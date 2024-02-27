@@ -24,7 +24,7 @@ This guide will walk you through how to make a one time payment by using the pay
 ## Create one time payment 
 Sensitive information like credit card numbers or bank account numbers are replaced by the payment token.
 
-```graphql
+```graphql title="GraphQL"
 mutation {
   createOneTimePayment(amount: Int, 
   merchant_uid: String, 
@@ -69,7 +69,7 @@ mutation {
 
 ## Returns
 The results presented below show that the query was successfully run and that every token was shown on the terminal in JSON format.
-``` json
+``` json title="JSON"
 {
   "data": {
     "createOneTimePayment": {
@@ -100,7 +100,7 @@ The results presented below show that the query was successfully run and that ev
 ***
 
 ## Next Steps
-You can also refer to Recurring payment here [Recurring Payments](../../recurring_payments/update_recurring_payments.md).
+You can also refer to Recurring payment here [Recurring Payments](../../recurring_payments/manage_recurring_payments/update_recurring_payments.mdx).
 
 </TabItem>
   <TabItem value="apple">

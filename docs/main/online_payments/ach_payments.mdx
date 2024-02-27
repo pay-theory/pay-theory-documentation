@@ -44,7 +44,7 @@ When you want to call a function from Pay Theory SDK you will need to use one of
 ## 3. Add Pay Theory elements to your form 
 You need to add the Pay Theory elements to your form. You can place these elements anywhere in your form and the SDK will place the hosted fields in the correct place.
 
-```jsx
+```jsx title="javascript"
 <div id="pay-theory-ach-account-name"></div>
 <div id="pay-theory-ach-account-number"></div>
 <div id="pay-theory-ach-routing-number"></div>
@@ -60,7 +60,7 @@ The link below provides list of all event listeners available in the below link.
 <a href= "../../sdk/javascript/EVENT_LISTENERS" class="button button--primary button--md">View All Event Listeners</a>
 :::
 
-```jsx
+```jsx title="javascript"
 paytheory.errorobserver(error => {
   //Logic to respond to errors
 })
@@ -71,7 +71,7 @@ paytheory.errorobserver(error => {
 After you have set up all the event listeners, you can initialize the Pay Theory fields by calling the 
 ` payTheoryFields `  function.
 
-```jsx
+```jsx title="javascript"
 const API_KEY ='YOUR_API_KEY'
 paytheory.payTheoryFields({
   apiKey: API_KEY,
@@ -90,7 +90,7 @@ paytheory.payTheoryFields({
 
 ## 6. Once the fields are valid, run transaction
 The only required field for the transact parameters is the amount field. You can customize the transact function more.
-```jsx
+```jsx title="javascript"
 //Amount passed in is in cents
 const AMOUNT = 1000
 

@@ -1,0 +1,33 @@
+---
+sidebar_position: 4
+sidebar_label: Sending Receipts
+title: "Sending Receipts"
+
+---
+
+import Tabs from '../../../components/Tabs';
+import TabItem from '@theme/TabItem';
+import Admonition from '@theme/Admonition';
+
+# Sending Receipts
+This guide will walk you through how to send receipts the payor. The following call will send a receipt for a transaction to the email address on file with the payor or an email passed in. 
+
+```graphql title="GraphQL"
+mutation sendingReceipts (email: AWSEmail, receipt_description: String, transaction_id: String!) {
+  createReceiptEmail(transaction_id: transaction_id, 
+                     email: email,
+                     receipt_description: receipt_description)
+}
+
+```
+
+### Required Arguments
+The following parameters must be used in order to send receipts to the payor. The query may fail to execute if any parameter is omitted, in which case the required data for processing will need to be requested.
+
+|Key                |type         |       description                     |
+|-------------------|-------------|---------------------------------------|     
+|transaction_id       |string     |The Pay Theory unique identifier for the transaction to send the receipt for. |
+|email       | AWSEmail    | The email address to send the receipt to. If not provided the email address on file with the payor will be used.|
+|receipt_description       |string | The description of the transaction that will be displayed on the receipt. If not provided it will just say "Payment to merchant_name".|
+
+

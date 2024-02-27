@@ -1,0 +1,68 @@
+---
+sidebar_position: 3
+sidebar_label: Create a Subscription
+title: ""
+
+---
+
+import Tabs from '../../../components/Tabs';
+import TabItem from '@theme/TabItem';
+import Admonition from '@theme/Admonition';
+
+
+# Making a payment using subscription
+A payment subscription involves paying for ongoing use of a service or product. This guide will walk you through how to make a payment using subscription.
+
+## Request
+In this example, Pat Johnson has purchased an ongoing subscription to Lawn Care Digest. Pat will be charged $5.00 every month from his tokenized method on file, until he cancels his subscription.
+
+```graphql title="GraphQL"
+mutation {
+  createRecurringPayment(input: {
+            amount: 500,  # Amount in pennies
+            merchant_uid: "", # Insert merchant_uid
+            payment_interval: MONTHLY, 
+            payment_method_id: "", # Insert tokenized payment method
+            recurring_name: "Lawn Care Digest",
+            payor: {
+                full_name: "Pat Johnson",
+                email: "patjohnson@pat_johnson.io"
+            }
+        }) {
+ amount_per_payment
+ payment_interval
+ recurring_id
+}
+
+}
+```
+:::note  Additional Parameters
+View the extensive list of parameters for recurring payments in our API.
+
+<a href= "../../api/recurring" class="button button--primary button--md">View All Parameters</a>
+:::
+
+***
+
+## Return
+The call will return the newly created recurring payment.
+```JSON title="JSON"
+{
+    "data": {
+        "createRecurringPayment": {
+            "amount_per_payment": 500,
+            "payment_interval": "MONTHLY",
+            "recurring_id": "pt_rec_XXXXXXXXX",
+        }
+    }
+}
+```
+
+***
+## Next Steps
+You can also refer to [create a payment plan](../recurring_payments/create_a_payment_plan.mdx), or if you are looking to update a recurring payment's payment method refer to [update recurring payments](../recurring_payments/manage_recurring_payments/update_recurring_payments.mdx).
+
+
+
+
+

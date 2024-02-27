@@ -10,6 +10,7 @@ Disputes are charges that have been contested by a cardholder to their card issu
 
 They could be an `INQUIRY` which is just a request for information, or an actual chargeback in the status `PENDING` which is a request for a charge to be reversed.
 
+***
 ## The Dispute Object
 
 ```graphql
@@ -31,57 +32,41 @@ They could be an `INQUIRY` which is just a request for information, or an actual
 }
 ```
 
-**merchant_uid**: ID  
-The Pay Theory unique identifier assigned to the merchant that the dispute belongs to.
+|Key                | type                             | description                                                                                                                                 |
+|-------------------|----------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------|     
+|merchant_uid       | ID                               | The Pay Theory unique identifier assigned to the merchant that the dispute belongs to.                                                      |
+|transaction        | Transaction                      | The transaction object for the transaction that is in dispute. More information on the transaction object can be found [here](transaction). |
+|dispute_id         | String                           | The Pay Theory unique dispute identifier.                                                                                                   |
+|status             | [DisputeStatus](#dispute-status) | The status of the dispute.                                                                                                                  |
+|reason             | [DisputeReason](#dispute-reason) | The reason code for the dispute as passed by the card issuer.                                                                               |
+|amount             | Int                              | The amount of the transaction in dispute.                                                                                                   |
+|dispute_date       | String                           | The date the dispute was created.                                                                                                           |
+|evidence_last_send_date| String                           | The last date evidence was sent to the processor. If no evidence was sent, this will be null.                                               |
+|updated_date       | String                           | The date the dispute was last updated.                                                                                                      |
+|expiration_date    | String                           | The final date to submit evidence to contest a dispute.                                                                                     |
+|reason_message     | String                           | A more detailed reason provided by the card issuer for the dispute.                                                                         |
+|settlement_withdrawal_batch| String                           | The settlement batch number where funds were withdrawn from the merchants account for the dispute.                                          |
+|settlement_deposit_batch| String                           | The settlement batch number where funds were deposited into the merchants account if a dispute is `WON`.                                    |
+|updated_row_at     | String                           | The date the dispute was last updated in the database.                                                                                      |
 
-**transaction**: Transaction  
-The transaction object for the transaction that is in dispute. More information on the transaction object can be found [here](transaction).
+***
+## Dispute Status
 
-**dispute_id**: String  
-The Pay Theory unique dispute identifier.
+- `INQUIRY` - The dispute is in the inquiry stage. The cardholder has requested more information about the charge.
+- `LOST` - The dispute has been lost. The cardholder has won the dispute and the funds have been withdrawn from the merchants account.
+- `PENDING` - The dispute is in the pending stage. The cardholder has requested a chargeback.
+- `WON` - The dispute has been won. The merchant has won the dispute and the funds have been deposited into the merchants account.
 
-**status**: DisputeStatus  
-The status of the dispute. It can be one of the following:
-- INQUIRY
-- LOST
-- PENDING
-- WON
+***
+## Dispute Reason
 
-**reason**: DisputeReason  
-The reason code for the dispute as passed by the card issuer. It can be one of the following:
-- CLERICAL
-- FRAUD
-- INQUIRY
-- QUALITY
-- TECHNICAL
+- `CLERICAL`
+- `FRAUD` 
+- `INQUIRY`
+- `QUALITY`
+- `TECHNICAL` 
 
-**amount**: Int  
-The amount of the transaction in dispute.
-
-**dispute_date**: String  
-The date the dispute was created.
-
-**evidence_last_send_date**: String  
-The last date evidence was sent to the processor. If no evidence was sent, this will be null.
-
-**updated_date**: String  
-The date the dispute was last updated.
-
-**expiration_date**: String  
-The final date to submit evidence to contest a dispute.
-
-**reason_message**: String  
-A more detailed reason provided by the card issuer for the dispute.
-
-**settlement_withdrawal_batch**: String  
-The settlement batch number where funds were withdrawn from the merchants account for the dispute.
-
-**settlement_deposit_batch**: String  
-The settlement batch number where funds were deposited into the merchants account if a dispute is `WON`.
-
-**updated_row_at**: String
-The date the dispute was last updated in the database.
-
+***
 ## Query Disputes
 
 ```graphql
@@ -108,28 +93,18 @@ query DisputeQuery($direction: MoveDirection, $limit: Int, $offset: String, $off
 }
 ```
 
-### Arguments
+**Parameters**
 
-**`limit`: Int**  
-The number of disputes to return.
+|Key                |type         |       description                     |
+|-------------------|-------------|---------------------------------------|     
+|direction          |MoveDirection|The direction of the pagination. Makes sure the results are returned in the correct order.|
+|limit              |Int          |The number of disputes to return.|
+|offset             |String       |The value of the offset item for which the list is being sorted.|
+|offset_id          |String       |The `dispute_id` of the offset item.|
+|query              |QueryObject  |The query to filter the disputes with based on Pay Theory defined data.|
 
-**`direction`: String**  
-The direction of the pagination. Makes sure the results are returned in the correct order.
-* `FORWARD`
-* `BACKWARD`
 
-**`offset`: String**  
-The value of the offset item for which the list is being sorted.  
-If the direction is `FORWARD`, the offset item is the last item in the previous list.  
-If the direction is `BACKWARD`, the offset is the first item in the previous list.
-
-**`offset_id`: String**  
-The `dispute_id` of the offset item. If the direction is `FORWARD`, the offset item is the last item in the list. If the direction is `BACKWARD`, the offset is the first item in the list.
-
-**`query`: QueryObject**  
-The query to filter the disputes with based on Pay Theory defined data.  Detailed information about the query object can be found [here](query).
-
-### Returns
+**Returns**
 ```json
 {
     "data": {
@@ -147,10 +122,7 @@ The query to filter the disputes with based on Pay Theory defined data.  Detaile
     }
 }
 ```
-
-
-**`items`: [Dispute]**  
-The list of disputes that are returned from the query.
-
-**`total_row_count`: Int**  
-The total number of disputes that match the query. Used to help with pagination.
+|Key                |type         |       description                     |
+|-------------------|-------------|---------------------------------------|     
+|items              |[Dispute]    |The list of disputes that are returned from the query.|
+|total_row_count    |Int          |The total number of disputes that match the query. Used to help with pagination.|

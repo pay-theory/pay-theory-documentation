@@ -1,0 +1,90 @@
+---
+sidebar_position: 2
+sidebar_label: 'Create a Payment Plan'
+title: ""
+---
+
+
+import Tabs from '../../../components/Tabs';
+import TabItem from '@theme/TabItem';
+import Admonition from '@theme/Admonition';
+
+# Create a Payment Plan
+Recurring payments are any repeating transactions that are completed on a periodic basis, such as a car loan, or mortgage. This guide will walk you through how to make a recurring payment plan.
+
+## Request
+In the following example Pat Johnson purchased a lawn mower for $1000.00. However, he was unable to make the entire payment, so he opted for a payment plan. In this example, his total payment of $1000.00 will be split up into 10 payments of $100.00. The payments will be collected from Pat Johnson's tokenized payment method every month, and will continue until the all 10 payments are complete.
+
+```graphql title="GraphQL"
+mutation {
+  createRecurringPayment(input: {
+            amount: 10000,  # Amount in pennies
+            payment_count: 10, 
+            merchant_uid: "", # Insert merchant_uid
+            payment_interval: MONTHLY, 
+            payment_method_id: "", # Insert tokenized payment method
+            recurring_name: "Lawn Mower",
+            payor: {
+                full_name: "Pat Johnson",
+                email: "patjohnson@pat_johnson.io"
+            }
+        }) {
+ amount_per_payment
+ payment_interval
+ recurring_id
+ remaining_payments
+}
+
+}
+```
+
+:::note  Additional Parameters
+View the extensive list of parameters for recurring payments in our API.
+
+<a href= "../../api/recurring" class="button button--primary button--md">View All Parameters</a>
+:::
+
+***
+
+## Return
+The call will return the newly created recurring payment.
+```JSON title="JSON"
+{
+    "data": {
+        "createRecurringPayment": {
+            "amount_per_payment": 10000,
+            "payment_interval": "MONTHLY",
+            "recurring_id": "pt_rec_XXXXXXXXX",
+            "remaining_payments": 9
+        }
+    }
+}
+```
+
+***
+
+## Next Steps
+You can also refer to [create payment subscription](../recurring_payments/create_a_subscription.mdx) or if you are looking to cancel a Recurring Payment refer to [cancel recurring payments](../recurring_payments/manage_recurring_payments/cancel_recurring_payments.mdx).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

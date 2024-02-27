@@ -1,0 +1,54 @@
+---
+sidebar_position: 5
+sidebar_label: Record an Offline Payment
+title: "Record an Offline Payment"
+
+---
+
+import Tabs from '../../../components/Tabs';
+import TabItem from '@theme/TabItem';
+import Admonition from '@theme/Admonition';
+
+# Record an Offline Payment
+ Offline transactions are used to track payments that are made outside Pay Theory towards an Invoice. This guide will demonstrate how to create an offline transaction for an invoice.
+
+## Request
+In this example the payor has made a cash payment offline for $100.00. Insert the correlating `invoice_id` into the code below to record an offline payment. 
+
+```graphql title="GraphQL"
+mutation {
+    createOfflineTransaction(input:  {
+        amount: 10000  # Amount in pennies
+        invoice_id: "" # Insert invoice_id
+        type: CASH, # Reference OfflineTransactionType 
+        transaction_date: "2022-09-19"
+    
+    }){
+        amount
+        type
+    }
+}
+```
+
+:::note  Additional Parameters
+View the extensive list of parameters for recording an offline payment in our API. 
+
+<a href= "../../api/invoice#create-an-offline-transaction" class="button button--primary button--md">View All Parameters</a>
+:::
+
+***
+
+## Return
+The response will contain the offline transaction object that was created.
+
+```JSON title="JSON"
+{
+    "data": {
+        "createOfflineTransaction": {
+            "amount": 10000,
+            "type": CASH,
+        }
+    }
+}
+
+```

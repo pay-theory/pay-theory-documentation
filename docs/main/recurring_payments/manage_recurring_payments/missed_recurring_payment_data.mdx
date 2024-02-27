@@ -1,0 +1,60 @@
+---
+sidebar_position: 5
+sidebar_label: Get Missed Recurring Payment Data
+title: "Get Missed Recurring Payment Data"
+
+---
+
+import Tabs from '../../../../components/Tabs';
+import TabItem from '@theme/TabItem';
+import Admonition from '@theme/Admonition';
+
+# Get Missed Recurring Payment Data
+Retrieving missed recurring payment data allows tracking of failed transactions or missed payments within a subscription or service. By following this guide you will learn how to obtain the total amount of payments due as well as the number of missed payments.
+
+
+## Request
+This is useful if you want to charge a customer for all missed payments at once when updating their payment method. This will query how many payments have been missed and the total amount of those payments.
+
+```graphql title="GraphQL"
+{
+    query missedRecurringPaymentData(
+        recurring_id: "" # Insert recurring_id
+    ) 
+    {
+        fee
+        number_of_payments_missed
+        total_amount_owed
+    }
+}
+```
+
+:::note  Additional Parameters
+View the extensive list of parameters for recurring payments in our API.
+
+<a href= "../../../api/recurring#get-missed-recurring-payment-data" class="button button--primary button--md">View All Parameters</a>
+:::
+
+
+***
+
+## Return
+The information from this call will include the amount the consumer needs to make up for missing payments for a recurring payment option.
+
+```JSON title="JSON"
+{
+    "data": {
+        "missedRecurringPaymentData": {
+            "fee": int,
+            "number_of_payments_missed": int,
+            "total_amount_owed": int
+        }
+    }
+}
+
+```
+***
+
+## Next Steps
+You always have the option to create [retry for failed recurring payments](retry_failed_recurring_payments.mdx) pertaining to recurring payments as well as [cancel the recurring payments](cancel_recurring_payments.mdx).
+

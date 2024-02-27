@@ -1,0 +1,44 @@
+---
+sidebar_position: 4
+sidebar_label: Resend an Invoice Email
+title: "Resend an Invoice Email"
+
+---
+
+import Tabs from '../../../components/Tabs';
+import TabItem from '@theme/TabItem';
+import Admonition from '@theme/Admonition';
+
+
+# Resend an Invoice Email
+The guide below will resend an invoice's email.
+
+## Request
+Insert the appropriate invoice ID into the request below to resend the invoice's email.
+
+```graphql title="GraphQL"
+mutation {
+    createInvoiceEmail(
+        invoice_id: "" # Insert invoice_id 
+)}
+```
+
+:::note  Additional Parameters
+View the extensive list of parameters for resending an invoice email in our API. 
+
+<a href= "../../api/invoice#resend-an-invoice-email" class="button button--primary button--md">View All Parameters</a>
+:::
+
+***
+
+## Return
+The response will include a boolean value that will be true if the email was sent successfully.
+
+```JSON title="JSON"
+{
+    "data": {
+        "createInvoiceEmail": true
+    }
+}
+```
+

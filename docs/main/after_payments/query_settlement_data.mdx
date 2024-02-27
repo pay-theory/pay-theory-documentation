@@ -1,0 +1,83 @@
+---
+sidebar_position: 2
+sidebar_label: Query Settlement Data
+title: "Query Settlement Data"
+
+---
+
+import Tabs from '../../../components/Tabs';
+import TabItem from '@theme/TabItem';
+import Admonition from '@theme/Admonition';
+
+# Query Settlement Data
+Settlements are a batch of payments, disputes, and refunds that are grouped together and paid out to a merchant. This guide will walk you through how to write a query for a settlement.
+
+```graphql title="GraphQL"
+query GetSettlement{
+    settlements(limit: 10, direction: FORWARD, offset: "", offset_id: "", query:{
+        query_list:[
+            {
+                key: "status",
+                value: "SUCCEEDED",
+                operator : EQUAL
+            }
+        ]
+    }) {
+        items {
+            gross_amount
+            merchant_uid
+            settlement_batch
+            status
+            transaction_debit_count
+            transaction_reversal_count
+        }
+    }
+}
+
+```
+
+### Arguments
+Sending a request is required in order to get query settlement data. To obtain the query data, the following three parameters are necessary.
+
+|Key                |type         |       description                     |
+|-------------------|-------------|---------------------------------------|     
+|limit            |int        |The number of settlements to return.|
+|direction        | string    | The direction of the pagination. Make sure the results are returned in the correct order.<ul><li>FORWARD</li><li>BACKWARD</li></ul>|
+|query            |QueryObject | The query to filter the settlements with. Detailed information about the query object can be found [here](custom_query.mdx).|
+
+
+### Required Arguments
+The following parameters must be used in order to get the query settlement data. The query may fail to execute if any parameter is omitted, in which case the required data for processing will need to be requested.
+
+|Key                |type         |       description                     |
+|-------------------|-------------|---------------------------------------|     
+|gross_amount       |int        |The total amount of the settlement before any fees and adjustments. |
+|merchant_uid       | string    | The Pay Theory unique identifier assigned to the merchant that the settlement belongs to.|
+|query            |QueryObject | The query to filter the settlements with. Detailed information about the query object can be found here[query].|
+|settlement_batch  |int     |The unique settlement batch number.|
+|status           | string      |The status of the settlement.<ul><li>PENDING</li><li>SUCCEEDED</li></ul> |
+|transaction_debit_count |int   | The number of transactions of type DEBIT that were included in the settlement.|
+
+
+***
+
+## Returns
+This returns an array of settlement objects and the total number of items that match that query.
+
+```JSON title="JSON"
+{
+    "data": {
+        "settlements": {
+            "items": [
+                {
+                    "settlement_batch": int
+                },
+                {
+                    "settlement_batch": int
+                },
+            ],
+                "total_row_count": int
+        }
+    }
+}
+```

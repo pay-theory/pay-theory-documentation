@@ -9,7 +9,7 @@ These are variables that are available to you from the Paytheory object to tell 
 
 These variables can be used to enable or disable elements in your app.
 
-They are made available to you as `@Published` variables so you can use them in your SwiftUI views.
+They are made available to you as `@Published` variables, so you can use them in your SwiftUI views.
 
 ## Valid
 
@@ -48,7 +48,7 @@ payTheory.cardNumber.isEmpty
   * This variable is used to tell if the field passes validation.
 
 * **isEmpty**: Bool
-  * This variable is used to tell if the field is has been typed into.
+  * This variable is used to tell if the field has been typed into.
 
 These two variables are available in the paytheory object for each of the following:
 

@@ -43,7 +43,7 @@ Below is a list of errors that can be returned from the SDK.
 | SOCKET_ERROR            | Indicates an error with the call to the socket.                                                                                 |
 | TRANSACTING_FIELD_ERROR | Indicates either multiple transacting fields or no transacting fields were found visible on the DOM when running a function.    |
 
-```jsx
+```jsx title="javascript"
 window.paytheory.errorObserver(error => {
   if (error.startsWith("FIELD_ERROR")) {
     // Logic to handle field-related errors

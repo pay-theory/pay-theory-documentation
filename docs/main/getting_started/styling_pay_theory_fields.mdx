@@ -68,7 +68,7 @@ To style the input parent div, provide your own CSS for the Pay Theory container
 Individual pay-theory-credit-card-number containers should be at least 340px wide, pay-theory-credit-card combined input should be 400px
 :::
 
-```jsx title= src/custom.css
+```jsx title="src/custom.css"
 #pay-theory-credit-card-number,
 #pay-theory-credit-card-exp,
 #pay-theory-credit-card-cvv {
@@ -84,7 +84,7 @@ Individual pay-theory-credit-card-number containers should be at least 340px wid
 ## Using the stateObserver
 A stateObserver lets you keep an eye on changes to the state of hosted fields and react to them. It offers a mechanism to keep a look on things like field focus, if a field is empty or if there are any validation errors with the field. Each time the state of a text input changes, the stateObserver callback method is called.
 
-```jsx title= src/paytheory.js
+```jsx title="src/paytheory.js"
 const stateHandler = (state) => {
   const cardState = state['card-number']
   const cardField = document.getElementById("pay-theory-credit-card-number")

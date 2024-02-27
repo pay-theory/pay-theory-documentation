@@ -1,0 +1,167 @@
+---
+sidebar_position: 3
+sidebar_label: Custom Query
+title: "Custom Query"
+
+---
+
+import Tabs from '../../../components/Tabs';
+import TabItem from '@theme/TabItem';
+import Admonition from '@theme/Admonition';
+
+# Custom Query
+We will go over how to create custom queries that you may submit to the Pay Theory API in this section.
+Let's examine a fundamental query object first, and then we will dissect it.
+
+```graphql title="GraphQL"
+{
+    query_list: [
+        {
+            key: "full_name",
+            value: "John Doe",
+            operator: EQUAL,
+            conjunctive_operator: NONE_NEXT
+        }
+    ], 
+    sort_list: {
+        direction: ASC, 
+        key: "transfer_date"
+    }
+}
+```
+
+## Query Pair
+A list of query pairs can be used to build out a query.
+
+#### Required Arguments
+The following parameter must be used in order to use a query pair while writing a GraphQL query.
+
+|Key                |type         |       description                     |
+|-------------------|-------------|---------------------------------------|     
+|key            |string        |The key to the value you want to query against.|
+|operator        | operator    |The operator to use to compare the value to the data you are calling. More detail below.|
+
+
+#### Optional Arguments
+The parameters listed below provide flexibility in query result customization but are not required in query pair.
+
+|Key                |type         |       description                     |
+|-------------------|-------------|---------------------------------------|     
+|conjunctive_operator | ConjunctiveOperator    | The conjunctive operator to use to connect the query pair with the next query pair. More detail below.|
+|in_values          |string        |A list of values to compare the data to. This should be used instead of `value` if using the operators `IN_LIST` or `NOT_IN_LIST`.|
+|query_group            |QueryPairs | A list of query pairs to use to build out a nested query. A more detailed example is below under the examples section.|
+|value            |string |The value to compare the data to. If using the LIKE or NOT_LIKE operator, this value can contain wildcard characters.|
+
+
+
+      ### Operators
+These operators are case-sensitive. The following are the available operators:
+
+|Type               |       description                     |
+|-------------------|---------------------------------------|     
+|EQUAL              | The value of the data must be equal to the value in the query pair.|
+|EQUAL_FALSE        | The value of the data must be equal to False.|
+|EQUAL_TRUE         | The value of the data must be equal to True.|
+|GREATER_EQUAL      | The value of the data must be greater than or equal to the value in the query pair.|
+|GREATER_THAN       | The value of the data must be greater than the value in the query pair.|
+|IN_LIST            | The value of the data must be in the list of in_values in the query pair.|
+|IS_NOT_NULL        | The value of the data must not be null.|
+|IS_NULL            | The value of the data must be null.|
+|LESS_EQUAL         | The value of the data must be less than or equal to the value in the query pair.|
+|LESS_THAN          | The value of the data must be less than the value in the query pair.|
+|LIKE               | The data is like the value. The value can contain wildcard characters like %,[],-,{},_,^. |
+|NOT_EQUAL          | The value of the data must not be equal to the value in the query pair.|
+|NOT_IN_LIST        | The value of the data must not be in the list of in_values in the query pair.|
+|NOT_LIKE           | The data is not like the value. The value can contain wildcard characters like %,[],-,{},_,^. |
+
+
+### Conjunctive Operators
+These operators are case-sensitive. Conjunctive operators in the same array must match for a query to work. To mix operators use nested queries with query pairs containing a `query_list`. The following are the available conjunctive operators:
+
+|Type               |       description                     |
+|-------------------|---------------------------------------|     
+|AND_NEXT           | The results of the query have to meet all the conditions in the query pair list.|
+|OR_NEXT            | The results of the query have to meet one of the conditions in the query pair list.  |
+|NONE_NEXT          | The final query pair in the list should use this operator since it has nothing to connect to. |
+
+### Sort Pair
+A sort pair is the object used to tell a query how the data should be sorted.
+
+|Key                |type         |       description                     |
+|-------------------|-------------|---------------------------------------|     
+|direction          |SortDirection       |The direction to sort the data. These are case-sensitive.<ul><li>`ASC`: Begins with the least or smallest and ends with the greatest or largest.</li><li>`DESC`: Begins with the greatest or largest and ends with the least or smallest.</li></ul>|
+|key             | string    | The key to sort the data by.|
+
+## Examples
+The following examples provide a quick rundown of how the query functions in the payment transaction.
+
+#### 1. Transactions With Status SETTLED and the reference starts with `test`.
+   If you wanted to build a query that looks for any transactions that has a status of SETTLED and the reference starts with test, you would do the following.
+
+   This query would return only those transactions where the status is `SETTLED` and the reference is `test`.
+    ```graphql title="GraphQL"
+    {
+    transactions(limit: 5, query: {query_list: [
+    {
+        key: "reference",
+        value: "test%",
+        operator: LIKE,
+        conjunctive_operator: AND_NEXT
+    },
+    {
+        key: "status",
+        value: "SETTLED",
+        operator: EQUAL,
+        conjunctive_operator: NONE_NEXT
+    }
+    ]}) 
+    {
+        items {
+            transaction_id
+            reference
+            gross_amount
+        }
+        total_row_count
+    }
+    }
+
+    ```
+
+#### 2. Querying Sub Objects
+    Payment method is a nested data object. Because of this, payment method queries can be made by passing a separate array of query pairs for the metadata.
+
+
+    This following will return 10 transactions where the `gross_amount` is greater than 1000 and the payment has a payment method in which the `last_four` is equal to 1234. It would be sorted by gross_amount in ascending order.
+
+    ```graphql title="GraphQL"
+    {
+	    transactions(limit: 10, query:{
+            query_list: [
+			    {
+                    key: "gross_amount",
+                    value: "1000",
+                    operator: GREATER_THAN,
+                    conjunctive_operator: NONE_NEXT
+                }
+            ],
+            sort_pair: [{
+                direction: ASC,
+                key: "gross_amount"
+            }]
+        } 
+        )
+	    {
+        items {
+            currency
+            gross_amount
+            payment_method(query_list: [{
+                key: "last_four",
+                value: "1234",
+                operator: EQUAL
+            }])
+        }
+        total_row_count
+        }
+    }
+    ```
+
