@@ -1,7 +1,7 @@
 ---
 sidebar_position: 12
 sidebar_label: 'Recurring'
-title: ""
+title: "Recurring"
 ---
 
 # Recurring Payment
@@ -12,76 +12,66 @@ You can create a recurring payment with a set number of payments to enable a pay
 
 You can also create a recurring payment with no set payment amounts to enable a subscription for a payor.
 
+***
 ## The Recurring Payment Object
 
-```js
+```graphql
 {
-    recurring_id: String
-    merchant_uid: String
-    payor: Payor
-    payment_method: PaymentMethodToken
+    account_code: String
     amount_per_payment: Int
-    fee_per_payment: Int
-    total_amount_per_payment: Int
+    created_date: AWSDateTime
     currency: String
-    prev_payment_date: Date
-    next_payment_date: Date
-    payment_interval: RecurringInterval
     fee_mode: FeeMode
-    remaining_payments: Int
-    status: RecurringStatus
+    fee_per_payment: Int
     is_active: Boolean
     is_processing: Boolean
-    recurring_name: String
-    recurring_description: String
-    account_code: String
-    reference: String
-    created_date: DateTime
+    recurring_id: String
+    merchant_uid: String
+    metadata: AWSJSON
     mute_all_emails: Boolean
-    metadata: JSON
+    next_payment_date: AWSDate
+    payment_interval: RecurringInterval
+    payment_method: PaymentMethodToken
+    payor: Payor
+    prev_payment_date: AWSDate
+    recurring_description: String
+    recurring_name: String
+    reference: String
+    remaining_payments: Int
+    status: RecurringStatus
+    total_amount_per_payment: Int
 }
 ```
 
-**`recurring_id`: String**  
-The Pay Theory unique identifier assigned to the recurring payment.
+|Key                | type                                     |       description                     |
+|-------------------|------------------------------------------|---------------------------------------|     
+|account_code       | String                                   |Custom account code for the recurring payment that will be tied to each payment.|
+|amount_per_payment| Int                                      |The amount of the recurring payment.|
+|created_date       | DateTime                                 |The date the recurring payment was created.|
+|currency           | String                                   |The type of currency for the recurring payment.|
+|fee_mode           | FeeMode                                  |The fee mode for the recurring payment.|
+|fee_per_payment    | Int                                      |The fee for the recurring payment.|
+|is_active          | Boolean                                  |Whether the recurring payment is active or been disabled.|
+|is_processing      | Boolean                                  |Whether the recurring payment is currently processing.|
+|merchant_uid       | String                                   |The Pay Theory unique identifier assigned to the merchant that the recurring payment belongs to.|
+|metadata           | JSON                                     |Custom metadata for the recurring payment that will be tied to each payment.|
+|mute_all_emails    | Boolean                                  |Manage whether the payor will receive emails for the recurring payment from Pay Theory.|
+|next_payment_date  | DateTime                                 |The date of the next payment to be made for the recurring payment.|
+|payment_interval   | [RecurringInterval](#recurring-interval) |The interval of the recurring payment.|
+|payment_method     | PaymentMethodToken                       |The payment method used to make the recurring payment.|
+|payor              | Payor                                    |The payor that the recurring payment belongs to.|
+|prev_payment_date  | DateTime                                 |The date of the last payment made for the recurring payment.|
+|recurring_description| String                                   |Custom description for the recurring payment.|
+|recurring_id       | String                                   |The Pay Theory unique identifier assigned to the recurring payment.|
+|recurring_name     | String                                   |Custom name for the recurring payment.|
+|reference          | String                                   |Custom reference for the recurring payment that will be tied to each payment.|
+|remaining_payments | Int                                      |The number of payments remaining for the recurring payment.|
+|status             | [RecurringStatus](#recurring-status)     |The status of the recurring payment.|
+|total_amount_per_payment| Int                                      |The amount the payor will be charged for the recurring payment.|
 
-**`merchant_uid`: String**  
-The Pay Theory unique identifier assigned to the merchant that the recurring payment belongs to.
+***
+### Recurring Interval
 
-**`payor`: Payor**  
-The payor that the recurring payment belongs to. Refer to the [Payor](payor) for more info.
-
-**`payment_method`: PaymentMethodToken**  
-The payment method used to make the recurring payment. Refer to the [Payment Method Token](payment_method_token) for more info.
-
-**`fee_mode`: FeeMode**  
-The fee mode for the recurring payment.
-
-- `MERCHANT_FEE`: Merchant pays fees
-- `SERVICE_FEE`: Payor pays fees
-
-**`amount_per_payment`: Int**
-The amount of the recurring payment.
-
-**`fee_per_payment`: Int**  
-The fee for the recurring payment.
-
-**`total_amount_per_payment`: Int**  
-The amount the payor will be charged for the recurring payment.
-
-- Same as `amount_per_payment` if your fee mode is `MERCHANT_FEE`
-- Adjusted total of `amount_per_payment` + `fee_per_payment` if your fee mode is `SERVICE_FEE`
-
-**`currency`: String**  
-The type of currency for the recurring payment.
-
-**`prev_payment_date`: Date**  
-The date of the last payment made for the recurring payment.
-
-**`next_payment_date`: Date**  
-The date of the next payment to be made for the recurring payment.
-
-**`payment_interval`: RecurringInterval**  
 The interval of the recurring payment. The following intervals are available:
 
 - `WEEKLY`
@@ -91,46 +81,22 @@ The interval of the recurring payment. The following intervals are available:
 - `BI_ANNUAL`
 - `ANNUAL`
 
-**`remaining_payments`: Int**  
-The number of payments remaining for the recurring payment. For a recurring date with no set amount of payments, this will be `null`.
+***
+### Recurring Status
 
-**`status`: RecurringStatus**  
-The status of the recurring payment.
+The status of the recurring payment. The following statuses are available:
 
-- `SYSTEM_FAILURE`: The recurring payment failed due to a system error. Will retry automatically till system issue resolved.
-- `INSTRUMENT_FAILURE`: The recurring payment failed due to a payment method error. Will not retry until payment method is updated.
-- `SUCCESS`: The last payment was successful.
+- `SYSTEM_FAILURE` 
+  - The recurring payment failed due to a system error. Will retry automatically till system issue resolved.
+- `INSTRUMENT_FAILURE`
+  - The recurring payment failed due to a payment method error. Will not retry until payment method is updated.
+- `SUCCESS`
+  - The last payment was successful.
 
-**`is_active`: Boolean**  
-Whether the recurring payment is active or been disabled.
-
-**`is_processing`: Boolean**  
-Whether the recurring payment is currently processing.
-
-**`recurring_name`: String**  
-Custom name for the recurring payment.
-
-**`recurring_description`: String**  
-Custom description for the recurring payment.
-
-**`account_code`: String**  
-Custom account code for the recurring payment that will be tied to each payment.
-
-**`reference`: String**  
-Custom reference for the recurring payment that will be tied to each payment.
-
-**`created_date`: DateTime**  
-The date the recurring payment was created.
-
-**`mute_all_emails`: Boolean**  
-Manage whether the payor will receive emails for the recurring payment from Pay Theory.
-
-**`metadata`: JSON**  
-Custom metadata for the recurring payment that will be tied to each payment.
-
+***
 ## Get Recurring Payments
 
-```js
+```graphql
 {
     recurringPayments(direction: MoveDirection, limit: Int, offset: String, offset_id: String, query: QueryObject) {
         items {
@@ -166,70 +132,37 @@ Custom metadata for the recurring payment that will be tied to each payment.
 }
 ```
 
-**Arguments**
+**Parameters**
 
-**`limit`: Int**  
-The number of recurring payments to return.
+|Key                |type         |       description                     |
+|-------------------|-------------|---------------------------------------|     
+|direction          |MoveDirection|The direction of the pagination. Makes sure the results are returned in the correct order.|
+|limit              |Int          |The number of recurring payments to return.|
+|offset             |String       |The value of the offset item for which the list is being sorted.|
+|offset_id          |String       |The `recurring_id` of the offset item.|
+|query              |QueryObject  |The query to filter the recurring payments with based on Pay Theory defined data. Detailed information about the query object can be found [here](query).|
 
-**`direction`: String**  
-The direction of the pagination. Makes sure the results are returned in the correct order.
 
-- `FORWARD`
-- `BACKWARD`
+**Nested Queries**  
+Recurring Payments can also be filtered by passing a query_list to the metadata, payment method, or payor.
 
-**`offset`: String**  
-The value of the offset item for which the list is being sorted.  
-If the direction is `FORWARD`, the offset item is the last item in the previous list.  
-If the direction is `BACKWARD`, the offset is the first item in the previous list.
+This will only return Recurring Payments that have Metadata, Payment Methods, or Payors that match these queries.  Detailed information about the query list can be found [here](query).
 
-**`offset_id`: String**  
-The `recurring_id` of the offset item. If the direction is `FORWARD`, the offset item is the last item in the list. If the direction is `BACKWARD`, the offset is the first item in the list.
-
-**`query`: QueryObject**  
-The query to filter the recurring payments with based on Pay Theory defined data.  Detailed information about the query object can be found [here](query).
-
-**Nested Arguments**
-
-**Metadata, PaymentMethod, PaymentMethod/Payor, Payor**
-
-**`query_list`: QueryPair[]**  
-The query list to filter the Metadata, Payor, Payment Method, or Payor tied to the Payment Method.  
-This will ensure that only Recurring Payments that have Metadata, Payors, Payment Methods, or Payment Method Payors that match these queries.  
-Detailed information about the query list can be found [here](query).
 
 **Returns**
 
-```js
-{
-    "data": {
-        "recurringPayments": {
-            "items": [
-                {
-                    "recurring_id": "pt_rec_1",
-                },
-                {
-                    "recurring_id": "pt_rec_2"
-                },
-                ...
-            ],
-                "total_row_count": 256
-        }
-    }
-}
-```
+|Key                |type         |       description                     |
+|-------------------|-------------|---------------------------------------|     
+|items              |[RecurringPayment] |The list of recurring payments that are returned from the query.|
+|total_row_count    |Int          |The total number of recurring payments that match the query. Used to help with pagination.|
 
-**`items`: [Settlement]**  
-The list of recurring payments that are returned from the query.
-
-**`total_row_count`: Int**  
-The total number of recurring payments that match the query. Used to help with pagination.
-
+***
 ## Create Recurring Payment
 
-```js
+```graphql
 mutation {
     createRecurringPayment(input: {
-        account_code: String,
+            account_code: String,
             amount: Int,
             currency: String,
             fee_mode: FEE_MODE,
@@ -247,229 +180,106 @@ mutation {
             mute_all_emails: Boolean
     }) {
         account_code
-        amount_per_payment
-        created_date
-        currency
-        fee_mode
-        fee_per_payment
-        is_active
-        is_processing
-        merchant_uid
-        metadata
-        next_payment_date
-        payment_interval
-        payment_method {
-        ...payment_method_object
-        }
-        payor {
-        ...payor_object
-        }
-        prev_payment_date
-        recurring_description
-        recurring_id
-        recurring_name
-        reference
-        remaining_payments
-        status
-        total_amount_per_payment
+        ...recuring_payment_object
     }
 }
 ```
 
-**Arguments**
+**Parameters**
+|Key                |type         |       description                     |
+|-------------------|-------------|---------------------------------------|
+|input              |RecurringPaymentInput|The input object that contains the details to create a new recurring payment.|
 
-**`input`: CreateRecurringPaymentInput**  
-This object contains all the details needed to create a recurring payment.
+**RecurringPaymentInput**
 
-**Required Arguments**
+| Key                   | type                                      | description                                                                                              |
+|-----------------------|-------------------------------------------|----------------------------------------------------------------------------------------------------------|     
+| account_code          | String                                    | Custom account code for the recurring payment that will be tied to each payment.                         |
+| amount                | Int!                                      | The amount of the recurring payment.                                                                     |
+| currency              | String                                    | The type of currency for the recurring payment.                                                          |
+| fee_mode              | FeeMode                                   | The fee mode for the recurring payment.                                                                  |
+| first_payment_date    | Date                                      | The date of the first payment. If not provided, the first payment will be made immediately.              |
+| merchant_uid          | String!                                   | The `merchant_uid` of the merchant that the recurring payment belongs to.                                |
+| metadata              | JSON                                      | Custom metadata for the recurring payment that will be tied to each payment.                             |
+| payment_count         | Int                                       | The number of payments to be made. If not provided, the recurring payment will continue until cancelled. |
+| payment_interval      | [RecurringInterval!](#recurring-interval) | The interval of the recurring payment.                                                                   |
+| payment_method_id     | String!                                   | The `payment_method_id` of the tokenized payment method that will be used for the recurring payment.     |
+| payor_id              | String                                    | The `payor_id` of the payor that the recurring payment will be tied to.                                  |
+| payor                 | Payor                                     | The payor object that the recurring payment will be tied to.                                             |
+| recurring_description | String                                    | Custom description for the recurring payment that will be tied to each payment.                          |
+| recurring_name        | String!                                   | Custom name for the recurring payment.                                                                   |
+| reference             | String                                    | Custom reference for the recurring payment that will be tied to each payment.                            |
+| mute_all_emails       | Boolean                                   | Manage whether the payor will receive emails for the recurring payment from Pay Theory.                  |
 
-**`merchant_uid`: String**  
-The Pay Theory merchant unique identifier for the merchant that is creating the recurring payment.
-
-**`amount`: Int**  
-The amount of the recurring payment.
-
-**`payment_interval`: PAYMENT_INTERVAL**  
-The interval of the recurring payment. The following intervals are available:
-- `WEEKLY`
-- `BI_WEEKLY`
-- `MONTHLY`
-- `QUARTERLY`
-- `BI_ANNUAL`
-- `ANNUAL`
-
-**`payment_method_id`: String**  
-The `payment_method_id` of the tokenized payment method that will be used for the recurring payment.
-
-**`recurrring_name`: String**  
-Custom name for the recurring payment. This is used to identify the recurring payment in customer emails and the Pay Theory dashboard.
-
-You need one of the following two variables:
-
-**`payor_id`: String**  
-The `payor_id` of the payor that the recurring payment will be tied to.
-
-**`payor`: Payor**  
-The payor object that the recurring payment will be tied to.  
-This will create a new payor in the system. Refer to the [Payor](payor) for more info.
-
-**Optional Arguments**
-
-**`account_code`: String**  
-Custom account code for the recurring payment that will be tied to each payment.
-
-**`currency`: String**  
-The currency of the recurring payment. If not provided, the currency will default to 'USD'.
-
-**`fee_mode`: FEE_MODE**  
-The fee mode of the recurring payment. The following fee modes are available:
-
-- `MERCHANT_FEE` (default)
-- `SERVICE_FEE`
-
-**`first_payment_date`: Date**  
-The date of the first payment. If not provided, the first payment will be made immediately.
-
-**`metadata`: JSON**  
-Custom metadata for the recurring payment that will be tied to each payment.
-
-**`mute_all_emails`: Boolean**  
-If set to `true`, no emails will be sent to the payor for this recurring payment. Default is `false`.
-
-**`payment_count`: Int**  
-The number of payments to be made. If not provided, the recurring payment will continue until cancelled.
-
-**`recurring_description`: String**  
-Custom description for the recurring payment that will be tied to each payment.
-
-**`reference`: String**  
-Custom reference code for the recurring payment that will be tied to each payment.
 
 **Returns**
 
 The call will return the newly created recurring payment.
 
-```js
-{
-    "data": {
-        "createRecurringPayment": {
-        ...recurring_payment_object
-        }
-    }
-}
-```
-
+***
 ## Update Recurring Payment
 
-```js
+```graphql
 mutation {
-    updateRecurringPayment(input: {
+    updateRecurringPayment( 
+      input: {
         payment_method_id: String,
-            recurring_id: String,
-            pay_all_missed_payments: Boolean
+        recurring_id: String,
+        pay_all_missed_payments: Boolean
         mute_all_emails: Boolean
     }) {
-        account_code
-        amount_per_payment
-        created_date
-        currency
-        fee_mode
-        fee_per_payment
-        is_active
-        is_processing
-        merchant_uid
-        metadata
-        mute_all_emails
-        next_payment_date
-        payment_interval
-        payment_method {
-        ...payment_method_object
-        }
-        payor {
-        ...payor_object
-        }
-        prev_payment_date
-        recurring_description
-        recurring_id
-        recurring_name
-        reference
-        remaining_payments
-        status
-        total_amount_per_payment
+        ... recurring_payment_object
     }
 }
 ```
 
-**Arguments**
+**Parameters**
 
-**`input`: CreateRecurringPaymentInput**  
-This object contains all the details needed to create a recurring payment.
+|Key               | type                        | description                                                                 |
+|------------------|-----------------------------|-----------------------------------------------------------------------------|     
+|input             | UpdateRecurringPaymentInput | The input object that contains the details to update the recurring payment. |
 
-**Required Arguments**
 
-**`recurring_id`: String**  
-The `recurring_id` of the recurring payment to be updated.
+**UpdateRecurringPaymentInput**
 
-**`payment_method_id`: String**  
-The `payment_method_id` of the tokenized payment method that will be used for the recurring payment.  
-If recurring payment is in a Failed state it will try to run a payment with the new payment method and get it back in to a Successful state.
-
-**Optional Arguments**
-
-**`pay_all_missed_payments`: Boolean**  
-If the recurring payment has a set number of payments (Payment Plan) and is in a Failed state, this will make a one time charge to account for all missed payments to get it back in to a Successful state.
-
-If the recurring payment does not have a set number of payments (Subscription) you are unable to use this option and only a single payment will be charged.
-
-**`mute_all_emails`: Boolean**  
-If set to `true`, no emails will be sent to the payor for this recurring payment.
+| Key                     | type    |       description                     |
+|-------------------------|---------|---------------------------------------|     
+| payment_method_id       | String  |The `payment_method_id` of the tokenized payment method that will be used for the recurring payment.|
+| recurring_id            | String! |The `recurring_id` of the recurring payment to be updated.|
+| pay_all_missed_payments | Boolean |If the recurring payment has a set number of payments &#40;Payment Plan&#41; and is in a Failed state, this will make a one time charge to account for all missed payments to get it back in to a Successful state.|
+| mute_all_emails         | Boolean |If set to `true`, no emails will be sent to the payor for this recurring payment.|
 
 **Returns**
 
 The call will return the updated recurring payment object.
 
-```js
-{
-    "data": {
-        "updateRecurringPayment": {
-        ...recurring_payment_object
-        }
-    }
-}
-```
-
+***
 ## Cancel Recurring Payment
 
 *Once a recurring payment is cancelled, it cannot be reactivated.*
 
-```js
+```graphql
 mutation {
     cancelRecurringPayment(recurring_id: String)
 }
 ```
 
-**Arguments**
+**Parameters**
 
-**`recurring_id`: String**  
-The `recurring_id` of the recurring payment to be cancelled.
+|Key                |type         | description                                                   |
+|-------------------|-------------|---------------------------------------------------------------|     
+|recurring_id       |String       | The `recurring_id` of the recurring payment to be cancelled.  |
 
 **Returns**
 
 The call will return `true` if the recurring payment was successfully cancelled.
 
-```js
-{
-    "data": {
-        "cancelRecurringPayment": true
-    }
-}
-```
-
+***
 ## Get Missed Recurring Payment Data
 
 This call will return details you need to display the proper amount to the customer to catch up on missed payments for a recurring payment.
 
-```js
+```graphql
 {
     missedRecurringPaymentData(recurring_id: String) {
         fee
@@ -479,59 +289,39 @@ This call will return details you need to display the proper amount to the custo
 }
 ```
 
-**Arguments**
+**Parameters**
 
-**`recurring_id`: String**  
-The `recurring_id` of the recurring payment to be cancelled.
+|Key                |type         |       description                     |
+|-------------------|-------------|---------------------------------------|     
+|recurring_id       |String       |The `recurring_id` of the recurring payment to get missed payment data for.|
 
 **Returns**
 
-```js
-{
-    "data": {
-        "missedRecurringPaymentData": {
-            "fee": 0,
-                "number_of_payments_missed": 5,
-                "total_amount_owed": 5000
-        }
-    }
-}
-```
+| Key                       |type         | description                                                                                                                                                                                                                                          |
+|---------------------------|-------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|     
+| fee                       |Int          | If the recurring payment has fee_mode set to `SERVICE_FEE`, this will be the total amount of fees that will be charged to the customer to payoff the missed payments.  <br/><br/> If the recurring payment has fee_mode set to `MERCHANT_FEE`, this will be 0. |
+| number_of_payments_missed |Int          | The number of payments that have been missed.                                                                                                                                                                                                        |
+| total_amount_owed         |Int          | The total amount that the customer will owe to payoff the missed payments.                                                                                                                                                                           |
 
-**`fee`: Int**  
-If the recurring payment has fee_mode set to `SERVICE_FEE`, this will be the total amount of fees that will be charged to the customer to payoff the missed payments.
-
-If the recurring payment has fee_mode set to `MERCHANT_FEE`, this will be 0.
-
-**`number_of_payments_missed`: Int**  
-The number of payments that have been missed.
-
-**`total_amount_owed`: Int**  
-The total amount that the customer will owe to payoff the missed payments.
-
-
+***
 ## Create Retry for Failed Recurring Payment
 
 This call will allow you to retry a payment for a recurring payment that is in a Failed state.  
 This should be used when the state is `INSTRUMENT_FAILURE` and the issue with the payment method has been addressed.  
 *EX: Payment failed for insufficient funds on the card, but the customer has since made a payment on the balance to resolve the issue.*
 
-```js
+```graphql
 mutation {
     createRetryForFailedRecurringPayment(recurring_id: "")
 }
 ```
 
-**Arguments**
+**Parameters**
 
-**`recurring_id`: String**  
-The `recurring_id` of the recurring payment to be retried.
+|Key                |type         |       description                     |
+|-------------------|-------------|---------------------------------------|     
+|recurring_id       |String       |The `recurring_id` of the recurring payment to be retried.|
 
 **Returns**
 
-```js
-{
-    "data": {
-        "createRetryForFailedRecurringPayment": true
-    }
-```
+The call will return `true` if the retry was successfully created.

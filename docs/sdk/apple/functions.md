@@ -1,7 +1,7 @@
 ---
 sidebar_position: 3
 sidebar_label: 'Functions'
-title: ""
+title: "Functions"
 ---
 # Functions
 

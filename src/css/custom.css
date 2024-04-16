@@ -387,6 +387,8 @@
   background-color: inherit;
 }*/
 
+
+
 .markdown {
   --ifm-vertical-rhythm-top: 1;
   --ifm-vertical-rhythm-bottom: 1;
@@ -417,8 +419,14 @@
  padding-right: 1rem;
 }
 
+
+/* * {
+  font-feature-settings: "ss03" 1, "ss08" 1, "ss13" 1, "ss15" 1, "ss18" 1, "ss19" 1;
+}  */
+
 body {
   font-family: var(--ifm-font-family-base);
+  font-feature-settings: "ss03" 1, "ss08" 1, "ss13" 1, "ss15" 1, "ss18" 1, "ss19" 1;
   font-style: normal;
   font-weight: var(--ifm-font-weight-book);
   font-size: var(--ifm-p-font-size);
@@ -460,6 +468,7 @@ strong {
 .markdown p {
   --ifm-p-font-size: 1rem;
   margin-bottom: calc( var(--ifm-paragraph-margin-bottom) * var(--ifm-leading)) !important;
+  font-feature-settings: "ss12" 1 !important;
 }
 
 .markdown h4 {
@@ -500,10 +509,12 @@ p {
   font-weight: var(--ifm-font-weight-book) !important;
   font-size: 1rem !important;
   line-height: 1.5rem !important;
+  font-feature-settings: "ss12" 1 !important;
 }
 p a{
   font-weight: var(--ifm-font-weight-medium);
   color: var(--ifm-color-primary);
+  font-feature-settings: "ss12" 1 !important;
 }
 
 h4 {
@@ -548,6 +559,7 @@ img{
 
 .menu{
   font-weight: var(--ifm-font-weight-book);
+  font-feature-settings: "ss12" 1 !important;
 }
 
 .menu__link--active{
@@ -772,7 +784,7 @@ div.navbar__logo{
   border-radius: 10px;
 }
 
-.alert .button--md{
+.button--md, .alert .button--md{
   padding-top: .35rem;
   text-decoration: none;
   margin-top: .5rem ;
@@ -1238,6 +1250,7 @@ code{
 }
 .hero p{
   font-family: 'halyard-text';
+  font-feature-settings: "ss12" 1 !important;
   font-size: 1.125rem !important;
   line-height: 1.75rem !important;
 }
@@ -1260,6 +1273,7 @@ code{
   letter-spacing: 1.8px;
   font-weight: 500 !important;
   font-family: 'halyard-text';
+  font-feature-settings: "ss12" 1 !important;
 }
 .hero .button{
   padding: 8px 20px 10px;
@@ -1338,6 +1352,7 @@ code{
   font-size: 1.125rem !important;
   line-height: 1.75rem !important;
   margin-left: 2px;
+  font-feature-settings: "ss12" 1 !important;
 }
 
 .home .col--2 .row{
@@ -1481,6 +1496,7 @@ code{
   .section-header p {
     line-height: 1.5rem !important;
     margin-left: 1px;
+    font-feature-settings: "ss12" 1 !important;
   }
   .hero p{
     font-size: 1rem !important;

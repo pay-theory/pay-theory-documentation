@@ -1,13 +1,14 @@
 ---
 sidebar_position: 5
 sidebar_label: 'Payor'
-title: ""
+title: "Payor"
 ---
 
 # Payor
 
 Payors are used to track payor info that can be tied to other data objects in Pay Theory.
 
+***
 ## The Payor Object
 ```graphql
 {
@@ -25,48 +26,26 @@ Payors are used to track payor info that can be tied to other data objects in Pa
     region: String
 }
 ```
+|Key                |type         |       description                     |
+|-------------------|-------------|---------------------------------------|     
+|address_line1      |String       |The first line of the address of the payor.|
+|address_line2      |String       |The second line of the address of the payor.|
+|city               |String       |The city of the payor.|
+|country            |String       |The country of the payor.|
+|email              |String       |The email address of the payor.|
+|full_name          |String       |The full name of the payor.|
+|merchant_uid       |String       |The Pay Theory unique identifier assigned to the merchant that the payor belongs to.|
+|metadata           |AWSJSON      |The metadata to attach to the payor.  This is a JSON object that can contain any data that you want to attach to the payor.|
+|payor_id           |String       |The unique payor id.|
+|phone              |String       |The phone number of the payor.|
+|postal_code        |String       |The postal code of the payor.|
+|region             |String       |The region of the payor.|
 
-**`address_line1`: String**  
-The first line of the address of the payor.
-
-**`address_line2`: String**  
-The second line of the address of the payor.
-
-**`city`: String**  
-The city of the payor.
-
-**`country`: String**  
-The country of the payor.
-
-**`email`: String**  
-The email address of the payor.
-
-**`full_name`: String**  
-The full name of the payor.
-
-**`merchant_uid`: String**  
-The Pay Theory unique identifier assigned to the merchant that the payor belongs to.
-
-**`metadata`: AWSJSON**  
-The metadata to attach to the payor.  This is a JSON object that can contain any data that you want to attach to the payor.
-
-**`payor_id`: String**  
-The unique payor id.
-
-**`phone`: String**  
-The phone number of the payor.
-
-**`postal_code`: String**  
-The postal code of the payor.
-
-**`region`: String**  
-The region of the payor.
-
-
+***
 ## Query Payors
 ```graphql
 {
-    payors(direction: FORWARD, limit: 10, offset: "", offset_id: "", query: QueryObject) {
+    payors(direction: MoveDirection, limit: Int, offset: String, offset_id: String, query: QueryObject) {
         items {
             address_line1
             address_line2
@@ -86,31 +65,20 @@ The region of the payor.
 }
 ```
 
-**Arguments**
+**Parameters**
 
-**`limit`: Int**  
-The number of payors to return.
+|Key                |type         |       description                     |
+|-------------------|-------------|---------------------------------------|     
+|direction          |MoveDirection|The direction of the pagination. Makes sure the results are returned in the correct order.|
+|limit              |Int          |The number of payors to return.|
+|offset             |String       |The value of the offset item for which the list is being sorted.|
+|offset_id          |String       |The `payor_id` of the offset item.|
+|query              |QueryObject  |The query to filter the payors with based on Pay Theory defined data. Detailed information about the query object can be found [here](query).|
 
-**`direction`: String**  
-The direction of the pagination. Makes sure the results are returned in the correct order.
-* `FORWARD`
-* `BACKWARD`
+**Nested Queries**  
+Payors can also be filtered by passing a query_list to the metadata.
 
-**`offset`: String**  
-The value of the offset item for which the list is being sorted.  
-If the direction is `FORWARD`, the offset item is the last item in the previous list.  
-If the direction is `BACKWARD`, the offset is the first item in the previous list.
-
-**`offset_id`: String**  
-The `payor_id` of the offset item. If the direction is `FORWARD`, the offset item is the last item in the list. If the direction is `BACKWARD`, the offset is the first item in the list.
-
-**`query`: QueryObject**  
-The query to filter the payors with based on Pay Theory defined data.  Detailed information about the query object can be found [here](query).
-
-**Nested Arguments**
-#### Metadata
-**`query_list`: QueryPair[]**
-The query list to filter the Metadata tied to the Payor. This will ensure that only Payors that have Metadata that match these queries. Detailed information about the query list can be found [here](query).
+This will only return Payors that have Metadata that match these queries.  Detailed information about the query list can be found [here](query).
 
 
 **Returns**
@@ -134,12 +102,12 @@ The query list to filter the Metadata tied to the Payor. This will ensure that o
 }
 ```
 
-**`items`: [Payor]**  
-The list of payors that are returned from the query. Objects will include all keys that are passed in with the query.
+|Key                |type         |       description                     |
+|-------------------|-------------|---------------------------------------|     
+|items              |[Payor]      |The list of payors that are returned from the query.|
+|total_row_count    |Int          |The total number of payors that match the query. Used to help with pagination.|
 
-**`total_row_count`: Int**  
-The total number of payors that match the query. Used to help with pagination.
-
+***
 ## Create Payor
 ```graphql
 mutation {
@@ -159,15 +127,16 @@ mutation {
 }
 ```
 
-**Arguments**
+**Parameters**
 
-**`input`: PayorInput**  
-The input object that contains the payor information to create a new payor.  Detailed information about the input object can be found [here](#the-payor-input-object).
+|Key                |type         |       description                     |
+|-------------------|-------------|---------------------------------------|     
+|input              |PayorInput   |The input object that contains the payor information to create a new payor.  Detailed information about the input object can be found [here](#the-payor-input-object).|
 
 **Returns**  
 This mutation returns the payor object that was created.
 
-
+***
 ## The Payor Input Object
 ```graphql
 {
@@ -185,35 +154,16 @@ This mutation returns the payor object that was created.
 }
 ```
 
-**`address_line1`: String**  
-The first line of the address of the payor.
-
-**`address_line2`: String**  
-The second line of the address of the payor.
-
-**`city`: String**  
-The city of the payor.
-
-**`country`: String**  
-The country of the payor.
-
-**`email`: String**  
-The email address of the payor.
-
-**`full_name`: String**  
-The full name of the payor.
-
-**`merchant_uid`: String**  
-The Pay Theory unique identifier assigned to the merchant that the payor belongs to.
-
-**`metadata`: AWSJSON**  
-The metadata to attach to the payor.  This is a JSON object that can contain any data that you want to attach to the payor.
-
-**`phone`: String**  
-The phone number of the payor.
-
-**`postal_code`: String**  
-The postal code of the payor.
-
-**`region`: String**  
-The region of the payor.
+| Key           | type    | description                                                                                                                 |
+|---------------|---------|-----------------------------------------------------------------------------------------------------------------------------|     
+| address_line1 | String  | The first line of the address of the payor.                                                                                 |
+| address_line2 | String  | The second line of the address of the payor.                                                                                |
+| city          | String  | The city of the payor.                                                                                                      |
+| country       | String  | The country of the payor.                                                                                                   |
+| email         | String  | The email address of the payor.                                                                                             |
+| full_name     | String  | The full name of the payor.                                                                                                 |
+|  merchant_uid | String  | The Pay Theory unique identifier assigned to the merchant that the payor belongs to.                                        |
+|  metadata     | AWSJSON | The metadata to attach to the payor.  This is a JSON object that can contain any data that you want to attach to the payor. |
+|  phone        | String  | The phone number of the payor.                                                                                              |
+|  postal_code  | String  | The postal code of the payor.                                                                                               |
+|  region       | String  | The region of the payor.                                                                                                    |

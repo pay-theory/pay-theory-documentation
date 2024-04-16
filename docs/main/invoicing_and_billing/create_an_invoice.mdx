@@ -1,0 +1,59 @@
+---
+sidebar_position: 1
+sidebar_label: Create an Invoice
+title: "Create an Invoice"
+---
+
+import Tabs from '../../../components/Tabs';
+import TabItem from '@theme/TabItem';
+import Admonition from '@theme/Admonition';
+
+# Create an Invoice
+Invoices are used to create a payment request that can be sent to a payor. This guide will walk you through how to create an invoice.
+
+## Request
+The following example will send an invoice to Pat Johnson. The invoice is for $100.00 USD and is for tutoring services. 
+
+```graphql title="GraphQL"
+mutation {
+    createInvoice(input:{
+        invoice_amount: 10000, # Amount in pennies
+        invoice_name: "Tutoring Services", 
+        merchant_uid: "", # Insert merchant_uid
+        payor: {
+            full_name: "Pat Johnson",
+            email: "patjohnson1234@pat_johnson.io"
+        },
+        currency: "USD"
+    }){
+        invoice_id
+        invoice_name
+        invoice_amount
+    }
+}
+
+```
+
+
+:::note  Additional Parameters
+View the extensive list of parameters for creating an invoice in our API.
+
+<a href= "../../api/invoice#create-an-invoice" class="button button--primary button--md">View All Parameters</a>
+:::
+
+***
+
+## Return
+The call will return the newly created invoice. The `invoice_id` will be used to track the invoice through our system.
+
+```JSON title="JSON"
+{
+    "data": {
+        "createInvoice": {
+            "invoice_id": "invoice_id",
+            "invoice_name": "Pat Johnson",
+            "invoice_amount": 10000
+        }
+    }
+}
+```

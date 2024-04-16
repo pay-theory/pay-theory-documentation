@@ -1,7 +1,7 @@
 ---
 sidebar_position: 2
 sidebar_label: 'Inputs'
-title: ""
+title: "Inputs"
 ---
 
 # Input Views

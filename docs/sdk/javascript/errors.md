@@ -1,7 +1,7 @@
 ---
 sidebar_position: 4
 sidebar_label: 'Error Handling'
-title: ""
+title: "SDK Error Handling"
 ---
 
 # SDK Errors

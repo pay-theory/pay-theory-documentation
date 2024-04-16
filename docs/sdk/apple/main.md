@@ -1,7 +1,7 @@
 ---
 sidebar_position: 1
 sidebar_label: 'Pay Theory Apple SDK'
-title: ""
+title: "Pay Theory Apple SDK"
 ---
 # Pay Theory Apple SDK
 

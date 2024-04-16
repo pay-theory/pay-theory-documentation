@@ -1,7 +1,7 @@
 ---
 sidebar_position: 4
 sidebar_label: 'Completion Handler'
-title: ""
+title: "Completion Handler"
 ---
 
 # Completion Handler

@@ -1,21 +1,12 @@
 ---
 sidebar_position: 4
 sidebar_label: 'Payment Button'
-title: ""
+title: "Payment Button"
 ---
 
 import Tabs from '../../../components/Tabs';
 import TabItem from '@theme/TabItem';
 import Admonition from '@theme/Admonition';
-
-<Tabs
-  defaultValue="javascript"
-  values={[
-    {label: 'Javascript', value: 'javascript'},
-    {label: 'Apple', value: 'apple'},
-    {label: 'Android', value: 'android'},
-  ]}>
-  <TabItem value="javascript">
   
 
 # Payment Button
@@ -24,23 +15,25 @@ This guide will walk you through the steps to create a payment button that will 
 ## 1. Import the SDK
 You need to use the Pay Theory Web SDK. This is available by adding the below script into your web header. This button will open a hosted checkout page that will allow the user to select a payment method and complete the payment.
 
-```jsx
-<script src="https://carefeed.sdk.paytheorystudy.com/index.js"></script>
+The SDK URL can be found in the Pay Theory portal under the settings tab as the SDK Import URL.
+
+```
+<script src={SDK Import URL}> </script>
 ```
 ***
 
 ## 2. Add Pay Theory element to your Html
 This div is used to mount an iframe that will include a checkout button. You need to add the Pay Theory elements to your HTML. You can place these elements anywhere in your HTML and the SDK will place the button in the correct place. 
 
-```jsx
-<div id = "pay-theory-checkout-button" ></div>
+```html
+<div id="pay-theory-checkout-button" ></div>
 ```
 *** 
 
 ## 3. Prepare the checkout details
 You will need to put together the details of the checkout. This includes the amount, payment name, and any other details you want to pass to the checkout.
 
-```jsx
+```jsx title="javascript"
 //Amount passed in is in cents
 const AMOUNT = 1000
 
@@ -59,16 +52,16 @@ const CHECKOUT_DETAILS = {
   recurringId: "pt_rec_XXXXXXXXX", 
 }
 ```
-These are the values that you can pass into the `checkoutDetails` object to customize the checkout page that opens when the button is clicked.
+These are the parameters that you can pass into the `checkoutDetails` object to customize the checkout page that opens when the button is clicked.
 
-### Required values:
+### Required parameters:
 
 |Key                |type               |description                                                                                |
 --------------------|-------------------|-------------------------------------------------------------------------------------------|     
 | amount            |int                |The amount of the payment in cents.                                           |
 | paymentName       |string             |The name of the payment that will be displayed on the checkout page. Will also be passed in to the reference field of the transaction.|
 
-### Optional values:
+### Optional parameters:
 
 |Key                      |type               |description                                                                                |
 --------------------------|-------------------|-------------------------------------------------------------------------------------------|     
@@ -81,7 +74,7 @@ These are the values that you can pass into the `checkoutDetails` object to cust
 
 ## 4. Create the Button
 Using the button function, you can make the button. Send the style object, the checkout details, and the action-handling routines. To manage the button's actions, you can write functions. Among them are `onReady`, `onClick`, `onSuccess`, `onError`, and `onCancel`.
-```jsx
+```jsx title="javascript"
 const handlePayment = () => {
   // Function that will be called when a payment is successful
   const ON_SUCCESS = (response) => {
@@ -102,16 +95,16 @@ paytheory.button({
 };
 ```
 
-These are the values that you can pass into the `button` function to customize the payment session.
+These are the parameters that you can pass into the `button` function to customize the payment session.
 You pass a single object into the function with the following keys.
 
-### Required values
+### Required parameters
 |Key                      |type               |description                                                                                |
 --------------------------|-------------------|-------------------------------------------------------------------------------------------|     
 | apiKey                  |string             |The API key for your Pay Theory account. You can find this in your Pay Theory Portal.|
 | checkoutDetails         |object             |The details for the checkout page that opens when the button is clicked. Details are mentioned [above](#prepare-the-checkout-details).|
 
-### Optional values
+### Optional parameters
 
 |Key                      |type               |description                                                                                |
 --------------------------|-------------------|-------------------------------------------------------------------------------------------|     
@@ -122,29 +115,9 @@ You pass a single object into the function with the following keys.
 | onSuccess               |function           |A function that will be called when the payment is successful. It is passed an object with the following values. <ul><li>last_four (String): The last four digits of the card number or account number.</li><li>amount (Int): The amount of the transaction (service fee is included).</li><li>service_fee (Int): The service fee of the transaction.</li><li>receipt_number (String): The Pay Theory receipt number.</li><li>brand (String): The brand of the card.</li><li>created_at (String): The date and time the transaction was created.</li><li>state (String): The status of the transaction.</li><li>metadata (JSON): The metadata of the transaction.</li><li>payor_id (String): The Pay Theory id for the payor that was used for the transaction.</li><li>payment_method_id (String): The Pay Theory id for the payment method token.</li></ul>  
 | onBarcode               |function           |A function that will be called when a barcode is successfully created and the user closes the window. It is passed an object with the following values.<ul><li> barcodeUrl (String): The url for the barcode image.</li><li> mapUrl (String): The url for the map to find retail locations to pay the barcode.</li></ul>
 
-***
 
 
 :::note Setting up a button for multiple payments
 The button session will only enable a single payment. If you want to enable multiple payments, you will need to clear the button from the DOM and create a new button.
 :::
 
-
-</TabItem>
-  <TabItem value="apple">
-
-# Documentation Coming Soon
-Our Apple SDK is fully functional. If you would like to implement our Apple SDK select the link below for more information.
-<a href= "../../sdk/apple/MAIN" class="button button--primary button--md">View Apple SDK Reference</a>
-
-  </TabItem>
-
-  <TabItem value="android">
-
-# Documentation Coming Soon
-Our Android SDK is fully functional. If you would like to implement our Android SDK select the link below for more information.
-<a href= "../../sdk/android/MAIN" class="button button--primary button--md">View Android SDK Reference</a>
-
-  </TabItem>
-
-</Tabs> 

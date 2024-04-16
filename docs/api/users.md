@@ -1,7 +1,7 @@
 ---
 sidebar_position: 11
 sidebar_label: 'Users'
-title: ""
+title: "Users"
 ---
 
 # Users
@@ -9,7 +9,7 @@ title: ""
 Users are accounts that have access to PayTheory Portals. Users can be created with access to the Merchant, System, or Partner Portal.
 
 ## The User Object
-```js
+```graphql
 {
     username: String
     email: String
@@ -19,26 +19,18 @@ Users are accounts that have access to PayTheory Portals. Users can be created w
 }
 ```
 
-**`username`: String**  
-The cognito username id of the user.
+|Key                |type         |       description                     |
+|-------------------|-------------|---------------------------------------|     
+|username           |String       |The cognito username id of the user.|
+|email              |String       |The email address of the user.|
+|user_status        |String       |The status of the user. Likely to be one of the following: `CONFIRMED`, `FORCE_CHANGE_PASSWORD`|
+|full_name          |String       |The full name of the user.|
+|phone              |String       |The phone number of the user.|
 
-**`email`: String**  
-The email address of the user.
-
-**`user_status`: String**  
-The status of the user. Likely to be one of the following:
-* `CONFIRMED`: User has logged in and set up their password.
-* `FORCE_CHANGE_PASSWORD`: User has yet to login with their temporary password.
-
-**`full_name`: String**  
-The full name of the user.
-
-**`phone`: String**  
-The phone number of the user.
 
 
 ## Query Users
-```js
+```graphql
 {
     users(user_pool: UserPool, merchant_uid: String) {
         username
@@ -50,16 +42,13 @@ The phone number of the user.
 }
 ```
 
-**Arguments**
+**Parameters**
 
-**`user_pool`: UserPool**  
-The user pool to query. One of the following:
-* `MERCHANT`: Query users in the Merchant Portal.
-* `SYSTEM`: Query users in the System Portal.
-* `PARTNER`: Query users in the Partner Portal.
+|Key                |type         |       description                     |
+|-------------------|-------------|---------------------------------------|     
+|user_pool          |UserPool     |The user pool to query. One of the following: `MERCHANT`, `SYSTEM`, `PARTNER`.|
+|merchant_uid       |String       |The merchant uid to query users for. Only used when querying users in the Merchant and System Portal.|
 
-**`merchant_uid`: String**  
-The merchant uid to query users for. Only used when querying users in the Merchant and System Portal.
 
 **Returns**
 
@@ -86,8 +75,9 @@ The merchant uid to query users for. Only used when querying users in the Mercha
 }
 ```
 
-**`users`: [User]**  
-The list of users that are returned from the query. Objects will include all keys that are passed in with the query.
+|Key                |type         |       description                     |
+|-------------------|-------------|---------------------------------------|     
+|users              |[User]       |The list of users that are returned from the query.|
 
 ## Create User
 ```js
@@ -108,31 +98,26 @@ mutation {
 }
 ```
 
-**Arguments**
+**Parameters**
 
-**`input`: UserInput**  
-An object containing the following keys:
+|Key                |type         |       description                     |
+|-------------------|-------------|---------------------------------------|     
+|intput             |UserInput    |An object containing the following|
 
-**`email`: AWSEmail**  
-The email address of the user. Must be a valid email address or the mutation will fail. Can only have one user per email per user pool.
+**UserInput**
 
-**`first_name`: String**  
-The first name of the user.
+|Key                |type         |       description                     |
+|-------------------|-------------|---------------------------------------|     
+|email              |AWSEmail     |The email address of the user. Must be a valid email address or the mutation will fail. Can only have one user per email per user pool.|
+|first_name         |String       |The first name of the user.|
+|last_name          |String       |The last name of the user.|
+|merchant_uid       |String       |The `merchant_uid` of the merchant to create the user for. Only used when creating a user for the Merchant or System Portal.|
+|phone              |AWSPhone     |The phone number of the user. Must be a valid phone number or null or the mutation will fail.|
+|user_pool          |UserPool     |The user pool to create the user in. One of the following: `MERCHANT`, `SYSTEM`, `PARTNER`.|
 
-**`last_name`: String**  
-The last name of the user.
+**Returns**
 
-**`merchant_uid`: String**  
-The `merchant_uid` of the merchant to create the user for. Only used when creating a user for the Merchant or System Portal.
-
-**`phone`: AWSPhone**  
-The phone number of the user. Must be a valid phone number or null or the mutation will fail.
-
-**`user_pool`: UserPool**  
-The user pool to create the user in. One of the following:
-* `MERCHANT`: Create a user in the Merchant Portal.
-* `SYSTEM`: Create a user in the System Portal.
-* `PARTNER`: Create a user in the Partner Portal.
+It will return the user object that was created.
 
 ## Delete User
 ```js
@@ -141,14 +126,13 @@ mutation {
 }
 ```
 
-**Arguments**
+**Parameters**
 
-**`username`: String**  
-The cognito username id of the user to delete.
+|Key                |type         |       description                     |
+|-------------------|-------------|---------------------------------------|     
+|username           |String       |The cognito username id of the user to delete.|
+|user_pool          |UserPool     |The user pool to delete the user from. One of the following: `MERCHANT`, `SYSTEM`, `PARTNER`.|
 
-**`user_pool`: UserPool**  
-The user pool to delete the user from. One of the following:
-* `MERCHANT`: Delete a user from the Merchant Portal.
-* `SYSTEM`: Delete a user from the System Portal.
-* `PARTNER`: Delete a user from the Partner Portal.
+**Returns**
 
+It will return `true` if the user was deleted successfully or an error if it was not.

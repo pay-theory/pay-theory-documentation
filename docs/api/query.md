@@ -1,7 +1,7 @@
 ---
 sidebar_position: 2
 sidebar_label: 'Query'
-title: ""
+title: "Query"
 ---
 
 # Query
@@ -10,55 +10,46 @@ Here we will detail how you can build your own queries to pass into the Pay Theo
 
 First let's look at a basic query object, then we can break down its parts.
 
+***
 ## The Query Object
 ```graphql
 {
-    query_list: [
-        {
-            key: "full_name",
-            value: "John Doe",
-            operator: EQUAL,
-            conjunctive_operator: NONE_NEXT
-        }
-    ], 
-    sort_list: {
-        direction: ASC, 
-        key: "transfer_date"
-    }
+    query_list: [QueryPair]
+    sort_list: [SortPair]
 }
 ```
 
-**`query_list`: [QueryPair]**  
-A list of query pairs used to build out a query.
+|Key                |type         |       description                     |
+|-------------------|-------------|---------------------------------------|     
+|query_list         |[QueryPair]  |A list of query pairs used to build out a query.|
+|sort_list          |[SortPair]   |A list of sort pairs to define how the data should be sorted.|
 
-**`sort_list`: [SortPair]**  
-A list of sort pairs to define how the data should be sorted.
-
+***
 ## Query Pair
 A query pair is the object to build out a query. There are some required fields and some optional fields.
 
-###### ~ = required
+```graphql
+{
+    conjunctive_operator: ConjunctiveOperator
+    in_values: [String]
+    key: String
+    operator: Operator
+    query_group: [QueryPair]
+    value: String
+}
+```
 
-**`key`: String**  
-The key to the value you want to query against. 
+| Key                  | type                | description                                                                                                                                                                  |
+|----------------------|---------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|     
+| key                  | String!             | The key to the value you want to query against.                                                                                                                              |
+| operator             | Operator            | The operator to use to compare the value to the data you are calling. More detail below.                                                                                     |
+| value                | String              | The value to compare the data to. If using the `LIKE` or `NOT_LIKE` operator, this value can contain [wildcard characters](https://www.w3schools.com/sql/sql_wildcards.asp). |
+| in_values            | [String]            | A list of values to compare the data to. This should be used instead of `value` if using the operators `IN` or `NOT_IN`.                                                     |
+| conjunctive_operator | ConjunctiveOperator | The conjunctive operator to use to connect the query pair with the next query pair. More detail below.                                                                       |
+| query_group          | [QueryPairs]        | A list of query pairs to use to build out a nested query.  A more detailed example is below under the examples section.                                                      |
 
-**`operator`: Operator**  
-The operator to use to compare the value to the data you are calling. More detail below.
-
-**`value`: String**  
-The value to compare the data to. If using the `LIKE` or `NOT_LIKE` operator, this value can contain [wildcard characters](https://www.w3schools.com/sql/sql_wildcards.asp).
-
-**`in_values`: [String]**  
-A list of values to compare the data to. This should be used instead of `value` if using the operators `IN` or `NOT_IN`.
-
-**~`conjunctive_operator`: ConjunctiveOperator**  
-The conjunctive operator to use to connect the query pair with the next query pair. More detail below.
-
-**`query_group`: [QueryPairs]**  
-A list of query pairs to use to build out a nested query.  
-A more detailed example is below under the examples section.
-
-### Operators
+***
+## Operators
 
 These operators are case-sensitive. The following are the available operators:
 
@@ -92,7 +83,8 @@ The data is less than the value.
 `LESS_EQUAL`  
 The data is less than or equal to the value.
 
-### Conjunctive Operators
+***
+## Conjunctive Operators
 
 These operators are case-sensitive. Conjunctive operators in the same array must match for a query to work. 
 To mix operators use nested queries with query pairs containing a `query_list`. The following are the available conjunctive operators:
@@ -106,24 +98,37 @@ To mix operators use nested queries with query pairs containing a `query_list`. 
 `NONE_NEXT`  
  The final query pair in the list should use this operator since it has nothing to connect to.
 
-
+***
 ## Sort Pair
 A sort pair is the object used to tell a query how the data should be sorted.
 
-**~`direction`: String**  
+```graphql
+{
+    direction: SortDirection
+    key: String
+}
+```
+
+|Key                |type         |       description                     |
+|-------------------|-------------|---------------------------------------|     
+|direction          |SortDirection|The direction to sort the data. These are case-sensitive.|
+|key                |String       |The key to sort the data by.|
+
+***
+## Sort Direction
+
 The direction to sort the data. These are case-sensitive.
-* `ASC`
-  * Begins with the least or smallest and ends with the greatest or largest
-* `DESC`
-  * Begins with the greatest or largest and ends with the least or smallest
 
-**~`key`: String**  
-The key to sort the data by.
+`ASC`  
+Begins with the least or smallest and ends with the greatest or largest
 
+`DESC`  
+Begins with the greatest or largest and ends with the least or smallest
 
+***
 ## Examples
 
-## Settlements With Gross Amount over $10
+### Settlements With Gross Amount over $10
 
 If you wanted to build a query that looked for any settlements that had a gross_amount over $10 and was sorted by gross_amount in ascending order, you would do the following:
 
@@ -153,7 +158,8 @@ If you wanted to build a query that looked for any settlements that had a gross_
 }
 ```
 
-## Transactions With Status `SETTLED` and the reference starts with `test`
+***
+### Transactions With Status `SETTLED` and the reference starts with `test`
 
 If you wanted to build a query that looked for any transactions that had a status of `SETTLED` and the `reference` starts with test, you would do the following:
 
@@ -183,7 +189,8 @@ If you wanted to build a query that looked for any transactions that had a statu
 }
 ```
 
-## Transactions with a nested query
+***
+### Transactions with a nested query
 To build nested queries you can use multiple query pairs with at least one containing a `query_group`.
 ```graphql
 {
@@ -226,7 +233,8 @@ This query would return any transactions where the `status` is SETTLED and the `
 
 This allows for more advanced queries and for you to group `AND_NEXT` and `OR_NEXT` in a single query.
 
-## Querying Sub Objects
+***
+### Querying Sub Objects
 
 Due to the fact payment method is a nested data object payment method queries be made by passing a separate array of query pairs for the metadata.
 ```graphql
@@ -264,7 +272,8 @@ Due to the fact payment method is a nested data object payment method queries be
 ```
 This would return 10 transactions where the `gross_amount` is greater than 1000 and the payment has a payment method in which `last_four` is equal to 1234. It would be sorted by gross_amount in ascending order.
 
-## Querying On Metadata
+***
+### Querying On Metadata
 
 Metadata queries work similarly but do not support nested queries using `query_group`.
 
