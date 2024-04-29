@@ -31,20 +31,20 @@ const PAYMENT_METADATA = {
 };
 
 // Parameters that you will pass in to configure the checkout page that opens when the button is clicked.
-const CHECKOUT_DETAILS = { 
-        amount: AMOUNT, 
+const CHECKOUT_DETAILS = {
+        amount: AMOUNT,
         paymentName: "School Technology Fees",
-        paymentDescription: "Technology Fee for the 2019-2020 school year", 
-        requirePhone: true, 
-        callToAction: paytheory.DONATE, 
-        acceptedPaymentMethods: paytheory.CARD_ONLY, 
-        payorId: "pt_pay_XXXXXXXXX", 
-        metadata: PAYMENT_METADATA,  
-        feeMode: paytheory.MERCHANT_FEE, 
-        accountCode: "code-123456789",  
-        paymentParameters: "expires-in-30-days", 
-        invoiceId: "pt_inv_XXXXXXXXX", 
-        recurringId: "pt_rec_XXXXXXXXX", 
+        paymentDescription: "Technology Fee for the 2019-2020 school year",
+        requirePhone: true,
+        callToAction: paytheory.DONATE,
+        acceptedPaymentMethods: paytheory.CARD_ONLY,
+        payorId: "pt_pay_XXXXXXXXX",
+        metadata: PAYMENT_METADATA,
+        feeMode: paytheory.MERCHANT_FEE,
+        accountCode: "code-123456789",
+        paymentParameters: "expires-in-30-days",
+        invoiceId: "pt_inv_XXXXXXXXX",
+        recurringId: "pt_rec_XXXXXXXXX",
 }
 ```
 
@@ -56,10 +56,10 @@ You can select styles for the button to match your website.
 
 ```javascript
 // Object that will style the payment button
-const STYLE_OBJECT = { 
-    color: paytheory.WHITE, 
-    callToAction: paytheory.DONATE, 
-    pill: true, 
+const STYLE_OBJECT = {
+    color: paytheory.WHITE,
+    callToAction: paytheory.DONATE,
+    pill: true,
     height: "48px"
 }
 ```

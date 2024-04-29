@@ -46,7 +46,7 @@ These are the properties you will be able to configure for a set of payment para
 
 * Payment Parameters will be checked both at the time of barcode creation and at the time of the transaction.
 
-* Payment Parameters will be most beneficial in ensuring that a transaction falls within a certain date and price range just like Card and ACH payments. 
+* Payment Parameters will be most beneficial in ensuring that a transaction falls within a certain date and price range just like Card and ACH payments.
 
 * They will also be beneficial in disabling barcodes that a merchant no longer wants to collect on.
 

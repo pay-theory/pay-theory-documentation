@@ -9,7 +9,7 @@ There are two requirements for sending an email receipt with a payment.
 * Pass an `email` into the payor info or a `payorId` with an email tied to it.
 * Pass `sendReceipt` into the transact arguments.
 
-You can optionally include a receipt description. 
+You can optionally include a receipt description.
 * Pass `receiptDescription` into the transactArguments. Defaults to "Payment from {Merchant Name}".
 
 ```javascript
@@ -26,7 +26,7 @@ const PAYOR_INFO = {
 myPayTheory.transact({
     amount: AMOUNT,
     payorInfo: PAYOR_INFO,
-    sendReceipt: true, 
+    sendReceipt: true,
     receiptDescription: "School Technology Fees"
 })
 ```

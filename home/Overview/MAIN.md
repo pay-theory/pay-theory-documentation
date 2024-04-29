@@ -4,12 +4,12 @@ Pay Theory provides three environments for your integration:
 
 - **PayTheory.com**
   - live integration for accepting payments
-- **PayTheoryStudy.com** 
+- **PayTheoryStudy.com**
   - sandbox integration for testing _new versions of your software_ against Pay Theory
 - **PayTheoryLab.com**
   - acceptance integration for testing _new versions of Pay Theory_ against your software
- 
-We understand how important the stability of your platform is. 
+
+We understand how important the stability of your platform is.
 
 Our platform is designed from the ground up to support yours by providing a flexible infrastructure for deployment of both your changes and ours.
 
@@ -91,4 +91,4 @@ _Not available in start sandbox accounts_
     - Manage merchant credentials
     - Mobile application registration (coming soon)
     - Website registration (coming soon)
-    - Onboard new merchants to live accounts (coming soon) 
+    - Onboard new merchants to live accounts (coming soon)

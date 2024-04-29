@@ -5,13 +5,13 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-
 //const lightTheme = require('prism-react-renderer/themes/github/index.cjs.js');
 //module.exports={
 
+// eslint-disable-next-line import/no-unresolved
 import lightTheme from 'prism-react-renderer/themes/github/index.cjs.js';
 export default {
-...lightTheme,
+  ...lightTheme,
   styles: [
     ...lightTheme.styles,
     {
