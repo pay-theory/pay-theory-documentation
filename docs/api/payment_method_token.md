@@ -147,7 +147,7 @@ mutation {
 The payment method token object. Refer to the [Payment Method Token](#the-payment-method-token-object) for more info.
 
 ***
-## Payment Method Input Object
+### Payment Method Input Object
 This is the input object used when passing in payment method into any mutation that requires it.  
 *You must be PCI L1 compliant to use this. For more details contact support@paytheory.com*
 
@@ -170,7 +170,7 @@ This is the input object used when passing in payment method into any mutation t
 |payor_id           | String                          |The unique payor id for the payor this payment method token belongs to.|
 
 ***
-## ACH Input Object 
+### ACH Input Object 
 The ach input object. It contains the following fields:
 
 ```graphql
@@ -203,7 +203,7 @@ The ach input object. It contains the following fields:
 
 
 ***
-## Card Input Object  
+### Card Input Object  
 
 The card input object. It contains the following fields:
 
@@ -237,7 +237,7 @@ The card input object. It contains the following fields:
 |security_code      |String!      |The security code of the card.|
 
 ***
-## Card Expiration Input
+### Card Expiration Input
 The card expiration input object. It contains the following fields:
 
 ```graphql
@@ -250,3 +250,31 @@ The card expiration input object. It contains the following fields:
 |-------------------|-------------|---------------------------------------|
 |month              |String!      |The month of the expiration date. Format: `MM`|
 |year               |String!      |The year of the expiration date. Format: `YY`|
+
+***
+## Update Payment Method To Disabled
+
+This mutation can be used to disable a payment method token. This will prevent the payment method token from being used to create a payment. Once a payment method token is disabled, it cannot be re-enabled.
+
+```graphql
+mutation MyMutation {
+  updatePaymentMethodToDisabled(merchant_uid: String!, payment_method_id: String!)
+}
+```
+
+**Parameters**
+
+| Key               | type   | description                                                                                         |
+|-------------------|--------|-----------------------------------------------------------------------------------------------------|
+| merchant_uid      | String | The Pay Theory unique identifier assigned to the merchant that the payment_method_token belongs to. |
+| payment_method_id | String | The unique payment method id.                                                                       |
+
+**Returns**
+
+```js
+{
+  "data": {
+    "updatePaymentMethodToDisabled": true
+  }
+}
+```
