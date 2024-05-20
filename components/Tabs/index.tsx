@@ -1,11 +1,12 @@
-import React from "react";
-import TabBar, {Props as TabsProps} from '@theme/Tabs';
+/* eslint-disable import/no-unresolved */
+import React from 'react';
+import TabBar, { Props as TabsProps } from '@theme/Tabs';
 
 const Tabs = (props: TabsProps) => {
-    return (
-        <>
-            <TabBar {...props} />
-            <style>{`
+  return (
+    <>
+      <TabBar {...props} />
+      <style>{`
                     .docItemCol_node_modules-\\@docusaurus-theme-classic-lib-theme-DocItem-Layout-styles-module, .docItemCol_VOVn{
                       padding-top: calc(var(--ifm-tabs-height) + 1rem);
                     }
@@ -70,11 +71,11 @@ const Tabs = (props: TabsProps) => {
                       }
                       .tabItem_node_modules-\@docusaurus-theme-classic-lib-theme-Tabs-styles-module, .tabItem_LNqP{
                         margin: 0 auto !important;
-                        
+
                       }
             `}</style>
-        </>
-    )
-}
+    </>
+  );
+};
 
-export default Tabs
+export default Tabs;

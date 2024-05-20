@@ -7,7 +7,7 @@
 
 const darkTheme = require('prism-react-renderer/themes/github/index.cjs.js');
 
-  module.exports={
+module.exports = {
   plain: {
     color: '#D4D4D4',
     backgroundColor: '#212121',

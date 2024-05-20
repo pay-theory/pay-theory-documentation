@@ -1,6 +1,6 @@
 # Card Present Quick Start
 
-This guide will walk you through the steps to activate a card present device to accept in person card payments with a device.  
+This guide will walk you through the steps to activate a card present device to accept in person card payments with a device.
 
 If you are looking to accept card present payments with a device please reach out to [support@paytheory.com](mailto:support@paytheory.com) to get started.
 
@@ -45,7 +45,7 @@ let payTheory = window.paytheory
 payTheory.create("YOUR_API_KEY")
     .then(ptObject => {
         ptObject.mount()
-      
+
         ptObject.cardPresentObserver(message => {
             // Handle card present messages
         })
@@ -91,7 +91,7 @@ ptObject.activateCardPresentDevice(CARD_PRESENT_PARAMS)
 
 ## Step 4: Handle responses In the cardPresentObserver
 
-You should receive two responses after calling the `activateCardPresentDevice` function.  
+You should receive two responses after calling the `activateCardPresentDevice` function.
 
 The first response will be a `ACTIVATED` message. This will let you know that the device is ready to accept a payment.
 
