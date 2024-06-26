@@ -1,0 +1,64 @@
+---
+sidebar_position: 4
+sidebar_label: Update Recurring Payment
+title: "Update Recurring Payment"
+---
+
+
+import Tabs from '../../../../components/Tabs';
+import TabItem from '@theme/TabItem';
+import Admonition from '@theme/Admonition';
+
+# Update Recurring Payment
+Updating recurring payments allows modifications to payment details, intervals, or amounts for ongoing subscriptions or services. This guide refers to making changes to the specifics of an already-existing regular payment plan, including altering the amounts, intervals, or related data.
+
+:::tip Tip
+Updating an invoice can be used to update a payment method and catch up on any missed payments caused by an invalid payment method. If you want to update any other fields, you will need to cancel the recurring payment and create a new one.
+:::
+
+
+## Request
+This call will allow you to update the payment method on a recurring payment and catch up on any missed payments caused by an invalid payment method.
+
+```graphql title="GraphQL"
+mutation {
+	updateRecurringPayment(input: {
+        payment_method_id: "", # Insert payment_method_id
+        recurring_id: "", # Insert recurring_id
+    }) 
+    {
+        amount_per_payment
+        remaining_payments
+        recurring_id
+    }
+}
+```
+
+:::note  Additional Parameters
+View the extensive list of parameters for recurring payments in our API.
+
+<a href= "../../../api/recurring#update-recurring-payment" class="button button--primary button--md">View All Parameters</a>
+:::
+
+***
+
+## Return
+The call will return the updated recurring payment object.
+
+```JSON title="JSON"
+{
+    "data": {
+        "updateRecurringPayment": {
+            "amount_per_payment": 100,
+            "remaining_payments": 10,
+            "recurring_id": "pt_rec_123456789"
+        }
+    }
+}
+
+```
+***
+
+## Next Steps
+You always have the option to create [new recurring payments](../create_a_payment_plan.mdx) pertaining to recurring payments as well as [cancel the recurring payments](cancel_recurring_payments.mdx).
+

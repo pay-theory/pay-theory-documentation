@@ -1,7 +1,7 @@
 ---
 sidebar_position: 3
 sidebar_label: 'Cash Payments'
-title: ""
+title: "Cash Payments"
 ---
 
 
@@ -25,14 +25,15 @@ This guide will show you how to accept cash payments online with Pay Theory’s 
 
 :::danger Before you start
 To use cash you will need to make sure the transact function is enabled in order to accept cash payments online.
-<a href= "../Getting%20Started/Quickstart#6-once-the-fields-are-valid-run-transaction" class="button button--primary button--md">Transact function</a>
+
+<a href= "../getting_started/Quickstart#6-once-the-fields-are-valid-run-transaction" class="button button--primary button--md">Transact function</a>
 :::
 
 ## Using the transact function
 
 This function is used to submit a payment to Pay Theory or generate a barcode using Pay Theory’s cash fields. It returns a Promise with the result or an error.
 
-```jsx paytheory.js
+```jsx title="paytheory.js"
 //Amount passed in is in cents
 const AMOUNT = 1000
 
@@ -113,7 +114,7 @@ This is the value of the `error` key in the response if the `type` is ERROR:
 You can customize your cash fields based on your requirements and desired user experience.
 These fields are all required to collect cash information from the user.
 
-```jsx
+```jsx title="javascript"
 <form>
 <div id = "pay-theory-cash-name"></div>
 <div id = "pay-theory-cash-contact"></div>
@@ -122,7 +123,7 @@ These fields are all required to collect cash information from the user.
 ***
 
 ## Next Steps
-You can also refer to different payment modes like [ACH](ach.mdx) functionality and [QRCode](qr_code.mdx) functionality .
+You can also refer to different payment modes like [ACH](ach_payments.mdx) functionality and [QRCode](qr_code.mdx) functionality .
 
 
 </TabItem>

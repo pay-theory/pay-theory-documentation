@@ -1,7 +1,7 @@
 ---
 sidebar_position: 1
 sidebar_label: 'Pay Theory GraphQL API'
-title: ""
+title: "Pay Theory GraphQL API"
 ---
 # Pay Theory GraphQL API
 
@@ -106,12 +106,10 @@ This key should be stored securely and not shared with anyone. It should be used
 
 ## POST GraphQL Query
 
-Queries are then executed by sending POST HTTP requests to the endpoint:
-
-***POST `https://api.PARTNER_NAME.STAGE.com/graphql`***
+Queries are then executed by sending POST HTTP requests to the endpoint. You can find the API endpoint in the Pay Theory Portal under the Settings tab.
 
 ```commandline
-curl --location --request POST 'https://api.PARTNER_NAME.STAGE.com/graphql' 
+curl --location --request POST '{GraphQL API URL}'
 --header 'Authorization: MERCHANT_UID;SECRET_KEY' 
 --header 'Content-Type: application/graphql' 
 --data '{"query":"{transactions(limit: 3) { items { transaction_id }}}"}'

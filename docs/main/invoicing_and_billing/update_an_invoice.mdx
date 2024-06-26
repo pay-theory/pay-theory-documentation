@@ -1,0 +1,45 @@
+---
+sidebar_position: 2
+sidebar_label: Update an Invoice
+title: "Update an Invoice"
+---
+
+import Tabs from '../../../components/Tabs';
+import TabItem from '@theme/TabItem';
+import Admonition from '@theme/Admonition';
+
+# Update an Invoice
+Updating an invoice involves making changes to the billing or payment information included in the invoice record. The following guide will demonstrate how to update an existing invoice.
+
+## Request
+This example calls an invoice, determined by the `invoice_id`, and will update `invoice_description` and `due_by` parameters.
+
+```graphql title="GraphQL"
+mutation {
+    updateInvoice(
+        invoice_id: "", # Insert invoice_id
+        invoice_update_input:{
+            invoice_description: "I updated the invoice's description",
+            due_by: "2022-09-19"
+    }) 
+}
+```
+
+:::note  Additional Parameters
+View the extensive list of parameters for updating an invoice in our API. 
+
+<a href= "../../api/invoice#update-an-invoice" class="button button--primary button--md">View All Parameters</a>
+:::
+
+***
+
+## Return
+If the invoice is updated, the call will return true.
+
+```JSON title="JSON"
+{
+    "data": {
+        "updateInvoice": true
+    }
+}
+```

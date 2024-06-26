@@ -1,7 +1,7 @@
 ---
 sidebar_position: 2
 sidebar_label: 'Recalling Payment Methods'
-title: ""
+title: "Recalling Payment Methods"
 ---
 
 
@@ -25,7 +25,7 @@ This guide will walk you through calling back payment method tokens for a specif
 Payment Method Tokens are meant to store info that represents a tokenized Bank Account, Credit Card, or Debit Card.
 
 This is what the token object looks like
-```jsx
+```jsx title="javascript"
 {
     payment_method_id: String
     merchant_uid: String
@@ -59,7 +59,7 @@ If you are unfamiliar with query writing, you can learn about fundamental query 
 <a href= "../../../api/QUERY" class="button button--primary button--md">View Query Details</a>
 :::
 
-```graphql
+```graphql title="GraphQL"
 const GET_PAYMENT_METHOD_TOKENS = gql`
 query  paymentMethodTokens(direction: FORWARD, limit: 10, query:{
   query_list:[{
@@ -97,7 +97,7 @@ The output response will come back in JSON format as an array of payment method 
 ***
 
 ##  Next Steps 
-You can also refer to how to make [one time payment Transaction](./Making a Payment with Payment Token.mdx)
+You can also refer to how to make [one time payment Transaction](making_a_payment_with_payment_tokens.mdx)
 
 
 </TabItem>

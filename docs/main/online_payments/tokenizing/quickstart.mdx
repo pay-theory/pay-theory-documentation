@@ -1,7 +1,7 @@
 ---
 sidebar_position: 1
 sidebar_label: 'Quickstart'
-title: ""
+title: "Tokenization Quickstart"
 ---
 
 import Tabs from '../../../../components/Tabs';
@@ -32,7 +32,7 @@ In order to tokenize a payment method you need be set up to accept online paymen
 
 ## Run tokenization method
 This function is used to tokenize a card or bank account. For further transactions, this token may be used in place of the real payment information, lowering the risk involved with keeping and transferring sensitive data.
-```jsx
+```jsx title="javascript"
 // optionally provide details about the payor
 const PAYOR_INFO = {
   "first_name": "Some",
@@ -45,8 +45,8 @@ const TOKENIZE_PAYMENT_METHOD_PARAMETERS = {
 
 paytheory.tokenizePaymentMethod(TOKENIZE_PAYMENT_METHOD_PARAMETERS)
 ```
-### Optional Values That Can be Passed into your payment method Token
-These are the values that you can pass into the tokenizePaymentMethod function to tokenize a card or bank account.
+### Optional parameters that can be passed into your payment method token
+These are the parameters that you can pass into the tokenizePaymentMethod function to tokenize a card or bank account.
 
 |Key                |type               |description                                               |
 --------------------|-------------------|----------------------------------------------------------|     
@@ -57,7 +57,7 @@ These are the values that you can pass into the tokenizePaymentMethod function t
 
 The function returns a Promise that will contain an object with a key of `type`. You can expect the following values for type.
 
-### Promise Return Type and Expected Values
+### Promise return type and expected values
 |Type               |Description                                            |
 --------------------|-------------------------------------------------------|
 | TOKENIZED         |The payment method was tokenized successfully and the token will be in the body key.|

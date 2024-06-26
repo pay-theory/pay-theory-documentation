@@ -1,7 +1,7 @@
 ---
 sidebar_position: 1
 sidebar_label: "Quickstart"
-title: ""
+title: "Quickstart"
 ---
 
 import Tabs from '../../../components/Tabs';
@@ -30,26 +30,24 @@ You will need access to your Pay Theory Sandbox. If you do not have a sandbox ac
 ## 1. Importing the SDK
 In order to import your SDK, you will need to copy and paste your Import URL into the header of your code editor.
 
+The SDK URL can be found in the Pay Theory portal under the settings tab as the SDK Import URL.
+
 ```
-<script src="https://start.sdk.paytheory.com/index.js"> </script>
+<script src={SDK Import URL}> </script>
 ```
 ***
 
-## 2. Calling the paytheory SDK
+## 2. Calling the Pay Theory SDK
 When you want to call a function from Pay Theory SDK you will need to use one of the following window objects:
 ` paytheory ` or ` window.paytheory `
 ***
 
-## 3. Add Paytheory elements to your form 
+## 3. Add Pay Theory elements to your form 
 You need to add the Pay Theory elements to your form. You can place these elements anywhere in your form and the SDK will place the hosted fields in the correct place.
 
-```jsx
-<form>
-...
-  <div id="pay-theory-credit-card"></div>
-  <div id="pay-theory-credit-card-zip"></div>
-...
-</form>
+```jsx title="javascript"
+<div id="pay-theory-credit-card"></div>
+<div id="pay-theory-credit-card-zip"></div>
 ```
 ***
 
@@ -58,10 +56,11 @@ After that, before you initialize the Pay Theory fields, you would need to invok
 
 :::tip  Recommended event listeners
 The link below provides list of all event listeners available in the below link.
+
 <a href= "../../sdk/javascript/EVENT_LISTENERS" class="button button--primary button--md">View All Event Listeners</a>
 :::
 
-```jsx
+```jsx title="javascript"
 paytheory.errorobserver(error => {
   //Logic to respond to errors
 })
@@ -72,16 +71,16 @@ paytheory.errorobserver(error => {
 After you have set up all the event listeners, you can initialize the Pay Theory fields by calling the 
 ` payTheoryFields `  function.
 
-```jsx
+```jsx title="javascript"
 const API_KEY ='YOUR_API_KEY'
 paytheory.payTheoryFields({
   apiKey: API_KEY,
 })
 ```
-:::note Finding your API Key from the Pay Theory Portal
-1. Log in to your Pay Theory Portal.
-2. Select the Settings page from the left-hand navigation menu.
-3. Select the Developer tab.
+:::note Finding your API Key from the Pay Theory portal
+1. Log in to your Pay Theory portal.
+2. Select the settings page from the left-hand navigation menu.
+3. Select the developer tab.
 4. Find the API Key (Public key for SDK).
 5. From here, you can copy the API key and paste it into your code editor.
 :::
@@ -89,9 +88,9 @@ paytheory.payTheoryFields({
 
 ***
 
-## 6. Once the fields are valid, Run Transaction
+## 6. Once the fields are valid, run transaction
 The only required field for the transact parameters is the amount field. You can customize the transact function more.
-```jsx
+```jsx title="javascript"
 //Amount passed in is in cents
 const AMOUNT = 1000
 
@@ -113,7 +112,7 @@ if (result.type === "SUCCESS") {
 ***
 
 
-## Download Code
+## Download code
 :::info Download full code
 Click below link to download the full code and project files.
 
@@ -121,7 +120,7 @@ Click below link to download the full code and project files.
 :::
 ***
 
-## Next Steps
+## Next steps
 Once you are able to initiate the payment the following guides will help you get payments ready for launch.
 * [Testing Transactions](../testing)
 * [Styling and Managing States](./styling_pay_theory_fields)

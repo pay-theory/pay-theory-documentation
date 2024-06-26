@@ -1,0 +1,46 @@
+---
+sidebar_position: 3
+sidebar_label: Cancel Recurring Payments
+title: "Cancel Recurring Payment"
+---
+
+import Tabs from '../../../../components/Tabs';
+import TabItem from '@theme/TabItem';
+import Admonition from '@theme/Admonition';
+
+# Cancel Recurring Payment
+Cancelling recurring payments stops an account from being charged or debited in the future for a service or subscription. This guide will show you how to cancel the recurring payments that will halt the further installments.
+
+## Request
+The procedure known as "Cancel Recurring Payment" ends planned, recurring payments. In order to halt further installments, users usually take this step, frequently. Once a recurring payment is canceled, it cannot be reactivated.
+
+```graphql title="GraphQL"
+mutation {
+    cancelRecurringPayment(
+        recurring_id: "" # Insert recurring_id
+)}
+```
+
+:::note  Additional Parameters
+View the extensive list of parameters for recurring payments in our API.
+
+<a href= "../../../api/recurring#cancel-recurring-payment" class="button button--primary button--md">View All Parameters</a>
+:::
+
+***
+
+## Return
+The call will return true if the recurring payment was successfully canceled.
+
+```JSON title="JSON"
+{
+    "data": 
+    {
+        "cancelRecurringPayment": true
+    }
+}
+```
+***
+
+## Next Steps
+You always have the option to [update any information](update_recurring_payments.mdx)pertaining to recurring payments as well as [create a new recurring payments](../create_a_payment_plan.mdx).

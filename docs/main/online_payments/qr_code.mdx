@@ -1,7 +1,7 @@
 ---
-sidebar_position: 6
-sidebar_label: 'QR Codes'
-title: ""
+sidebar_position: 5
+sidebar_label: 'QR Code'
+title: "QR Code"
 ---
 
 
@@ -9,16 +9,7 @@ import Tabs from '../../../components/Tabs';
 import TabItem from '@theme/TabItem';
 import Admonition from '@theme/Admonition';
 
-<Tabs
-  defaultValue="javascript"
-  values={[
-    {label: 'Javascript', value: 'javascript'},
-    {label: 'Apple', value: 'apple'},
-    {label: 'Android', value: 'android'},
-  ]}>
-  <TabItem value="javascript">
-
-# QR Codes
+# QR Code
 This guide will show you how to generate QR codes that will take users to your checkout. This function initializes a payment session based on the checkoutDetails you pass in. This QR Code will open a hosted checkout page that will allow the user to select a payment method and complete the payment.
 
 
@@ -31,7 +22,7 @@ In order to use QR Codes you need be set up to accept online payments.
 ## Prepare the QR Code
 Use the code below to generate your QR Code.
 
-```jsx
+```jsx title="javascript"
 //Amount passed in is in cents
 const AMOUNT = 1000
 
@@ -64,16 +55,16 @@ paytheory.qrCode(OPTIONS)
 
 ## Customizing your QR code
 
-The following values can be passed into the qrCode function to customize the payment session.
+The following parameters can be passed into the qrCode function to customize the payment session.
 You will pass a single object into the function with the following keys.
 
-### Required Values:
+### Required parameters:
 |Key                      |type               |description                                                                                |
 --------------------------|-------------------|-------------------------------------------------------------------------------------------|     
 | apiKey                  |string             |The API key for your Pay Theory account. You can find this in your Pay Theory Portal.|
 | checkoutDetails         |object             |The details for the checkout page that opens when the qrCode is scanned. Details Below.|
 
-### Optional Values
+### Optional parameters
 
 |Key                      |type               |description                                                                                |
 --------------------------|-------------------|-------------------------------------------------------------------------------------------|     
@@ -86,16 +77,16 @@ You will pass a single object into the function with the following keys.
 
 ## Customizing checkout details
 
-The following values can be passed into the checkoutDetails object to customize the checkout page that opens when the qrCode is scanned.
+The following parameters can be passed into the checkoutDetails object to customize the checkout page that opens when the qrCode is scanned.
 
-### Required values:
+### Required parameters:
 
 |Key                |type               |description                                                                                |
 --------------------|-------------------|-------------------------------------------------------------------------------------------|     
 | amount            |int                |The amount of the payment in cents.                                           |
 | paymentName       |string             |The name of the payment that will be displayed on the checkout page. Will also be passed in to the reference field of the transaction.|
 
-### Optional values:
+### Optional parameters:
 
 |Key                      |type               |description                                                                                |
 --------------------------|-------------------|-------------------------------------------------------------------------------------------|     
@@ -107,24 +98,6 @@ The following values can be passed into the checkoutDetails object to customize 
 ***
 
 ##  Next Steps
-You may also make reference to various payment methods like [ACH](ach.mdx) and [Cash](cash_payments.mdx) capability.
+You may also make reference to various payment methods like [ACH](ach_payments.mdx) and [Cash](cash_payments.mdx) capability.
 
 
-</TabItem>
-  <TabItem value="apple">
-
-# Documentation Coming Soon
-Our Apple SDK is fully functional. If you would like to implement our Apple SDK select the link below for more information.
-<a href= "../../sdk/apple/MAIN" class="button button--primary button--md">View Apple SDK Reference</a>
-
-  </TabItem>
-
-  <TabItem value="android">
-
-# Documentation Coming Soon
-Our Android SDK is fully functional. If you would like to implement our Android SDK select the link below for more information.
-<a href= "../../sdk/android/MAIN" class="button button--primary button--md">View Android SDK Reference</a>
-
-  </TabItem>
-
-</Tabs>

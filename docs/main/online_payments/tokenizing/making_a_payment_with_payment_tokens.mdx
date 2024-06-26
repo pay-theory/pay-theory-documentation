@@ -1,7 +1,7 @@
 ---
 sidebar_position: 3
-sidebar_label: 'Making a Payment with Payment Tokens'
-title: ""
+sidebar_label: 'Making a Payment with Payment Method Tokens'
+title: "Making a Payment with Payment Method Tokens"
 ---
 
 
@@ -18,15 +18,15 @@ import Admonition from '@theme/Admonition';
   ]}>
   <TabItem value="javascript">
 
-# Making a Payment with Payment Tokens
-This guide will walk you through how to make a one time payment by using the payment token.
+# Making a Payment with Payment Method Tokens
+This guide will walk you through how to make a one time payment by using the payment method token.
 
 ## Create one time payment 
-Sensitive information like credit card numbers or bank account numbers are replaced by the payment token.
+Sensitive information like credit card numbers or bank account numbers are replaced by the payment method token.
 
-```graphql
+```graphql title="GraphQL"
 mutation {
-  createOneTimePayment(amount: Int, 
+  createTransaction(amount: Int,
   merchant_uid: String, 
   payment_method_id: String, 
   account_code: String, 
@@ -68,23 +68,7 @@ mutation {
 ***
 
 ## Returns
-The results presented below show that the query was successfully run and that every token was shown on the terminal in JSON format.
-``` json
-{
-  "data": {
-    "createOneTimePayment": {
-      status: TransactionStatus
-      amount: Int
-      card_brand: String
-      last_four: String
-      service_fee: Int
-      currency: String
-      transaction_id: String
-      created_at: DateTime
-    }
-  }
-}
-```
+The createTransaction mutation will return a [transaction object](/docs/api/transaction#create-transaction)
 
 |Key                 |type             |description                                 |
 |--------------------|-----------------|--------------------------------------------|    
@@ -100,7 +84,7 @@ The results presented below show that the query was successfully run and that ev
 ***
 
 ## Next Steps
-You can also refer to Recurring payment here [Recurring Payments](../../recurring_payments/quickstart/update_recurring_payments.md).
+You can also refer to Recurring payment here [Recurring Payments](../../recurring_payments/manage_recurring_payments/update_recurring_payments.mdx).
 
 </TabItem>
   <TabItem value="apple">
@@ -120,27 +104,3 @@ Our Android SDK is fully functional. If you would like to implement our Android 
   </TabItem>
 
 </Tabs>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

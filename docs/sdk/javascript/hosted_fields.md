@@ -1,7 +1,7 @@
 ---
 sidebar_position: 3
 sidebar_label: 'Hosted Fields'
-title: ""
+title: "Hosted Fields"
 ---
 
 # Hosted Fields
@@ -146,18 +146,9 @@ To style the input parent div simply provide your own CSS for the pay theory con
 }
 ```
 
-To style the input fields you can pass in a custom style object to the create function in our SDK. This allows you to style the text inside the inputs as well as the style of the radio buttons for the ACH account type.
+## Styles Object
 
-- `default`: (Object) The way a text field look when it is not in state success or error.
-- `success`: (Object) The way a text field look when it is valid. Only applies to fields that go through validation.
-- `error`: (Object) The way a text field look when it is invalid. Only applies to fields that go through validation.
-- `radio`: The way radio buttons look for the ACH account type
-  - `width`: (Int) The width in pixels of the radio buttons
-  - `fill`: (String) The color of the radio buttons
-  - `stroke`: (String) The color of the radio buttons border
-  - `text`: (Object) This style object will be used to style the labels for the radio buttons
-- `hidePlaceholder`: (Boolean) that allows you to hide the placeholder text in the input fields
-
+To style the input fields you can pass in a custom style object to the create function in our SDK. This allows you to style the text inside the inputs as well as the style of the radio buttons for the ACH account type
 
 ```javascript
 const STYLES = {
@@ -185,3 +176,31 @@ const STYLES = {
   hidePlaceholder: false
 }
 ```
+
+|Key                | type                          |       description                     |
+|-------------------|-------------------------------|---------------------------------------|     
+|default            | CSS Style Object              |The way a text field look when it is not in state success or error.|
+|success            | CSS Style Object              |The way a text field look when it is valid. Only applies to fields that go through validation.|
+|error              | CSS Style Object              |The way a text field look when it is invalid. Only applies to fields that go through validation.|
+|radio              | [Radio Object](#radio-object) |The way radio buttons look for the ACH account type|
+|hidePlaceholder    | Boolean                       |that allows you to hide the placeholder text in the input fields|
+
+## Radio Object
+
+This style object will be used to style the labels for the radio buttons. It contains the following keys:
+
+|Key                | type                        |       description                     |
+|-------------------|-----------------------------|---------------------------------------|     
+|width              | Int                         |The width in pixels of the radio buttons|
+|fill               | String                      |The color of the radio buttons|
+|stroke             | String                      |The color of the radio buttons border|
+|text               | [Text Object](#text-object) |This style object will be used to style the labels for the radio buttons|
+
+## Text Object
+
+This style object will be used to style the labels for the radio buttons. It contains the following keys:
+
+|Key                |type         |       description                     |
+|-------------------|-------------|---------------------------------------|
+|fontSize           |String       |The font size of the radio button labels|
+|color              |String       |The color of the radio button labels|

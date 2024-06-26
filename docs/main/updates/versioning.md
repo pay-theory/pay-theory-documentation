@@ -1,7 +1,9 @@
 ---
-sidebar_position: 1
-sidebar_class_name: disabled
+sidebar_position: 2
 sidebar_label: Versioning
+title: "Versioning"
+sidebar_class_name: hidden
+
 ---
 
 Coming Soon

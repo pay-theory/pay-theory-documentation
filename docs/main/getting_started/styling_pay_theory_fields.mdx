@@ -1,7 +1,7 @@
 ---
 sidebar_position: 2
 sidebar_label: 'Styling and Managing States'
-title: ""
+title: "Styling and Managing States"
 ---
 
 import Tabs from '../../../components/Tabs';
@@ -68,7 +68,7 @@ To style the input parent div, provide your own CSS for the Pay Theory container
 Individual pay-theory-credit-card-number containers should be at least 340px wide, pay-theory-credit-card combined input should be 400px
 :::
 
-```jsx title= src/custom.css
+```jsx title="src/custom.css"
 #pay-theory-credit-card-number,
 #pay-theory-credit-card-exp,
 #pay-theory-credit-card-cvv {
@@ -84,7 +84,7 @@ Individual pay-theory-credit-card-number containers should be at least 340px wid
 ## Using the stateObserver
 A stateObserver lets you keep an eye on changes to the state of hosted fields and react to them. It offers a mechanism to keep a look on things like field focus, if a field is empty or if there are any validation errors with the field. Each time the state of a text input changes, the stateObserver callback method is called.
 
-```jsx title= src/paytheory.js
+```jsx title="src/paytheory.js"
 const stateHandler = (state) => {
   const cardState = state['card-number']
   const cardField = document.getElementById("pay-theory-credit-card-number")
@@ -115,7 +115,7 @@ For more details on stateObserver functionality
 ***
 
 ## Next steps
-Once your Pay Theory fields are stylized you will need to make sure Error handling is set up. Additionally you can further customize your Pay Theory fields by adding [Cash](../online_payments/cash_payments.mdx) and or [ACH](../online_payments/ach.mdx) functionality.
+Once your Pay Theory fields are stylized you will need to make sure Error handling is set up. Additionally you can further customize your Pay Theory fields by adding [Cash](../online_payments/cash_payments.mdx) and or [ACH](../online_payments/ach_payments) functionality.
 
 
 </TabItem>
@@ -131,7 +131,7 @@ Our Apple SDK is fully functional. If you would like to implement our Apple SDK 
 
 # Documentation Coming Soon
 Our Android SDK is fully functional. If you would like to implement our Android SDK select the link below for more information.
-<a href= "../../sdk/android/MAIN" class="button button--primary button--md">View Android SDK Reference</a>
+<a href= "../../sdk/android/main" class="button button--primary button--md">View Android SDK Reference</a>
 
   </TabItem>
 

@@ -1,7 +1,7 @@
 ---
 sidebar_position: 5
 sidebar_label: 'Failure Codes'
-title: ""
+title: "Failure Codes"
 ---
 
 # Failed Transactions
