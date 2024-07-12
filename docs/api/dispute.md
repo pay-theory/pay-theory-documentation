@@ -1,5 +1,5 @@
 ---
-sidebar_position: 8
+sidebar_position: 50
 sidebar_label: 'Dispute'
 title: "Dispute"
 ---
@@ -33,7 +33,7 @@ They could be an `INQUIRY` which is just a request for information, or an actual
 ```
 
 |Key                | type                             | description                                                                                                                                 |
-|-------------------|----------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------|     
+|-------------------|----------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------|
 |merchant_uid       | ID                               | The Pay Theory unique identifier assigned to the merchant that the dispute belongs to.                                                      |
 |transaction        | Transaction                      | The transaction object for the transaction that is in dispute. More information on the transaction object can be found [here](transaction). |
 |dispute_id         | String                           | The Pay Theory unique dispute identifier.                                                                                                   |
@@ -61,10 +61,10 @@ They could be an `INQUIRY` which is just a request for information, or an actual
 ### Dispute Reason
 
 - `CLERICAL`
-- `FRAUD` 
+- `FRAUD`
 - `INQUIRY`
 - `QUALITY`
-- `TECHNICAL` 
+- `TECHNICAL`
 
 ***
 ## Query Disputes
@@ -96,7 +96,7 @@ query DisputeQuery($direction: MoveDirection, $limit: Int, $offset: String, $off
 **Parameters**
 
 |Key                |type         |       description                     |
-|-------------------|-------------|---------------------------------------|     
+|-------------------|-------------|---------------------------------------|
 |direction          |MoveDirection|The direction of the pagination. Makes sure the results are returned in the correct order.|
 |limit              |Int          |The number of disputes to return.|
 |offset             |String       |The value of the offset item for which the list is being sorted.|
@@ -123,6 +123,6 @@ query DisputeQuery($direction: MoveDirection, $limit: Int, $offset: String, $off
 }
 ```
 |Key                |type         |       description                     |
-|-------------------|-------------|---------------------------------------|     
+|-------------------|-------------|---------------------------------------|
 |items              |[Dispute]    |The list of disputes that are returned from the query.|
 |total_row_count    |Int          |The total number of disputes that match the query. Used to help with pagination.|

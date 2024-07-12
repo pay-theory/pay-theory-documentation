@@ -66,7 +66,7 @@ Button("Make Payment") {
     // Submit payment logic
 }
 .disabled(!payTheory.valid.card)
-``` 
+```
 
 ## Step 4: Submit Transaction
 
@@ -83,6 +83,6 @@ Button("Make Payment") {
 
 The response from Pay Theory will be sent to the completion handler you set in step 1. A successful response will return a `[String: Any]` dictionary. A failure response will return a `FailureResponse` object.
 
-The `Failure Response` object is defined [here](COMPLETION_HANDLER#failure-response) and the success response dictionary is defined [here](COMPLETION_HANDLER#success-response).
+The `Failure Response` object is defined [here](completion_handler#failure-response) and the success response dictionary is defined [here](completion_handler#success-response).
 
 
