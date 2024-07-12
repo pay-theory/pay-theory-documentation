@@ -72,6 +72,7 @@ The type of bank account. It can be one of the following:
 ### Card Type
 
 The type of card. It can be one of the following:
+
 - `BUSINESS_CREDIT`
 - `BUSINESS_DEBIT`
 - `CREDIT_CARD`
