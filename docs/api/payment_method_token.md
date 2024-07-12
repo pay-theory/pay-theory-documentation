@@ -77,6 +77,7 @@ The type of card. It can be one of the following:
 - `PREPAID_CARD`
 
 ### Payment Type
+
 The type of payment method. It can be one of the following:
 - `ACH`
 - `CARD`
