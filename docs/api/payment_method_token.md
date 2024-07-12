@@ -79,6 +79,7 @@ The type of card. It can be one of the following:
 ### Payment Type
 
 The type of payment method. It can be one of the following:
+
 - `ACH`
 - `CARD`
 - `CASH`
