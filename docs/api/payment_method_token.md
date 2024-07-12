@@ -86,6 +86,7 @@ The type of payment method. It can be one of the following:
 - `CASH`
 
 ### Wallet Type
+
 The type of wallet that the payment method token is stored in. It can be one of the following:
 - `APPLE_PAY`
 - `CLICK_TO_PAY`
