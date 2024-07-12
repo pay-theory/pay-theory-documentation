@@ -62,6 +62,7 @@ Payment Method Tokens are meant to store info that represents a tokenized Bank A
 
 ### Ach Account Type
 The type of bank account. It can be one of the following:
+
 - `BUSINESS_CHECKING`
 - `BUSINESS_SAVINGS`
 - `PERSONAL_CHECKING`
