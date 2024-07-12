@@ -1,5 +1,5 @@
 ---
-sidebar_position: 11
+sidebar_position: 50
 sidebar_label: 'Users'
 title: "Users"
 ---
@@ -20,7 +20,7 @@ Users are accounts that have access to PayTheory Portals. Users can be created w
 ```
 
 |Key                |type         |       description                     |
-|-------------------|-------------|---------------------------------------|     
+|-------------------|-------------|---------------------------------------|
 |username           |String       |The cognito username id of the user.|
 |email              |String       |The email address of the user.|
 |user_status        |String       |The status of the user. Likely to be one of the following: `CONFIRMED`, `FORCE_CHANGE_PASSWORD`|
@@ -45,7 +45,7 @@ Users are accounts that have access to PayTheory Portals. Users can be created w
 **Parameters**
 
 |Key                |type         |       description                     |
-|-------------------|-------------|---------------------------------------|     
+|-------------------|-------------|---------------------------------------|
 |user_pool          |UserPool     |The user pool to query. One of the following: `MERCHANT`, `SYSTEM`, `PARTNER`.|
 |merchant_uid       |String       |The merchant uid to query users for. Only used when querying users in the Merchant and System Portal.|
 
@@ -76,7 +76,7 @@ Users are accounts that have access to PayTheory Portals. Users can be created w
 ```
 
 |Key                |type         |       description                     |
-|-------------------|-------------|---------------------------------------|     
+|-------------------|-------------|---------------------------------------|
 |users              |[User]       |The list of users that are returned from the query.|
 
 ## Create User
@@ -101,13 +101,13 @@ mutation {
 **Parameters**
 
 |Key                |type         |       description                     |
-|-------------------|-------------|---------------------------------------|     
+|-------------------|-------------|---------------------------------------|
 |intput             |UserInput    |An object containing the following|
 
 **UserInput**
 
 |Key                |type         |       description                     |
-|-------------------|-------------|---------------------------------------|     
+|-------------------|-------------|---------------------------------------|
 |email              |AWSEmail     |The email address of the user. Must be a valid email address or the mutation will fail. Can only have one user per email per user pool.|
 |first_name         |String       |The first name of the user.|
 |last_name          |String       |The last name of the user.|
@@ -129,7 +129,7 @@ mutation {
 **Parameters**
 
 |Key                |type         |       description                     |
-|-------------------|-------------|---------------------------------------|     
+|-------------------|-------------|---------------------------------------|
 |username           |String       |The cognito username id of the user to delete.|
 |user_pool          |UserPool     |The user pool to delete the user from. One of the following: `MERCHANT`, `SYSTEM`, `PARTNER`.|
 
