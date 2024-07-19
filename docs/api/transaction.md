@@ -317,6 +317,7 @@ This call will return a [Transaction](#the-transaction-object) object with the d
 
 
 ***
+
 ## Create Reversal
 
 This call will create a refund or a void for a transaction.

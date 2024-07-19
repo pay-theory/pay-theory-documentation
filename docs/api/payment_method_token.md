@@ -61,14 +61,19 @@ Payment Method Tokens are meant to store info that represents a tokenized Bank A
 
 
 ### Ach Account Type
+
 The type of bank account. It can be one of the following:
+
 - `BUSINESS_CHECKING`
 - `BUSINESS_SAVINGS`
 - `PERSONAL_CHECKING`
 - `PERSONAL_SAVINGS`
 
 ### Card Type
+
 The type of card. It can be one of the following:
+
+
 - `BUSINESS_CREDIT`
 - `BUSINESS_DEBIT`
 - `CREDIT_CARD`
@@ -76,13 +81,18 @@ The type of card. It can be one of the following:
 - `PREPAID_CARD`
 
 ### Payment Type
+
 The type of payment method. It can be one of the following:
+
 - `ACH`
 - `CARD`
 - `CASH`
 
 ### Wallet Type
+
+
 The type of wallet that the payment method token is stored in. It can be one of the following:
+
 - `APPLE_PAY`
 - `CLICK_TO_PAY`
 - `GOOGLE_PAY`
