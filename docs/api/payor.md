@@ -137,7 +137,7 @@ mutation {
 This mutation returns the payor object that was created.
 
 ***
-## The Payor Input Object
+### The Payor Input Object
 ```graphql
 {
     address_line1: String
@@ -167,3 +167,20 @@ This mutation returns the payor object that was created.
 |  phone        | String  | The phone number of the payor.                                                                                              |
 |  postal_code  | String  | The postal code of the payor.                                                                                               |
 |  region       | String  | The region of the payor.                                                                                                    |
+
+
+***
+
+## Update Payor
+```graphql
+mutation {
+    createPayor(payor_data: PayorInput!, payor_id: String!)
+}
+```
+
+**Parameters**
+
+|Key                |type         |       description                     |
+|-------------------|-------------|---------------------------------------|
+|payor_data         |PayorInput   |The input object that contains the payor information to update the payor.  Detailed information about the input object can be found [here](#the-payor-input-object).|
+|payor_id           |String       |The unique payor id of the payor to update.|
