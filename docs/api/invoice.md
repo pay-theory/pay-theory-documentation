@@ -80,7 +80,7 @@ Invoices are used to create a payment request that can be sent to a payor.
 
 ```graphql
 {
-    invoices(direction: FORWARD, limit: 10, offset: "", offset_id: "", query: QueryObject) {
+    invoices(direction: FORWARD, limit: 10, offset: "", offset_id: "", query: SqlQuery) {
         items {
             account_code
             created_date
@@ -140,7 +140,7 @@ Invoices are used to create a payment request that can be sent to a payor.
 |limit              |Int          |The number of invoices to return.|
 |offset             |String       |The value of the offset item for which the list is being sorted.|
 |offset_id          |String       |The `invoice_id` of the offset item.|
-|query              |QueryObject  |The query to filter the invoices with based on Pay Theory defined data.|
+|query              |SqlQuery  |The query to filter the invoices with based on Pay Theory defined data.|
 
 
 **Nested Queries**

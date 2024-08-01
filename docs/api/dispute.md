@@ -101,7 +101,7 @@ query DisputeQuery($direction: MoveDirection, $limit: Int, $offset: String, $off
 |limit              |Int          |The number of disputes to return.|
 |offset             |String       |The value of the offset item for which the list is being sorted.|
 |offset_id          |String       |The `dispute_id` of the offset item.|
-|query              |QueryObject  |The query to filter the disputes with based on Pay Theory defined data.|
+|query              |SqlQuery  |The query to filter the disputes with based on Pay Theory defined data.|
 
 
 **Returns**

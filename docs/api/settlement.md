@@ -63,7 +63,7 @@ A 32-bit Int is between 2,147,483,647 and -2,147,483,648. Any value outside of t
 ## Query Settlements
 ```js
 {
-    settlements(limit: Int, direction: MoveDirection, offset: String, offset_id: String, query: QueryObject) {
+    settlements(limit: Int, direction: MoveDirection, offset: String, offset_id: String, query: SqlQuery) {
         items {
             currency
             gross_amount
@@ -91,7 +91,7 @@ A 32-bit Int is between 2,147,483,647 and -2,147,483,648. Any value outside of t
 | direction | MoveDirection | The direction of the pagination. Makes sure the results are returned in the correct order. |
 | offset    | String        | The value of the offset item for which the list is being sorted.                           |
 | offset_id | String        | The `settlement_batch` of the offset item.                                                 |
-| query     | QueryObject   | The query to filter the settlements with based on Pay Theory defined data.                 |
+| query     | SqlQuery   | The query to filter the settlements with based on Pay Theory defined data.                 |
 
 **Returns**
 

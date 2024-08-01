@@ -45,7 +45,7 @@ Payors are used to track payor info that can be tied to other data objects in Pa
 ## Query Payors
 ```graphql
 {
-    payors(direction: MoveDirection, limit: Int, offset: String, offset_id: String, query: QueryObject) {
+    payors(direction: MoveDirection, limit: Int, offset: String, offset_id: String, query: SqlQuery) {
         items {
             address_line1
             address_line2
@@ -73,7 +73,7 @@ Payors are used to track payor info that can be tied to other data objects in Pa
 |limit              |Int          |The number of payors to return.|
 |offset             |String       |The value of the offset item for which the list is being sorted.|
 |offset_id          |String       |The `payor_id` of the offset item.|
-|query              |QueryObject  |The query to filter the payors with based on Pay Theory defined data. Detailed information about the query object can be found [here](query).|
+|query              |SqlQuery  |The query to filter the payors with based on Pay Theory defined data. Detailed information about the query object can be found [here](query).|
 
 **Nested Queries**
 Payors can also be filtered by passing a query_list to the metadata.

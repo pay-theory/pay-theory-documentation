@@ -24,6 +24,7 @@ Payment Method Tokens are meant to store info that represents a tokenized Bank A
   exp_date: String
   full_name: String
   is_active: Boolean
+  issuing_country_code: String
   last_four: String
   merchant_uid: String
   metadata: AWSJSON
@@ -35,29 +36,30 @@ Payment Method Tokens are meant to store info that represents a tokenized Bank A
   wallet_type: WalletType
 }
 ```
-| Key               | type           | description                                                                                                        |
-|-------------------|----------------|--------------------------------------------------------------------------------------------------------------------|
-| address_line1     | String         | The first line of the billing address.                                                                             |
-| address_line2     | String         | The second line of the billing address.                                                                            |
-| bank_account_type | AchAccountType | The type of bank account.                                                                                          |
-| bank_code         | String         | The bank code of the bank account if `payment_type` is `ACH`.                                                      |
-| barcode_id        | String         | The barcode id of the payment method token if `payment_type` is `CASH`.                                            |
-| card_brand        | String         | The brand of the card if `payment_type` is `CARD`.                                                                 |
-| card_type         | CardType       | The type of card if `payment_type` is `CARD`.                                                                      |
-| city              | String         | The city of the billing address.                                                                                   |
-| country           | String         | The country of the billing address.                                                                                |
-| exp_date          | String         | The expiration date of the card if `payment_type` is `CARD`. Format: `MMYY`                                        |
-| full_name         | String         | The name on card or bank account.                                                                                  |
-| is_active         | Boolean        | Indicator for if payment method is active. If false the payment method cannot be used to process new transactions. |
-| last_four         | String         | The last four digits of the card or bank account number.                                                           |
-| merchant_uid      | String         | The Pay Theory unique identifier assigned to the merchant that the payment_method_token belongs to.                |
-| metadata          | AWSJSON        | Any additional data that was stored with the payment method token.                                                 |
-| payment_method_id | String         | The unique payment method id.                                                                                      |
-| payment_type      | PaymentType    | The type of payment method. It can be one of the following: `CARD`, `ACH`                                          |
-| payor             | Payor          | The payor object. Refer to the [Payor](payor#the-payor-object) docs for more info.                                 |
-| postal_code       | String         | The postal code of the billing address.                                                                            |
-| region            | String         | The region of the billing address.                                                                                 |
-| wallet_type       | WalletType     | The type of wallet that the payment method token is stored in.                                                     |
+| Key                  | type           | description                                                                                                        |
+|----------------------|----------------|--------------------------------------------------------------------------------------------------------------------|
+| address_line1        | String         | The first line of the billing address.                                                                             |
+| address_line2        | String         | The second line of the billing address.                                                                            |
+| bank_account_type    | AchAccountType | The type of bank account.                                                                                          |
+| bank_code            | String         | The bank code of the bank account if `payment_type` is `ACH`.                                                      |
+| barcode_id           | String         | The barcode id of the payment method token if `payment_type` is `CASH`.                                            |
+| card_brand           | String         | The brand of the card if `payment_type` is `CARD`.                                                                 |
+| card_type            | CardType       | The type of card if `payment_type` is `CARD`.                                                                      |
+| city                 | String         | The city of the billing address.                                                                                   |
+| country              | String         | The country of the billing address.                                                                                |
+| exp_date             | String         | The expiration date of the card if `payment_type` is `CARD`. Format: `MMYY`                                        |
+| full_name            | String         | The name on card or bank account.                                                                                  |
+| is_active            | Boolean        | Indicator for if payment method is active. If false the payment method cannot be used to process new transactions. |
+| issuing_country_code | String         | The issuing country code of the country that issued the card or that the bank account was opened in.               |
+| last_four            | String         | The last four digits of the card or bank account number.                                                           |
+| merchant_uid         | String         | The Pay Theory unique identifier assigned to the merchant that the payment_method_token belongs to.                |
+| metadata             | AWSJSON        | Any additional data that was stored with the payment method token.                                                 |
+| payment_method_id    | String         | The unique payment method id.                                                                                      |
+| payment_type         | PaymentType    | The type of payment method. It can be one of the following: `CARD`, `ACH`                                          |
+| payor                | Payor          | The payor object. Refer to the [Payor](payor#the-payor-object) docs for more info.                                 |
+| postal_code          | String         | The postal code of the billing address.                                                                            |
+| region               | String         | The region of the billing address.                                                                                 |
+| wallet_type          | WalletType     | The type of wallet that the payment method token is stored in.                                                     |
 
 
 ### Ach Account Type
@@ -103,7 +105,7 @@ The type of wallet that the payment method token is stored in. It can be one of 
 ## Query Payment Method Tokens
 ```graphql
 {
-    paymentMethodTokens(direction: FORWARD, limit: 10, offset: "", offset_id: "", query: QueryObject) {
+    paymentMethodTokens(direction: FORWARD, limit: 10, offset: "", offset_id: "", query: SqlQuery) {
         items {
           address_line1
           address_line2
@@ -138,7 +140,7 @@ The type of wallet that the payment method token is stored in. It can be one of 
 |limit              |Int          |The number of payment_method_tokens to return.|
 |offset             |String       |The value of the offset item for which the list is being sorted.|
 |offset_id          |String       |The `payment_method_id` of the offset item.|
-|query              |QueryObject  |The query to filter the payment_method_tokens with based on Pay Theory defined data. Detailed information about the query object can be found [here](query).|
+|query              |SqlQuery  |The query to filter the payment_method_tokens with based on Pay Theory defined data. Detailed information about the query object can be found [here](query).|
 
 **Nested Queries**
 Payment Method Tokens can also be filtered by passing a query_list to the metadata or payor.
@@ -203,19 +205,21 @@ This is the input object used when passing in payment method into any mutation t
 {
     ach: AchInput
     card: CardInput
+    canadian_eft: CanadianEftInput
     metadata: AWSJSON
     payor: PayorInput
     payor_id: String
 }
 ```
 
-| Key      | type                            | description                                                                                                                                      |
-|----------|---------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------|
-| ach      | [AchInput](#ach-input-object)   | The ach input object.                                                                                                                            |
-| card     | [CardInput](#card-input-object) | The card input object.                                                                                                                           |
-| metadata | AWSJSON                         | Any additional data that you want to store with the payment method token. This data will be returned with the payment method token when queried. |
-| payor    | PayorInput                      | The payor input object. Refer to the [PayorInput](payor#the-payor-input-object) docs for more info.                                              |
-| payor_id | String                          | The unique payor id for the payor this payment method token belongs to.                                                                          |
+| Key          | type                            | description                                                                                                                                      |
+|--------------|---------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------|
+| ach          | [AchInput](#ach-input-object)   | The ach input object used for creating Bank Accounts in the USA                                                                                  |
+| card         | [CardInput](#card-input-object) | The card input object.                                                                                                                           |
+| canadian_eft | CanadianEftInput                | The canadian eft input object used for creating Bank Accounts in Canada.                                                                         |
+| metadata     | AWSJSON                         | Any additional data that you want to store with the payment method token. This data will be returned with the payment method token when queried. |
+| payor        | PayorInput                      | The payor input object. Refer to the [PayorInput](payor#the-payor-input-object) docs for more info.                                              |
+| payor_id     | String                          | The unique payor id for the payor this payment method token belongs to.                                                                          |
 
 ***
 ### ACH Input Object
@@ -249,6 +253,28 @@ The ach input object. It contains the following fields:
 | region          | String         | The region of the billing address.      |
 | routing_number  | String!        | The routing number of the bank account. |
 
+
+***
+### Canadian EFT Input Object
+The Canadian EFT input object. It contains the following fields:
+
+```graphql
+{
+  account_number: String!
+  account_type: BankAccountType!
+  institution_number: String!
+  name_on_account: String!
+  transit_number: String!
+}
+```
+
+| Key                | type             | description                                 |
+|--------------------|------------------|---------------------------------------------|
+| account_number     | String!          | The account number of the bank account.     |
+| account_type       | BankAccountType! | The type of bank account.                   |
+| institution_number | String!          | The institution number of the bank account. |
+| name_on_account    | String!          | The name on the bank account.               |
+| transit_number     | String!          | The transit number of the bank account.     |
 
 ***
 ### Card Input Object

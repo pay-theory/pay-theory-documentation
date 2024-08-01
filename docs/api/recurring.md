@@ -98,7 +98,7 @@ The status of the recurring payment. The following statuses are available:
 
 ```graphql
 {
-    recurringPayments(direction: MoveDirection, limit: Int, offset: String, offset_id: String, query: QueryObject) {
+    recurringPayments(direction: MoveDirection, limit: Int, offset: String, offset_id: String, query: SqlQuery) {
         items {
             account_code
             amount_per_payment
@@ -140,7 +140,7 @@ The status of the recurring payment. The following statuses are available:
 |limit              |Int          |The number of recurring payments to return.|
 |offset             |String       |The value of the offset item for which the list is being sorted.|
 |offset_id          |String       |The `recurring_id` of the offset item.|
-|query              |QueryObject  |The query to filter the recurring payments with based on Pay Theory defined data. Detailed information about the query object can be found [here](query).|
+|query              |SqlQuery  |The query to filter the recurring payments with based on Pay Theory defined data. Detailed information about the query object can be found [here](query).|
 
 
 **Nested Queries**

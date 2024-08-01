@@ -80,7 +80,7 @@ The call to action that will be displayed on the button at the time of checkout.
 ## Query Payment Links
 ```js
 {
-    paymentLinks(direction: FORWARD, limit: 10, offset: "", offset_id: "", query: QueryObject) {
+    paymentLinks(direction: FORWARD, limit: 10, offset: "", offset_id: "", query: SqlQuery) {
         total_row_count
         items {
             merchant_uid
@@ -114,7 +114,7 @@ The call to action that will be displayed on the button at the time of checkout.
 |direction          |MoveDirection|The direction of the pagination. Makes sure the results are returned in the correct order.|
 |offset             |String       |The value of the offset item for which the list is being sorted.|
 |offset_id          |String       |The `link_id` of the offset item.|
-|query              |QueryObject  |The query to filter the payment links with based on Pay Theory defined data. Detailed information about the query object can be found [here](query)|
+|query              |SqlQuery  |The query to filter the payment links with based on Pay Theory defined data. Detailed information about the query object can be found [here](query)|
 
 
 **Returns**
