@@ -105,7 +105,7 @@ The type of wallet that the payment method token is stored in. It can be one of 
 ## Query Payment Method Tokens
 ```graphql
 {
-    paymentMethodTokens(direction: FORWARD, limit: 10, offset: "", offset_id: "", query: SqlQuery) {
+    paymentMethodTokens(direction: MoveDirection, limit: Int, offset: String, offset_id: String, query: SqlQuery) {
         items {
           address_line1
           address_line2
@@ -134,13 +134,13 @@ The type of wallet that the payment method token is stored in. It can be one of 
 
 **Parameters**
 
-|Key                |type         |       description                     |
-|-------------------|-------------|---------------------------------------|
-|direction          |MoveDirection|The direction of the pagination. Makes sure the results are returned in the correct order.|
-|limit              |Int          |The number of payment_method_tokens to return.|
-|offset             |String       |The value of the offset item for which the list is being sorted.|
-|offset_id          |String       |The `payment_method_id` of the offset item.|
-|query              |SqlQuery  |The query to filter the payment_method_tokens with based on Pay Theory defined data. Detailed information about the query object can be found [here](query).|
+| Key       | type          | description                                                                                                                                                  |
+|-----------|---------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| direction | MoveDirection | The direction of the pagination. Makes sure the results are returned in the correct order.                                                                   |
+| limit     | Int           | The number of payment_method_tokens to return.                                                                                                               |
+| offset    | String        | The value of the offset item for which the list is being sorted.                                                                                             |
+| offset_id | String        | The `payment_method_id` of the offset item.                                                                                                                  |
+| query     | SqlQuery      | The query to filter the payment_method_tokens with based on Pay Theory defined data. Detailed information about the query object can be found [here](query). |
 
 **Nested Queries**
 Payment Method Tokens can also be filtered by passing a query_list to the metadata or payor.
@@ -149,28 +149,10 @@ This will only return Payment Method Tokens that have Metadata or Payors that ma
 
 **Returns**
 
-```js
-{
-    "data": {
-        "paymentMethodTokens": {
-            "items": [
-                {
-                    "payment_method_id": "pt_pmt_XXXXX",
-                },
-                {
-                    "payment_method_id": "pt_pmt_XXXXX",
-                },
-                ...
-            ],
-                "total_row_count": 256
-        }
-    }
-}
-```
-|Key                |type         |       description                     |
-|-------------------|-------------|---------------------------------------|
-|items              |[PaymentMethodToken]|The list of payment_method_tokens that are returned from the query.|
-|total_row_count    |Int          |The total number of payment_method_tokens that match the query. Used to help with pagination.|
+| Key             | type                 | description                                                                                   |
+|-----------------|----------------------|-----------------------------------------------------------------------------------------------|
+| items           | [PaymentMethodToken] | The list of payment_method_tokens that are returned from the query.                           |
+| total_row_count | Int                  | The total number of payment_method_tokens that match the query. Used to help with pagination. |
 
 ***
 ## Create Payment Method
@@ -188,10 +170,10 @@ mutation {
 
 **Parameters**
 
-|Key                |type         |       description                     |
-|-------------------|-------------|---------------------------------------|
-|payment_method     |PaymentMethodInput|The payment method input object. Refer to the [PaymentMethodInput](#payment-method-input-object) docs for more info.|
-|merchant_uid       |String       |The Pay Theory unique identifier assigned to the merchant that the payment_method_token belongs to.|
+| Key            | type               | description                                                                                                          |
+|----------------|--------------------|----------------------------------------------------------------------------------------------------------------------|
+| payment_method | PaymentMethodInput | The payment method input object. Refer to the [PaymentMethodInput](#payment-method-input-object) docs for more info. |
+| merchant_uid   | String             | The Pay Theory unique identifier assigned to the merchant that the payment_method_token belongs to.                  |
 
 **Returns**
 The payment method token object. Refer to the [Payment Method Token](#the-payment-method-token-object) for more info.
@@ -268,13 +250,13 @@ The Canadian EFT input object. It contains the following fields:
 }
 ```
 
-| Key                | type             | description                                 |
-|--------------------|------------------|---------------------------------------------|
-| account_number     | String!          | The account number of the bank account.     |
-| account_type       | BankAccountType! | The type of bank account.                   |
-| institution_number | String!          | The institution number of the bank account. |
-| name_on_account    | String!          | The name on the bank account.               |
-| transit_number     | String!          | The transit number of the bank account.     |
+| Key                | type             | description                                                     |
+|--------------------|------------------|-----------------------------------------------------------------|
+| account_number     | String!          | The account number of the bank account.                         |
+| account_type       | BankAccountType! | The type of bank account.                                       |
+| institution_number | String!          | The institution number of the bank account. Should be 3 digits. |
+| name_on_account    | String!          | The name on the bank account.                                   |
+| transit_number     | String!          | The transit number of the bank account. Should be 5 digits.     |
 
 ***
 ### Card Input Object
@@ -320,10 +302,10 @@ The card expiration input object. It contains the following fields:
     year: String!
 }
 ```
-|Key                |type         |       description                     |
-|-------------------|-------------|---------------------------------------|
-|month              |String!      |The month of the expiration date. Format: `MM`|
-|year               |String!      |The year of the expiration date. Format: `YY`|
+| Key   | type    | description                                    |
+|-------|---------|------------------------------------------------|
+| month | String! | The month of the expiration date. Format: `MM` |
+| year  | String! | The year of the expiration date. Format: `YY`  |
 
 ***
 ## Update Payment Method To Disabled
