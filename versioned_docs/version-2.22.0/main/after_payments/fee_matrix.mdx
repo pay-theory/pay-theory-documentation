@@ -1,0 +1,111 @@
+---
+sidebar_position: 5
+sidebar_label: Fee Matrix
+title: "Fee Matrix"
+---
+
+import Tabs from '../../../components/Tabs';
+import TabItem from '@theme/TabItem';
+import Admonition from '@theme/Admonition';
+
+# Fee Matrix
+<br/>
+This guide will walk you through how Pay Theory calculates fees for transactions using the Fee Matrix.
+
+## What is the Fee Matrix?
+
+The Fee Matrix is a tool that Pay Theory uses to calculate the fees for a merchant.
+
+There are some per item fees that are listed at the root level of the Fee Matrix. These fees are used to charge the merchant when certain events happen in the system.
+
+For example, if a merchant has an ACH Return come through the system, Pay Theory will charge the merchant a fee for that return.
+
+There are also some fees that are calculated based on the transaction amount. These fees are listed in the Fee Matrix as a combination of a percentage (basis points) and a fixed fee.
+
+For example, if a merchant processes a $100 transaction and the fee for that transaction is 2.9% + $0.30, Pay Theory will charge the merchant $3.20 for that transaction.
+
+## What Per Item Fees are in the Fee Matrix?
+
+The following per item fees are in the Fee Matrix:
+
+| Fee Name                 | Description                                                                                        |
+|--------------------------|----------------------------------------------------------------------------------------------------|
+| ACH Return Fee           | This fee is charged to the merchant when an ACH return is processed.                               |
+| ACH Return Dispute Fee   | This fee is charged to the merchant when an ACH return dispute is processed.                       |
+| Card Account Updater Fee | This fee is charged to the merchant when a card on file is updated using the card account updater. |
+| Chargeback Fee           | This fee is charged to the merchant when a chargeback is processed.                                |
+| International Card Basis | This fee is charged per transaction when an international card is used.                            |
+
+## How does the Fee Matrix know what to use for calculating a fee?
+
+The Fee Matrix contains a few different fee structures that can be used to calculate fees for a transaction.
+
+If the transaction is an ACH transaction it will be calculated using the ACH fee structure.
+
+If the transaction is a Card transaction it will be calculated by looking at the matrix and determining the fee based on the card type, brand, and transaction amount.
+
+The brand can only be used to determine the fee in the context of a transaction using the `MERCHANT_FEE` fee model. If the transaction is using the `SERVICE_FEE` fee model, the matrix will use the card type or default card structure.
+
+The system will find the appropriate fee structure in this priority if parts of the Matrix are configured:
+
+1. Card Brand (`MERCHANT_FEE` only)
+2. Card Type
+3. Default Card
+
+## How are Fees Calculated?
+
+Each fee structure will contain at most four different values that it will use to calculate the fee for a transaction.
+
+| Key          | description                                                                           |
+|--------------|---------------------------------------------------------------------------------------|
+| basis_points | A percentage of the transaction amount that will be charged to the merchant as a fee. |
+| fixed        | A fixed fee that will be charged to the merchant for each transaction.                |
+| max_fee      | The maximum fee that will be charged to the merchant for each transaction.            |
+| min_fee      | The minimum fee that will be charged to the merchant for each transaction.            |
+
+:::tip Basis Points
+A basis point is a unit of measure that is equal to 1/100th of a percentage point. For example, 1 basis point is equal to 0.01%.<br/>
+<a href= "https://www.paytheory.com/blog/what-is-a-basis-point" class="button button--primary button--md">Learn More</a>
+:::
+
+The formula for calculating the fee for a transaction is as follows:
+
+```
+fee = (basis_points * transaction_amount / 100) + fixed
+```
+
+If the fee is less than the minimum fee, the minimum fee will be charged. If the fee is greater than the maximum fee, the maximum fee will be charged.
+
+## How are Fees Applied?
+
+If you use the `MERCHANT_FEE` fee model, the fees will be applied to the merchant and taken out of the transaction amount before the merchant is paid.
+
+If you use the `SERVICE_FEE` fee model, the fees will be applied to the customer and added to the total transaction amount before it is processed.
+
+## Fee Matrix Example
+
+Let's say you have an ACH Transaction for $100 and the fee structure for ACH transactions is as follows:
+
+```
+ach: {
+    merchant_fee: {
+        basis_points: 40,
+        fixed: 40,
+        max_fee: 500,
+    },
+    service_fee: {
+        basis_points: 100,
+        fixed: 25,
+        max_fee: 500,
+        min_fee: 50
+    }
+}
+```
+
+The fee for this transaction would be $0.80 if you use the `MERCHANT_FEE` fee model and $1.25 if you use the `SERVICE_FEE` fee model.
+
+:::note Additional Resources
+Fee Matrix can be found for each merchant by using the [merchant query](/docs/api/merchant#query-merchant).
+
+Fee Matrix can be updated for each merchant by using the [updateFeeMatrix mutation](/docs/api/merchant#update-fee-matrix).
+:::
