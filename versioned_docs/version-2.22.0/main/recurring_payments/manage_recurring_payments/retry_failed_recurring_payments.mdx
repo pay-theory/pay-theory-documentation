@@ -1,0 +1,54 @@
+---
+sidebar_position: 6
+sidebar_label: Retry Failed Recurring Payment
+title: "Retry Failed Recurring Payment"
+---
+
+import Tabs from '../../../../components/Tabs';
+import TabItem from '@theme/TabItem';
+import Admonition from '@theme/Admonition';
+
+
+# Retry Failed Recurring Payment
+Retry failed recurring payments automatically resubmits declined transactions for a subscription or service. This should be used if the payment method on file is still valid, and you want to retry the payment.
+
+:::info Example
+Payment has failed because of insufficient funds on the card, but the customer has made a payment on the balance to resolve the issue this will  prevent future payment failures due to insufficient funds.
+:::
+
+
+## Request
+This call will allow you to retry a payment for a recurring payment that is in a Failed state. This should be used when the state is `INSTRUMENT_FAILURE` and the issue with the payment method has been addressed.
+
+```graphql title="GraphQL"
+mutation {
+    createRetryForFailedRecurringPayment(
+        recurring_id: "" # Insert recurring_id
+)}
+
+```
+
+:::note  Additional Parameters
+View the extensive list of parameters for recurring payments in our API.
+
+<a href= "../../../api/recurring#create-retry-for-failed-recurring-payment" class="button button--primary button--md">View All Parameters</a>
+:::
+
+***
+
+## Return
+This returns if the attempt made for retry failed payment is successful or not.
+
+```JSON title="JSON"
+{
+    "data": 
+    {
+        "createRetryForFailedRecurringPayment": true
+    }
+}
+```
+***
+
+## Next Steps
+You always have the choice to either [cancel the recurring payments](cancel_recurring_payments.mdx) or check for any [missed recurring payments](missed_recurring_payment_data.mdx) related to recurring payments.
+

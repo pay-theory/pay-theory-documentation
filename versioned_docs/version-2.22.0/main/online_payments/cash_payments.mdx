@@ -1,0 +1,148 @@
+---
+sidebar_position: 3
+sidebar_label: 'Cash Payments'
+title: "Cash Payments"
+---
+
+
+import Tabs from '../../../components/Tabs';
+import TabItem from '@theme/TabItem';
+import Admonition from '@theme/Admonition';
+
+<Tabs
+  defaultValue="javascript"
+  values={[
+    {label: 'Javascript', value: 'javascript'},
+    {label: 'Apple', value: 'apple'},
+    {label: 'Android', value: 'android'},
+  ]}>
+<TabItem value="javascript">
+  
+
+# Cash Payments
+This guide will show you how to accept cash payments online with Pay Theory’s checkout as well as how to handle barcodes that are generated at checkout.  
+
+
+:::danger Before you start
+To use cash you will need to make sure the transact function is enabled in order to accept cash payments online.
+
+<a href= "../getting_started/Quickstart#6-once-the-fields-are-valid-run-transaction" class="button button--primary button--md">Transact function</a>
+:::
+
+## Using the transact function
+
+This function is used to submit a payment to Pay Theory or generate a barcode using Pay Theory’s cash fields. It returns a Promise with the result or an error.
+
+```jsx title="paytheory.js"
+//Amount passed in is in cents
+const AMOUNT = 1000
+
+// optionally provide details about the payor
+const PAYOR_INFO = {
+  "first_name": "Some",
+  "last_name": "Body",
+  "email": "somebody@gmail.com",
+  "phone": "3335554444",
+  "personal_address": {
+    "city": "Somewhere",
+    "country": "USA",
+    "region": "OH,
+  }
+}
+
+const BILLING_INFO = {
+  name: "Some Body",
+  address: {
+    line1: "123 Street St",
+    line2: "Apartment 17",
+    city: "Somewhere",
+    country: "USA"
+  }
+}
+
+const PAYMENT_METADATA = {
+  "student-name": "Jane Doe"
+};
+
+// Parameters that you will pass into the transact function. More details below.
+const TRANSACTING_PARAMETERS = { 
+  amount: AMOUNT, 
+  payorInfo: PAYOR_INFO, 
+  payorId: "pt_pay_XXXXXXXXX", // optional
+  metadata: PAYMENT_METADATA, // optional 
+}
+
+paytheory.transact(TRANSACTING_PARAMETERS)
+```
+
+The following are values that you can pass into the `transact` function to customize the payment. The only required key is `amount`.
+
+|Key                |type               |description                                                                                |
+--------------------|-------------------|-------------------------------------------------------------------------------------------|     
+| amount            |int                |It represents the amount to be charged in cents.                                           |
+| payorInfo         |object             |Refer to payor info here [payorinfo](../../sdk/JAVASCRIPT/FUNCTIONS#payor-info-object)|
+
+The function returns a Promise that will contain an object with a key of `type`. You can expect the following values for type:
+
+|Type               |description                                                                                       |
+--------------------|---------------------------------------------------------------------------------------------------|     
+| CASH              |The transact call successfully generated a barcode and the barcode details will be in the body key.|
+| ERROR             |The transact call had an error while processing and the error details will be in the error key.    |
+
+### Cash response
+
+This is the value of the `body` key in the response if the `type` is CASH:
+
+While generating the Barcode it will use the geolocation to return a map url for the user's specific location. If this is the first time it has been requested the user will have the opportunity to accept or decline the request.
+
+|Key                |type               |description                                               |
+--------------------|-------------------|----------------------------------------------------------|     
+| barcodeURL        |string             |The url for the barcode image.|
+| mapURL            |string             |The url for the map to find the retail locations to pay the barcode.|
+
+### Error response
+
+This is the value of the `error` key in the response if the `type` is ERROR:
+
+|Key                |type               |description                                               |
+|--------------------|-------------------|----------------------------------------------------------|     
+| message           |string             |The error message.|
+
+***
+
+## Cash Fields
+You can customize your cash fields based on your requirements and desired user experience.
+These fields are all required to collect cash information from the user.
+
+```jsx title="javascript"
+<form>
+<div id = "pay-theory-cash-name"></div>
+<div id = "pay-theory-cash-contact"></div>
+</form>
+```
+***
+
+## Next Steps
+You can also refer to different payment modes like [ACH](ach_payments.mdx) functionality and [QRCode](qr_code.mdx) functionality .
+
+
+</TabItem>
+  <TabItem value="apple">
+
+# Documentation Coming Soon
+Our Apple SDK is fully functional. If you would like to implement our Apple SDK select the link below for more information.
+<a href= "../../sdk/apple/MAIN" class="button button--primary button--md">View Apple SDK Reference</a>
+
+  </TabItem>
+
+  <TabItem value="android">
+
+# Documentation Coming Soon
+Our Android SDK is fully functional. If you would like to implement our Android SDK select the link below for more information.
+<a href= "../../sdk/android/MAIN" class="button button--primary button--md">View Android SDK Reference</a>
+
+  </TabItem>
+
+</Tabs>
+
+
