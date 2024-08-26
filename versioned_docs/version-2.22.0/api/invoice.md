@@ -6,7 +6,7 @@ title: "Invoice"
 
 # Invoice
 
-Invoices are used to create a payment request that can be sent to a payor. 
+Invoices are used to create a payment request that can be sent to a payor.
 
 ***
 ## The Invoice Object
@@ -36,7 +36,7 @@ Invoices are used to create a payment request that can be sent to a payor.
 ```
 
 |Key                |type         |       description                     |
-|-------------------|-------------|---------------------------------------|     
+|-------------------|-------------|---------------------------------------|
 |account_code       |String       |A custom value that will be passed on to the transaction when a payment is made through Pay Theory's hosted checkout.|
 |created_date       |String       |The date the invoice was created.|
 |currency           |String       |The currency of the payment that will be used to pay the invoice.|
@@ -69,18 +69,18 @@ Invoices are used to create a payment request that can be sent to a payor.
 }
 ```
 |Key                |type         | description                                                                                                                                                                                                |
-|-------------------|-------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|     
+|-------------------|-------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 |accepted_payment_methods|AcceptedPaymentMethods| The payment methods that will be accepted on the Pay Theory hosted checkout page.  <br/><br/> An object containing keys of `ach`, `card`, and `cash` with a boolean value indicating if they are accepted. |
 |is_secure          |Boolean      | When set to true, the payor will be required to enter a security pin to pay the invoice.                                                                                                                   |
 |require_payor_address|Boolean    | When set to true, the payor will be required to enter their address to pay the invoice.                                                                                                                    |
 |security_pin       |String       | The security pin that the payor will be required to enter to pay the invoice. This is only used if `is_secure` is set to true.                                                                             |
 
 ***
-## Query Invoices  
+## Query Invoices
 
 ```graphql
 {
-    invoices(direction: FORWARD, limit: 10, offset: "", offset_id: "", query: QueryObject) {
+    invoices(direction: MoveDirection, limit: Int, offset: String, offset_id: String, query: SqlQuery) {
         items {
             account_code
             created_date
@@ -135,15 +135,15 @@ Invoices are used to create a payment request that can be sent to a payor.
 ```
 
 |Key                |type         |       description                     |
-|-------------------|-------------|---------------------------------------|     
+|-------------------|-------------|---------------------------------------|
 |direction          |MoveDirection|The direction of the pagination. Makes sure the results are returned in the correct order.|
 |limit              |Int          |The number of invoices to return.|
 |offset             |String       |The value of the offset item for which the list is being sorted.|
 |offset_id          |String       |The `invoice_id` of the offset item.|
-|query              |QueryObject  |The query to filter the invoices with based on Pay Theory defined data.|
+|query              |SqlQuery  |The query to filter the invoices with based on Pay Theory defined data.|
 
 
-**Nested Queries**  
+**Nested Queries**
 Invoices can also be filtered by passing a `query_list` to the metadata or payor.
 
 This will only return Invoices that have Metadata or Payors that match these queries.  Detailed information about the query list can be found [here](query).
@@ -169,7 +169,7 @@ This will only return Invoices that have Metadata or Payors that match these que
 ```
 
 |Key                |type         |       description                     |
-|-------------------|-------------|---------------------------------------|     
+|-------------------|-------------|---------------------------------------|
 |items              |[Invoice](#the-invoice-object)[]|A list of invoices that match the query.|
 |total_row_count    |Int          |The total number of invoices that match the query.|
 
@@ -190,7 +190,7 @@ mutation {
 ```
 
 | Key   | type               | description                                                                     |
-|-------|--------------------|---------------------------------------------------------------------------------|     
+|-------|--------------------|---------------------------------------------------------------------------------|
 | input | CreateInvoiceInput | The input object that contains all the information needed to create an invoice. |
 
 ### Create Invoice Input
@@ -217,7 +217,7 @@ mutation {
 ```
 
 |Key                | type                                            |       description                     |
-|-------------------|-------------------------------------------------|---------------------------------------|     
+|-------------------|-------------------------------------------------|---------------------------------------|
 |account_code       | String                                          |A custom value that will be passed on to the transaction when a payment is made through Pay Theory's hosted checkout.|
 |currency           | String                                          |The currency of the payment that will be used to pay the invoice.|
 |due_by             | String                                          |The date that the payor is expected to pay the invoice by.|
@@ -235,7 +235,7 @@ mutation {
 |send_email         | Boolean                                         |When set to true, an email will be sent to the payor with a link to the hosted checkout page.|
 |settings           | [InvoiceSettingsInput](#invoice-settings-input) |The settings input object to configure settings for the Pay Theory hosted checkout page.|
 
-**Return**  
+**Return**
 The response will contain the invoice object that was created. More information on the [invoice object](#the-invoice-object).
 
 ***
@@ -248,7 +248,7 @@ The response will contain the invoice object that was created. More information 
 }
 ```
 |Key                |type         |       description                     |
-|-------------------|-------------|---------------------------------------|     
+|-------------------|-------------|---------------------------------------|
 |accepted_payment_methods|AcceptedPaymentMethodsInput|The payment methods that will be accepted on the Pay Theory hosted checkout page.  <br/><br/> An object containing keys of `ach`, `card`, and `cash` with a boolean value indicating if they are accepted. |
 |is_secure          |Boolean      |When set to true, the payor will be required to enter a security pin to pay the invoice.|
 |require_payor_address|Boolean    |When set to true, the payor will be required to enter their address to pay the invoice.|
@@ -272,7 +272,7 @@ mutation {
 **Parameters**
 
 |Key                |type         |       description                     |
-|-------------------|-------------|---------------------------------------|     
+|-------------------|-------------|---------------------------------------|
 |invoice_id         |String       |The Pay Theory unique identifier for the invoice to update.|
 |invoice_update_input|UpdateInvoiceInput|The input object that contains all of the information needed to update an invoice.|
 
@@ -294,7 +294,7 @@ mutation {
 }
 ```
 |Key                | type                                            | description                                                                                                                                                                    |
-|-------------------|-------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|     
+|-------------------|-------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 |account_code       | String                                          | A custom value that will be passed on to the transaction when a payment is made through Pay Theory's hosted checkout.                                                          |
 |currency           | String                                          | The currency of the payment that will be used to pay the invoice.                                                                                                              |
 |due_by             | String                                          | The date that the payor is expected to pay the invoice by.                                                                                                                     |
@@ -308,7 +308,7 @@ mutation {
 |send_email         | Boolean                                         | When set to true, an email will be sent to the payor with details about the updated invoice.                                                                                    |
 |settings           | [InvoiceSettingsInput](#invoice-settings-input) | The settings input object to configure settings for the Pay Theory hosted checkout page.                                                                                       |
 
-**Returns**  
+**Returns**
 The response will contain the invoice object that was updated. More information on the [invoice object](#the-invoice-object).
 
 ***
@@ -316,16 +316,16 @@ The response will contain the invoice object that was updated. More information 
 
 ```graphql
 mutation {
-    deleteInvoice(invoice_id: String!) 
+    deleteInvoice(invoice_id: String!)
 }
 ```
 
 **Parameters**
 |Key                |type         |       description                     |
-|-------------------|-------------|---------------------------------------|     
+|-------------------|-------------|---------------------------------------|
 |invoice_id         |String       |The Pay Theory unique identifier for the invoice to delete.|
 
-**Returns**  
+**Returns**
 The response will include a boolean value that will be true if the invoice was deleted successfully.
 
 ***
@@ -342,10 +342,10 @@ mutation {
 **Parameters**
 
 |Key                |type         |       description                     |
-|-------------------|-------------|---------------------------------------|     
+|-------------------|-------------|---------------------------------------|
 |invoice_id         |String       |The Pay Theory unique identifier for the invoice to send an email for.|
 
-**Returns**  
+**Returns**
 The response will include a boolean value that will be true if the email was sent successfully.
 
 ***
@@ -362,7 +362,7 @@ The response will include a boolean value that will be true if the email was sen
 }
 ```
 |Key                |type         |       description                     |
-|-------------------|-------------|---------------------------------------|     
+|-------------------|-------------|---------------------------------------|
 |amount             |Int          |The amount of the offline transaction.|
 |instance_id        |String       |The Pay Theory unique identifier for the offline transaction.|
 |invoice_id         |String       |The Pay Theory unique identifier for the invoice that the offline transaction is being applied to.|
@@ -391,7 +391,7 @@ mutation {
 **Parameters**
 
 |Key                |type         |       description                     |
-|-------------------|-------------|---------------------------------------|     
+|-------------------|-------------|---------------------------------------|
 |input              |CreateOfflineTransactionInput|The input object that contains all of the information needed to create an offline transaction.|
 
 **CreateOfflineTransactionInput**
@@ -406,7 +406,7 @@ mutation {
 ```
 
 |Key                |type         |       description                     |
-|-------------------|-------------|---------------------------------------|     
+|-------------------|-------------|---------------------------------------|
 |amount             |Int          |The amount of the offline transaction.|
 |invoice_id         |String       |The Pay Theory unique identifier for the invoice that the offline transaction is being applied to.|
 |note               |String       |A note that can be added to the offline transaction. This is a custom value that can be used to store information about the offline transaction.|
@@ -414,5 +414,5 @@ mutation {
 |type               |OfflineTransactionType|The type of offline transaction. It can be one of the following: `ACH`, `CARD`, `CASH`, `OTHER`.|
 
 
-**Returns**  
+**Returns**
 The response will contain the offline transaction object that was created. More information on the [offline transaction object](#offline-transaction-object).
