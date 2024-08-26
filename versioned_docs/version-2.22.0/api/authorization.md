@@ -4,9 +4,9 @@ sidebar_label: 'Authorization'
 title: "Authorization"
 ---
 
-# Authorization  
+# Authorization
 
-An authorization is used to reserve funds on a card for a future transaction.  It is not a charge, but it does reserve the funds on the card for a period of time.  The authorization will expire after a period of time if it is not captured.  
+An authorization is used to reserve funds on a card for a future transaction.  It is not a charge, but it does reserve the funds on the card for a period of time.  The authorization will expire after a period of time if it is not captured.
 
 *Authorizations are currently only available for certain processors.  Please contact Pay Theory for more information.*
 ***
@@ -36,7 +36,7 @@ An authorization is used to reserve funds on a card for a future transaction.  I
 ```
 
 |Key                |type         |       description                     |
-|-------------------|-------------|---------------------------------------|     
+|-------------------|-------------|---------------------------------------|
 |account_code       |String       |Custom defined value passed in as the account code for the authorization.|
 |amount             |Int!         |The amount of the authorization in cents.|
 |authorization_date |AWSDateTime! |The date and time the authorization was created.|
@@ -61,7 +61,7 @@ An authorization is used to reserve funds on a card for a future transaction.  I
 
 ```graphql
 {
-    authorizations(direction: FORWARD, limit: 10, offset: "", offset_id: "", query: QueryObject) {
+    authorizations(direction: MoveDirection, limit: Int, offset: String, offset_id: String, query: SqlQuery) {
         items {
             account_code
             amount
@@ -98,16 +98,16 @@ An authorization is used to reserve funds on a card for a future transaction.  I
 **Parameters**
 
 |Key                |type         |       description                     |
-|-------------------|-------------|---------------------------------------|     
+|-------------------|-------------|---------------------------------------|
 |limit              |Int          |The number of authorizations to return.|
 |direction          |String       |The direction of the pagination. Makes sure the results are returned in the correct order.|
 |offset             |String       |The value of the offset item for which the list is being sorted.  If the direction is `FORWARD`, the offset item is the last item in the previous list.  If the direction is `BACKWARD`, the offset is the first item in the previous list.|
 |offset_id          |String       |The `authorization_id` of the offset item. If the direction is `FORWARD`, the offset item is the last item in the list. If the direction is `BACKWARD`, the offset is the first item in the list.|
-|query              |QueryObject  |The query to filter the authorizations with based on Pay Theory defined data.  Detailed information about the query object can be found [here](query).|
+|query              |SqlQuery  |The query to filter the authorizations with based on Pay Theory defined data.  Detailed information about the query object can be found [here](query).|
 
 
-**Nested Queries**  
-Authorizations can also be filtered by passing a query_list to the metadata, payment method, or payor tied to the payment method.  
+**Nested Queries**
+Authorizations can also be filtered by passing a query_list to the metadata, payment method, or payor tied to the payment method.
 
 This will only return Authorizations that have Metadata, Payment Methods, or Payors that match these queries.  Detailed information about the query list can be found [here](query).
 
@@ -116,17 +116,17 @@ This will only return Authorizations that have Metadata, Payment Methods, or Pay
 
 ```graphql
 mutation {
-  createAuthorization( account_code: "", 
-                       amount: 10, 
-                       fee: 10, 
-                       fee_mode: MERCHANT_FEE, 
-                       health_expense_type: CLINICAL, 
-                       invoice_id: "", 
-                       merchant_uid: "", 
-                       metadata: "false", 
-                       payment_method: {}, 
-                       payment_method_id: "", 
-                       reference: "", 
+  createAuthorization( account_code: "",
+                       amount: 10,
+                       fee: 10,
+                       fee_mode: MERCHANT_FEE,
+                       health_expense_type: CLINICAL,
+                       invoice_id: "",
+                       merchant_uid: "",
+                       metadata: "false",
+                       payment_method: {},
+                       payment_method_id: "",
+                       reference: "",
                        sale_id: "") {
       authorization_id
       ...
@@ -137,7 +137,7 @@ mutation {
 **Parameters**
 
 |Key                |type         |       description                     |
-|-------------------|-------------|---------------------------------------|     
+|-------------------|-------------|---------------------------------------|
 |account_code       |String       |Custom defined value passed in as the account code for the authorization.|
 |amount             |Int!         |The amount of the authorization in cents.|
 |fee                |Int          |The amount of the service fee in cents.|
@@ -161,13 +161,13 @@ The authorization object.  Refer to the [Authorization Object](#the-authorizatio
 
 ```graphql
 mutation {
-    createCapture( allow_exceeded_amount: false, 
-                   allow_reauth: false, 
+    createCapture( allow_exceeded_amount: false,
+                   allow_reauth: false,
                    amount: 10,
                    fee: 10,
-                   authorization_id: "", 
-                   merchant_uid: "", 
-                   receipt_description: "", 
+                   authorization_id: "",
+                   merchant_uid: "",
+                   receipt_description: "",
                    send_receipt: false) {
         transaction_id
         ...
@@ -179,7 +179,7 @@ mutation {
 **Parameters**
 
 |Key                |type         | description                                                                                                                                                                                                                                                                                                                                                    |
-|-------------------|-------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|     
+|-------------------|-------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 |allow_exceeded_amount|Boolean    | Whether to allow the capture to exceed the amount of the authorization.  <br/><br/>If this is set to `true` Pay Theory will release the hold on the current auth and create a new auth for the amount of the capture.  <br/><br/>If this is set to `false` or left blank, the capture will fail if the amount is greater than the amount of the authorization. |
 |allow_reauth       |Boolean      | Whether to allow the capture to be reauthorized in the case that it is expired.  <br/><br/>If this is set to `true` Pay Theory will reauthorize the capture if it is expired.  <br/><br/>If this is set to `false` or left blank, the capture will fail if it is expired.                                                                                      |
 |amount             |Int!         | The amount of the capture in cents. If auth has a `fee_mode` of `SERVICE_FEE` this amount would be the amount without the fee included.                                                                                                                                                                                                                        |
@@ -197,7 +197,7 @@ The transaction object.  Refer to the [Transaction Object](transaction.md) for m
 ***
 ## Void Authorization
 
-This will void an authorization that has not been captured.  If the authorization has been captured, this call will fail. 
+This will void an authorization that has not been captured.  If the authorization has been captured, this call will fail.
 
 *Partial voids are not supported by all processors and cannot be processed on an Amex authorization.  Please contact Pay Theory for more information.*
 
@@ -210,9 +210,9 @@ mutation {
 **Parameters**
 
 |Key                |type         | description                                                                                  |
-|-------------------|-------------|----------------------------------------------------------------------------------------------|     
+|-------------------|-------------|----------------------------------------------------------------------------------------------|
 |authorization_id   |String!      | The Pay Theory unique identifier assigned to the authorization that you are looking to void. |
 |void_amount        |Int!         | The amount of the void in cents. <br/><br/>   *Partial voids are not supported by all processors and cannot be processed on an Amex authorization.  Please contact Pay Theory for more information.*                                               |
 
-**Returns**  
+**Returns**
 This call returns a boolean indicating if the void was successful.

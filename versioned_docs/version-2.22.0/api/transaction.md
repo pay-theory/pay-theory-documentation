@@ -46,7 +46,7 @@ Transactions are a data object that can represent a payment, failed or successfu
 ```
 
 | Key                | type                                                                       | description                                                               |
-|--------------------|----------------------------------------------------------------------------|---------------------------------------------------------------------------|     
+|--------------------|----------------------------------------------------------------------------|---------------------------------------------------------------------------|
 | account_code       | String                                                                     | Customer defined account code for the transaction.                        |
 | ach_return_details | AchReturnDetails                                                           | The details of the ACH return if any.                                     |
 | authorization_id   | String                                                                     | The authorization id for the transaction.                                 |
@@ -117,7 +117,7 @@ Transactions are a data object that can represent a payment, failed or successfu
 
 ***
 ### Refund Reason Code
-    
+
 - `DUPLICATE`
 - `FRAUDULENT`
 - `OTHER`
@@ -148,7 +148,7 @@ Transactions are a data object that can represent a payment, failed or successfu
 ## Query Transactions
 ```graphql
 {
-  transactions(direction: FORWARD, limit: 10, offset: "", offset_id: "", query: QueryObject) {
+  transactions(direction: MoveDirection, limit: Int, offset: String, offset_id: String, query: SqlQuery) {
     items {
       account_code
       currency
@@ -193,14 +193,14 @@ Transactions are a data object that can represent a payment, failed or successfu
 **Arguments**
 
 |Key                |type         |       description                     |
-|-------------------|-------------|---------------------------------------|     
+|-------------------|-------------|---------------------------------------|
 |direction          |MoveDirection|The direction of the pagination. Makes sure the results are returned in the correct order.|
 |limit              |Int          |The number of transactions to return.|
 |offset             |String       |The value of the offset item for which the list is being sorted.|
 |offset_id          |String       |The `transaction_id` of the offset item.|
-|query              |QueryObject  |The query to filter the transactions with based on Pay Theory defined data. Detailed information about the query object can be found [here](query).|
+|query              |SqlQuery  |The query to filter the transactions with based on Pay Theory defined data. Detailed information about the query object can be found [here](query).|
 
-**Nested Queries**  
+**Nested Queries**
 Transactions can also be filtered by passing a query_list to the metadata, payment method, or payor tied to the payment method.
 
 This will only return Transactions that have Metadata, Payment Methods, or Payors that match these queries.  Detailed information about the query list can be found [here](query).
@@ -228,7 +228,7 @@ This will only return Transactions that have Metadata, Payment Methods, or Payor
 ```
 
 |Key                | type          | description                                                                          |
-|-------------------|---------------|--------------------------------------------------------------------------------------|     
+|-------------------|---------------|--------------------------------------------------------------------------------------|
 |items              | [Transaction] | The list of transactions that are returned from the query.                           |
 |total_row_count    | Int           | The total number of transactions that match the query. Used to help with pagination. |
 
@@ -237,19 +237,19 @@ This will only return Transactions that have Metadata, Payment Methods, or Payor
 
 ```graphql
 mutation {
-  createTransaction(amount: Int, 
-          merchant_uid: String, 
-          payment_method_id: String, 
+  createTransaction(amount: Int,
+          merchant_uid: String,
+          payment_method_id: String,
           payment_method: PaymentMethodInput,
-          account_code: String, 
-          currency: String, 
-          fee: Int, 
+          account_code: String,
+          currency: String,
+          fee: Int,
           fee_mode: FeeMode,
-          invoice_id: String, 
-          metadata: JSON, 
-          receipt_description: String, 
-          recurring_id: String, 
-          reference: String, 
+          invoice_id: String,
+          metadata: JSON,
+          receipt_description: String,
+          recurring_id: String,
+          reference: String,
           send_receipt: Boolean) {
       account_code
       currency
@@ -292,7 +292,7 @@ mutation {
 **Arguments**
 
 | Key                 | type                   | description                                                                                                                                                                                                                   |
-|---------------------|------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|     
+|---------------------|------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | amount              | Int!                   | The amount of the transaction. If the FeeMode is `SERVICE_FEE`, this is the amount of the transaction before fees.                                                                                                            |
 | merchant_uid        | String!                | The Pay Theory unique identifier for the merchant the transaction is for.                                                                                                                                                     |
 | payment_method_id   | String                 | The Pay Theory unique identifier for the payment method the transaction will be charged to.                                                                                                                                   |
@@ -321,9 +321,9 @@ This call will create a refund for a transaction.
 
 ```graphql
 mutation {
-  createRefund(amount: Int, 
-               refund_reason: { reason_code: RefundReasonCode, reason_details: String }, 
-               transaction_id: String, 
+  createRefund(amount: Int,
+               refund_reason: { reason_code: RefundReasonCode, reason_details: String },
+               transaction_id: String,
                refund_email: String )
 }
 ```
@@ -331,7 +331,7 @@ mutation {
 **Arguments**
 
 |Key                | type                           |       description                     |
-|-------------------|--------------------------------|---------------------------------------|     
+|-------------------|--------------------------------|---------------------------------------|
 |amount             | Int                            |The amount of the refund. This must be less than or equal to the amount of the transaction.|
 |refund_reason      | [RefundReason](#refund-reason) |The reason for the refund. This is required for all refunds and is made up of the following.|
 |transaction_id     | String                         |The Pay Theory unique identifier for the transaction to refund.|
@@ -362,7 +362,7 @@ This call will allow you to calculate what the fee amount should be if using `SE
 **Arguments**
 
 | Key          | type    | description                                                                                  |
-|--------------|---------|----------------------------------------------------------------------------------------------|     
+|--------------|---------|----------------------------------------------------------------------------------------------|
 | amount       | Int     | The amount of the transaction.                                                               |
 | merchant_uid | String  | The Pay Theory unique identifier for the merchant the transaction is for.                    |
 | is_ach       | Boolean | If the transaction is an ACH transaction.                                                    |
@@ -385,16 +385,16 @@ This call will send a receipt for a transaction to the email address on file wit
 
 ```graphql
 mutation MyMutation($email: AWSEmail, $receipt_description: String, $transaction_id: String!) {
-  createReceiptEmail(transaction_id: $transaction_id, 
+  createReceiptEmail(transaction_id: $transaction_id,
                      email: $email,
                      receipt_description: $receipt_description)
 }
 ```
 
-**Arguments**  
+**Arguments**
 
 | Key                  | type     | description                                                                                                                               |
-|----------------------|----------|-------------------------------------------------------------------------------------------------------------------------------------------|     
+|----------------------|----------|-------------------------------------------------------------------------------------------------------------------------------------------|
 | transaction_id       | String!  | The Pay Theory unique identifier for the transaction to send the receipt for.                                                             |
 | email                | AWSEmail | The email address to send the receipt to. If not provided the email address on file with the payor will be used.                          |
 | receipt_description  | String   | The description of the transaction that will be displayed on the receipt. If not provided it will just say "Payment to `merchant_name`".  |

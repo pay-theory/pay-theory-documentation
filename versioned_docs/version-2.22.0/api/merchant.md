@@ -42,7 +42,7 @@ Merchants are the entities that are using Pay Theory to accept payments.
 
 ### The Fee Matrix Object
 
-This object is used to calculate the fees that are charged to the payor. `card`, `ach`, and `cash` are the main fee objects that are used to calculate the fees for each transaction type.  
+This object is used to calculate the fees that are charged to the payor. `card`, `ach`, and `cash` are the main fee objects that are used to calculate the fees for each transaction type.
 
 The other objects are used to calculate fees for specific card brands or card types and are optional. If they are not set, the fees will be calculated using the `card` object.
 
@@ -71,7 +71,7 @@ Card brands can only be used to charge different fees when using the `MERCHANT_F
     service_fee_enabled: Boolean!
     visa: CardBrandFee
 }
-``` 
+```
 
 |Key                |type         | description                                                                                                                           |
 |-------------------|-------------|---------------------------------------------------------------------------------------------------------------------------------------|
@@ -159,7 +159,7 @@ type CardServiceFee {
 
 **Parameters**
 |Key                |type         |       description                     |
-|-------------------|-------------|---------------------------------------|     
+|-------------------|-------------|---------------------------------------|
 |merchant_name      |String       |The name of the merchant to query.|
 |merchant_uid       |String       |The `merchant_uid` of the merchant to query.|
 
@@ -177,7 +177,7 @@ type CardServiceFee {
 ```
 
 |Key                | type                             |       description                     |
-|-------------------|----------------------------------|---------------------------------------|     
+|-------------------|----------------------------------|---------------------------------------|
 |merchant          | [Merchant](#the-merchant-object) |The merchant object that is returned from the query.|
 
 ***
@@ -214,7 +214,7 @@ This is a limited merchant object that is returned when you want to query a list
 ## Query Merchants
 ```js
 {
-    merchants(direction: FORWARD, limit: 10, offset: "", offset_id: "", query: QueryObject) {
+    merchants(direction: MoveDirection, limit: Int, offset: String, offset_id: String, query: SqlQuery) {
         items {
             ach_active
             card_active
@@ -233,12 +233,12 @@ This is a limited merchant object that is returned when you want to query a list
 **Parameters**
 
 |Key                |type         |       description                     |
-|-------------------|-------------|---------------------------------------|     
+|-------------------|-------------|---------------------------------------|
 |direction          |MoveDirection|The direction of the pagination. Makes sure the results are returned in the correct order.|
 |limit              |Int          |The number of merchants to return.|
 |offset             |String       |The value of the offset item for which the list is being sorted.|
 |offset_id          |String       |The `merchant_uid` of the offset item.|
-|query              |QueryObject  |The query to filter the merchants with based on Pay Theory defined data.|
+|query              |SqlQuery  |The query to filter the merchants with based on Pay Theory defined data.|
 
 **Returns**
 
@@ -262,7 +262,7 @@ This is a limited merchant object that is returned when you want to query a list
 ```
 
 |Key                |type         |       description                     |
-|-------------------|-------------|---------------------------------------|     
+|-------------------|-------------|---------------------------------------|
 |items              |[ListMerchant]|The list of merchants that are returned from the query.|
 |total_row_count    |Int          |The total number of merchants that match the query. Used to help with pagination.|
 
@@ -292,14 +292,14 @@ mutation {
 **Parameters**
 
 |Key                |type         |       description                     |
-|-------------------|-------------|---------------------------------------|     
+|-------------------|-------------|---------------------------------------|
 |merchant_name      |String       |The name of the merchant to create.|
 |parent_merchant_uid|String       |The `merchant_uid` of the parent merchant.  This is only set if the merchant belongs to another merchant account.|
 |user               |User         |The user that will be created for the merchant.  This user will be given access to the onboarding form on Merchant creation.|
 
 **User Parameters**
 |Key                |type         |       description                     |
-|-------------------|-------------|---------------------------------------|     
+|-------------------|-------------|---------------------------------------|
 |email              |AWSEmail     |The email address of the user. Must be a valid email address or the mutation will fail.|
 |first_name         |String       |The first name of the user.|
 |last_name          |String       |The last name of the user.|
@@ -318,7 +318,7 @@ mutation {
 }
 ```
 |Key                |type        |       description                     |
-|-------------------|------------|---------------------------------------|     
+|-------------------|------------|---------------------------------------|
 |createMerchant     |ListMerchant|The newly created merchant object.|
 
 
@@ -356,7 +356,7 @@ mutation {
 |-------------------|-------------|---------------------------------------|
 |fee_matrix         |FeeMatrixInput|The new fee matrix that will be used to calculate the fees for the merchant.|
 
-**Fee Matrix Input Object**  
+**Fee Matrix Input Object**
 
 The only required key in the update is the `merchant_uid`.  All other keys are optional.  If they are not set, the current value will be kept.
 If you want to update an optional field to be null, you can set the value to `null`.
