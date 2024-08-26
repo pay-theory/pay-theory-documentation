@@ -7,25 +7,25 @@ title: "Deprecated"
 
 ## Create One Time Payment
 
-This call was deprecated in favor of the [`createTransaction`](transaction.md#create-transaction) mutation.  
+This call was deprecated in favor of the [`createTransaction`](transaction.md#create-transaction) mutation.
 The `createTransaction` mutation returns a more detailed response than this call.
 
 ```graphql
 mutation {
-  createOneTimePayment(amount: Int, 
-          merchant_uid: String, 
-          payment_method_id: String, 
-          payment_method: PaymentMethodInput,
-          account_code: String, 
-          currency: String, 
-          fee: Int, 
-          fee_mode: FeeMode,
-          invoice_id: String, 
-          metadata: JSON, 
-          receipt_description: String, 
-          recurring_id: String, 
-          reference: String, 
-          send_receipt: Boolean) {
+  createOneTimePayment(amount: Int,
+    merchant_uid: String,
+    payment_method_id: String,
+    payment_method: PaymentMethodInput,
+    account_code: String,
+    currency: String,
+    fee: Int,
+    fee_mode: FeeMode,
+    invoice_id: String,
+    metadata: JSON,
+    receipt_description: String,
+    recurring_id: String,
+    reference: String,
+    send_receipt: Boolean) {
     amount
     card_brand
     created_at
@@ -41,7 +41,7 @@ mutation {
 **Arguments**
 
 | Key                 | type                   | description                                                                                                                                                                                                                   |
-|---------------------|------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|     
+|---------------------|------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | amount              | Int!                   | The amount of the transaction. If the FeeMode is `SERVICE_FEE`, this is the amount of the transaction before fees.                                                                                                            |
 | merchant_uid        | String!                | The Pay Theory unique identifier for the merchant the transaction is for.                                                                                                                                                     |
 | payment_method_id   | String                 | The Pay Theory unique identifier for the payment method the transaction will be charged to.                                                                                                                                   |
@@ -77,21 +77,50 @@ mutation {
 }
 ```
 
-|Key                | type                                     | description                                                                |
-|-------------------|------------------------------------------|----------------------------------------------------------------------------|     
-|status             | [TransactionStatus](#transaction-status) | The status of the transaction.                                             |
-|amount             | Int                                      | The amount of the transaction.                                             |
-|card_brand         | String                                   | The brand of the card used for the transaction.                            |
-|last_four          | String                                   | The last four digits of the card or bank account used for the transaction. |
-|service_fee        | Int                                      | The amount of the service fee charged for the transaction.                 |
-|currency           | String                                   | The type of currency for the transaction.                                  |
-|transaction_id     | String                                   | The Pay Theory unique identifier for the transaction.                      |
-|created_at         | DateTime                                 | The date and time the transaction was created.                             |
+|Key                | type                                                   | description                                                                |
+|-------------------|--------------------------------------------------------|----------------------------------------------------------------------------|
+|status             | [TransactionStatus](transaction.md#transaction-status) | The status of the transaction.                                             |
+|amount             | Int                                                    | The amount of the transaction.                                             |
+|card_brand         | String                                                 | The brand of the card used for the transaction.                            |
+|last_four          | String                                                 | The last four digits of the card or bank account used for the transaction. |
+|service_fee        | Int                                                    | The amount of the service fee charged for the transaction.                 |
+|currency           | String                                                 | The type of currency for the transaction.                                  |
+|transaction_id     | String                                                 | The Pay Theory unique identifier for the transaction.                      |
+|created_at         | DateTime                                               | The date and time the transaction was created.                             |
+
+***
+
+## Create Refund
+
+This call will create a refund for a transaction.
+
+```graphql
+mutation {
+  createRefund(amount: Int,
+               refund_reason: { reason_code: RefundReasonCode, reason_details: String },
+               transaction_id: String,
+               refund_email: String )
+}
+```
+
+**Arguments**
+
+| Key            | type                                         | description                                                                                     |
+|----------------|----------------------------------------------|-------------------------------------------------------------------------------------------------|
+| amount         | Int                                          | The amount of the refund. This must be less than or equal to the amount of the transaction.     |
+| refund_reason  | [RefundReason](transaction.md#refund-reason) | The reason for the refund. This is required for all refunds and is made up of the following.    |
+| transaction_id | String                                       | The Pay Theory unique identifier for the transaction to refund.                                 |
+| refund_email   | String                                       | The email address to send the refund receipt to. If not provided an email will not be sent out. |
+
+
+**Returns**
+
+The call will return a boolean `true` if the refund was created successfully or errors if it fails.
 
 ***
 ## Calculate Service Fee Amount
 
-This call was deprecated in favor of the [`serviceFee`](transaction.md#calculate-service-fee) query.  
+This call was deprecated in favor of the [`serviceFee`](transaction.md#calculate-service-fee) query.
 The `serviceFee` query returns a single fee object that contains the fee, total, and adjusted total for the transaction based on the amount and payment method details passed in.
 
 ```graphql
@@ -114,7 +143,7 @@ The `serviceFee` query returns a single fee object that contains the fee, total,
 **Arguments**
 
 |Key                |type         |       description                     |
-|-------------------|-------------|---------------------------------------|     
+|-------------------|-------------|---------------------------------------|
 |amount             |Int          |The amount of the transaction.|
 |merchant_uid       |String       |The Pay Theory unique identifier for the merchant the transaction is for.|
 
@@ -143,7 +172,7 @@ The `serviceFee` query returns a single fee object that contains the fee, total,
 You are returned two objects, one for ACH and one for Card. Each object contains the following fields:
 
 |Key                |type         |       description                     |
-|-------------------|-------------|---------------------------------------|     
+|-------------------|-------------|---------------------------------------|
 |fee                |Int          |The amount that the service fee should be based on the amount passed in.|
 |total              |Int          |The total amount of the transaction before the service fee. This is what you would want to pass in the `amount` argument for the `createOneTimePayment` call.|
 |adjusted_total     |Int          |The total amount of the transaction after the service fee. This is what you would want to show the payor the total amount of the transaction will be.|

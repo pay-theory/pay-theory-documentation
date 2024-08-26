@@ -18,6 +18,7 @@ An authorization is used to reserve funds on a card for a future transaction.  I
     amount: Int!
     authorization_date: AWSDateTime!
     authorization_id: String!
+    avs_status: String
     currency: String!
     expiration_date: AWSDateTime
     failure_reasons: [String]
@@ -41,6 +42,7 @@ An authorization is used to reserve funds on a card for a future transaction.  I
 |amount             |Int!         |The amount of the authorization in cents.|
 |authorization_date |AWSDateTime! |The date and time the authorization was created.|
 |authorization_id   |String!      |The Pay Theory unique identifier assigned to the authorization.|
+|avs_status         |String       |The AVS status of the authorization.|
 |currency           |String!      |The currency of the authorization.  Currently only `USD` is supported.|
 |expiration_date    |AWSDateTime  |The date and time the authorization will expire.|
 |failure_reasons    |[String]     |Array of failure reasons for the authorization.  If the authorization is successful, this will be null.|
@@ -116,18 +118,19 @@ This will only return Authorizations that have Metadata, Payment Methods, or Pay
 
 ```graphql
 mutation {
-  createAuthorization( account_code: "",
-                       amount: 10,
-                       fee: 10,
+  createAuthorization( account_code: String,
+                       amount: Int,
+                       fee: Int,
                        fee_mode: MERCHANT_FEE,
                        health_expense_type: CLINICAL,
-                       invoice_id: "",
-                       merchant_uid: "",
-                       metadata: "false",
+                       invoice_id: String,
+                       merchant_uid: String,
+                       metadata: AWSJSON,
+                       one_time_use_token: Boolean,
                        payment_method: {},
-                       payment_method_id: "",
-                       reference: "",
-                       sale_id: "") {
+                       payment_method_id: String,
+                       reference: String,
+                       sale_id: String) {
       authorization_id
       ...
   }
@@ -136,20 +139,21 @@ mutation {
 
 **Parameters**
 
-|Key                |type         |       description                     |
-|-------------------|-------------|---------------------------------------|
-|account_code       |String       |Custom defined value passed in as the account code for the authorization.|
-|amount             |Int!         |The amount of the authorization in cents.|
-|fee                |Int          |The amount of the service fee in cents.|
-|fee_mode           |FeeMode!     |The fee mode for the authorization.  It can be one of the following: `SERVICE_FEE`, `MERCHANT_FEE`|
-|health_expense_type|HealthExpenseType|The health expense type for the authorization.  It can be one of the following: `CLINICAL`, `COPAY`, `DENTAL`, `HEALTHCARE`, `RX`, `TRANSIT`, `VISION`|
-|invoice_id         |String       |The Pay Theory unique identifier assigned to the invoice that the authorization belongs to.|
-|merchant_uid       |String!      |The Pay Theory unique identifier assigned to the merchant that the authorization belongs to.|
-|metadata           |AWSJSON      |Any additional data that should be stored with the authorization.|
-|payment_method     |PaymentMethodInput|The payment method input object for the payment method that will be used for the authorization.  More information on the payment method input object can be found [here](payment_method_token.md#payment-method-input-object).|
-|payment_method_id  |String       |The Pay Theory unique identifier assigned to the payment method that will be used for the authorization.|
-|reference          |String       |Custom defined value passed in as the reference for the authorization.|
-|sale_id            |String       |The Pay Theory unique identifier assigned to the sale that the authorization belongs to. Sales can be used to tie together multiple auths and captures.|
+| Key                 | type               | description                                                                                                                                                                                                                    |
+|---------------------|--------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| account_code        | String             | Custom defined value passed in as the account code for the authorization.                                                                                                                                                      |
+| amount              | Int!               | The amount of the authorization in cents.                                                                                                                                                                                      |
+| fee                 | Int                | The amount of the service fee in cents.                                                                                                                                                                                        |
+| fee_mode            | FeeMode!           | The fee mode for the authorization.  It can be one of the following: `SERVICE_FEE`, `MERCHANT_FEE`                                                                                                                             |
+| health_expense_type | HealthExpenseType  | The health expense type for the authorization.  It can be one of the following: `CLINICAL`, `COPAY`, `DENTAL`, `HEALTHCARE`, `RX`, `TRANSIT`, `VISION`                                                                         |
+| invoice_id          | String             | The Pay Theory unique identifier assigned to the invoice that the authorization belongs to.                                                                                                                                    |
+| merchant_uid        | String!            | The Pay Theory unique identifier assigned to the merchant that the authorization belongs to.                                                                                                                                   |
+| metadata            | AWSJSON            | Any additional data that should be stored with the authorization.                                                                                                                                                              |
+| one_time_use_token  | Boolean            | If the payment method token should be used for a single transaction. Defaults to `false`. If set to `true` the `is_active` flag on the payment method will be set to false after the authorization.                            |
+| payment_method      | PaymentMethodInput | The payment method input object for the payment method that will be used for the authorization.  More information on the payment method input object can be found [here](payment_method_token.md#payment-method-input-object). |
+| payment_method_id   | String             | The Pay Theory unique identifier assigned to the payment method that will be used for the authorization.                                                                                                                       |
+| reference           | String             | Custom defined value passed in as the reference for the authorization.                                                                                                                                                         |
+| sale_id             | String             | The Pay Theory unique identifier assigned to the sale that the authorization belongs to. Sales can be used to tie together multiple auths and captures.                                                                        |
 
 
 **Returns**
@@ -203,16 +207,16 @@ This will void an authorization that has not been captured.  If the authorizatio
 
 ```graphql
 mutation {
-    createVoidForAuthorization(authorization_id: String!, void_amount: Int!)
+  createVoidForAuthorization(authorization_id: String!, void_amount: Int @deprecated(reason: "Only full voids are supported.")): Boolean
 }
 ```
 
 **Parameters**
 
-|Key                |type         | description                                                                                  |
-|-------------------|-------------|----------------------------------------------------------------------------------------------|
-|authorization_id   |String!      | The Pay Theory unique identifier assigned to the authorization that you are looking to void. |
-|void_amount        |Int!         | The amount of the void in cents. <br/><br/>   *Partial voids are not supported by all processors and cannot be processed on an Amex authorization.  Please contact Pay Theory for more information.*                                               |
+| Key              | type    | description                                                                                  |
+|------------------|---------|----------------------------------------------------------------------------------------------|
+| authorization_id | String! | The Pay Theory unique identifier assigned to the authorization that you are looking to void. |
+| ~~void_amount~~  | Int!    | The amount of the void in cents. <br/><br/> *Deprecated* Only full voids are supported.      |
 
 **Returns**
 This call returns a boolean indicating if the void was successful.
