@@ -5,7 +5,7 @@ title: "Making a Payment with Payment Method Tokens"
 ---
 
 
-import Tabs from '../../../../components/Tabs';
+import Tabs from '@site/components/Tabs';
 import TabItem from '@theme/TabItem';
 import Admonition from '@theme/Admonition';
 
@@ -21,19 +21,19 @@ import Admonition from '@theme/Admonition';
 # Making a Payment with Payment Method Tokens
 This guide will walk you through how to make a one time payment by using the payment method token.
 
-## Create one time payment 
+## Create one time payment
 Sensitive information like credit card numbers or bank account numbers are replaced by the payment method token.
 
 ```graphql title="GraphQL"
 mutation {
   createTransaction(amount: Int,
-  merchant_uid: String, 
-  payment_method_id: String, 
-  account_code: String, 
-  currency: String, 
-  fee: Int, 
+  merchant_uid: String,
+  payment_method_id: String,
+  account_code: String,
+  currency: String,
+  fee: Int,
   fee_mode: FeeMode,
-  invoice_id: String, 
+  invoice_id: String,
   metadata: JSON) {
     amount
     card_brand
@@ -49,7 +49,7 @@ mutation {
 
 ### Required Arguments
 |Key                |type         |       description                     |
-|-------------------|-------------|---------------------------------------|     
+|-------------------|-------------|---------------------------------------|
 | amount            |int        |The amount of the transaction. If the FeeMode is SERVICE_FEE, this is the amount of the transaction before fees.|
 | merchant_uid      |string      |The Pay Theory unique identifier for the merchant the transaction is for.|
 | payment_method_id  |string     |The Pay Theory unique identifier for the payment method the transaction will be charged to.|
@@ -59,7 +59,7 @@ mutation {
 
 ### Optional Arguments
 |Key                 |type             |description                                 |
-|---------------------|-----------------|--------------------------------------------|    
+|---------------------|-----------------|--------------------------------------------|
 | account_code      |string     | Customer defined account code for the transaction.|
 | currency          |string     |The type of currency for the transaction. Defaults to USD.|
 | invoice_id        |string     | The Pay Theory unique identifier for the invoice the transaction is for.|
@@ -71,7 +71,7 @@ mutation {
 The createTransaction mutation will return a [transaction object](/docs/api/transaction#create-transaction)
 
 |Key                 |type             |description                                 |
-|--------------------|-----------------|--------------------------------------------|    
+|--------------------|-----------------|--------------------------------------------|
 | status             |TransactionStatus|The status of the transaction. Options are:<ul><li>PENDING</li><li>SUCCEEDED</li><li>FAILED</li></ul> |
 | amount             |int              |The amount of the transaction. This is the amount after fees if the FeeMode is SERVICE_FEE.|
 | card_brand         |string           |The brand of the card used for the transaction.|

@@ -5,7 +5,7 @@ title: "Create a Subscription"
 
 ---
 
-import Tabs from '../../../components/Tabs';
+import Tabs from '@site/components/Tabs';
 import TabItem from '@theme/TabItem';
 import Admonition from '@theme/Admonition';
 
@@ -21,7 +21,7 @@ mutation {
   createRecurringPayment(input: {
             amount: 500,  # Amount in pennies
             merchant_uid: "", # Insert merchant_uid
-            payment_interval: MONTHLY, 
+            payment_interval: MONTHLY,
             payment_method_id: "", # Insert tokenized payment method
             recurring_name: "Lawn Care Digest",
             payor: {

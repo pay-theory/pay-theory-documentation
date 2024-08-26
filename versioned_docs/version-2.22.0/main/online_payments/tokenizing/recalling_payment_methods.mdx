@@ -5,7 +5,7 @@ title: "Recalling Payment Methods"
 ---
 
 
-import Tabs from '../../../../components/Tabs';
+import Tabs from '@site/components/Tabs';
 import TabItem from '@theme/TabItem';
 import Admonition from '@theme/Admonition';
 
@@ -19,7 +19,7 @@ import Admonition from '@theme/Admonition';
   <TabItem value="javascript">
 
 # Recalling Payment Method
-This guide will walk you through calling back payment method tokens for a specific payor using our API. 
+This guide will walk you through calling back payment method tokens for a specific payor using our API.
 
 ## Understanding the payment method token object
 Payment Method Tokens are meant to store info that represents a tokenized Bank Account, Credit Card, or Debit Card.
@@ -39,7 +39,7 @@ This is what the token object looks like
 ```
 
 |Key                 |type             |description                                 |
-|--------------------|-----------------|--------------------------------------------|     
+|--------------------|-----------------|--------------------------------------------|
 |  payment_method_id | string          |The unique payment method id.|
 |  merchant_uid      | string          |The Pay Theory unique identifier assigned to the merchant that the payment_method_token belongs to.|
 | payor              |PayorObject      |The payor object. Refer to the Payor docs for more info.|
@@ -54,7 +54,7 @@ This is what the token object looks like
 Tokens are used to reference a payment method and enable transactions rather than managing credit card numbers and bank account information directly.
 
 :::info Additional Query information
-If you are unfamiliar with query writing, you can learn about fundamental query structure from the information provided below. 
+If you are unfamiliar with query writing, you can learn about fundamental query structure from the information provided below.
 
 <a href= "../../../api/QUERY" class="button button--primary button--md">View Query Details</a>
 :::
@@ -66,7 +66,7 @@ query  paymentMethodTokens(direction: FORWARD, limit: 10, query:{
     key: "exp_date",
     value: "05%",
     operator : LIKE
-    conjunctive_operator: OR_NEXT  
+    conjunctive_operator: OR_NEXT
   },
   {
     key: "card_brand",
@@ -96,7 +96,7 @@ The output response will come back in JSON format as an array of payment method 
 
 ***
 
-##  Next Steps 
+##  Next Steps
 You can also refer to how to make [one time payment Transaction](making_a_payment_with_payment_tokens.mdx)
 
 

@@ -4,7 +4,7 @@ sidebar_label: 'Quickstart'
 title: "Tokenization Quickstart"
 ---
 
-import Tabs from '../../../../components/Tabs';
+import Tabs from '@site/components/Tabs';
 import TabItem from '@theme/TabItem';
 import Admonition from '@theme/Admonition';
 
@@ -23,7 +23,7 @@ This quickstart will show you how to securely tokenize a user's payment method s
 
 
 :::danger Before you start
-In order to tokenize a payment method you need be set up to accept online payments.  
+In order to tokenize a payment method you need be set up to accept online payments.
 
 <a href= "../../getting_started/Quickstart" class="button button--primary button--md">Accepting Online Payments</a>
 :::
@@ -49,7 +49,7 @@ paytheory.tokenizePaymentMethod(TOKENIZE_PAYMENT_METHOD_PARAMETERS)
 These are the parameters that you can pass into the tokenizePaymentMethod function to tokenize a card or bank account.
 
 |Key                |type               |description                                               |
---------------------|-------------------|----------------------------------------------------------|     
+--------------------|-------------------|----------------------------------------------------------|
 | payorInfo         |object             |see the Payor Info object below for details|
 | billingInfo       |object             |see the Billing Info object below for details. This is required if you are not using the zip hosted field.|
 | metadata          |object             |An object that will be stored with the token and can be used to track the token.|
@@ -71,7 +71,7 @@ After the payment is successful you can see the token has been generated and thi
 This is the value of the body key in the response if the type is TOKENIZED:
 
 |Key                   |type               |description                                               |
-|-----------------------|-------------------|----------------------------------------------------------|     
+|-----------------------|-------------------|----------------------------------------------------------|
 |  payment_method_id   |string             |The Pay Theory id for the payment method token. |
 |  payor_id            |string            | The Pay Theory id for the payor that was used for the payment method token.|
 | last_four            |string             | The last four digits of the card number or account number.|
@@ -84,8 +84,8 @@ This is the value of the body key in the response if the type is TOKENIZED:
 This is the value of the error key in the response if the type is ERROR:
 
 |Key                   |type               |description                                               |
------------------------|-------------------|----------------------------------------------------------|     
-| message              |string             |The error message.|  
+-----------------------|-------------------|----------------------------------------------------------|
+| message              |string             |The error message.|
 
 ***
 

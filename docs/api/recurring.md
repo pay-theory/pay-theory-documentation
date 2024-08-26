@@ -1,5 +1,5 @@
 ---
-sidebar_position: 50
+sidebar_position: 12
 sidebar_label: 'Recurring'
 title: "Recurring"
 ---
@@ -44,7 +44,7 @@ You can also create a recurring payment with no set payment amounts to enable a 
 ```
 
 |Key                | type                                     |       description                     |
-|-------------------|------------------------------------------|---------------------------------------|
+|-------------------|------------------------------------------|---------------------------------------|     
 |account_code       | String                                   |Custom account code for the recurring payment that will be tied to each payment.|
 |amount_per_payment| Int                                      |The amount of the recurring payment.|
 |created_date       | DateTime                                 |The date the recurring payment was created.|
@@ -86,7 +86,7 @@ The interval of the recurring payment. The following intervals are available:
 
 The status of the recurring payment. The following statuses are available:
 
-- `SYSTEM_FAILURE`
+- `SYSTEM_FAILURE` 
   - The recurring payment failed due to a system error. Will retry automatically till system issue resolved.
 - `INSTRUMENT_FAILURE`
   - The recurring payment failed due to a payment method error. Will not retry until payment method is updated.
@@ -98,7 +98,7 @@ The status of the recurring payment. The following statuses are available:
 
 ```graphql
 {
-    recurringPayments(direction: MoveDirection, limit: Int, offset: String, offset_id: String, query: SqlQuery) {
+    recurringPayments(direction: MoveDirection, limit: Int, offset: String, offset_id: String, query: QueryObject) {
         items {
             account_code
             amount_per_payment
@@ -135,15 +135,15 @@ The status of the recurring payment. The following statuses are available:
 **Parameters**
 
 |Key                |type         |       description                     |
-|-------------------|-------------|---------------------------------------|
+|-------------------|-------------|---------------------------------------|     
 |direction          |MoveDirection|The direction of the pagination. Makes sure the results are returned in the correct order.|
 |limit              |Int          |The number of recurring payments to return.|
 |offset             |String       |The value of the offset item for which the list is being sorted.|
 |offset_id          |String       |The `recurring_id` of the offset item.|
-|query              |SqlQuery  |The query to filter the recurring payments with based on Pay Theory defined data. Detailed information about the query object can be found [here](query).|
+|query              |QueryObject  |The query to filter the recurring payments with based on Pay Theory defined data. Detailed information about the query object can be found [here](query).|
 
 
-**Nested Queries**
+**Nested Queries**  
 Recurring Payments can also be filtered by passing a query_list to the metadata, payment method, or payor.
 
 This will only return Recurring Payments that have Metadata, Payment Methods, or Payors that match these queries.  Detailed information about the query list can be found [here](query).
@@ -152,7 +152,7 @@ This will only return Recurring Payments that have Metadata, Payment Methods, or
 **Returns**
 
 |Key                |type         |       description                     |
-|-------------------|-------------|---------------------------------------|
+|-------------------|-------------|---------------------------------------|     
 |items              |[RecurringPayment] |The list of recurring payments that are returned from the query.|
 |total_row_count    |Int          |The total number of recurring payments that match the query. Used to help with pagination.|
 
@@ -193,7 +193,7 @@ mutation {
 **RecurringPaymentInput**
 
 | Key                   | type                                      | description                                                                                              |
-|-----------------------|-------------------------------------------|----------------------------------------------------------------------------------------------------------|
+|-----------------------|-------------------------------------------|----------------------------------------------------------------------------------------------------------|     
 | account_code          | String                                    | Custom account code for the recurring payment that will be tied to each payment.                         |
 | amount                | Int!                                      | The amount of the recurring payment.                                                                     |
 | currency              | String                                    | The type of currency for the recurring payment.                                                          |
@@ -221,7 +221,7 @@ The call will return the newly created recurring payment.
 
 ```graphql
 mutation {
-    updateRecurringPayment(
+    updateRecurringPayment( 
       input: {
         payment_method_id: String,
         recurring_id: String,
@@ -236,14 +236,14 @@ mutation {
 **Parameters**
 
 |Key               | type                        | description                                                                 |
-|------------------|-----------------------------|-----------------------------------------------------------------------------|
+|------------------|-----------------------------|-----------------------------------------------------------------------------|     
 |input             | UpdateRecurringPaymentInput | The input object that contains the details to update the recurring payment. |
 
 
 **UpdateRecurringPaymentInput**
 
 | Key                     | type    |       description                     |
-|-------------------------|---------|---------------------------------------|
+|-------------------------|---------|---------------------------------------|     
 | payment_method_id       | String  |The `payment_method_id` of the tokenized payment method that will be used for the recurring payment.|
 | recurring_id            | String! |The `recurring_id` of the recurring payment to be updated.|
 | pay_all_missed_payments | Boolean |If the recurring payment has a set number of payments &#40;Payment Plan&#41; and is in a Failed state, this will make a one time charge to account for all missed payments to get it back in to a Successful state.|
@@ -267,7 +267,7 @@ mutation {
 **Parameters**
 
 |Key                |type         | description                                                   |
-|-------------------|-------------|---------------------------------------------------------------|
+|-------------------|-------------|---------------------------------------------------------------|     
 |recurring_id       |String       | The `recurring_id` of the recurring payment to be cancelled.  |
 
 **Returns**
@@ -292,13 +292,13 @@ This call will return details you need to display the proper amount to the custo
 **Parameters**
 
 |Key                |type         |       description                     |
-|-------------------|-------------|---------------------------------------|
+|-------------------|-------------|---------------------------------------|     
 |recurring_id       |String       |The `recurring_id` of the recurring payment to get missed payment data for.|
 
 **Returns**
 
 | Key                       |type         | description                                                                                                                                                                                                                                          |
-|---------------------------|-------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|---------------------------|-------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|     
 | fee                       |Int          | If the recurring payment has fee_mode set to `SERVICE_FEE`, this will be the total amount of fees that will be charged to the customer to payoff the missed payments.  <br/><br/> If the recurring payment has fee_mode set to `MERCHANT_FEE`, this will be 0. |
 | number_of_payments_missed |Int          | The number of payments that have been missed.                                                                                                                                                                                                        |
 | total_amount_owed         |Int          | The total amount that the customer will owe to payoff the missed payments.                                                                                                                                                                           |
@@ -306,8 +306,8 @@ This call will return details you need to display the proper amount to the custo
 ***
 ## Create Retry for Failed Recurring Payment
 
-This call will allow you to retry a payment for a recurring payment that is in a Failed state.
-This should be used when the state is `INSTRUMENT_FAILURE` and the issue with the payment method has been addressed.
+This call will allow you to retry a payment for a recurring payment that is in a Failed state.  
+This should be used when the state is `INSTRUMENT_FAILURE` and the issue with the payment method has been addressed.  
 *EX: Payment failed for insufficient funds on the card, but the customer has since made a payment on the balance to resolve the issue.*
 
 ```graphql
@@ -319,7 +319,7 @@ mutation {
 **Parameters**
 
 |Key                |type         |       description                     |
-|-------------------|-------------|---------------------------------------|
+|-------------------|-------------|---------------------------------------|     
 |recurring_id       |String       |The `recurring_id` of the recurring payment to be retried.|
 
 **Returns**

@@ -5,7 +5,7 @@ title: "ACH Payments"
 
 ---
 
-import Tabs from '../../../components/Tabs';
+import Tabs from '@site/components/Tabs';
 import TabItem from '@theme/TabItem';
 import Admonition from '@theme/Admonition';
 
@@ -16,7 +16,7 @@ import Admonition from '@theme/Admonition';
     {label: 'Apple', value: 'apple'},
     {label: 'Android', value: 'android'},
   ]}>
-  
+
   <TabItem value="javascript">
 
 # Accepting ACH Payments
@@ -44,7 +44,7 @@ When you want to call a function from Pay Theory SDK you will need to use one of
 ` paytheory ` or ` window.paytheory `
 ***
 
-## 3. Add Pay Theory elements to your form 
+## 3. Add Pay Theory elements to your form
 You need to add the Pay Theory elements to your form. You can place these elements anywhere in your form and the SDK will place the hosted fields in the correct place.
 
 ```jsx title="javascript"
@@ -71,7 +71,7 @@ paytheory.errorobserver(error => {
 ***
 
 ## 5. Initialize the Pay Theory fields
-After you have set up all the event listeners, you can initialize the Pay Theory fields by calling the 
+After you have set up all the event listeners, you can initialize the Pay Theory fields by calling the
 ` payTheoryFields `  function.
 
 ```jsx title="javascript"
@@ -98,7 +98,7 @@ The only required field for the transact parameters is the amount field. You can
 const AMOUNT = 1000
 
 // Parameters that you will pass into the transact function. More details below.
-const TRANSACTING_PARAMETERS = { 
+const TRANSACTING_PARAMETERS = {
     amount: AMOUNT
 }
 

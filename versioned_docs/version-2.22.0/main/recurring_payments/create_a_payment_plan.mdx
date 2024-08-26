@@ -5,7 +5,7 @@ title: "Create a Payment Plan"
 ---
 
 
-import Tabs from '../../../components/Tabs';
+import Tabs from '@site/components/Tabs';
 import TabItem from '@theme/TabItem';
 import Admonition from '@theme/Admonition';
 
@@ -19,9 +19,9 @@ In the following example Pat Johnson purchased a lawn mower for $1000.00. Howeve
 mutation {
   createRecurringPayment(input: {
             amount: 10000,  # Amount in pennies
-            payment_count: 10, 
+            payment_count: 10,
             merchant_uid: "", # Insert merchant_uid
-            payment_interval: MONTHLY, 
+            payment_interval: MONTHLY,
             payment_method_id: "", # Insert tokenized payment method
             recurring_name: "Lawn Mower",
             payor: {

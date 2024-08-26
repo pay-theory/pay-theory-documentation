@@ -44,7 +44,7 @@ const cleanupFunction =  window.paytheory.errorObserver(error => {
 
 **Callback Parameter**
 
-The callback will be passed a string indicating what happened in the SDK. The string should begin with one of the codes shown [here](ERRORS).
+The callback will be passed a string indicating what happened in the SDK. The string should begin with one of the codes shown [here](errors).
 
 Most errors will require the user to refresh the page and try again.
 
@@ -91,14 +91,14 @@ The callback will be passed a state object. The state object will include an obj
 Each of the above keys will contain an object with the following keys:
 
 |Key                |type         |       description                     |
-|-------------------|-------------|---------------------------------------|     
+|-------------------|-------------|---------------------------------------|
 |isFocused          |boolean      |Indicates if the field is focused|
 |isDirty            |boolean      |Indicates if the field currently has text entered|
 |errorMessages      |array        |Array of error messages if the field is invalid|
 
 *Note: If using the combined card field you will receive state updates for number, cvv, and exp separately*
 
-This can be used to help if you want to display field specific error messages or style the fields based on the state.  
+This can be used to help if you want to display field specific error messages or style the fields based on the state.
 This can also be used to help if you are using the Card Billing fields to capture the payor info and want to ensure the fields are filled out.
 
 **Returns**

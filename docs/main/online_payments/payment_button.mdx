@@ -4,10 +4,10 @@ sidebar_label: 'Payment Button'
 title: "Payment Button"
 ---
 
-import Tabs from '../../../components/Tabs';
+import Tabs from '@site/components/Tabs';
 import TabItem from '@theme/TabItem';
 import Admonition from '@theme/Admonition';
-  
+
 
 # Payment Button
 This guide will walk you through the steps to create a payment button that will take users to a paytheory checkout page.
@@ -23,12 +23,12 @@ The SDK URL can be found in the Pay Theory portal under the settings tab as the 
 ***
 
 ## 2. Add Pay Theory element to your Html
-This div is used to mount an iframe that will include a checkout button. You need to add the Pay Theory elements to your HTML. You can place these elements anywhere in your HTML and the SDK will place the button in the correct place. 
+This div is used to mount an iframe that will include a checkout button. You need to add the Pay Theory elements to your HTML. You can place these elements anywhere in your HTML and the SDK will place the button in the correct place.
 
 ```html
 <div id="pay-theory-checkout-button" ></div>
 ```
-*** 
+***
 
 ## 3. Prepare the checkout details
 You will need to put together the details of the checkout. This includes the amount, payment name, and any other details you want to pass to the checkout.
@@ -42,14 +42,14 @@ const PAYMENT_METADATA = {
 };
 
 // Parameters that you will pass in to configure the checkout page that opens when the button is clicked.
-const CHECKOUT_DETAILS = { 
-  amount: AMOUNT, 
+const CHECKOUT_DETAILS = {
+  amount: AMOUNT,
   paymentName: “user-name”
 
-  acceptedPaymentMethods: paytheory.CARD_ONLY, 
-  payorId: "pt_pay_XXXXXXXXX", 
-  metadata: PAYMENT_METADATA,  
-  recurringId: "pt_rec_XXXXXXXXX", 
+  acceptedPaymentMethods: paytheory.CARD_ONLY,
+  payorId: "pt_pay_XXXXXXXXX",
+  metadata: PAYMENT_METADATA,
+  recurringId: "pt_rec_XXXXXXXXX",
 }
 ```
 These are the parameters that you can pass into the `checkoutDetails` object to customize the checkout page that opens when the button is clicked.
@@ -57,20 +57,20 @@ These are the parameters that you can pass into the `checkoutDetails` object to 
 ### Required parameters:
 
 |Key                |type               |description                                                                                |
---------------------|-------------------|-------------------------------------------------------------------------------------------|     
+--------------------|-------------------|-------------------------------------------------------------------------------------------|
 | amount            |int                |The amount of the payment in cents.                                           |
 | paymentName       |string             |The name of the payment that will be displayed on the checkout page. Will also be passed in to the reference field of the transaction.|
 
 ### Optional parameters:
 
 |Key                      |type               |description                                                                                |
---------------------------|-------------------|-------------------------------------------------------------------------------------------|     
+--------------------------|-------------------|-------------------------------------------------------------------------------------------|
 | acceptedPaymentMethods  |string             |<ul><li> The payment methods that will be accepted for the payment. Defaults to `paytheory.ALL`.</li><li>Constants are available from the SDK.</li><li>Available options are `paytheory.ONLY_CARD`, `paytheory.ONLY_ACH`, `paytheory.ONLY_CASH`, `paytheory.NOT_CARD`,  `paytheory.NOT_ACH`, `paytheory.NOT_CASH`, and `paytheory.ALL`.</li></ul> |
 | payorId                 |string             |The Pay Theory id for the payor that will be used for the payment. If this is not passed in, a new payor will be created.|
 | metadata                |JSON               |The metadata that will be passed into the transaction.|
 | recurring ID            |string             |<ul><li>The Pay Theory recurring ID to use for the payment. Allows for users to assign a payment to a recurring payment.</li><li>If you pass in a recurring ID, the transaction amount must be an interval of the recurring payments amount per payment.</li></ul>|
 
-*** 
+***
 
 ## 4. Create the Button
 Using the button function, you can make the button. Send the style object, the checkout details, and the action-handling routines. To manage the button's actions, you can write functions. Among them are `onReady`, `onClick`, `onSuccess`, `onError`, and `onCancel`.
@@ -100,19 +100,19 @@ You pass a single object into the function with the following keys.
 
 ### Required parameters
 |Key                      |type               |description                                                                                |
---------------------------|-------------------|-------------------------------------------------------------------------------------------|     
+--------------------------|-------------------|-------------------------------------------------------------------------------------------|
 | apiKey                  |string             |The API key for your Pay Theory account. You can find this in your Pay Theory Portal.|
 | checkoutDetails         |object             |The details for the checkout page that opens when the button is clicked. Details are mentioned [above](#prepare-the-checkout-details).|
 
 ### Optional parameters
 
 |Key                      |type               |description                                                                                |
---------------------------|-------------------|-------------------------------------------------------------------------------------------|     
+--------------------------|-------------------|-------------------------------------------------------------------------------------------|
 | onReady                 |function           |A function that will be called when the button is ready to be clicked.|
 | onClick                 |function           |A function that will be called when the button is clicked.|
 | onError                 |function           |A function that will be called when an error occurs. It is passed an error string.|
 | onCancel                |function           |A function that will be called when the user cancels the payment from the pop-up window.|
-| onSuccess               |function           |A function that will be called when the payment is successful. It is passed an object with the following values. <ul><li>last_four (String): The last four digits of the card number or account number.</li><li>amount (Int): The amount of the transaction (service fee is included).</li><li>service_fee (Int): The service fee of the transaction.</li><li>receipt_number (String): The Pay Theory receipt number.</li><li>brand (String): The brand of the card.</li><li>created_at (String): The date and time the transaction was created.</li><li>state (String): The status of the transaction.</li><li>metadata (JSON): The metadata of the transaction.</li><li>payor_id (String): The Pay Theory id for the payor that was used for the transaction.</li><li>payment_method_id (String): The Pay Theory id for the payment method token.</li></ul>  
+| onSuccess               |function           |A function that will be called when the payment is successful. It is passed an object with the following values. <ul><li>last_four (String): The last four digits of the card number or account number.</li><li>amount (Int): The amount of the transaction (service fee is included).</li><li>service_fee (Int): The service fee of the transaction.</li><li>receipt_number (String): The Pay Theory receipt number.</li><li>brand (String): The brand of the card.</li><li>created_at (String): The date and time the transaction was created.</li><li>state (String): The status of the transaction.</li><li>metadata (JSON): The metadata of the transaction.</li><li>payor_id (String): The Pay Theory id for the payor that was used for the transaction.</li><li>payment_method_id (String): The Pay Theory id for the payment method token.</li></ul>
 | onBarcode               |function           |A function that will be called when a barcode is successfully created and the user closes the window. It is passed an object with the following values.<ul><li> barcodeUrl (String): The url for the barcode image.</li><li> mapUrl (String): The url for the map to find retail locations to pay the barcode.</li></ul>
 
 

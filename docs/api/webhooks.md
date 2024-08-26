@@ -1,5 +1,5 @@
 ---
-sidebar_position: 50
+sidebar_position: 15
 sidebar_label: 'Webhooks'
 title: "Webhooks"
 ---
@@ -127,10 +127,10 @@ A webhook event object represents a webhook trigger, meaning it may have sent a 
 
 Can be one of the following:
 
-`SUCCESS`
+`SUCCESS`  
 The notification was successfully received (2xx response) by your endpoint.
 
-`FAILURE`
+`FAILURE`  
 The notification was not successfully received (4xx or 5xx response, or no response at all) by your endpoint.
 
 `IGNORED`

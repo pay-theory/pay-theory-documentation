@@ -4,7 +4,7 @@ sidebar_label: Get Missed Recurring Payment Data
 title: "Get Missed Recurring Payment Data"
 ---
 
-import Tabs from '../../../../components/Tabs';
+import Tabs from '@site/components/Tabs';
 import TabItem from '@theme/TabItem';
 import Admonition from '@theme/Admonition';
 
@@ -19,7 +19,7 @@ This is useful if you want to charge a customer for all missed payments at once 
 {
     query missedRecurringPaymentData(
         recurring_id: "" # Insert recurring_id
-    ) 
+    )
     {
         fee
         number_of_payments_missed

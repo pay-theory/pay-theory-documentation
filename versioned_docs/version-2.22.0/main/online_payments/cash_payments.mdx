@@ -5,7 +5,7 @@ title: "Cash Payments"
 ---
 
 
-import Tabs from '../../../components/Tabs';
+import Tabs from '@site/components/Tabs';
 import TabItem from '@theme/TabItem';
 import Admonition from '@theme/Admonition';
 
@@ -17,10 +17,10 @@ import Admonition from '@theme/Admonition';
     {label: 'Android', value: 'android'},
   ]}>
 <TabItem value="javascript">
-  
+
 
 # Cash Payments
-This guide will show you how to accept cash payments online with Pay Theory’s checkout as well as how to handle barcodes that are generated at checkout.  
+This guide will show you how to accept cash payments online with Pay Theory’s checkout as well as how to handle barcodes that are generated at checkout.
 
 
 :::danger Before you start
@@ -65,11 +65,11 @@ const PAYMENT_METADATA = {
 };
 
 // Parameters that you will pass into the transact function. More details below.
-const TRANSACTING_PARAMETERS = { 
-  amount: AMOUNT, 
-  payorInfo: PAYOR_INFO, 
+const TRANSACTING_PARAMETERS = {
+  amount: AMOUNT,
+  payorInfo: PAYOR_INFO,
   payorId: "pt_pay_XXXXXXXXX", // optional
-  metadata: PAYMENT_METADATA, // optional 
+  metadata: PAYMENT_METADATA, // optional
 }
 
 paytheory.transact(TRANSACTING_PARAMETERS)
@@ -78,14 +78,14 @@ paytheory.transact(TRANSACTING_PARAMETERS)
 The following are values that you can pass into the `transact` function to customize the payment. The only required key is `amount`.
 
 |Key                |type               |description                                                                                |
---------------------|-------------------|-------------------------------------------------------------------------------------------|     
+--------------------|-------------------|-------------------------------------------------------------------------------------------|
 | amount            |int                |It represents the amount to be charged in cents.                                           |
-| payorInfo         |object             |Refer to payor info here [payorinfo](../../sdk/JAVASCRIPT/FUNCTIONS#payor-info-object)|
+| payorInfo         |object             |Refer to payor info here [payorinfo](../../sdk/javascript/functions#payor-info-object)|
 
 The function returns a Promise that will contain an object with a key of `type`. You can expect the following values for type:
 
 |Type               |description                                                                                       |
---------------------|---------------------------------------------------------------------------------------------------|     
+--------------------|---------------------------------------------------------------------------------------------------|
 | CASH              |The transact call successfully generated a barcode and the barcode details will be in the body key.|
 | ERROR             |The transact call had an error while processing and the error details will be in the error key.    |
 
@@ -96,7 +96,7 @@ This is the value of the `body` key in the response if the `type` is CASH:
 While generating the Barcode it will use the geolocation to return a map url for the user's specific location. If this is the first time it has been requested the user will have the opportunity to accept or decline the request.
 
 |Key                |type               |description                                               |
---------------------|-------------------|----------------------------------------------------------|     
+--------------------|-------------------|----------------------------------------------------------|
 | barcodeURL        |string             |The url for the barcode image.|
 | mapURL            |string             |The url for the map to find the retail locations to pay the barcode.|
 
@@ -105,7 +105,7 @@ While generating the Barcode it will use the geolocation to return a map url for
 This is the value of the `error` key in the response if the `type` is ERROR:
 
 |Key                |type               |description                                               |
-|--------------------|-------------------|----------------------------------------------------------|     
+|--------------------|-------------------|----------------------------------------------------------|
 | message           |string             |The error message.|
 
 ***
@@ -131,7 +131,7 @@ You can also refer to different payment modes like [ACH](ach_payments.mdx) funct
 
 # Documentation Coming Soon
 Our Apple SDK is fully functional. If you would like to implement our Apple SDK select the link below for more information.
-<a href= "../../sdk/apple/MAIN" class="button button--primary button--md">View Apple SDK Reference</a>
+<a href= "../../sdk/apple/main" class="button button--primary button--md">View Apple SDK Reference</a>
 
   </TabItem>
 
@@ -139,7 +139,7 @@ Our Apple SDK is fully functional. If you would like to implement our Apple SDK 
 
 # Documentation Coming Soon
 Our Android SDK is fully functional. If you would like to implement our Android SDK select the link below for more information.
-<a href= "../../sdk/android/MAIN" class="button button--primary button--md">View Android SDK Reference</a>
+<a href= "../../sdk/android/main" class="button button--primary button--md">View Android SDK Reference</a>
 
   </TabItem>
 

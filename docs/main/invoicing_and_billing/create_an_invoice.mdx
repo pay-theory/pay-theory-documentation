@@ -4,7 +4,7 @@ sidebar_label: Create an Invoice
 title: "Create an Invoice"
 ---
 
-import Tabs from '../../../components/Tabs';
+import Tabs from '@site/components/Tabs';
 import TabItem from '@theme/TabItem';
 import Admonition from '@theme/Admonition';
 
@@ -12,13 +12,13 @@ import Admonition from '@theme/Admonition';
 Invoices are used to create a payment request that can be sent to a payor. This guide will walk you through how to create an invoice.
 
 ## Request
-The following example will send an invoice to Pat Johnson. The invoice is for $100.00 USD and is for tutoring services. 
+The following example will send an invoice to Pat Johnson. The invoice is for $100.00 USD and is for tutoring services.
 
 ```graphql title="GraphQL"
 mutation {
     createInvoice(input:{
         invoice_amount: 10000, # Amount in pennies
-        invoice_name: "Tutoring Services", 
+        invoice_name: "Tutoring Services",
         merchant_uid: "", # Insert merchant_uid
         payor: {
             full_name: "Pat Johnson",

@@ -1,5 +1,5 @@
 ---
-sidebar_position: 50
+sidebar_position: 7
 sidebar_label: 'Settlement'
 title: "Settlement"
 ---
@@ -34,7 +34,7 @@ Settlements are a batch of payments, disputes, and refunds that are grouped toge
 ```
 
 | Key                        | type   | description                                                                                                  |
-|----------------------------|--------|--------------------------------------------------------------------------------------------------------------|
+|----------------------------|--------|--------------------------------------------------------------------------------------------------------------|     
 | currency                   | String | The currency of the settlement.                                                                              |
 | ~~gross_amount~~           | Int    | The total amount of the settlement before any fees and adjustments.                                          |
 | gross_amount_64bit         | String | The total amount of the settlement before any fees in a string format to support 64-bit Int                  |
@@ -55,15 +55,15 @@ Settlements are a batch of payments, disputes, and refunds that are grouped toge
 | updated_row_at             | String | The date the settlement was last updated in an ISO 8601 String format.                                       |
 
 :::note Deprecations
-The `@deprecated` directive is used to indicate that the field is deprecated and will be removed in a future version.
-GraphQL does not support Int64, so we use a string to support 64-bit Integers.
+The `@deprecated` directive is used to indicate that the field is deprecated and will be removed in a future version.   
+GraphQL does not support Int64, so we use a string to support 64-bit Integers.  
 A 32-bit Int is between 2,147,483,647 and -2,147,483,648. Any value outside of this range will be passed in as a 0 to the deprecated Int fields to avoid the call failing.
 :::
 
 ## Query Settlements
 ```js
 {
-    settlements(limit: Int, direction: MoveDirection, offset: String, offset_id: String, query: SqlQuery) {
+    settlements(limit: Int, direction: MoveDirection, offset: String, offset_id: String, query: QueryObject) {
         items {
             currency
             gross_amount
@@ -86,12 +86,12 @@ A 32-bit Int is between 2,147,483,647 and -2,147,483,648. Any value outside of t
 **Parameters**
 
 | Key       | type          | description                                                                                |
-|-----------|---------------|--------------------------------------------------------------------------------------------|
+|-----------|---------------|--------------------------------------------------------------------------------------------|     
 | limit     | Int           | The number of settlements to return.                                                       |
 | direction | MoveDirection | The direction of the pagination. Makes sure the results are returned in the correct order. |
 | offset    | String        | The value of the offset item for which the list is being sorted.                           |
 | offset_id | String        | The `settlement_batch` of the offset item.                                                 |
-| query     | SqlQuery   | The query to filter the settlements with based on Pay Theory defined data.                 |
+| query     | QueryObject   | The query to filter the settlements with based on Pay Theory defined data.                 |
 
 **Returns**
 
@@ -114,6 +114,6 @@ A 32-bit Int is between 2,147,483,647 and -2,147,483,648. Any value outside of t
 }
 ```
 | Key             | type         | description                                                                         |
-|-----------------|--------------|-------------------------------------------------------------------------------------|
+|-----------------|--------------|-------------------------------------------------------------------------------------|     
 | items           | [Settlement] | The list of settlements that are returned from the query.                           |
 | total_row_count | Int          | The total number of settlements that match the query. Used to help with pagination. |

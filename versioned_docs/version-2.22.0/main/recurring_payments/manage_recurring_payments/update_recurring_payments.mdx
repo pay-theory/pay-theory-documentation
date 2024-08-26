@@ -5,7 +5,7 @@ title: "Update Recurring Payment"
 ---
 
 
-import Tabs from '../../../../components/Tabs';
+import Tabs from '@site/components/Tabs';
 import TabItem from '@theme/TabItem';
 import Admonition from '@theme/Admonition';
 
@@ -25,7 +25,7 @@ mutation {
 	updateRecurringPayment(input: {
         payment_method_id: "", # Insert payment_method_id
         recurring_id: "", # Insert recurring_id
-    }) 
+    })
     {
         amount_per_payment
         remaining_payments
