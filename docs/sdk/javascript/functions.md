@@ -23,11 +23,12 @@ paytheory.payTheoryFields({
 
 These are the parameters that you can pass into the `payTheoryFields` function to customize the Hosted Fields.
 
-|Key                | type                                        |       description                     |
-|-------------------|---------------------------------------------|---------------------------------------|
-|apiKey             | String                                      |Your Pay Theory API key. This is required to initialize the Hosted Fields.|
-|styles             | [Style Object](hosted_fields#styles-object) |An object that contains the styles for the Hosted Fields.|
-|placeholders       | Object                                      |An object that contains any custom placeholders you would like to use for the fields.|
+| Key          | type                                        | description                                                                                                                                                                                                                                  |
+|--------------|---------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| apiKey       | String                                      | Your Pay Theory API key. This is required to initialize the Hosted Fields.                                                                                                                                                                   |
+| country      | String                                      | The country code for the country of the merchant you are initializing the SDK for. This should alight with the `country_code` on their [merchant](/docs/api/merchant#the-merchant-object) object. Defaults to `USA` if nothing is passed in. |
+| placeholders | Object                                      | An object that contains any custom placeholders you would like to use for the fields.                                                                                                                                                        |
+| styles       | [Style Object](hosted_fields#styles-object) | An object that contains the styles for the Hosted Fields.                                                                                                                                                                                    |
 
 ***
 ## transact
@@ -72,20 +73,21 @@ const PAYMENT_METADATA = {
 
 // Parameters that you will pass into the transact function. More details below.
 const TRANSACTING_PARAMETERS = {
-        amount: AMOUNT,
-        payorInfo: PAYOR_INFO, // optional
-        billingInfo: BILLING_INFO, // optional
-        payorId: "pt_pay_XXXXXXXXX", // optional
-        metadata: PAYMENT_METADATA, // optional
-        feeMode: FEE_MODE, // optional
-        fee: 100, // optional
-        confirmation: false, // optional
-        accountCode: "code-123456789", // optional
-        reference: "field-trip", // optional
-        invoiceId: "pt_inv_XXXXXXXXX", // optional
-        sendReceipt: true, // optional
-        receiptDescription: "School Technology Fees", // optional
-        recurringId: "pt_rec_XXXXXXXXX", // optional
+    accountCode: "code-123456789", // optional
+    amount: AMOUNT,
+    billingInfo: BILLING_INFO, // optional
+    confirmation: false, // optional
+    fee: 100, // optional
+    feeMode: FEE_MODE, // optional
+    invoiceId: "pt_inv_XXXXXXXXX", // optional
+    metadata: PAYMENT_METADATA, // optional
+    oneTimeUseToken: false, // optional
+    payorId: "pt_pay_XXXXXXXXX", // optional
+    payorInfo: PAYOR_INFO, // optional
+    receiptDescription: "School Technology Fees", // optional
+    recurringId: "pt_rec_XXXXXXXXX", // optional
+    reference: "field-trip", // optional
+    sendReceipt: true, // optional
 }
 
 paytheory.transact(TRANSACTING_PARAMETERS)
@@ -93,23 +95,23 @@ paytheory.transact(TRANSACTING_PARAMETERS)
 
 These are the parameters that you can pass into the `transact` function to customize the payment.
 
-| Key                | type                                 | description                                                                                                                                                                                                                                                                                             |
-|--------------------|--------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| amount             | Int                                  | The amount of the transaction in cents.                                                                                                                                                                                                                                                                 |
-| payorInfo          | [Payor Info](#payor-info-object)     | Details of the payor who is making the transaction.                                                                                                                                                                                                                                                     |
-| billingInfo        | [Billing Info](#billing-info-object) | Billing info for the payment method. This is required if you are not using the `zip` hosted field.                                                                                                                                                                                                      |
-| metadata           | Object                               | An object that will be stored with the transaction and can be used to track the payment.                                                                                                                                                                                                                |
-| feeMode            | String                               | Defaults to `window.paytheory.MERCHANT_FEE`. If available to merchant and set to `window.paytheory.SERVICE_FEE` the fee will be added to the amount and charged to the payor. More details about the fee modes in your Pay Theory Portal.                                                               |
-| fee                | Int                                  | Represents the fee to be charged in cents. If you are using `SERVICE_FEE` mode and want to skip the confirmation step, you must provide the fee amount. This will be validated to make sure it matches the fee amount that would be charged. If the fee amount does not match, an error will be thrown. |
-| confirmation       | Boolean                              | Defaults to `false`. If set to `true` the payment will return a response to the tokenizeObserver before it needs to be confirmed. Required if using `SERVICE_FEE` fee mode.                                                                                                                             |
-| accountCode        | String                               | Code that can be used to track a payment or group of payments. Will be included in the transaction schema and in the Pay Theory Portal.                                                                                                                                                                 |
-| reference          | String                               | Custom description assigned to a payment. Will be included in the transaction schema and in the Pay Theory Portal.                                                                                                                                                                                      |
-| payorId            | String                               | The Pay Theory payor ID to use for the payment. Allows for user to manage identities. This cannot be used if also using the `payorInfo` parameter.                                                                                                                                                      |
-| invoiceId          | String                               | The Pay Theory invoice ID to use for the payment. Allows for user to assign a payment to an invoice.                                                                                                                                                                                                    |
-| recurringId        | String                               | The Pay Theory recurring ID to use for the payment. Allows for user to assign a payment to a recurring payment. If you pass in a recurring ID, the transactions amount must be an interval of the recurring payments amount per payment.                                                                |
-| sendReceipt        | Boolean                              | Pass `true` to send a receipt to the payor. Must have an email address on the payorInfo object or pass in a payorId that has an email address tied to it.                                                                                                                                               |
-| receiptDescription | String                               | Description to be included in the receipt. Defaults to "Payment from your merchant".                                                                                                                                                                                                                    |
-
+| Key                | type                                 | description                                                                                                                                                                                                                                                                                           |
+|--------------------|--------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| accountCode        | String                               | Code that can be used to track a payment or group of payments. Will be included in the transaction schema and in the Pay Theory Portal.                                                                                                                                                               |
+| amount             | Int                                  | The amount of the transaction in cents.                                                                                                                                                                                                                                                               |
+| billingInfo        | [Billing Info](#billing-info-object) | Billing info for the payment method. This is required if you are not using the zip hosted field.                                                                                                                                                                                                      |
+| confirmation       | Boolean                              | Defaults to false. If set to true the payment will return a response to the tokenizeObserver before it needs to be confirmed. Required if using SERVICE_FEE fee mode.                                                                                                                                 |
+| fee                | Int                                  | Represents the fee to be charged in cents. If you are using SERVICE_FEE mode and want to skip the confirmation step, you must provide the fee amount. This will be validated to make sure it matches the fee amount that would be charged. If the fee amount does not match, an error will be thrown. |
+| feeMode            | String                               | Defaults to window.paytheory.MERCHANT_FEE. If available to merchant and set to window.paytheory.SERVICE_FEE the fee will be added to the amount and charged to the payor. More details about the fee modes in your Pay Theory Portal.                                                                 |
+| invoiceId          | String                               | The Pay Theory invoice ID to use for the payment. Allows for user to assign a payment to an invoice.                                                                                                                                                                                                  |
+| metadata           | Object                               | An object that will be stored with the transaction and can be used to track the payment.                                                                                                                                                                                                              |
+| oneTimeUseToken    | Boolean                              | Defaults to false. If set to true the payment method will have the `is_active` flag set to `false` after the transaction processes so it cannot make payments.                                                                                                                                        |
+| payorId            | String                               | The Pay Theory payor ID to use for the payment. Allows for user to manage identities. This cannot be used if also using the payorInfo parameter.                                                                                                                                                      |
+| payorInfo          | [Payor Info](#payor-info-object)     | Details of the payor who is making the transaction.                                                                                                                                                                                                                                                   |
+| receiptDescription | String                               | Description to be included in the receipt. Defaults to "Payment from your merchant".                                                                                                                                                                                                                  |
+| recurringId        | String                               | The Pay Theory recurring ID to use for the payment. Allows for user to assign a payment to a recurring payment. If you pass in a recurring ID, the transactions amount must be an interval of the recurring payments amount per payment.                                                              |
+| reference          | String                               | Custom description assigned to a payment. Will be included in the transaction schema and in the Pay Theory Portal.                                                                                                                                                                                    |
+| sendReceipt        | Boolean                              | Pass true to send a receipt to the payor. Must have an email address on the payorInfo object or pass in a payorId that has an email address tied to it.                                                                                                                                               |
 
 The function returns a Promise that will contain an object with a key of `type`. You can expect the following values for `type`:
 - [`SUCCESS`](#success-response): The transaction was successful and the transaction details will be in the `body` key.
@@ -356,12 +358,12 @@ If the response has the `type` of `ERROR` it will have another key `error` with 
 
 This is the value of the `body` key in the response if the `type` is `TOKENIZED`:
 
-|Key                |type         |       description                     |
-|-------------------|-------------|---------------------------------------|
-|payment_method_id  |String       |The Pay Theory id for the payment method token|
-|payor_id           |String       |The Pay Theory id for the payor that was used for the payment method token|
-|last_four          |String       |The last four digits of the card number or account number|
-|brand              |String       |The brand of the card|
-|expiration         |String       |The expiration date of the card formatted as MMYY|
-|payment_type       |String       |The type of payment method tokenized. This will be `card` or `ach`|
-|metadata           |JSON         |The metadata that was passed in when tokenizing the payment method|
+| Key               | type   | description                                                                |
+|-------------------|--------|----------------------------------------------------------------------------|
+| payment_method_id | String | The Pay Theory id for the payment method token                             |
+| payor_id          | String | The Pay Theory id for the payor that was used for the payment method token |
+| last_four         | String | The last four digits of the card number or account number                  |
+| brand             | String | The brand of the card                                                      |
+| expiration        | String | The expiration date of the card formatted as MMYY                          |
+| payment_type      | String | The type of payment method tokenized. This will be `card` or `ach`         |
+| metadata          | JSON   | The metadata that was passed in when tokenizing the payment method         |

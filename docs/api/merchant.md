@@ -16,6 +16,7 @@ Merchants are the entities that are using Pay Theory to accept payments.
     api_key: String
     card_active: Boolean
     cash_active: Boolean
+    country_code: String
     fee_matrix: FeeMatrix
     is_system: Boolean
     merchant_name: String
@@ -26,19 +27,20 @@ Merchants are the entities that are using Pay Theory to accept payments.
 }
 ```
 
-| Key                  | type             | description                                                                                                          |
-|----------------------|------------------|----------------------------------------------------------------------------------------------------------------------|
-| ach_active           | Boolean          | If the merchant has successfully completed onboarding and has an ACH processor active.                               |
-| api_key              | String           | The API key of the merchant. This is used to authenticate use of the PayTheory Web and Native SDKs.                  |
-| card_active          | Boolean          | If the merchant has successfully completed onboarding and has a card processor active.                               |
-| cash_active          | Boolean          | If the merchant has successfully completed onboarding and has a cash processor active.                               |
-| fee_matrix           | FeeMatrix        | The fee matrix that the merchant is using.  This is used to calculate the fees that are charged to the payor.        |
-| is_system            | Boolean          | If the merchant is a system merchant.  System merchants are merchants that also have sub merchants.                  |
-| merchant_name        | String           | The name of the merchant.                                                                                            |
-| merchant_uid         | String           | The Pay Theory unique identifier assigned to the merchant.                                                           |
+| Key                  | type             | description                                                                                                         |
+|----------------------|------------------|---------------------------------------------------------------------------------------------------------------------|
+| ach_active           | Boolean          | If the merchant has successfully completed onboarding and has an ACH processor active.                              |
+| api_key              | String           | The API key of the merchant. This is used to authenticate use of the PayTheory Web and Native SDKs.                 |
+| card_active          | Boolean          | If the merchant has successfully completed onboarding and has a card processor active.                              |
+| cash_active          | Boolean          | If the merchant has successfully completed onboarding and has a cash processor active.                              |
+| country_code         | String           | The country code of the country the merchant operates from.                                                         |
+| fee_matrix           | FeeMatrix        | The fee matrix that the merchant is using.  This is used to calculate the fees that are charged to the payor.       |
+| is_system            | Boolean          | If the merchant is a system merchant.  System merchants are merchants that also have sub merchants.                 |
+| merchant_name        | String           | The name of the merchant.                                                                                           |
+| merchant_uid         | String           | The Pay Theory unique identifier assigned to the merchant.                                                          |
 | parent_merchant_uid  | String           | The `merchant_uid` of the parent merchant.  This is only set if the merchant is a sub merchant of a system merchant. |
-| settings             | MerchantSettings | The settings that the merchant has set.                                                                              |
-| submitted_onboarding | Boolean          | Whether the merchant has submitted their onboarding information.                                                     |
+| settings             | MerchantSettings | The settings that the merchant has set.                                                                             |
+| submitted_onboarding | Boolean          | Whether the merchant has submitted their onboarding information.                                                    |
 
 ### The Fee Matrix Object
 
@@ -189,6 +191,7 @@ This is a limited merchant object that is returned when you want to query a list
     ach_active: Boolean
     card_active: Boolean
     cash_active: Boolean
+    country_code: String
     is_system: Boolean
     merchant_name: String
     merchant_uid: String
@@ -202,6 +205,7 @@ This is a limited merchant object that is returned when you want to query a list
 |ach_active         |Boolean      |If the merchant has successfully completed onboarding and has an ACH processor active.|
 |card_active        |Boolean      |If the merchant has successfully completed onboarding and has a card processor active.|
 |cash_active        |Boolean      |If the merchant has successfully completed onboarding and has a cash processor active.|
+|country_code       |String       |The country code of the country the merchant operates from.|
 |is_system          |Boolean      |If the merchant is a system merchant.  System merchants are merchants that also have sub merchants.|
 |merchant_name      |String       |The name of the merchant.|
 |merchant_uid       |String       |The Pay Theory unique identifier assigned to the merchant.|
@@ -214,7 +218,7 @@ This is a limited merchant object that is returned when you want to query a list
 ## Query Merchants
 ```js
 {
-    merchants(direction: FORWARD, limit: 10, offset: "", offset_id: "", query: QueryObject) {
+    merchants(direction: FORWARD, limit: 10, offset: "", offset_id: "", query: SqlQuery) {
         items {
             ach_active
             card_active
@@ -238,7 +242,7 @@ This is a limited merchant object that is returned when you want to query a list
 |limit              |Int          |The number of merchants to return.|
 |offset             |String       |The value of the offset item for which the list is being sorted.|
 |offset_id          |String       |The `merchant_uid` of the offset item.|
-|query              |QueryObject  |The query to filter the merchants with based on Pay Theory defined data.|
+|query              |SqlQuery  |The query to filter the merchants with based on Pay Theory defined data.|
 
 **Returns**
 
