@@ -250,11 +250,12 @@ const config = {
       },
     }),
   scripts: [
+    // Need to run this script first to ensure that the widget_id is set before the widget is initialized
     {
       type: 'text/javascript',
       src: '/script/freshdesk.js',
-      async: true,
-      defer: true,
+      async: false,
+      defer: false,
     },
     {
       type: 'text/javascript',

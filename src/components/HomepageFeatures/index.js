@@ -1,6 +1,25 @@
 import React from 'react';
 
 export default function HomepageFeatures() {
+  const openFreshworksWidget = (retry = true) => {
+    try {
+      if (typeof FreshworksWidget === 'function') {
+        FreshworksWidget('open');
+      } else if (retry) {
+        console.log('Retrying to open FreshworksWidget');
+        setTimeout(() => openFreshworksWidget(false), 500);
+      } else {
+        throw new Error('FreshworksWidget is not a function');
+      }
+    } catch (error) {
+      console.error('Failed to open FreshworksWidget:', error);
+    }
+  };
+
+  const handleClick = () => {
+    openFreshworksWidget();
+  };
+
   return (
     <div className="docs-home-content">
       <div className="hero">
@@ -14,7 +33,7 @@ export default function HomepageFeatures() {
               Get started with payments
             </a>
             <a
-              onClick={() => FreshworksWidget('open')}
+              onClick={handleClick}
               className="button button--secondary button--md">
               Request a sandbox
             </a>
