@@ -81,7 +81,7 @@ module.exports = {
     },
     {
       type: 'doc',
-      id: 'api/webhook',
+      id: 'api/webhooks',
     },
     {
       type: 'html',
