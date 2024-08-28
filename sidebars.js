@@ -80,6 +80,10 @@ module.exports = {
       id: 'api/users',
     },
     {
+      type: 'doc',
+      id: 'api/webhooks',
+    },
+    {
       type: 'html',
       value: "<hr style='margin: 16px 0 0'/>",
     },
