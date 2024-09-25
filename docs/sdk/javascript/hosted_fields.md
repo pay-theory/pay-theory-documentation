@@ -60,7 +60,7 @@ These optional fields are used to collect billing information from the user.
 
 ## ACH Fields
 
-These fields are all required to collect ACH information from the user.
+These fields are all required to collect ACH information from the user for Bank Accounts in the USA.
 
 ```html
 <form>
@@ -70,6 +70,21 @@ These fields are all required to collect ACH information from the user.
   <div id="pay-theory-ach-routing-number"></div>
   <div id="pay-theory-ach-account-type"></div>
   ...
+</form>
+```
+
+## EFT Fields
+
+These fields are all required to collect EFT information from the user for Bank Accounts in Canada.
+
+```html
+<form>
+  ...
+  <div id="pay-theory-bank-account-name"></div>
+  <div id="pay-theory-bank-account-number"></div>
+  <div id="pay-theory-bank-institution-number"></div>
+  <div id="pay-theory-bank-transit-number"></div>
+  <div id="pay-theory-bank-account-type"></div>
 </form>
 ```
 
@@ -88,7 +103,7 @@ These fields are all required to collect Cash information from the user.
 
 ## Checkout Button Field
 
-This div is used to mount an iframe that will include a checkout button.  
+This div is used to mount an iframe that will include a checkout button.
 This button will open a hosted checkout page that will allow the user to select a payment method and complete the payment.
 
 ```html
@@ -98,7 +113,7 @@ This button will open a hosted checkout page that will allow the user to select 
 
 ## QR Code Field
 
-This div is used to mount an iframe that will include a QR Code.  
+This div is used to mount an iframe that will include a QR Code.
 This QR Code will open a hosted checkout page that will allow the user to select a payment method and complete the payment.
 
 ```html
@@ -178,7 +193,7 @@ const STYLES = {
 ```
 
 |Key                | type                          |       description                     |
-|-------------------|-------------------------------|---------------------------------------|     
+|-------------------|-------------------------------|---------------------------------------|
 |default            | CSS Style Object              |The way a text field look when it is not in state success or error.|
 |success            | CSS Style Object              |The way a text field look when it is valid. Only applies to fields that go through validation.|
 |error              | CSS Style Object              |The way a text field look when it is invalid. Only applies to fields that go through validation.|
@@ -190,7 +205,7 @@ const STYLES = {
 This style object will be used to style the labels for the radio buttons. It contains the following keys:
 
 |Key                | type                        |       description                     |
-|-------------------|-----------------------------|---------------------------------------|     
+|-------------------|-----------------------------|---------------------------------------|
 |width              | Int                         |The width in pixels of the radio buttons|
 |fill               | String                      |The color of the radio buttons|
 |stroke             | String                      |The color of the radio buttons border|

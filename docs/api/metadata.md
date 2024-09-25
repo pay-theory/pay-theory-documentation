@@ -1,5 +1,5 @@
 ---
-sidebar_position: 13
+sidebar_position: 50
 sidebar_label: 'Metadata'
 title: "Metadata"
 ---
@@ -22,7 +22,7 @@ mutation {
 **Parameters**
 
 |Key                |type         |       description                     |
-|-------------------|-------------|---------------------------------------|     
+|-------------------|-------------|---------------------------------------|
 |id                 |String       |The id of the item you want to update metadata for.|
 |merchant_uid       |String       |The Pay Theory merchant_uid of the item you want to update metadata for.|
 |metadata           |JSON         |The metadata you want to update the item with. Any keys passed in will overwrite the existing metadata.|
@@ -43,7 +43,7 @@ mutation {
 
 **Parameters**
 |Key                |type         |       description                     |
-|-------------------|-------------|---------------------------------------|     
+|-------------------|-------------|---------------------------------------|
 |id                 |String       |The id of the item you want to delete metadata for.|
 |merchant_uid       |String       |The Pay Theory merchant_uid of the item you want to delete metadata for.|
 |metadata_associate |MetadataAssociate|The type of item you want to delete metadata for. Options are: `AUTHORIZATION`, `INVOICE`, `PAYMENT_METHOD_TOKEN`, `PAYMENT_SESSION`, `PAYOR`, `RECURRING`, `TRANSACTION`, `SALE`|

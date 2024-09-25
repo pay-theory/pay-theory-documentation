@@ -1,7 +1,7 @@
 ---
 sidebar_position: 2
-sidebar_label: 'Query'
-title: "Query"
+sidebar_label: 'Querying the API'
+title: "Querying the API"
 ---
 
 # Query
@@ -20,7 +20,7 @@ First let's look at a basic query object, then we can break down its parts.
 ```
 
 |Key                |type         |       description                     |
-|-------------------|-------------|---------------------------------------|     
+|-------------------|-------------|---------------------------------------|
 |query_list         |[QueryPair]  |A list of query pairs used to build out a query.|
 |sort_list          |[SortPair]   |A list of sort pairs to define how the data should be sorted.|
 
@@ -40,7 +40,7 @@ A query pair is the object to build out a query. There are some required fields 
 ```
 
 | Key                  | type                | description                                                                                                                                                                  |
-|----------------------|---------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|     
+|----------------------|---------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | key                  | String!             | The key to the value you want to query against.                                                                                                                              |
 | operator             | Operator            | The operator to use to compare the value to the data you are calling. More detail below.                                                                                     |
 | value                | String              | The value to compare the data to. If using the `LIKE` or `NOT_LIKE` operator, this value can contain [wildcard characters](https://www.w3schools.com/sql/sql_wildcards.asp). |
@@ -53,49 +53,49 @@ A query pair is the object to build out a query. There are some required fields 
 
 These operators are case-sensitive. The following are the available operators:
 
-`EQUAL`  
+`EQUAL`
 The data is equal to the value.
 
-`NOT_EQUAL`  
+`NOT_EQUAL`
 The data is not equal to the value.
 
-`LIKE`  
+`LIKE`
 The data is like the value. The value can contain [wildcard characters](https://www.w3schools.com/sql/sql_wildcards.asp).
 
-`NOT_LIKE`  
+`NOT_LIKE`
 The data is not like the value. The value can contain [wildcard characters](https://www.w3schools.com/sql/sql_wildcards.asp).
 
-`IN_LIST`  
+`IN_LIST`
 The data is in the list of values.
 
-`NOT_IN_LIST`  
+`NOT_IN_LIST`
 The data is not in the list of values.
 
-`GREATER_THAN`  
+`GREATER_THAN`
 The data is greater than the value.
 
-`GREATER_EQUAL`  
+`GREATER_EQUAL`
 The data is greater than or equal to the value.
 
-`LESS_THAN`  
+`LESS_THAN`
 The data is less than the value.
 
-`LESS_EQUAL`  
+`LESS_EQUAL`
 The data is less than or equal to the value.
 
 ***
 ## Conjunctive Operators
 
-These operators are case-sensitive. Conjunctive operators in the same array must match for a query to work. 
+These operators are case-sensitive. Conjunctive operators in the same array must match for a query to work.
 To mix operators use nested queries with query pairs containing a `query_list`. The following are the available conjunctive operators:
 
-`AND_NEXT`  
+`AND_NEXT`
  The results of the query have to meet all the conditions in the query pair list.
 
-`OR_NEXT`  
+`OR_NEXT`
  The results of the query have to meet one of the conditions in the query pair list.
 
-`NONE_NEXT`  
+`NONE_NEXT`
  The final query pair in the list should use this operator since it has nothing to connect to.
 
 ***
@@ -110,7 +110,7 @@ A sort pair is the object used to tell a query how the data should be sorted.
 ```
 
 |Key                |type         |       description                     |
-|-------------------|-------------|---------------------------------------|     
+|-------------------|-------------|---------------------------------------|
 |direction          |SortDirection|The direction to sort the data. These are case-sensitive.|
 |key                |String       |The key to sort the data by.|
 
@@ -119,10 +119,10 @@ A sort pair is the object used to tell a query how the data should be sorted.
 
 The direction to sort the data. These are case-sensitive.
 
-`ASC`  
+`ASC`
 Begins with the least or smallest and ends with the greatest or largest
 
-`DESC`  
+`DESC`
 Begins with the greatest or largest and ends with the least or smallest
 
 ***
@@ -253,7 +253,7 @@ Due to the fact payment method is a nested data object payment method queries be
               direction: ASC,
               key: "gross_amount"
             }]
-          } 
+          }
           ) {
         items {
             currency
@@ -293,7 +293,7 @@ Metadata queries work similarly but do not support nested queries using `query_g
               direction: ASC,
               key: "gross_amount"
             }]
-          } 
+          }
           ) {
         items {
             currency
