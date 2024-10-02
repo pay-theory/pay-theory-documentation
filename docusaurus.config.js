@@ -3,7 +3,7 @@
 
 //const lightCodeTheme = require('./src/css/prismLight.js');
 
-import {themes as prismThemes} from 'prism-react-renderer';
+import { themes as prismThemes } from 'prism-react-renderer';
 //const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 
 /** @type {import('@docusaurus/types').Config} */
@@ -44,10 +44,21 @@ const config = {
         },
         docs: {
           sidebarPath: require.resolve('./sidebars.js'),
+          lastVersion: 'current',
+          versions: {
+            current: {
+              label: '2.23.0 (Labs)',
+              path: '',
+            },
+            '2.22.0': {
+              label: '2.22.0',
+              path: '2.22.0',
+              banner: 'none', // show banner for this version
+            },
+          },
           //routeBasePath: '/',
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
-          
         },
         blog: false,
         // blog: {
@@ -57,7 +68,7 @@ const config = {
         //   editUrl:
         //     'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
         // },
-        
+
         theme: {
           customCss: require.resolve('./src/css/custom.css'),
         },
@@ -85,7 +96,7 @@ const config = {
   //       language: "en",
   //       style: undefined,
   //       maxSearchResults: 8,
-  //       lunr: 
+  //       lunr:
   //       {
   //         tokenizerSeparator: /[\s\-]+/,
   //         b: 0.75,
@@ -95,7 +106,7 @@ const config = {
   //         tagsBoost: 3,
   //         parentCategoriesBoost: 2,
   //       }
-      
+
   //     },
   //   ],
   // ],
@@ -103,8 +114,7 @@ const config = {
   //   // ...
   //   '@aldridged/docusaurus-plugin-lunr'
   // ],
-    
-  
+
   //themes: ['@docusaurus/theme-search-algolia'],
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
@@ -119,15 +129,14 @@ const config = {
       image: 'img/logo.svg',
       algolia: {
         apiKey: 'fa68347e5d228c27e710aa15ccda53de',
-        indexName:'paytheory',
+        indexName: 'paytheory',
         ContextualSearch: true,
-        placeholder:'search in Pay Theory website',
-        appId:'750L2445EV',
+        placeholder: 'search in Pay Theory website',
+        appId: '750L2445EV',
         insights: true,
-        debug: false
-
+        debug: false,
       },
-      
+
       navbar: {
         title: 'Docs',
         logo: {
@@ -136,6 +145,11 @@ const config = {
           href: '/',
         },
         items: [
+          {
+            type: 'docsVersionDropdown',
+            position: 'left',
+            dropdownActiveClassDisabled: true,
+          },
           {
             type: 'docSidebar',
             sidebarId: 'homeSidebar',
@@ -174,9 +188,8 @@ const config = {
                 label: 'Android SDK',
                 docsPluginId: 'default',
               },
-          ]
-        },
-          
+            ],
+          },
 
           // {
           //   href: 'https://start.merchant.dashboard.paytheory.com/settings',
@@ -236,24 +249,27 @@ const config = {
         //darkTheme: darkCodeTheme,
       },
     }),
-    scripts: [
-        {
-            type: 'text/javascript',
-            src: '/script/freshdesk.js',
-        },
-        {
-            type: 'text/javascript',
-            src: 'https://widget.freshworks.com/widgets/44000004239.js',
-            async: true,
-            defer: true
-        },
-        {
-            type: 'text/javascript',
-            src: '/script/hotjar.js',
-            async: true,
-            defer: true
-        }
-    ]
+  scripts: [
+    // Need to run this script first to ensure that the widget_id is set before the widget is initialized
+    {
+      type: 'text/javascript',
+      src: '/script/freshdesk.js',
+      async: false,
+      defer: false,
+    },
+    {
+      type: 'text/javascript',
+      src: 'https://widget.freshworks.com/widgets/44000004239.js',
+      async: true,
+      defer: true,
+    },
+    {
+      type: 'text/javascript',
+      src: '/script/hotjar.js',
+      async: true,
+      defer: true,
+    },
+  ],
 };
 
 module.exports = config;

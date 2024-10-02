@@ -1,7 +1,8 @@
 ---
-sidebar_position: 14
+sidebar_position: 50
 sidebar_label: 'Payment Links'
 title: "Payment Links"
+description: "Payment Links are a used to create a checkout page without having to write any code. You can create a payment link and send it to your customers to pay for your products or services."
 ---
 
 # Payment Links
@@ -34,28 +35,28 @@ Payment links are a used to create a checkout page without having to write any c
     require_phone: Boolean
 }
 ```
-|Key                | type                                                      |       description                     |
-|-------------------|-----------------------------------------------------------|---------------------------------------|     
-|accepted_payment_methods| [AcceptedPaymentMethodsEnum](#acceptedpaymentmethodsenum) |The payment methods that will be available to a payor when making a payment.|
-|account_code       | String                                                    |Account Code that will be passed in to every transaction made with this payment link.|
-|amount             | Int                                                       |The amount of the payment that the payor will be asked to pay or if `amount_is_variable` is set to the amount that will be the default amount.|
-|amount_is_variable | Boolean                                                   |If set to `true` the payor will be able to enter the amount they want to pay.|
-|call_to_action     | [CallToActionType](#calltoactiontype)                     |The call to action that will be displayed on the button at the time of checkout.|
-|created_date       | AWSDateTime                                               |The date and time the payment link was created.|
-|currency           | String                                                    |The type of currency for the payment.|
-|custom_success_message| String                                                    |The message that will be displayed to the payor after a successful payment.|
-|fee_mode           | FeeMode                                                   |The fee mode of the payments that will be made with the payment link.|
-|is_active          | Boolean                                                   |If set to `true` the payment link will be active and available to payors. If set to `false` the payment link will not be available to payors.|
-|link_id            | String                                                    |The unique id of the payment link.|
-|link_name          | String                                                    |The name you give to the payment link for internal tracking purposes.|
-|link_url           | String                                                    |The url of the payment link.|
-|max_amount         | Int                                                       |The maximum amount the payor can pay if `amount_is_variable` is set to `true`.|
-|merchant_uid       | String                                                    |The Pay Theory unique identifier assigned to the merchant that the transaction belongs to.|
-|min_amount         | Int                                                       |The minimum amount the payor can pay if `amount_is_variable` is set to `true`.|
-|payment_name       | String                                                    |The name of the payment that will be displayed to the customer. This will be passed in as the `reference` at the time of the transaction.|
-|payment_description| String                                                    |The description of the payment that will be displayed to the customer.|
-|redirect_url       | String                                                    |The url that the payor will be redirected to after a successful payment.|
-|require_phone      | Boolean                                                   |If set to `true` the payor will be required to enter their phone number before making the payment.|
+| Key                      | type                                                      | description                                                                                                                                    |
+|--------------------------|-----------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------|
+| accepted_payment_methods | [AcceptedPaymentMethodsEnum](#acceptedpaymentmethodsenum) | The payment methods that will be available to a payor when making a payment.                                                                   |
+| account_code             | String                                                    | Account Code that will be passed in to every transaction made with this payment link.                                                          |
+| amount                   | Int                                                       | The amount of the payment that the payor will be asked to pay or if `amount_is_variable` is set to the amount that will be the default amount. |
+| amount_is_variable       | Boolean                                                   | If set to `true` the payor will be able to enter the amount they want to pay.                                                                  |
+| call_to_action           | [CallToActionType](#calltoactiontype)                     | The call to action that will be displayed on the button at the time of checkout.                                                               |
+| created_date             | AWSDateTime                                               | The date and time the payment link was created.                                                                                                |
+| currency                 | String                                                    | The type of currency for the payment.                                                                                                          |
+| custom_success_message   | String                                                    | The message that will be displayed to the payor after a successful payment.                                                                    |
+| fee_mode                 | FeeMode                                                   | The fee mode of the payments that will be made with the payment link.                                                                          |
+| is_active                | Boolean                                                   | If set to `true` the payment link will be active and available to payors. If set to `false` the payment link will not be available to payors.  |
+| link_id                  | String                                                    | The unique id of the payment link.                                                                                                             |
+| link_name                | String                                                    | The name you give to the payment link for internal tracking purposes.                                                                          |
+| link_url                 | String                                                    | The url of the payment link.                                                                                                                   |
+| max_amount               | Int                                                       | The maximum amount the payor can pay if `amount_is_variable` is set to `true`.                                                                 |
+| merchant_uid             | String                                                    | The Pay Theory unique identifier assigned to the merchant that the transaction belongs to.                                                     |
+| min_amount               | Int                                                       | The minimum amount the payor can pay if `amount_is_variable` is set to `true`.                                                                 |
+| payment_name             | String                                                    | The name of the payment that will be displayed to the customer. This will be passed in as the `reference` at the time of the transaction.      |
+| payment_description      | String                                                    | The description of the payment that will be displayed to the customer.                                                                         |
+| redirect_url             | String                                                    | The url that the payor will be redirected to after a successful payment.                                                                       |
+| require_phone            | Boolean                                                   | If set to `true` the payor will be required to enter their phone number before making the payment.                                             |
 
 ***
 ### AcceptedPaymentMethodsEnum
@@ -79,7 +80,7 @@ The call to action that will be displayed on the button at the time of checkout.
 ## Query Payment Links
 ```js
 {
-    paymentLinks(direction: FORWARD, limit: 10, offset: "", offset_id: "", query: QueryObject) {
+    paymentLinks(direction: FORWARD, limit: 10, offset: "", offset_id: "", query: SqlQuery) {
         total_row_count
         items {
             merchant_uid
@@ -108,12 +109,12 @@ The call to action that will be displayed on the button at the time of checkout.
 ```
 **Parameters**
 |Key                |type         |       description                     |
-|-------------------|-------------|---------------------------------------|     
+|-------------------|-------------|---------------------------------------|
 |limit              |Int          |The number of payment links to return.|
 |direction          |MoveDirection|The direction of the pagination. Makes sure the results are returned in the correct order.|
 |offset             |String       |The value of the offset item for which the list is being sorted.|
 |offset_id          |String       |The `link_id` of the offset item.|
-|query              |QueryObject  |The query to filter the payment links with based on Pay Theory defined data. Detailed information about the query object can be found [here](query)|
+|query              |SqlQuery  |The query to filter the payment links with based on Pay Theory defined data. Detailed information about the query object can be found [here](query)|
 
 
 **Returns**
@@ -138,10 +139,10 @@ The call to action that will be displayed on the button at the time of checkout.
     }
 }
 ```
-|Key                |type         |       description                     |
-|-------------------|-------------|---------------------------------------|     
-|items              |[PaymentLink] |The list of payment links that are returned from the query.|
-|total_row_count    |Int          |The total number of payment links that match the query. Used to help with pagination.|
+| Key             | type          | description                                                                           |
+|-----------------|---------------|---------------------------------------------------------------------------------------|
+| items           | [PaymentLink] | The list of payment links that are returned from the query.                           |
+| total_row_count | Int           | The total number of payment links that match the query. Used to help with pagination. |
 
 ***
 ## Create a Payment Link
@@ -191,29 +192,31 @@ mutation {
 ```
 
 **Parameters**
-|Key                |type         |       description                     |
-|-------------------|-------------|---------------------------------------|     
-|input              |PaymentLinkInput|This object contains all the details needed to create a payment link.|
+
+| Key   | type             | description                                                           |
+|-------|------------------|-----------------------------------------------------------------------|
+| input | PaymentLinkInput | This object contains all the details needed to create a payment link. |
 
 **PaymentLinkInput**
-|Key                | type                                                      | description                                                                                                                                    |
-|-------------------|-----------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------|     
-|accepted_payment_methods| [AcceptedPaymentMethodsEnum](#acceptedpaymentmethodsenum) | The payment methods that will be available to a payor when making a payment.                                                                   |
-|account_code       | String                                                    | Account Code that will be passed in to every transaction made with this payment link.                                                          |
-|amount             | Int!                                                       | The amount of the payment that the payor will be asked to pay or if `amount_is_variable` is set to the amount that will be the default amount. |
-|amount_is_variable | Boolean                                                   | If set to `true` the payor will be able to enter the amount they want to pay.                                                                  |
-|call_to_action     | [CallToActionType](#calltoactiontype)                     | The call to action that will be displayed on the button at the time of checkout.                                                               |
-|currency           | String                                                    | The currency of the payment.                                                                                                                   |    
-|custom_success_message| String                                                    | The message that will be displayed to the payor after they have successfully paid.                                                             |
-|fee_mode           | FeeMode                                                   | The fee mode of the payments that will be made with the payment link.                                                                          |
-|link_name          | String!                                                    | The name you give to the payment link for internal tracking purposes.                                                                          |
-|max_amount         | Int                                                       | The maximum amount the payor can pay if `amount_is_variable` is set to `true`.                                                                 |
-|merchant_uid       | String!                                                    | The merchant uid of the merchant that will be creating the payment link.                                                                       |
-|min_amount         | Int                                                       | The minimum amount the payor can pay if `amount_is_variable` is set to `true`.                                                                 |
-|payment_description| String                                                    | The description of the payment that will be displayed to the customer.                                                                         |
-|payment_name       | String!                                                    | The name of the payment that will be displayed to the customer. This will be passed in as the `reference` at the time of the transaction.      |
-|redirect_url       | String                                                    | The url that the payor will be redirected to after they have successfully paid.                                                                |
-|require_phone      | Boolean                                                   | If set to `true` the payor will be required to enter their phone number before making the payment.                                             |
+
+| Key                      | type                                                      | description                                                                                                                                    |
+|--------------------------|-----------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------|
+| accepted_payment_methods | [AcceptedPaymentMethodsEnum](#acceptedpaymentmethodsenum) | The payment methods that will be available to a payor when making a payment.                                                                   |
+| account_code             | String                                                    | Account Code that will be passed in to every transaction made with this payment link.                                                          |
+| amount                   | Int!                                                      | The amount of the payment that the payor will be asked to pay or if `amount_is_variable` is set to the amount that will be the default amount. |
+| amount_is_variable       | Boolean                                                   | If set to `true` the payor will be able to enter the amount they want to pay.                                                                  |
+| call_to_action           | [CallToActionType](#calltoactiontype)                     | The call to action that will be displayed on the button at the time of checkout.                                                               |
+| currency                 | String                                                    | The currency of the payment.                                                                                                                   |
+| custom_success_message   | String                                                    | The message that will be displayed to the payor after they have successfully paid.                                                             |
+| fee_mode                 | FeeMode                                                   | The fee mode of the payments that will be made with the payment link.                                                                          |
+| link_name                | String!                                                   | The name you give to the payment link for internal tracking purposes.                                                                          |
+| max_amount               | Int                                                       | The maximum amount the payor can pay if `amount_is_variable` is set to `true`.                                                                 |
+| merchant_uid             | String!                                                   | The merchant uid of the merchant that will be creating the payment link.                                                                       |
+| min_amount               | Int                                                       | The minimum amount the payor can pay if `amount_is_variable` is set to `true`.                                                                 |
+| payment_description      | String                                                    | The description of the payment that will be displayed to the customer.                                                                         |
+| payment_name             | String!                                                   | The name of the payment that will be displayed to the customer. This will be passed in as the `reference` at the time of the transaction.      |
+| redirect_url             | String                                                    | The url that the payor will be redirected to after they have successfully paid.                                                                |
+| require_phone            | Boolean                                                   | If set to `true` the payor will be required to enter their phone number before making the payment.                                             |
 
 
 
@@ -280,13 +283,13 @@ mutation {
 **Parameters**
 
 |Key                |type         |       description                     |
-|-------------------|-------------|---------------------------------------|     
+|-------------------|-------------|---------------------------------------|
 |input              |UpdatePaymentLinkInput|This object contains all the details needed to update a payment link.|
 
 **UpdatePaymentLinkInput**
 
 | Key                      | type                                                      | description                                                                                                                                    |
-|--------------------------|-----------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------|     
+|--------------------------|-----------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------|
 | accepted_payment_methods | [AcceptedPaymentMethodsEnum](#acceptedpaymentmethodsenum) | The payment methods that will be available to a payor when making a payment.                                                                   |
 | account_code             | String                                                    | Account Code that will be passed in to every transaction made with this payment link.                                                          |
 | amount                   | Int                                                       | The amount of the payment that the payor will be asked to pay or if `amount_is_variable` is set to the amount that will be the default amount. |

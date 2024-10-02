@@ -14,8 +14,10 @@ Here is some steps to get you started with a basic implementation.
 
 To use the Pay Theory Web SDK, you need to add this script to your web header:
 
+The SDK URL can be found in the Pay Theory portal under the settings tab as the SDK Import URL.
+
 ```html
-<script src="https://start.sdk.paytheory.com/index.js"></script>
+<script src={SDK Import URL}> </script>
 ```
 
 The SDK will be available on the window object as `paytheory`.
@@ -45,7 +47,7 @@ You need to add the Pay Theory elements to your form. You can place these elemen
 
 You would then need to call any event listeners before you initialize the Pay Theory fields.
 
-A full list of event listeners can be found [here](EVENT_LISTENERS).
+A full list of event listeners can be found [here](event_listeners.md).
 
 ```javascript
 paytheory.errorObserver(error => {
@@ -68,18 +70,18 @@ paytheory.payTheoryFields({
 
 ## Step 5: Once the fields are valid, run transaction
 
-Use the [valid observer](EVENT_LISTENERS#validobserver) to tell when the hosted fields are valid, so you can submit the payment.
+Use the [valid observer](event_listeners#validobserver) to tell when the hosted fields are valid, so you can submit the payment.
 
 The only required field for the `transact` parameters is the `amount` field.
 
-You can customize the `transact` function more. Check out the full list of parameters [here](FUNCTIONS#transact).
+You can customize the `transact` function more. Check out the full list of parameters [here](functions#transact).
 
 ```javascript
 //Amount passed in is in cents
 const AMOUNT = 1000
 
 // Parameters that you will pass into the transact function. More details below.
-const TRANSACTING_PARAMETERS = { 
+const TRANSACTING_PARAMETERS = {
         amount: AMOUNT
 }
 

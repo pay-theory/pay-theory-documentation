@@ -1,5 +1,5 @@
 ---
-sidebar_position: 5
+sidebar_position: 50
 sidebar_label: 'Payor'
 title: "Payor"
 ---
@@ -27,7 +27,7 @@ Payors are used to track payor info that can be tied to other data objects in Pa
 }
 ```
 |Key                |type         |       description                     |
-|-------------------|-------------|---------------------------------------|     
+|-------------------|-------------|---------------------------------------|
 |address_line1      |String       |The first line of the address of the payor.|
 |address_line2      |String       |The second line of the address of the payor.|
 |city               |String       |The city of the payor.|
@@ -45,7 +45,7 @@ Payors are used to track payor info that can be tied to other data objects in Pa
 ## Query Payors
 ```graphql
 {
-    payors(direction: MoveDirection, limit: Int, offset: String, offset_id: String, query: QueryObject) {
+    payors(direction: MoveDirection, limit: Int, offset: String, offset_id: String, query: SqlQuery) {
         items {
             address_line1
             address_line2
@@ -68,14 +68,14 @@ Payors are used to track payor info that can be tied to other data objects in Pa
 **Parameters**
 
 |Key                |type         |       description                     |
-|-------------------|-------------|---------------------------------------|     
+|-------------------|-------------|---------------------------------------|
 |direction          |MoveDirection|The direction of the pagination. Makes sure the results are returned in the correct order.|
 |limit              |Int          |The number of payors to return.|
 |offset             |String       |The value of the offset item for which the list is being sorted.|
 |offset_id          |String       |The `payor_id` of the offset item.|
-|query              |QueryObject  |The query to filter the payors with based on Pay Theory defined data. Detailed information about the query object can be found [here](query).|
+|query              |SqlQuery  |The query to filter the payors with based on Pay Theory defined data. Detailed information about the query object can be found [here](query).|
 
-**Nested Queries**  
+**Nested Queries**
 Payors can also be filtered by passing a query_list to the metadata.
 
 This will only return Payors that have Metadata that match these queries.  Detailed information about the query list can be found [here](query).
@@ -103,7 +103,7 @@ This will only return Payors that have Metadata that match these queries.  Detai
 ```
 
 |Key                |type         |       description                     |
-|-------------------|-------------|---------------------------------------|     
+|-------------------|-------------|---------------------------------------|
 |items              |[Payor]      |The list of payors that are returned from the query.|
 |total_row_count    |Int          |The total number of payors that match the query. Used to help with pagination.|
 
@@ -130,14 +130,14 @@ mutation {
 **Parameters**
 
 |Key                |type         |       description                     |
-|-------------------|-------------|---------------------------------------|     
+|-------------------|-------------|---------------------------------------|
 |input              |PayorInput   |The input object that contains the payor information to create a new payor.  Detailed information about the input object can be found [here](#the-payor-input-object).|
 
-**Returns**  
+**Returns**
 This mutation returns the payor object that was created.
 
 ***
-## The Payor Input Object
+### The Payor Input Object
 ```graphql
 {
     address_line1: String
@@ -155,7 +155,7 @@ This mutation returns the payor object that was created.
 ```
 
 | Key           | type    | description                                                                                                                 |
-|---------------|---------|-----------------------------------------------------------------------------------------------------------------------------|     
+|---------------|---------|-----------------------------------------------------------------------------------------------------------------------------|
 | address_line1 | String  | The first line of the address of the payor.                                                                                 |
 | address_line2 | String  | The second line of the address of the payor.                                                                                |
 | city          | String  | The city of the payor.                                                                                                      |
@@ -167,3 +167,20 @@ This mutation returns the payor object that was created.
 |  phone        | String  | The phone number of the payor.                                                                                              |
 |  postal_code  | String  | The postal code of the payor.                                                                                               |
 |  region       | String  | The region of the payor.                                                                                                    |
+
+
+***
+
+## Update Payor
+```graphql
+mutation {
+    createPayor(payor_data: PayorInput!, payor_id: String!)
+}
+```
+
+**Parameters**
+
+|Key                |type         |       description                     |
+|-------------------|-------------|---------------------------------------|
+|payor_data         |PayorInput   |The input object that contains the payor information to update the payor.  Detailed information about the input object can be found [here](#the-payor-input-object).|
+|payor_id           |String       |The unique payor id of the payor to update.|
