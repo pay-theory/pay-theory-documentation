@@ -29,7 +29,7 @@ import PayTheory
 
 ## Step 3: Initialize the PayTheory Object
 
-Now, you can initialize the PayTheory object with your API key. You can do this in your SwiftUI view:
+Now, you can initialize the [PayTheory](pay_theory_class.mdx) object with your API key. You can do this in your SwiftUI view:
 
 ```swift
 import SwiftUI
@@ -46,7 +46,7 @@ struct ContentView: View {
 
 ## Step 4: Wrap Your View with PTForm
 
-Wrap your main view content with the `PTForm` view provided by the SDK. This allows the custom text fields to access the necessary data:
+Wrap your main view content with the [`PTForm`](ui_components/pt_form.mdx) view provided by the SDK. This allows the custom text fields to access the necessary data:
 
 ```swift
 var body: some View {
@@ -61,7 +61,7 @@ var body: some View {
 
 ## Step 5: Add Custom Text Fields for Card Details
 
-Use the custom text fields provided by the SDK to capture card details:
+Use the custom text fields provided by the SDK to capture [card](ui_components/card_fields.mdx) details:
 
 ```swift
 PTForm {
@@ -100,7 +100,7 @@ Button("Pay") {
 ```
 
 :::note Alternative: Tokenizing Payments
-Instead of immediately processing a payment with `transact`, you can tokenize a payment method for later use.
+Instead of immediately processing a payment with [`transact`](functions/transact.mdx), you can [tokenize](functions/tokenize_payment_method.mdx) a payment method for later use.
 :::
 
 :::note Async Versions Available

@@ -34,13 +34,14 @@ When called, the `updateAmount` function performs the following actions:
 
 ## Fee Calculation Behavior
 
-- **Service Fee Model**: This function is primarily used to calculate fees when using the service fee model for transactions. It helps determine what the fee will be based on the current amount.
+*Service Fee Model*: This function is primarily used to calculate fees when using the service fee model for transactions. It helps determine what the fee will be based on the current amount.
 
-- **Card Payments**:
+**Card Payments**:
 - The card fee will not be calculated until at least 6 digits (BIN) have been entered into the card number field.
 - If the BIN changes (i.e., the user modifies the first 6 digits of the card number), the fee will be recalculated automatically.
 
-- **ACH Payments**: For ACH (bank transfer) payments, the fee calculation will proceed immediately as it doesn't depend on a BIN number.
+**ACH Payments**:
+- For ACH (bank transfer) payments, the fee calculation will proceed immediately as it doesn't depend on a BIN number.
 
 ## Usage
 

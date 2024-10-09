@@ -14,7 +14,7 @@ The `tokenizePaymentMethod` function allows you to tokenize a payment method for
 
 ```swift
 public func tokenizePaymentMethod(
-    paymentMethod: PAYMENT_TYPE,
+    paymentMethod: PaymentType,
     payor: Payor? = nil,
     payorId: String? = nil,
     metadata: [String: String]? = nil
@@ -25,17 +25,17 @@ public func tokenizePaymentMethod(
 
 | Parameter     | Type                | Description                                                                                                                                       |
 |---------------|---------------------|---------------------------------------------------------------------------------------------------------------------------------------------------|
-| paymentMethod | `PAYMENT_TYPE`      | The type of payment method to tokenize (e.g., `.CARD`, `.ACH`).                                                                                    |
-| payor         | `Payor?`            | The details of the payor that you are tokenizing the payment method for. This cannot be used if also using the `payorId` parameter.               |
+| paymentMethod | `PaymentType`      | The type of payment method to tokenize (e.g., `.CARD`, `.ACH`).                                                                                    |
+| payor         | [`Payor?`](../data_models/payor)            | The details of the payor that you are tokenizing the payment method for. This cannot be used if also using the `payorId` parameter.               |
 | payorId       | `String?`           | The Pay Theory payor ID to use for the payment. Allows for user to manage identities. This cannot be used if also using the `payor` parameter.    |
 | metadata      | `[String: String]?` | A dictionary that will be stored with the token and can be used to track the token.                                                                |
 
 ### Return Value
 
-The function returns a `TokenizePaymentMethodResponse`, which is an enum with the following cases:
+The function returns a [`TokenizePaymentMethodResponse`](../response_types/tokenization_response), which is an enum with the following cases:
 
-- `.Success(TokenizedPaymentMethod)`
-- `.Error(PTError)`
+- [`.Success(TokenizedPaymentMethod)`](../response_types/tokenization_response#tokenizedpaymentmethod)
+- [`.Error(PTError)`](../response_types/pt_error)
 
 ### Usage Example
 
@@ -64,7 +64,7 @@ do {
 
 ```swift
 public func tokenizePaymentMethod(
-    paymentMethod: PAYMENT_TYPE,
+    paymentMethod: PaymentType,
     payor: Payor? = nil,
     payorId: String? = nil,
     metadata: [String: String]? = nil,

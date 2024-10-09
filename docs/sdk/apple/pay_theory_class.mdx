@@ -57,7 +57,12 @@ The `PayTheory` class provides several public variables for accessing payment-re
 @Published public private(set) var ach: ACHState
 ```
 
-These variables provide access to the current state of different payment methods (card, cash, and ACH). Each state object contains validation status and entered details for the respective payment method.
+These variables provide access to the current state of different payment methods. Each state object contains validation status and entered details for the respective payment method.
+
+More details on these states can be found here:
+- [ACHState](state/ach_state.mdx)
+- [CardState](state/card_state.mdx)
+- [CashState](state/cash_state.mdx)
 
 ### Service Fees
 
@@ -76,7 +81,7 @@ These variables hold the calculated service fees (in cents) for card and bank (A
 
 This boolean indicates whether the `PayTheory` instance has completed its initialization and is ready to process payments. It should be checked before attempting to use the instance for payment operations.
 
-:::note
+:::note Private Setters
 The `private(set)` modifier on these published properties means they can be read from outside the class, but only modified within the class itself. This ensures that the SDK maintains control over these states while still allowing your app to observe them.
 :::
 
