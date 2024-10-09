@@ -1,0 +1,102 @@
+---
+sidebar_position: 2
+sidebar_label: 'tokenizePaymentMethod'
+title: "tokenizePaymentMethod"
+---
+
+# tokenizePaymentMethod
+
+The `tokenizePaymentMethod` function allows you to tokenize a payment method for future use without immediately processing a payment. It's available in two versions: an asynchronous version using Swift's modern concurrency features, and a closure-based version for compatibility with older codebases.
+
+## Async Version
+
+### Function Signature
+
+```swift
+public func tokenizePaymentMethod(
+    paymentMethod: PAYMENT_TYPE,
+    payor: Payor? = nil,
+    payorId: String? = nil,
+    metadata: [String: String]? = nil
+) async -> TokenizePaymentMethodResponse
+```
+
+### Parameters
+
+| Parameter     | Type                | Description                                                                                                                                       |
+|---------------|---------------------|---------------------------------------------------------------------------------------------------------------------------------------------------|
+| paymentMethod | `PAYMENT_TYPE`      | The type of payment method to tokenize (e.g., `.CARD`, `.ACH`).                                                                                    |
+| payor         | `Payor?`            | The details of the payor that you are tokenizing the payment method for. This cannot be used if also using the `payorId` parameter.               |
+| payorId       | `String?`           | The Pay Theory payor ID to use for the payment. Allows for user to manage identities. This cannot be used if also using the `payor` parameter.    |
+| metadata      | `[String: String]?` | A dictionary that will be stored with the token and can be used to track the token.                                                                |
+
+### Return Value
+
+The function returns a `TokenizePaymentMethodResponse`, which is an enum with the following cases:
+
+- `.Success(TokenizedPaymentMethod)`
+- `.Error(PTError)`
+
+### Usage Example
+
+```swift
+do {
+    let response = try await payTheory.tokenizePaymentMethod(
+        paymentMethod: .CARD,
+        payor: Payor(firstName: "John", lastName: "Doe", email: "john@example.com"),
+        metadata: ["customer_id": "12345"]
+    )
+
+    switch response {
+    case .Success(let tokenizedPayment):
+        print("Tokenization successful: \(tokenizedPayment.paymentMethodId)")
+    case .Error(let error):
+        print("Tokenization failed: \(error.error)")
+    }
+} catch {
+    print("An error occurred: \(error)")
+}
+```
+
+## Closure-based Version
+
+### Function Signature
+
+```swift
+public func tokenizePaymentMethod(
+    paymentMethod: PAYMENT_TYPE,
+    payor: Payor? = nil,
+    payorId: String? = nil,
+    metadata: [String: String]? = nil,
+    completion: @escaping (TokenizePaymentMethodResponse) -> Void
+)
+```
+
+The parameters for the closure-based version are the same as the async version, with an additional `completion` parameter:
+
+| Parameter  | Type                                             | Description                                                                   |
+|------------|--------------------------------------------------|-------------------------------------------------------------------------------|
+| completion | `@escaping (TokenizePaymentMethodResponse) -> Void` | A closure that will be called with the result of the tokenization operation. |
+
+### Usage Example
+
+```swift
+payTheory.tokenizePaymentMethod(
+    paymentMethod: .CARD,
+    payor: Payor(firstName: "John", lastName: "Doe", email: "john@example.com"),
+    metadata: ["customer_id": "12345"]
+) { response in
+    switch response {
+    case .Success(let tokenizedPayment):
+        print("Tokenization successful: \(tokenizedPayment.paymentMethodId)")
+    case .Error(let error):
+        print("Tokenization failed: \(error.error)")
+    }
+}
+```
+
+:::note Note
+The closure-based version of `tokenizePaymentMethod` is executed asynchronously. The completion handler will be called on an arbitrary thread, so make sure to dispatch UI updates to the main thread if needed.
+:::
+
+Both versions of the `tokenizePaymentMethod` function provide the same functionality. Choose the one that best fits your app's architecture and your preferred coding style. The async version is recommended for new projects using Swift 5.5 or later, as it provides better readability and error handling with Swift's structured concurrency.

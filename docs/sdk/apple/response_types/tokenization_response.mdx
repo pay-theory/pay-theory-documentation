@@ -1,0 +1,92 @@
+---
+sidebar_position: 2
+sidebar_label: 'TokenizePaymentMethodResponse'
+title: "TokenizePaymentMethodResponse"
+---
+
+# TokenizePaymentMethodResponse
+
+`TokenizePaymentMethodResponse` is an enumeration that represents the possible responses from a tokenize payment method operation in the PayTheory system. It provides a structured way to handle different outcomes of a tokenization attempt, including success and errors.
+
+## Enum Cases
+
+| Case | Associated Value | Description |
+|------|------------------|-------------|
+| Success | TokenizedPaymentMethod | Represents a successfully tokenized payment method. |
+| Error | PTError | Represents an error that occurred during the tokenization process. |
+
+## Associated Types
+
+### TokenizedPaymentMethod
+
+Represents a successfully tokenized payment method in the PayTheory system.
+
+#### Properties
+
+| Property | Type | Description |
+|----------|------|-------------|
+| paymentMethodId | String | The Pay Theory id for the payment method token |
+| payorId | String | The Pay Theory id for the payor that was used for the payment method token |
+| lastFour | String | The last four digits of the card number or account number |
+| brand | String | The brand of the card |
+| expiration | String | The expiration date of the card formatted as MMYY |
+| paymentType | String | The type of payment method tokenized. This will be 'card' or 'ach' |
+| metadata | [String: Any] | The metadata that was passed in when tokenizing the payment method |
+
+### PTError
+
+Represents an error that occurred during the tokenization process. For detailed information about `PTError`, please refer to the PTError documentation.
+
+## Usage Example
+
+Here's an example of how to handle a `TokenizePaymentMethodResponse`:
+
+```swift
+func handleTokenizationResponse(_ response: TokenizePaymentMethodResponse) {
+    switch response {
+    case .Success(let tokenizedPaymentMethod):
+        print("Payment method successfully tokenized:")
+        print("Payment Method ID: \(tokenizedPaymentMethod.paymentMethodId)")
+        print("Payor ID: \(tokenizedPaymentMethod.payorId)")
+        print("Last Four: \(tokenizedPaymentMethod.lastFour)")
+        print("Brand: \(tokenizedPaymentMethod.brand)")
+        print("Expiration: \(tokenizedPaymentMethod.expiration)")
+        print("Payment Type: \(tokenizedPaymentMethod.paymentType)")
+
+        if !tokenizedPaymentMethod.metadata.isEmpty {
+            print("Metadata:")
+            for (key, value) in tokenizedPaymentMethod.metadata {
+                print("  \(key): \(value)")
+            }
+        }
+
+        // Here you might save the payment method ID for future transactions
+        savePaymentMethodId(tokenizedPaymentMethod.paymentMethodId)
+
+    case .Error(let error):
+        print("Tokenization error occurred:")
+        print("Error: \(error.code): \(error.error)")
+
+        // Handle the error based on its code
+        switch error.code {
+        case .invalidParam:
+            print("Invalid parameter provided. Please check the payment information.")
+        case .socketError:
+            print("Network error occurred. Please check your internet connection and try again.")
+        default:
+            print("An unexpected error occurred. Please try again later.")
+        }
+    }
+}
+
+// Usage
+func tokenizePaymentMethod() {
+    payTheory.tokenizePaymentMethod(paymentMethod: .CARD) { response in
+        handleTokenizationResponse(response)
+    }
+}
+```
+
+This example demonstrates how to switch on the `TokenizePaymentMethodResponse` enum and handle each case appropriately. In the success case, you can access all the details of the tokenized payment method and perform any necessary operations (like saving the payment method ID for future use). In the error case, you can provide appropriate feedback to the user based on the specific error that occurred.
+
+By using `TokenizePaymentMethodResponse`, the PayTheory SDK provides a consistent and type-safe way to handle the outcomes of payment method tokenization, making it easier for developers to implement robust error handling and success flows in their applications.

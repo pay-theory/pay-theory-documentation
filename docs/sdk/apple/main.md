@@ -7,82 +7,163 @@ title: "Pay Theory Apple SDK"
 
 This is the Pay Theory Apple SDK. It is a collection of Swift UI inputs and utilities to help you integrate Pay Theory into your app.
 
-## Importing the SDK
+This guide will walk you through the basic steps to integrate the PayTheory Swift SDK into your iOS application.
 
-To add Pay Theory as dependency to your Xcode project, select `File` > `Add Packages...`, enter its repository URL: `https://github.com/pay-theory/pay-theory-ios.git` and import `PayTheory`.
+## Step 1: Import the Swift Package
 
-Then, to use it in your source code, add:
+First, you need to add the PayTheory Swift package to your Xcode project:
+
+1. In Xcode, go to File > Add Packages...
+2. In the search bar, enter the following URL: `https://github.com/pay-theory/pay-theory-ios`
+3. Select the PayTheory package when it appears in the search results.
+4. Choose the version or branch you want to use (usually, you'll want the latest version).
+5. Click "Add Package" to import it into your project.
+
+## Step 2: Import PayTheory in Your Swift File
+
+In any Swift file where you want to use PayTheory, add the import statement at the top:
 
 ```swift
-import Pay Theory
+import PayTheory
 ```
 
-## Step 1: Initialize Pay Theory Object
+## Step 3: Initialize the PayTheory Object
 
-To initialize the Pay Theory object, you need to provide your API key. You can find this in the Pay Theory Merchant dashboard under `Settings`.
-
-You also need to set your completion handler on `completion` value of the Pay Theory object. This is where you will receive any responses from Pay Theory.
-
-*We recommend you set the completion handler in `onAppear`, `viewDidAppear`, or `viewWillAppear`.*
+Now, you can initialize the PayTheory object with your API key. You can do this in your SwiftUI view:
 
 ```swift
-let payTheory = PayTheory(apiKey: "YOUR_API_KEY")
+import SwiftUI
+import PayTheory
 
-payTheory.completion = { result in
-    switch result {
-    case .success(let response):
-        print(response)
-    case .failure(let error):
-        print(error)
+struct ContentView: View {
+    let payTheory = PayTheory(apiKey: "your-api-key-here") { error in
+        print("Error: \(error.error)")
     }
+
+    // ... rest of your view code
 }
 ```
 
-## Step 2: Place Inputs in Your View
+## Step 4: Wrap Your View with PTForm
 
-You need to place the inputs into your view wrapped in a `PTForm` view. The `PTForm` view allows the inputs to talk to each other and validate the data.
+Wrap your main view content with the `PTForm` view provided by the SDK. This allows the custom text fields to access the necessary data:
 
-You also need to pass your PT object to the `PTForm` view as an environment object.
+```swift
+var body: some View {
+    PTForm {
+        VStack {
+            // Your form fields will go here
+        }
+    }
+    .environmentObject(payTheory)
+}
+```
+
+## Step 5: Add Custom Text Fields for Card Details
+
+Use the custom text fields provided by the SDK to capture card details:
 
 ```swift
 PTForm {
-    PTCardName()
-    PTCombinedCard()
-    PTCardPostalCode()
+    VStack {
+        PTCardName()
+        PTCardNumber()
+        PTExp()
+        PTCvv()
+        PTCardPostalCode()
+
+        // Other form fields as needed
+    }
 }
 .environmentObject(payTheory)
 ```
 
-## Step 3: Check for validity
+## Step 6: Implement Payment Button
 
-You can check if the inputs have collected enough information to create a payment by checking the `valid` property on the `PayTheory` object.
-
-You can check to see if `card`, `ach`, or `cash` inputs are valid by checking the `valid` property.
-
-Set submit payment button to disabled if not valid.
+Add a button to initiate the payment process:
 
 ```swift
-Button("Make Payment") {
-    // Submit payment logic
+Button("Pay") {
+    payTheory.transact(amount: 1000, paymentMethod: .CARD) { response in
+        switch response {
+        case .Success(let payment):
+            print("Payment successful: \(payment.transactionId)")
+        case .Failure(let failure):
+            print("Payment failed: \(failure.failureText)")
+        case .Error(let error):
+            print("Error: \(error.error)")
+        case .Barcode:
+            print("Barcode generation not applicable for card payments")
+        }
+    }
 }
-.disabled(!payTheory.valid.card)
 ```
 
-## Step 4: Submit Transaction
+:::note Alternative: Tokenizing Payments
+Instead of immediately processing a payment with `transact`, you can tokenize a payment method for later use.
+:::
 
-You can submit a transaction by calling the `transact` method on the `PayTheory` object. This method returns a `Payment` object.
+:::note Async Versions Available
+Both `transact` and `tokenizePaymentMethod` have async versions that you can use with Swift's structured concurrency:
 
 ```swift
-Button("Make Payment") {
-    payTheory.transact(amount: 3300, payorId: "pt_payor_id")
+Button("Async Pay") {
+    Task {
+        let response = await payTheory.transact(amount: 1000, paymentMethod: .CARD)
+        // Handle response
+    }
 }
-.disabled(!payTheory.valid.card)
 ```
 
-## Step 5: Handle Response
+Choose the version that best fits your app's architecture and your preferred coding style.
+:::
 
-The response from Pay Theory will be sent to the completion handler you set in step 1. A successful response will return a `[String: Any]` dictionary. A failure response will return a `FailureResponse` object.
+## Complete Example
 
-The `Failure Response` object is defined [here](completion_handler#failure-response) and the success response dictionary is defined [here](completion_handler#success-response).
+Here's a complete example putting it all together:
 
+```swift
+import SwiftUI
+import PayTheory
+
+struct ContentView: View {
+    let payTheory = PayTheory(apiKey: "your-api-key-here") { error in
+        print("Error: \(error.error)")
+    }
+
+    var body: some View {
+        PTForm {
+            VStack {
+                PTCardName()
+                PTCardNumber()
+                PTExp()
+                PTCvv()
+                PTCardPostalCode()
+
+                Button("Pay") {
+                    payTheory.transact(amount: 1000, paymentMethod: .CARD) { response in
+                        switch response {
+                        case .Success(let payment):
+                            print("Payment successful: \(payment.transactionId)")
+                        case .Failure(let failure):
+                            print("Payment failed: \(failure.failureText)")
+                        case .Error(let error):
+                            print("Error: \(error.error)")
+                        case .Barcode:
+                            print("Barcode generation not applicable for card payments")
+                        }
+                    }
+                }
+            }
+        }
+        .environmentObject(payTheory)
+    }
+}
+```
+
+This quick start guide demonstrates how to import the PayTheory package, initialize the PayTheory object, use the PTForm wrapper, add custom text fields for card details, and implement a payment button to process a transaction.
+
+Remember to replace `"your-api-key-here"` with your actual PayTheory API key.
+
+For more advanced usage and additional payment methods, please refer to the full SDK documentation.
 

@@ -1,0 +1,187 @@
+---
+sidebar_position: 3
+sidebar_label: 'CardState'
+title: "CardState"
+---
+
+# CardState
+
+The `CardState` class in the PayTheory SDK manages the state of credit card payment information. It provides a secure way to handle and validate card payment details without directly exposing sensitive financial data.
+
+## CardState Class
+
+### Overview
+
+`CardState` is the main class that encapsulates the state of a card payment method. It conforms to the `ObservableObject` protocol, making it compatible with SwiftUI's state management system.
+
+### Properties
+
+| Property    | Type          | Description                                         |
+|-------------|---------------|-----------------------------------------------------|
+| isValid     | `Bool`        | Indicates if all card details are valid and complete. |
+| number      | `CardNumber`  | Manages the state of the card number.               |
+| exp         | `CardExp`     | Manages the state of the card expiration date.      |
+| cvv         | `CardCvv`     | Manages the state of the card CVV.                  |
+| postalCode  | `CardPostalCode` | Manages the state of the billing postal code.    |
+| name        | `CardName`    | Manages the state of the cardholder's name.         |
+| lineOne     | `CardLineOne` | Manages the state of the first line of the billing address. |
+| lineTwo     | `CardLine2`   | Manages the state of the second line of the billing address. |
+| city        | `CardCity`    | Manages the state of the billing city.              |
+| region      | `CardRegion`  | Manages the state of the billing region (state/province). |
+| country     | `CardCountry` | Manages the state of the billing country.           |
+
+### Usage
+
+```swift
+@EnvironmentObject var payTheory: PayTheory
+
+var body: some View {
+    VStack {
+        Text("Card Payment Valid: \(payTheory.card.isValid ? "Yes" : "No")")
+        // Card form fields
+    }
+}
+```
+
+## Sub-classes
+
+Each of the following sub-classes conforms to the `ObservableObject` and `ValidAndEmpty` protocols.
+
+### CardNumber
+
+Manages the state of the card number.
+
+#### Properties
+
+| Property | Type   | Description                                               |
+|----------|--------|-----------------------------------------------------------|
+| isValid  | `Bool` | Indicates if the card number is valid.                    |
+| isEmpty  | `Bool` | Indicates if the card number field is empty.              |
+
+#### Usage
+
+```swift
+Text("Card Number Valid: \(payTheory.card.number.isValid ? "Yes" : "No")")
+Text("Card Number Empty: \(payTheory.card.number.isEmpty ? "Yes" : "No")")
+```
+
+### CardExp
+
+Manages the state of the card expiration date.
+
+#### Properties
+
+| Property | Type   | Description                                               |
+|----------|--------|-----------------------------------------------------------|
+| isValid  | `Bool` | Indicates if the expiration date is valid.                |
+| isEmpty  | `Bool` | Indicates if the expiration date field is empty.          |
+
+#### Usage
+
+```swift
+Text("Expiration Valid: \(payTheory.card.exp.isValid ? "Yes" : "No")")
+Text("Expiration Empty: \(payTheory.card.exp.isEmpty ? "Yes" : "No")")
+```
+
+### CardCvv
+
+Manages the state of the card CVV.
+
+#### Properties
+
+| Property | Type   | Description                                               |
+|----------|--------|-----------------------------------------------------------|
+| isValid  | `Bool` | Indicates if the CVV is valid.                            |
+| isEmpty  | `Bool` | Indicates if the CVV field is empty.                      |
+
+#### Usage
+
+```swift
+Text("CVV Valid: \(payTheory.card.cvv.isValid ? "Yes" : "No")")
+Text("CVV Empty: \(payTheory.card.cvv.isEmpty ? "Yes" : "No")")
+```
+
+### CardPostalCode
+
+Manages the state of the billing postal code.
+
+#### Properties
+
+| Property | Type   | Description                                               |
+|----------|--------|-----------------------------------------------------------|
+| isValid  | `Bool` | Indicates if the postal code is valid.                    |
+| isEmpty  | `Bool` | Indicates if the postal code field is empty.              |
+
+#### Usage
+
+```swift
+Text("Postal Code Valid: \(payTheory.card.postalCode.isValid ? "Yes" : "No")")
+Text("Postal Code Empty: \(payTheory.card.postalCode.isEmpty ? "Yes" : "No")")
+```
+
+### CardName, CardLineOne, CardLine2, CardCity, CardRegion, CardCountry
+
+These classes manage the state of various billing address details. Each has the same structure as the above classes, with `isValid` and `isEmpty` properties.
+
+## Validation Logic
+
+- The `isValid` property of `CardState` is `true` only when all required sub-class `isValid` properties are `true`.
+- Each sub-class has its own validation logic:
+- `CardNumber`: Valid if it passes the Luhn algorithm and meets the requirements for the specific card brand.
+- `CardExp`: Valid if it represents a date in the future.
+- `CardCvv`: Valid if it contains the correct number of digits for the card brand (typically 3 or 4).
+- `CardPostalCode`: Valid if it meets the format requirements for the specified country.
+- Other address fields are typically considered valid if they are not empty, but may have additional validation rules.
+
+## Best Practices
+
+1. Always use the provided PayTheory UI components (`PTCardNumber`, `PTExp`, `PTCvv`, etc.) to ensure proper state management and security.
+2. Observe the `isValid` and `isEmpty` properties to provide real-time feedback to users.
+3. Use the `CardState.isValid` property to control the enabled state of your submission button.
+4. Remember that while you can check the validity of fields, you cannot access the actual card data. This is a security feature of the SDK.
+
+## Example: Complete Card Payment Form
+
+Here's an example of how to use `CardState` in a complete card payment form:
+
+```swift
+struct CardPaymentForm: View {
+    @EnvironmentObject var payTheory: PayTheory
+
+    var body: some View {
+        VStack {
+            PTCardNumber()
+                .background(backgroundColor(for: payTheory.card.number))
+            PTExp()
+                .background(backgroundColor(for: payTheory.card.exp))
+            PTCvv()
+                .background(backgroundColor(for: payTheory.card.cvv))
+            PTCardPostalCode()
+                .background(backgroundColor(for: payTheory.card.postalCode))
+
+            Button("Submit Card Payment") {
+                submitPayment()
+            }
+            .disabled(!payTheory.card.isValid)
+        }
+    }
+
+    private func backgroundColor(for field: ValidAndEmpty) -> Color {
+        if field.isEmpty {
+            return .white
+        } else if field.isValid {
+            return .green.opacity(0.2)
+        } else {
+            return .red.opacity(0.2)
+        }
+    }
+
+    private func submitPayment() {
+        // Card payment submission logic
+    }
+}
+```
+
+This example demonstrates how to use the `CardState` and its sub-classes to create a responsive card payment form with real-time validation feedback.
+
+By leveraging `CardState` and its sub-classes, you can create secure and user-friendly card payment forms while adhering to best practices in handling sensitive financial data.

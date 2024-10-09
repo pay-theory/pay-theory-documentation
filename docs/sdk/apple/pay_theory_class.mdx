@@ -1,0 +1,106 @@
+---
+sidebar_position: 2
+sidebar_label: 'Pay Theory Class'
+title: "Pay Theory Class"
+---
+
+# PayTheory Class
+
+The `PayTheory` class is the core component of the PayTheory iOS SDK. It manages payment processing, handles various payment methods, and provides access to transaction-related information.
+
+## Class Declaration
+
+```swift
+public class PayTheory: ObservableObject, WebSocketProtocol
+```
+
+The `PayTheory` class conforms to `ObservableObject`, allowing it to be used with SwiftUI's state management system, and `WebSocketProtocol` for handling real-time communication with PayTheory services.
+
+## Initializer
+
+The `PayTheory` class is initialized with the following function signature:
+
+```swift
+public init(amount: Int? = nil, apiKey: String, devMode: Bool = false, errorHandler: @escaping (PTError) -> Void)
+```
+
+Here's a detailed description of each parameter:
+
+| Parameter    | Type                        | Description                                                                                                                                                                             |
+|--------------|-----------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| amount       | `Int?`                      | An optional integer representing the transaction amount in cents. If provided, it will be used to calculate fees for Service Fee mode. Defaults to `nil`.                              |
+| apiKey       | `String`                    | A string containing the API key for authentication with PayTheory services. It should be in the format `'{partner}-{paytheorystage}-{UUID}'`.                                          |
+| devMode      | `Bool`                      | A boolean flag indicating whether to run in development mode. When `true`, it uses the development environment for app attestation. Defaults to `false`.                               |
+| errorHandler | `@escaping (PTError) -> Void` | A closure that handles any errors that might occur during initialization and other background actions. It takes a `PTError` parameter and doesn't return a value.                      |
+
+### Example Usage
+
+```swift
+let payTheory = PayTheory(
+    amount: 1000,  // $10.00
+    apiKey: "partner-stage-1234567890abcdef",
+    devMode: true
+) { error in
+    print("Error occurred: \(error.error)")
+}
+```
+
+## Public Variables
+
+The `PayTheory` class provides several public variables for accessing payment-related information and states:
+
+### Payment Method States
+
+```swift
+@Published public private(set) var card: CardState
+@Published public private(set) var cash: CashState
+@Published public private(set) var ach: ACHState
+```
+
+These variables provide access to the current state of different payment methods (card, cash, and ACH). Each state object contains validation status and entered details for the respective payment method.
+
+### Service Fees
+
+```swift
+@Published public private(set) var cardServiceFee: Int?
+@Published public private(set) var bankServiceFee: Int?
+```
+
+These variables hold the calculated service fees (in cents) for card and bank (ACH) transactions. They will be `nil` if no fee applies or if the fee hasn't been calculated yet.
+
+### Ready State
+
+```swift
+@Published public private(set) var isReady: Bool
+```
+
+This boolean indicates whether the `PayTheory` instance has completed its initialization and is ready to process payments. It should be checked before attempting to use the instance for payment operations.
+
+:::note
+The `private(set)` modifier on these published properties means they can be read from outside the class, but only modified within the class itself. This ensures that the SDK maintains control over these states while still allowing your app to observe them.
+:::
+
+## Usage in SwiftUI
+
+To use the `PayTheory` class in a SwiftUI view, you typically initialize it as a state object or environment object:
+
+```swift
+struct ContentView: View {
+    @StateObject private var payTheory = PayTheory(
+        apiKey: "your-api-key-here"
+    ) { error in
+        print("PayTheory Error: \(error.error)")
+    }
+
+    var body: some View {
+        PTForm {
+            // Your payment form contents
+        }
+        .environmentObject(payTheory)
+    }
+}
+```
+
+By using `@StateObject` and passing the `payTheory` instance as an environment object, you ensure that all child views have access to the same `PayTheory` instance and can react to its state changes.
+
+For more details on the specific functions provided by the `PayTheory` class and how to use the various state classes, please refer to the detailed API documentation.
