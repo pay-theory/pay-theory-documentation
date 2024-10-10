@@ -27,20 +27,20 @@ Merchants are the entities that are using Pay Theory to accept payments.
 }
 ```
 
-| Key                  | type             | description                                                                                                         |
-|----------------------|------------------|---------------------------------------------------------------------------------------------------------------------|
-| ach_active           | Boolean          | If the merchant has successfully completed onboarding and has an ACH processor active.                              |
-| api_key              | String           | The API key of the merchant. This is used to authenticate use of the PayTheory Web and Native SDKs.                 |
-| card_active          | Boolean          | If the merchant has successfully completed onboarding and has a card processor active.                              |
-| cash_active          | Boolean          | If the merchant has successfully completed onboarding and has a cash processor active.                              |
-| country_code         | String           | The country code of the country the merchant operates from.                                                         |
-| fee_matrix           | FeeMatrix        | The fee matrix that the merchant is using.  This is used to calculate the fees that are charged to the payor.       |
-| is_system            | Boolean          | If the merchant is a system merchant.  System merchants are merchants that also have sub merchants.                 |
-| merchant_name        | String           | The name of the merchant.                                                                                           |
-| merchant_uid         | String           | The Pay Theory unique identifier assigned to the merchant.                                                          |
-| parent_merchant_uid  | String           | The `merchant_uid` of the parent merchant.  This is only set if the merchant is a sub merchant of a system merchant. |
-| settings             | MerchantSettings | The settings that the merchant has set.                                                                             |
-| submitted_onboarding | Boolean          | Whether the merchant has submitted their onboarding information.                                                    |
+| Key                  | type                                        | description                                                                                                         |
+|----------------------|---------------------------------------------|---------------------------------------------------------------------------------------------------------------------|
+| ach_active           | Boolean                                     | If the merchant has successfully completed onboarding and has an ACH processor active.                              |
+| api_key              | String                                      | The API key of the merchant. This is used to authenticate use of the PayTheory Web and Native SDKs.                 |
+| card_active          | Boolean                                     | If the merchant has successfully completed onboarding and has a card processor active.                              |
+| cash_active          | Boolean                                     | If the merchant has successfully completed onboarding and has a cash processor active.                              |
+| country_code         | String                                      | The country code of the country the merchant operates from.                                                         |
+| fee_matrix           | FeeMatrix                                   | The fee matrix that the merchant is using.  This is used to calculate the fees that are charged to the payor.       |
+| is_system            | Boolean                                     | If the merchant is a system merchant.  System merchants are merchants that also have sub merchants.                 |
+| merchant_name        | String                                      | The name of the merchant.                                                                                           |
+| merchant_uid         | String                                      | The Pay Theory unique identifier assigned to the merchant.                                                          |
+| parent_merchant_uid  | String                                      | The `merchant_uid` of the parent merchant.  This is only set if the merchant is a sub merchant of a system merchant. |
+| settings             | [MerchantSettings](#merchantsettingsobject) | The settings that the merchant has set.                                                                             |
+| submitted_onboarding | Boolean                                     | Whether the merchant has submitted their onboarding information.                                                    |
 
 ### The Fee Matrix Object
 
@@ -145,6 +145,33 @@ type CardServiceFee {
 |fixed              |Int          | The fixed fee that will be charged to the merchant for each transaction.                         |
 |max_fee            |Int          | The maximum fee that will be charged to the merchant for each transaction.                       |
 |min_fee            |Int          | The minimum fee that will be charged to the merchant for each transaction.                       |
+
+### Merchant Settings Object
+
+```js
+{
+    contact_email: AWSEmail
+    contact_phone: AWSPhone
+    facebook: AWSURL
+    instagram: AWSURL
+    linkedin: AWSURL
+    tiktok: AWSURL
+    twitter: AWSURL
+    website: AWSURL
+}
+```
+
+| Key | Type | Description |
+|-----|------|-------------|
+| contact_email | AWSEmail | The contact email for the merchant. |
+| contact_phone | AWSPhone | The contact phone number for the merchant. |
+| facebook | AWSURL | The Facebook URL for the merchant. |
+| instagram | AWSURL | The Instagram URL for the merchant. |
+| linkedin | AWSURL | The LinkedIn URL for the merchant. |
+| tiktok | AWSURL | The TikTok URL for the merchant. |
+| twitter | AWSURL | The Twitter URL for the merchant. |
+| website | AWSURL | The website URL for the merchant. |
+
 
 ***
 ## Query Merchant
@@ -455,3 +482,58 @@ input CardServiceFeeInput {
     }
 }
 ```
+
+## Update Merchant Settings
+
+```graphql
+mutation {
+    updateMerchantSettings(
+        merchant_uid: ID!,
+        settings: MerchantSettingsInput!
+    ) {
+        Boolean
+    }
+}
+```
+
+**Parameters**
+
+| Key | Type | Description |
+|-----|------|-------------|
+| merchant_uid | ID! | The unique identifier of the merchant whose settings are being updated. |
+| settings | MerchantSettingsInput! | The new settings for the merchant. |
+
+**MerchantSettingsInput Object**
+
+```graphql
+input MerchantSettingsInput {
+    contact_email: AWSEmail
+    contact_phone: AWSPhone
+    facebook: AWSURL
+    instagram: AWSURL
+    linkedin: AWSURL
+    tiktok: AWSURL
+    twitter: AWSURL
+    website: AWSURL
+}
+```
+
+All fields in the MerchantSettingsInput are optional. If a field is not provided, it will not be updated.
+
+:::note Important
+The `AWSEmail`,  `AWSPhone`, and `AWSURL` types must be valid according to AWS AppSync's validation rules. If an invalid email or phone number is provided, the mutation will throw an error. For details on how these types are validated, please refer to the [AWS AppSync Scalar Types documentation](https://docs.aws.amazon.com/appsync/latest/devguide/scalars.html).
+:::
+
+**Returns**
+
+```js
+{
+    "data": {
+        "updateMerchantSettings": true
+    }
+}
+```
+
+| Key | Type | Description |
+|-----|------|-------------|
+| updateMerchantSettings | Boolean | Returns true if the update was successful, false otherwise. |
