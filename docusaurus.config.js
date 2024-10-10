@@ -47,13 +47,8 @@ const config = {
           lastVersion: 'current',
           versions: {
             current: {
-              label: '2.23.0 (Labs)',
+              label: '2.23.0',
               path: '',
-            },
-            '2.22.0': {
-              label: '2.22.0',
-              path: '2.22.0',
-              banner: 'none', // show banner for this version
             },
           },
           //routeBasePath: '/',
@@ -145,11 +140,11 @@ const config = {
           href: '/',
         },
         items: [
-          {
-            type: 'docsVersionDropdown',
-            position: 'left',
-            dropdownActiveClassDisabled: true,
-          },
+          // {
+          //   type: 'docsVersionDropdown',
+          //   position: 'left',
+          //   dropdownActiveClassDisabled: true,
+          // },
           {
             type: 'docSidebar',
             sidebarId: 'homeSidebar',
