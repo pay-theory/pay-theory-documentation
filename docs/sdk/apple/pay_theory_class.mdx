@@ -26,12 +26,12 @@ public init(amount: Int? = nil, apiKey: String, devMode: Bool = false, errorHand
 
 Here's a detailed description of each parameter:
 
-| Parameter    | Type                        | Description                                                                                                                                                                             |
-|--------------|-----------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| amount       | `Int?`                      | An optional integer representing the transaction amount in cents. If provided, it will be used to calculate fees for Service Fee mode. Defaults to `nil`.                              |
-| apiKey       | `String`                    | A string containing the API key for authentication with PayTheory services. It should be in the format `'{partner}-{paytheorystage}-{UUID}'`.                                          |
-| devMode      | `Bool`                      | A boolean flag indicating whether to run in development mode. When `true`, it uses the development environment for app attestation. Defaults to `false`.                               |
-| errorHandler | `@escaping (PTError) -> Void` | A closure that handles any errors that might occur during initialization and other background actions. It takes a `PTError` parameter and doesn't return a value.                      |
+| Parameter    | Type                          | Description                                                                                                                                                                                   |
+|--------------|-------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| amount       | `Int?`                        | An optional integer representing the transaction amount in cents. If provided, it will be used to calculate fees for Service Fee mode. Defaults to `nil`.                                     |
+| apiKey       | `String`                      | A string containing the API key for authentication with PayTheory services. It should be in the format `'{partner}-{paytheorystage}-{UUID}'`.                                                 |
+| devMode      | `Bool`                        | A boolean flag indicating whether to run in development mode. When `true` it allows you to skip the app attestation process and run in the simulator. This cannot be turned on in production. |
+| errorHandler | `@escaping (PTError) -> Void` | A closure that handles any errors that might occur during initialization and other background actions. It takes a `PTError` parameter and doesn't return a value.                             |
 
 ### Example Usage
 

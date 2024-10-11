@@ -44,6 +44,10 @@ struct ContentView: View {
 }
 ```
 
+:::note DevMode
+When testing in the sandbox environment, set `devMode` to `true` to bypass App Attestation. This is useful for testing in simulators but does not reflect the production environment. Always test with `devMode` set to `false` in sandbox before moving to production.
+:::
+
 ## Step 4: Wrap Your View with PTForm
 
 Wrap your main view content with the [`PTForm`](ui_components/pt_form.mdx) view provided by the SDK. This allows the custom text fields to access the necessary data:

@@ -95,7 +95,7 @@ payTheory.tokenizePaymentMethod(
 }
 ```
 
-:::note Note
+:::note Asynchronous Execution Note
 The closure-based version of `tokenizePaymentMethod` is executed asynchronously. The completion handler will be called on an arbitrary thread, so make sure to dispatch UI updates to the main thread if needed.
 :::
 

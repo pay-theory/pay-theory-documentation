@@ -101,7 +101,7 @@ struct CheckoutView: View {
 - The `bankServiceFee` for ACH payments will be calculated immediately upon calling `updateAmount`.
 - Fee calculations are asynchronous. Observe the `cardServiceFee` and `bankServiceFee` properties of your PayTheory instance for updates.
 
-:::tip
+:::tip Tip
 When implementing a payment form, consider calling `updateAmount` whenever the user modifies the card number, especially if they change the first 6 digits. This ensures the most accurate fee calculation based on the specific card type.
 :::
 

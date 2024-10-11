@@ -141,7 +141,7 @@ payTheory.transact(
 }
 ```
 
-:::note
+:::note Asynchronous Execution Note
 The closure-based version of `transact` is executed asynchronously. The completion handler will be called on an arbitrary thread, so make sure to dispatch UI updates to the main thread if needed.
 :::
 
