@@ -18,7 +18,7 @@ public func transact(
     paymentMethod: PaymentType,
     accountCode: String? = nil,
     fee: Int? = nil,
-    feeMode: FeeMode = .MERCHANT_FEE,
+    feeMode: FeeMode = .merchantFee,
     healthExpenseType: HealthExpenseType? = nil,
     invoiceId: String? = nil,
     level3DataSummary: Level3DataSummary? = nil,
@@ -69,18 +69,18 @@ The function returns a [`TransactResponse`](../response_types/transaction_respon
 do {
     let response = try await payTheory.transact(
         amount: 1000,
-        paymentMethod: .CARD,
+        paymentMethod: .card,
         metadata: ["order_id": "12345"]
     )
 
     switch response {
-    case .Success(let transaction):
+    case .success(let transaction):
         print("Transaction successful: \(transaction.transactionId)")
-    case .Failure(let failure):
+    case .failure(let failure):
         print("Transaction failed: \(failure.failureText)")
-    case .Error(let error):
+    case .error(let error):
         print("Error occurred: \(error.error)")
-    case .Barcode:
+    case .barcode:
         print("Barcode generated (not applicable for card payments)")
     }
 } catch {
@@ -98,7 +98,7 @@ public func transact(
     paymentMethod: PaymentType,
     accountCode: String? = nil,
     fee: Int? = nil,
-    feeMode: FeeMode = .MERCHANT_FEE,
+    feeMode: FeeMode = .merchantFee,
     healthExpenseType: HealthExpenseType? = nil,
     invoiceId: String? = nil,
     level3DataSummary: Level3DataSummary? = nil,
@@ -125,17 +125,17 @@ The parameters for the closure-based version are the same as the async version, 
 ```swift
 payTheory.transact(
     amount: 1000,
-    paymentMethod: .CARD,
+    paymentMethod: .card,
     metadata: ["order_id": "12345"]
 ) { response in
     switch response {
-    case .Success(let transaction):
+    case .success(let transaction):
         print("Transaction successful: \(transaction.transactionId)")
-    case .Failure(let failure):
+    case .failure(let failure):
         print("Transaction failed: \(failure.failureText)")
-    case .Error(let error):
+    case .error(let error):
         print("Error occurred: \(error.error)")
-    case .Barcode:
+    case .barcode:
         print("Barcode generated (not applicable for card payments)")
     }
 }

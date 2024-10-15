@@ -12,8 +12,8 @@ title: "TokenizePaymentMethodResponse"
 
 | Case | Associated Value | Description |
 |------|------------------|-------------|
-| Success | TokenizedPaymentMethod | Represents a successfully tokenized payment method. |
-| Error | PTError | Represents an error that occurred during the tokenization process. |
+| success | TokenizedPaymentMethod | Represents a successfully tokenized payment method. |
+| error | PTError | Represents an error that occurred during the tokenization process. |
 
 ## Associated Types
 
@@ -44,7 +44,7 @@ Here's an example of how to handle a `TokenizePaymentMethodResponse`:
 ```swift
 func handleTokenizationResponse(_ response: TokenizePaymentMethodResponse) {
     switch response {
-    case .Success(let tokenizedPaymentMethod):
+    case .success(let tokenizedPaymentMethod):
         print("Payment method successfully tokenized:")
         print("Payment Method ID: \(tokenizedPaymentMethod.paymentMethodId)")
         print("Payor ID: \(tokenizedPaymentMethod.payorId)")
@@ -63,7 +63,7 @@ func handleTokenizationResponse(_ response: TokenizePaymentMethodResponse) {
         // Here you might save the payment method ID for future transactions
         savePaymentMethodId(tokenizedPaymentMethod.paymentMethodId)
 
-    case .Error(let error):
+    case .error(let error):
         print("Tokenization error occurred:")
         print("Error: \(error.code): \(error.error)")
 
@@ -81,7 +81,7 @@ func handleTokenizationResponse(_ response: TokenizePaymentMethodResponse) {
 
 // Usage
 func tokenizePaymentMethod() {
-    payTheory.tokenizePaymentMethod(paymentMethod: .CARD) { response in
+    payTheory.tokenizePaymentMethod(paymentMethod: .card) { response in
         handleTokenizationResponse(response)
     }
 }

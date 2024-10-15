@@ -90,15 +90,15 @@ Add a button to initiate the payment process:
 
 ```swift
 Button("Pay") {
-    payTheory.transact(amount: 1000, paymentMethod: .CARD) { response in
+    payTheory.transact(amount: 1000, paymentMethod: .card) { response in
         switch response {
-        case .Success(let payment):
+        case .success(let payment):
             print("Payment successful: \(payment.transactionId)")
-        case .Failure(let failure):
+        case .failure(let failure):
             print("Payment failed: \(failure.failureText)")
-        case .Error(let error):
+        case .error(let error):
             print("Error: \(error.error)")
-        case .Barcode:
+        case .barcode:
             print("Barcode generation not applicable for card payments")
         }
     }
@@ -115,7 +115,7 @@ Both `transact` and `tokenizePaymentMethod` have async versions that you can use
 ```swift
 Button("Async Pay") {
     Task {
-        let response = await payTheory.transact(amount: 1000, paymentMethod: .CARD)
+        let response = await payTheory.transact(amount: 1000, paymentMethod: .card)
         // Handle response
     }
 }
@@ -147,15 +147,15 @@ struct ContentView: View {
                 PTCardPostalCode()
 
                 Button("Pay") {
-                    payTheory.transact(amount: 1000, paymentMethod: .CARD) { response in
+                    payTheory.transact(amount: 1000, paymentMethod: .card) { response in
                         switch response {
-                        case .Success(let payment):
+                        case .success(let payment):
                             print("Payment successful: \(payment.transactionId)")
-                        case .Failure(let failure):
+                        case .failure(let failure):
                             print("Payment failed: \(failure.failureText)")
-                        case .Error(let error):
+                        case .error(let error):
                             print("Error: \(error.error)")
-                        case .Barcode:
+                        case .barcode:
                             print("Barcode generation not applicable for card payments")
                         }
                     }

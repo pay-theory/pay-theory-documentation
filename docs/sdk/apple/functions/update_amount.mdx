@@ -62,7 +62,7 @@ class CheckoutViewModel: ObservableObject {
         payTheory = PayTheory(
             amount: 0, // Initial amount
             apiKey: "your-api-key-here",
-            feeMode: .SERVICE_FEE // Using service fee model
+            feeMode: .serviceFee // Using service fee model
         ) { error in
             print("PayTheory Error: \(error.error)")
         }
@@ -96,7 +96,7 @@ struct CheckoutView: View {
 ## Important Notes
 
 - The `newAmount` parameter should be provided in cents. For example, use `1000` for $10.00.
-- This function is most relevant when using the service fee model (`feeMode: .SERVICE_FEE`).
+- This function is most relevant when using the service fee model (`feeMode: .serviceFee`).
 - For card payments, the `cardServiceFee` will only be calculated and updated once a valid BIN (first 6 digits of the card number) is entered in the card number field.
 - The `bankServiceFee` for ACH payments will be calculated immediately upon calling `updateAmount`.
 - Fee calculations are asynchronous. Observe the `cardServiceFee` and `bankServiceFee` properties of your PayTheory instance for updates.

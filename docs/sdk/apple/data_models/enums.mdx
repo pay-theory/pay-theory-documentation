@@ -14,9 +14,9 @@ The `PaymentType` enum represents the different payment methods supported by the
 
 ```swift
 public enum PaymentType: String, CaseIterable, Identifiable {
-    case CARD
-    case ACH
-    case CASH
+    case card
+    case ach
+    case cash
 
     public var id: Self { self }
 }
@@ -26,15 +26,15 @@ public enum PaymentType: String, CaseIterable, Identifiable {
 
 | Case | Description |
 |------|-------------|
-| `CARD` | Represents credit or debit card payments. |
-| `ACH` | Represents Automated Clearing House (bank transfer) payments. |
-| `CASH` | Represents cash payments (typically used with barcode generation for in-person payments). |
+| `card` | Represents credit or debit card payments. |
+| `ach` | Represents Automated Clearing House (bank transfer) payments. |
+| `cash` | Represents cash payments (typically used with barcode generation for in-person payments). |
 
 ### Usage
 
 ```swift
 // Example: Specifying a card payment in a transaction
-payTheory.transact(amount: 1000, paymentMethod: .CARD) { response in
+payTheory.transact(amount: 1000, paymentMethod: .card) { response in
     // Handle transaction response
 }
 ```
@@ -44,9 +44,9 @@ payTheory.transact(amount: 1000, paymentMethod: .CARD) { response in
 The `FeeMode` enum defines how transaction fees are handled in the Pay Theory system.
 
 ```swift
-public enum FEE_MODE: String, Codable {
-    case MERCHANT_FEE
-    case SERVICE_FEE
+public enum FeeMode: String, Codable {
+    case merchantFee
+    case serviceFee
 }
 ```
 
@@ -54,17 +54,17 @@ public enum FEE_MODE: String, Codable {
 
 | Case | Description |
 |------|-------------|
-| `MERCHANT_FEE` | The merchant absorbs the transaction fee. The customer pays only the transaction amount. |
-| `SERVICE_FEE` | The customer pays the transaction fee in addition to the transaction amount. |
+| `merchantFee` | The merchant absorbs the transaction fee. The customer pays only the transaction amount. |
+| `serviceFee` | The customer pays the transaction fee in addition to the transaction amount. |
 
 ### Usage
 
 ```swift
 // Example: Setting up a transaction with a service fee
 payTheory.transact(amount: 1000,
-                   paymentMethod: .CARD,
+                   paymentMethod: .card,
                    fee: 50,
-                   feeMode: .SERVICE_FEE) { response in
+                   feeMode: .serviceFee) { response in
     // Handle transaction response
 }
 ```
@@ -75,37 +75,36 @@ The `HealthExpenseType` enum categorizes health-related expenses, which can be i
 
 ```swift
 public enum HealthExpenseType: String, Codable {
-    case MEDICAL
-    case DENTAL
-    case VISION
-    case PRESCRIPTION
-    case HEARING
-    case TRANSIT
-    case PARKING
-    case UNREIMBURSED
+    case healthcare
+    case perscription
+    case vision
+    case clinical
+    case copay
+    case dental
+    case transit
 }
 ```
 
 ### Cases
 
-| Case | Description |
-|------|-------------|
-| `MEDICAL` | General medical expenses |
-| `DENTAL` | Dental care expenses |
-| `VISION` | Vision care expenses |
-| `PRESCRIPTION` | Prescription medication expenses |
-| `HEARING` | Hearing-related medical expenses |
-| `TRANSIT` | Health-related transit expenses |
-| `PARKING` | Health-related parking expenses |
-| `UNREIMBURSED` | Unreimbursed medical expenses |
+| Case           | Description                                                 |
+|----------------|-------------------------------------------------------------|
+| `medical`      | Represents general medical expenses.                        |
+| `perscription` | Represents prescription medication expenses.                |
+| `vision`       | Represents vision-related expenses.                         |
+| `clinical`     | Represents clinical expenses.                               |
+| `copay`        | Represents copayments for medical services.                 |
+| `dental`       | Represents dental expenses.                                 |
+| `transit`      | Represents transportation expenses related to medical care. |
+
 
 ### Usage
 
 ```swift
 // Example: Processing a medical expense transaction
 payTheory.transact(amount: 15000,
-                   paymentMethod: .CARD,
-                   healthExpenseType: .MEDICAL) { response in
+                   paymentMethod: .card,
+                   healthExpenseType: .medical) { response in
     // Handle transaction response
 }
 ```

@@ -12,10 +12,10 @@ title: "TransactResponse"
 
 | Case | Associated Value | Description |
 |------|------------------|-------------|
-| Barcode | CashBarcode | Represents the successful generation of a cash barcode. |
-| Error | PTError | Represents an error that occurred during the transaction process. |
-| Failure | FailedTransaction | Represents a failed transaction. |
-| Success | SuccessfulTransaction | Represents a successful transaction. |
+| barcode | CashBarcode | Represents the successful generation of a cash barcode. |
+| error | PTError | Represents an error that occurred during the transaction process. |
+| failure | FailedTransaction | Represents a failed transaction. |
+| success | SuccessfulTransaction | Represents a successful transaction. |
 
 ## Associated Types
 
@@ -73,16 +73,16 @@ Here's an example of how to handle a `TransactResponse`:
 ```swift
 func handleTransactionResponse(_ response: TransactResponse) {
     switch response {
-    case .Barcode(let barcode):
+    case .barcode(let barcode):
         print("Cash barcode generated:")
         print("Barcode URL: \(barcode.barcodeUrl)")
         print("Payment locations map: \(barcode.mapUrl)")
 
-    case .Error(let error):
+    case .errpr(let error):
         print("Transaction error occurred:")
         print("Error: \(error.code): \(error.error)")
 
-    case .Failure(let failedTransaction):
+    case .failure(let failedTransaction):
         print("Transaction failed:")
         print("Transaction ID: \(failedTransaction.transactionId)")
         print("Last Four: \(failedTransaction.lastFour)")
@@ -91,7 +91,7 @@ func handleTransactionResponse(_ response: TransactResponse) {
         print("Failure Code: \(failedTransaction.failureCode)")
         print("Failure Message: \(failedTransaction.failureText)")
 
-    case .Success(let successfulTransaction):
+    case .success(let successfulTransaction):
         print("Transaction successful:")
         print("Transaction ID: \(successfulTransaction.transactionId)")
         print("Last Four: \(successfulTransaction.lastFour)")

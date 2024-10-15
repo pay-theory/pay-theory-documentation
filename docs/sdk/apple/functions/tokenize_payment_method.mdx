@@ -25,7 +25,7 @@ public func tokenizePaymentMethod(
 
 | Parameter     | Type                | Description                                                                                                                                       |
 |---------------|---------------------|---------------------------------------------------------------------------------------------------------------------------------------------------|
-| paymentMethod | `PaymentType`      | The type of payment method to tokenize (e.g., `.CARD`, `.ACH`).                                                                                    |
+| paymentMethod | `PaymentType`      | The type of payment method to tokenize (e.g., `.card`, `.ach`).                                                                                    |
 | payor         | [`Payor?`](../data_models/payor)            | The details of the payor that you are tokenizing the payment method for. This cannot be used if also using the `payorId` parameter.               |
 | payorId       | `String?`           | The Pay Theory payor ID to use for the payment. Allows for user to manage identities. This cannot be used if also using the `payor` parameter.    |
 | metadata      | `[String: String]?` | A dictionary that will be stored with the token and can be used to track the token.                                                                |
@@ -42,15 +42,15 @@ The function returns a [`TokenizePaymentMethodResponse`](../response_types/token
 ```swift
 do {
     let response = try await payTheory.tokenizePaymentMethod(
-        paymentMethod: .CARD,
+        paymentMethod: .card,
         payor: Payor(firstName: "John", lastName: "Doe", email: "john@example.com"),
         metadata: ["customer_id": "12345"]
     )
 
     switch response {
-    case .Success(let tokenizedPayment):
+    case .success(let tokenizedPayment):
         print("Tokenization successful: \(tokenizedPayment.paymentMethodId)")
-    case .Error(let error):
+    case .error(let error):
         print("Tokenization failed: \(error.error)")
     }
 } catch {
@@ -82,14 +82,14 @@ The parameters for the closure-based version are the same as the async version, 
 
 ```swift
 payTheory.tokenizePaymentMethod(
-    paymentMethod: .CARD,
+    paymentMethod: .card,
     payor: Payor(firstName: "John", lastName: "Doe", email: "john@example.com"),
     metadata: ["customer_id": "12345"]
 ) { response in
     switch response {
-    case .Success(let tokenizedPayment):
+    case .success(let tokenizedPayment):
         print("Tokenization successful: \(tokenizedPayment.paymentMethodId)")
-    case .Error(let error):
+    case .error(let error):
         print("Tokenization failed: \(error.error)")
     }
 }
