@@ -1,0 +1,102 @@
+---
+sidebar_position: 2
+sidebar_label: 'ACH Fields'
+title: "ACH Fields"
+---
+
+# Pay Theory ACH UI Fields
+
+This documentation covers all the SwiftUI views provided by the Pay Theory SDK for capturing ACH (Automated Clearing House) information. These views are designed to be used within a `PTForm` and require a `PayTheory` object to be provided as an environment object.
+
+## Common Requirements
+
+All of these views:
+- Must be used within a `PTForm` view hierarchy
+- Require a `PayTheory` object to be provided as an environment object
+- Automatically handle data binding and validation with the Pay Theory SDK
+
+## PTAchAccountName
+
+A SwiftUI view that provides a text field for capturing the name on the bank account.
+
+### Usage
+
+```swift
+PTAchAccountName(placeholder: "Name on Account")
+```
+
+### Properties
+
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| placeholder | String | "Name on Account" | The placeholder text displayed when the field is empty |
+
+## PTAchAccountNumber
+
+A SwiftUI view that provides a text field for capturing the bank account number.
+
+### Usage
+
+```swift
+PTAchAccountNumber(placeholder: "Account Number")
+```
+
+### Properties
+
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| placeholder | String | "Account Number" | The placeholder text displayed when the field is empty |
+
+## PTAchRoutingNumber
+
+A SwiftUI view that provides a text field for capturing the bank routing number.
+
+### Usage
+
+```swift
+PTAchRoutingNumber(placeholder: "Routing Number")
+```
+
+### Properties
+
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| placeholder | String | "Routing Number" | The placeholder text displayed when the field is empty |
+
+## PTAchAccountType
+
+A SwiftUI view that provides a segmented picker for selecting the type of bank account (checking or savings).
+
+### Usage
+
+```swift
+PTAchAccountType()
+```
+
+### Properties
+
+This view does not accept any custom properties. It provides a fixed set of options for account type selection.
+
+## Example Usage
+
+Here's an example of how to use these fields together within a `PTForm`:
+
+```swift
+struct ACHPaymentView: View {
+    @EnvironmentObject var payTheory: PayTheory
+
+    var body: some View {
+        PTForm {
+            VStack(spacing: 20) {
+                PTAchAccountName()
+                PTAchAccountNumber()
+                PTAchRoutingNumber()
+                PTAchAccountType()
+            }
+        }
+        .environmentObject(payTheory)
+    }
+}
+```
+
+This example creates a complete ACH payment form using all the available ACH UI fields. Remember to provide the `PayTheory` object as an environment object to the `PTForm` for proper functionality.

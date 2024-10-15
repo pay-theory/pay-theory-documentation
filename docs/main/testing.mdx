@@ -1,5 +1,5 @@
 ---
-sidebar_position: 6
+sidebar_position: 7
 sidebar_label: 'Testing'
 title: "Testing"
 ---
@@ -8,7 +8,7 @@ title: "Testing"
 This guide will show you how to test card and ACH payments, card failures and disputes.
 
 :::danger Before you start
-In order to test a payment method you need be set up to accept online payments.  
+In order to test a payment method you need be set up to accept online payments.
 
 <a href= "getting_started/Quickstart" class="button button--primary button--md">Accepting Online Payments</a>
 :::
@@ -21,7 +21,7 @@ When testing you will be using an SDK import and API Key that contains either pa
 
 ### Card Brands
 |Card Brand |Testing Number        |
-------------|----------------------|    
+------------|----------------------|
 |Discover   |6542 1548 4662 3459   |
 |Mastercard |5454 5454 5454 5454   |
 |Amex       |3434 343434 34343     |
@@ -32,7 +32,7 @@ To trigger certain failures process a payment using the following amounts. These
 
 
 |Amount |Error Type                             |
-------------|---------------------------------------|    
+------------|---------------------------------------|
 |102        |GENERIC_DECLINE                        |
 |193        |INSUFFICIENT_FUNDS                     |
 |194        |INVALID_ACCOUNT_NUMBER                 |
@@ -48,8 +48,9 @@ If you want to trigger a dispute in sandbox, run a transaction for `888888`. You
 
 
 ## Testing ACH Transactions
-|Name on Account    |Account Number      | Routing Number     |
---------------------|--------------------|--------------------|
-|Any                |789456124           |789456124           |
+| Transaction Outcome | Account Number | Routing Number |
+|---------------------|----------------|----------------|
+| Success             | 0000000016     | 122105278      |
+| Failure             | 0000000005     | 122105278      |
 
 

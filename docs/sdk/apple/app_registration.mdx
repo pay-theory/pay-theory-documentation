@@ -1,0 +1,128 @@
+---
+sidebar_position: 7
+sidebar_label: 'Register Your App'
+title: "Register Your App"
+---
+
+# Apple App Attestation Setup Guide
+
+## Introduction
+
+Apple's App Attestation is a crucial security feature that verifies the authenticity of your app. When integrating with the Pay Theory SDK, it's important to understand how App Attestation is used in different environments:
+
+- **Production Environment**: App Attestation is required for all apps in the production environment. You must complete the setup process described in this guide to ensure your app can successfully go through Apple's App Attestation.
+
+- **Sandbox Environment**: While App Attestation is not strictly required in the sandbox environment, it's highly recommended to test it to ensure a smooth transition to production. You can test App Attestation in the sandbox by following these steps:
+1. Complete the setup process described in this guide.
+2. When initializing the PayTheory object in your app, do not set `devMode` to `true`. For example:
+```swift
+let payTheory = PayTheory(apiKey: "your-sandbox-api-key")
+```
+3. This allows you to test App Attestation in the sandbox environment, mimicking the production behavior.
+
+:::note DevMode
+Setting `devMode` to `true` bypasses App Attestation, which is useful for testing in simulators but does not reflect the production environment. Always test with `devMode` set to `false` in sandbox before moving to production.
+:::
+
+By testing App Attestation in the sandbox environment, you can identify and resolve any issues before deploying to production, ensuring a smoother launch process.
+
+Now, let's proceed with obtaining the necessary credentials for Apple's App Attestation.
+
+## Obtaining the Necessary Credentials
+
+To set up Apple's App Attestation, you'll need to obtain the following:
+
+1. App ID (composed of App ID Prefix and Bundle ID)
+2. DeviceCheck Key
+3. DeviceCheck Key ID
+
+These credentials are essential for registering your app and enabling it to go through Apple's App Attestation process.
+
+## 1. Obtaining the App ID
+
+The App ID consists of two parts: the App ID Prefix and the Bundle ID. Here's how to obtain both:
+
+1. Log in to your [Apple Developer Account](https://developer.apple.com/account/).
+2. Navigate to "Certificates, Identifiers & Profiles".
+3. In the sidebar, select "Identifiers" under the "Identifiers" section.
+4. Look for your app in the list.
+
+Here you'll find:
+- The Bundle ID, typically in the format `com.yourcompany.yourappname`.
+- The App ID Prefix, which is usually a 10-digit Team ID.
+
+If you haven't created an App ID yet:
+
+1. Click the "+" button to add a new identifier.
+2. Select "App IDs" and click "Continue".
+3. Choose "App" as the type and click "Continue".
+4. Fill in the description and Bundle ID.
+5. Select the capabilities your app needs. *(App Attest is required for Pay Theory SDK integration.)*
+6. Click "Continue" and then "Register" to create the App ID.
+
+After registration, you'll be able to see both the App ID Prefix and Bundle ID for your app.
+
+## 2. Creating a DeviceCheck Key
+
+The DeviceCheck Key is used to authenticate your server with Apple's servers.
+
+1. Still in the "Certificates, Identifiers & Profiles" section, click on "Keys" in the sidebar.
+2. Click the "+" button to add a new key.
+3. Give your key a name (e.g., "DeviceCheck Key for MyApp").
+4. Under "Key Services", check the box next to "DeviceCheck".
+5. Click "Continue" and then "Register".
+6. On the next screen, click "Download" to save your private key.
+:::warning Warning
+This is your only chance to download the key. Store it securely!
+:::
+7. Click "Done".
+
+## 3. Obtaining the DeviceCheck Key ID
+
+The Key ID is a unique identifier for your DeviceCheck Key.
+
+1. After creating the key, you'll be taken back to the "Keys" page.
+2. Find your newly created DeviceCheck Key in the list.
+3. The "Key ID" column shows your DeviceCheck Key ID.
+
+## Using the Credentials
+
+Now that you have obtained the necessary information:
+
+1. App ID Prefix (e.g., `A1B2C3D4E5`)
+2. Bundle ID (e.g., `com.yourcompany.yourappname`)
+3. DeviceCheck Key (the `.p8` file you downloaded)
+4. DeviceCheck Key ID (e.g., `YYX4DR48M7`)
+
+You'll need to add these details to Pay Theory's system through the portal. Here's how:
+
+1. Log in to your Pay Theory account portal.
+2. Navigate to the Settings section.
+3. Look for an option related to "Apple App Details" or "iOS App Configuration".
+4. You should see fields to enter your App ID, Device Check Key, and Device Check Key ID.
+5. For the App ID field, enter the information in this format: `{App ID Prefix}.{Bundle ID}`
+For example: `A1B2C3D4E5.com.yourcompany.yourappname`
+6. Enter the DeviceCheck Key and DeviceCheck Key ID as instructed previously.
+
+:::important Key Format
+When entering the DeviceCheck Key, make sure to copy and paste the **entire** contents of the `.p8` file, including the header and footer lines:
+```
+-----BEGIN PRIVATE KEY-----
+[... key content ...]
+-----END PRIVATE KEY-----
+   ```
+Omitting these lines will result in an invalid key and authentication failures.
+:::
+
+6. Save your changes.
+
+By adding these credentials to the Pay Theory portal, you're enabling the system to properly authenticate and verify your app during the App Attestation process.
+
+## Next Steps
+
+1. Ensure your app is properly configured to use App Attestation.
+2. Test your app thoroughly in the sandbox environment.
+3. When ready, transition to the production environment.
+4. Keep your credentials secure and up to date in the Pay Theory portal.
+
+For any additional assistance or questions about integrating these credentials with Pay Theory, please refer to the Pay Theory documentation or contact their support team.
