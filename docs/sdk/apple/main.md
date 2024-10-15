@@ -16,7 +16,9 @@ First, you need to add the PayTheory Swift package to your Xcode project:
 1. In Xcode, go to File > Add Packages...
 2. In the search bar, enter the following URL: `https://github.com/pay-theory/pay-theory-ios`
 3. Select the PayTheory package when it appears in the search results.
-4. Choose the version or branch you want to use (usually, you'll want the latest version).
+4. Choose the branch you want to use. This would be your partner name and the environment you are targeting.
+   - For example, if you are a partner named `start` targeting the `paytheory` environment, you would select the `start-paytheory` branch.
+   - Your environment can be `paytheory`, `paytheorystudy`, or `paytheorylab`.
 5. Click "Add Package" to import it into your project.
 
 ## Step 2: Import PayTheory in Your Swift File
