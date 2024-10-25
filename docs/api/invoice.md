@@ -415,4 +415,4 @@ mutation {
 
 
 **Returns**
-The response will contain the offline transaction object that was created. More information on the [offline transaction object](#offline-transaction-object).
+The response will contain the offline transaction object that was created. More information on the [offline transaction object](#the-offline-transaction-object).
