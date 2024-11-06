@@ -30,7 +30,6 @@
     "algoliasearch": "^5.10.2",
     "babel-plugin-inline-dotenv": "^1.7.0",
     "clsx": "^2.1.1",
-    "docusaurus2-dotenv": "^1.4.0",
     "dotenv": "^16.4.5",
     "prism-react-renderer": "^2.4.0",
     "react": "^18.3.1",
