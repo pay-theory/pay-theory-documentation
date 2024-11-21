@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 /**
  * Copyright (c) Facebook, Inc. and its affiliates.
  *
