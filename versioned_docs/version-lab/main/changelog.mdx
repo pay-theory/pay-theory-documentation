@@ -1,0 +1,47 @@
+---
+sidebar_position: 6
+sidebar_label: 'Changelog'
+title: "Changelog"
+---
+
+# Changelog
+Additions and updates to Pay Theory’s API
+
+## October 4, 2024
+#### Added to API
+* `country_code` was added to the Merchant and ListMerchant object
+* `canadian_eft` was added to the PaymentMethodInput for creating Canadian Bank accounts
+* `issuing_country_code` was added to the PaymentMethodToken schema
+* `flag_for_review` key added to Transaction schema
+
+***
+
+## September 29, 2024
+#### Added to API
+* `country_code` was added to the Merchant and ListMerchant object
+* `canadian_eft` was added to the PaymentMethodInput for creating Canadian Bank accounts
+* `issuing_country_code` was added to the PaymentMethodToken schema
+* `flag_for_review` key added to Transaction schema
+* `merchant` object of type ListMerchant was added to the Transaction schema
+* `updateTransactionInReview` mutation added to allow someone to approve or decline flagged transactions
+* `one_time_use_token` added to the createTransaction mutation to make it so that we immediately disable token after making the transaction
+* `createReversal` mutation added to API. Returns object with `is_void` and `transaction_id` in the response so you can tell if a payment was refunded, voided, or partially voided
+* `barcode` query added to API so you can fetch a single cash barcode from our system
+* `createBarcode` mutation added to API allowing cash barcodes to be created directly in the API without use of the SDK
+#### Added to JS SDK
+* `country` added to the payTheoryFields function to tell the SDK what fields to look for when initializing the Bank Fields. Defaults to USA but also accepts CAN
+* `oneTimeUseToken` added to the transact function parameters to make it so that we immediately disable token after making the transaction
+* New div IDs added for initializing the CAN bank fields:
+  * bank-account-number - `pay-theory-bank-account-number`
+  * bank-account-name - `pay-theory-bank-account-name`
+  * bank-account-type - `pay-theory-bank-account-type`
+  * bank-institution-number - `pay-theory-bank-institution-number`
+  * bank-transit-number - `pay-theory-bank-transit-number`
+#### Changed
+* `avs_status` now included in the Authorization and Transaction schema
+* `bank_account_type`, `bank_code`, `barcode_id`, and `card_type` now included in the PaymentMethodToken schema
+* CardType enum with the following types added to schema: `BUSINESS_CREDIT`, `BUSINESS_DEBIT`, `CREDIT_CARD`, `DEBIT_CARD`, `PREPAID_CARD`
+* `void_amount` argument is deprecated in the `createVoidForAuthorization` mutation as only full voids are supported
+* `createRefund` mutation is deprecated. Recommend using `createReversal` call now
+* All successful transactions from the SDK/API will now have the state/status of `PENDING` instead of the potential of both `PENDING` or `SUCCEEDED`
+  * `PENDING` transactions are now able to be voided to prevent funds from moving before settle

@@ -1,0 +1,71 @@
+---
+sidebar_position: 4
+sidebar_label: 'Cash Fields'
+title: "Cash Fields"
+---
+
+# Pay Theory Cash UI Fields
+
+This documentation covers the SwiftUI views provided by the Pay Theory SDK for capturing cash payment information. These views are designed to be used within a `PTForm` and require a `PayTheory` object to be provided as an environment object.
+
+## Common Requirements
+
+All of these views:
+- Must be used within a `PTForm` view hierarchy
+- Require a `PayTheory` object to be provided as an environment object
+- Automatically handle data binding and validation with the Pay Theory SDK
+
+## PTCashName
+
+A SwiftUI view that provides a text field for capturing the name of the person making the cash payment.
+
+### Usage
+
+```swift
+PTCashName(placeholder: "Full Name")
+```
+
+### Properties
+
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| placeholder | String | "Full Name" | The placeholder text displayed when the field is empty |
+
+## PTCashContact
+
+A SwiftUI view that provides a text field for capturing the contact information (phone or email) of the person making the cash payment.
+
+### Usage
+
+```swift
+PTCashContact(placeholder: "Phone or Email")
+```
+
+### Properties
+
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| placeholder | String | "Phone or Email" | The placeholder text displayed when the field is empty |
+
+## Example Usage
+
+Here's an example of how to use these fields together within a `PTForm`:
+
+```swift
+struct CashPaymentView: View {
+    @EnvironmentObject var payTheory: PayTheory
+
+    var body: some View {
+        PTForm {
+            VStack(spacing: 20) {
+                PTCashName()
+                PTCashContact()
+                // Add other UI elements as needed, such as amount display or submit button
+            }
+        }
+        .environmentObject(payTheory)
+    }
+}
+```
+
+This example creates a cash payment form using the available cash UI fields. Remember to provide the `PayTheory` object as an environment object to the `PTForm` for proper functionality.

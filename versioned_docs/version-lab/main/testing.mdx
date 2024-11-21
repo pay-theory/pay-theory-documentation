@@ -1,0 +1,68 @@
+---
+sidebar_position: 7
+sidebar_label: 'Testing'
+title: "Testing"
+---
+
+# Testing
+This guide will show you how to test card and ACH payments, card failures and disputes.
+
+:::danger Before you start
+In order to test a payment method you need be set up to accept online payments.
+
+<a href= "getting_started/Quickstart" class="button button--primary button--md">Accepting Online Payments</a>
+:::
+
+***
+
+
+## Testing Card Transactions
+When testing you will be using an SDK import and API Key that contains either paytheorylab or paytheorystudy.
+
+### Card Brands
+| Card Brand | Testing Number      |
+|------------|---------------------|
+| Discover   | 6542 1548 4662 3459 |
+| Mastercard | 5454 5454 5454 5454 |
+| Amex       | 3434 343434 34343   |
+| Visa       | 4393 4200 0000 2680 |
+
+### Card Types
+| Card Type       | Testing Number      |
+|-----------------|---------------------|
+| Business Credit | 4005 5192 0000 0004 |
+| Business Debit  | 4591 9000 1010 1010 |
+| Credit Card     | 4012 0000 3333 0026 |
+| Debit Card      | 4867 3200 0000 1111 |
+| Prepaid Card    | 5445 4351 1311 2111 |
+
+
+### Card Failures
+To trigger certain failures process a payment using the following amounts. These failures will not work when using `service_fee` fee mode.
+
+***These amounts are in cents.***
+
+
+| Amount | Error Type                             |
+|--------|----------------------------------------|
+| 102    | GENERIC_DECLINE                        |
+| 193    | INSUFFICIENT_FUNDS                     |
+| 194    | INVALID_ACCOUNT_NUMBER                 |
+| 889986 | ADDRESS_VERIFICATION_FAILED_RISK_RULES |
+| 889987 | CVV_FAILED_RISK_RULES                  |
+| 888888 | DISPUTE                                |
+
+:::note Triggering a dispute
+If you want to trigger a dispute in sandbox, run a transaction for `888888`. You will get a success back and a dispute will be generated as well from this transaction.
+:::
+
+***
+
+
+## Testing ACH Transactions
+| Transaction Outcome | Account Number | Routing Number |
+|---------------------|----------------|----------------|
+| Success             | 0000000016     | 122105278      |
+| Failure             | 0000000005     | 122105278      |
+
+

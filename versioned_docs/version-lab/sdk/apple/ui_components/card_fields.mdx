@@ -1,0 +1,210 @@
+---
+sidebar_position: 3
+sidebar_label: 'Card Fields'
+title: "Card Fields"
+---
+
+# Pay Theory Card UI Fields
+
+This documentation covers all the SwiftUI views provided by the Pay Theory SDK for capturing card information. These views are designed to be used within a `PTForm` and require a `PayTheory` object to be provided as an environment object.
+
+## Common Requirements
+
+All of these views:
+- Must be used within a `PTForm` view hierarchy
+- Require a `PayTheory` object to be provided as an environment object
+- Automatically handle data binding and validation with the Pay Theory SDK
+
+## PTCardName
+
+A SwiftUI view that provides a text field for capturing the cardholder's name.
+
+### Usage
+
+```swift
+PTCardName(placeholder: "Name on Card")
+```
+
+### Properties
+
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| placeholder | String | "Name on Card" | The placeholder text displayed when the field is empty |
+
+## PTCardNumber
+
+A SwiftUI view that provides a text field for capturing the card number.
+
+### Usage
+
+```swift
+PTCardNumber(placeholder: "Card Number")
+```
+
+### Properties
+
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| placeholder | String | "Card Number" | The placeholder text displayed when the field is empty |
+
+## PTExp
+
+A SwiftUI view that provides a text field for capturing the card's expiration date.
+
+### Usage
+
+```swift
+PTExp(placeholder: "MM/YY")
+```
+
+### Properties
+
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| placeholder | String | "MM/YY" | The placeholder text displayed when the field is empty |
+
+## PTCvv
+
+A SwiftUI view that provides a text field for capturing the card's CVV (Card Verification Value).
+
+### Usage
+
+```swift
+PTCvv(placeholder: "CVV")
+```
+
+### Properties
+
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| placeholder | String | "CVV" | The placeholder text displayed when the field is empty |
+
+## PTCardLineOne
+
+A SwiftUI view that provides a text field for capturing the first line of the billing address.
+
+### Usage
+
+```swift
+PTCardLineOne(placeholder: "Address Line 1")
+```
+
+### Properties
+
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| placeholder | String | "Address Line 1" | The placeholder text displayed when the field is empty |
+
+## PTCardLineTwo
+
+A SwiftUI view that provides a text field for capturing the second line of the billing address (if needed).
+
+### Usage
+
+```swift
+PTCardLineTwo(placeholder: "Address Line 2")
+```
+
+### Properties
+
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| placeholder | String | "Address Line 2" | The placeholder text displayed when the field is empty |
+
+## PTCardCity
+
+A SwiftUI view that provides a text field for capturing the city of the billing address.
+
+### Usage
+
+```swift
+PTCardCity(placeholder: "City")
+```
+
+### Properties
+
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| placeholder | String | "City" | The placeholder text displayed when the field is empty |
+
+## PTCardRegion
+
+A SwiftUI view that provides a text field for capturing the region (state/province) of the billing address.
+
+### Usage
+
+```swift
+PTCardRegion(placeholder: "State")
+```
+
+### Properties
+
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| placeholder | String | "Region" | The placeholder text displayed when the field is empty |
+
+## PTCardPostalCode
+
+A SwiftUI view that provides a text field for capturing the postal code of the billing address.
+
+### Usage
+
+```swift
+PTCardPostalCode(placeholder: "ZIP/Postal Code")
+```
+
+### Properties
+
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| placeholder | String | "Postal Code" | The placeholder text displayed when the field is empty |
+
+## PTCardCountry
+
+A SwiftUI view that provides a text field for capturing the country of the billing address.
+
+### Usage
+
+```swift
+PTCardCountry(placeholder: "Country")
+```
+
+### Properties
+
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| placeholder | String | "Country" | The placeholder text displayed when the field is empty |
+
+## Example Usage
+
+Here's an example of how to use these fields together within a `PTForm`:
+
+```swift
+struct CardPaymentView: View {
+    @EnvironmentObject var payTheory: PayTheory
+
+    var body: some View {
+        PTForm {
+            VStack(spacing: 20) {
+                PTCardName()
+                PTCardNumber()
+                HStack {
+                    PTExp()
+                    PTCvv()
+                }
+                PTCardLineOne()
+                PTCardLineTwo()
+                PTCardCity()
+                HStack {
+                    PTCardRegion()
+                    PTCardPostalCode()
+                }
+                PTCardCountry()
+            }
+        }
+        .environmentObject(payTheory)
+    }
+}
+```
+
+This example creates a complete card payment form using all the available card UI fields. Remember to provide the `PayTheory` object as an environment object to the `PTForm` for proper functionality.
