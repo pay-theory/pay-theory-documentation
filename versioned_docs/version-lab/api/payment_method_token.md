@@ -161,7 +161,9 @@ This mutation will create a payment method token for a payor. The payment method
 
 ```graphql
 mutation {
-    createPaymentMethod(payment_method: PaymentMethodInput!, merchant_uid: String!) {
+    createPaymentMethod(payment_method: PaymentMethodInput!,
+                        merchant_uid: String!,
+                        skip_validation: Boolean) {
         payment_method_id
         ...
     }
@@ -170,10 +172,11 @@ mutation {
 
 **Parameters**
 
-| Key            | type               | description                                                                                                          |
-|----------------|--------------------|----------------------------------------------------------------------------------------------------------------------|
-| payment_method | PaymentMethodInput | The payment method input object. Refer to the [PaymentMethodInput](#payment-method-input-object) docs for more info. |
-| merchant_uid   | String             | The Pay Theory unique identifier assigned to the merchant that the payment_method_token belongs to.                  |
+| Key            | type               | description                                                                                                           |
+|----------------|--------------------|-----------------------------------------------------------------------------------------------------------------------|
+| payment_method | PaymentMethodInput | The payment method input object. Refer to the [PaymentMethodInput](#payment-method-input-object) docs for more info.  |
+| merchant_uid   | String             | The Pay Theory unique identifier assigned to the merchant that the payment_method_token belongs to.                   |
+| skip_validation| Boolean            | A boolean flag indicating whether to skip the validation of the payment method. Defaults to `false` if not passed in. |
 
 **Returns**
 The payment method token object. Refer to the [Payment Method Token](#the-payment-method-token-object) for more info.

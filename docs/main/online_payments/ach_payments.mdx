@@ -9,16 +9,6 @@ import Tabs from '@site/components/Tabs';
 import TabItem from '@theme/TabItem';
 import Admonition from '@theme/Admonition';
 
-<Tabs
-  defaultValue="javascript"
-  values={[
-    {label: 'Javascript', value: 'javascript'},
-    {label: 'Apple', value: 'apple'},
-    {label: 'Android', value: 'android'},
-  ]}>
-
-  <TabItem value="javascript">
-
 # Accepting ACH Payments
 In this Quickstart, you will learn how to create, initiate, and test a payment for ACH payments.
 
@@ -27,6 +17,17 @@ You will need access to your Pay Theory Sandbox. If you do not have a sandbox ac
 
 <a onClick={() => FreshworksWidget('open')} class="button button--primary button--md">Request a Sandbox </a>
 :::
+
+***
+
+<Tabs
+  defaultValue="javascript"
+  values={[
+    {label: 'Javascript', value: 'javascript'},
+    {label: 'Apple', value: 'apple'},
+  ]}>
+
+  <TabItem value="javascript">
 
 ## 1. Importing the SDK
 In order to import your SDK, you will need to copy and paste your Import URL into the header of your code editor.
@@ -121,6 +122,180 @@ Click below link to download the full code and project files.
 
 <a  target="\_blank" href={require('/static/paytheory.zip').default}  class="button button--primary button--md" download > Download </a>
 :::
+
+</TabItem>
+  <TabItem value="apple">
+
+## Step 1: Import the Swift Package
+
+First, you need to add the PayTheory Swift package to your Xcode project:
+
+1. In Xcode, go to File > Add Packages...
+2. In the search bar, enter the following URL: `https://github.com/pay-theory/pay-theory-ios`
+3. Select the PayTheory package when it appears in the search results.
+4. Choose the branch you want to use. This would be your partner name and the environment you are targeting.
+- For example, if you are a partner named `start` targeting the `paytheory` environment, you would select the `start-paytheory` branch.
+- Your environment can be `paytheory`, `paytheorystudy`, or `paytheorylab`.
+5. Click "Add Package" to import it into your project.
+
+## Step 2: Import PayTheory in Your Swift File
+
+In any Swift file where you want to use PayTheory, add the import statement at the top:
+
+```swift
+import PayTheory
+```
+
+## Step 3: Initialize the PayTheory Object
+
+Now, you can initialize the [PayTheory](/docs/sdk/apple/pay_theory_class.mdx) object with your API key. You can do this in your SwiftUI view:
+
+```swift
+import SwiftUI
+import PayTheory
+
+struct ContentView: View {
+    let payTheory = PayTheory(apiKey: "your-api-key-here") { error in
+        print("Error: \(error.error)")
+    }
+
+    // ... rest of your view code
+}
+```
+
+:::note DevMode
+When testing in the sandbox environment, set `devMode` to `true` to bypass App Attestation. This is useful for testing in simulators but does not reflect the production environment. Always test with `devMode` set to `false` in sandbox before moving to production.
+:::
+
+## Step 4: Wrap Your View with PTForm
+
+Wrap your main view content with the [`PTForm`](/docs/sdk/apple/ui_components/pt_form.mdx) view provided by the SDK. This allows the custom text fields to access the necessary data:
+
+```swift
+var body: some View {
+    PTForm {
+        VStack {
+            // Your form fields will go here
+        }
+    }
+    .environmentObject(payTheory)
+}
+```
+
+## Step 5: Add Custom Text Fields for Card Details
+
+Use the custom text fields provided by the SDK to capture [ach](/docs/sdk/apple/ui_components/ach_fields.mdx) details:
+
+```swift
+PTForm {
+    VStack {
+        PTAchAccountName()
+        PTAchAccountNumber()
+        PTAchRoutingNumber()
+        PTAchAccountType()
+
+        // Other form fields as needed
+    }
+}
+.environmentObject(payTheory)
+```
+
+## Step 6: Implement Payment Button
+
+Add a button to initiate the payment process:
+
+```swift
+Button("Pay") {
+    payTheory.transact(amount: 1000, paymentMethod: .ach) { response in
+        switch response {
+        case .success(let payment):
+            print("Payment successful: \(payment.transactionId)")
+        case .failure(let failure):
+            print("Payment failed: \(failure.failureText)")
+        case .error(let error):
+            print("Error: \(error.error)")
+        case .barcode:
+            print("Barcode generation not applicable for ach payments")
+        }
+    }
+}
+```
+
+:::note Async Versions Available
+Both `transact` and `tokenizePaymentMethod` have async versions that you can use with Swift's structured concurrency:
+
+```swift
+Button("Async Pay") {
+    Task {
+        let response = await payTheory.transact(amount: 1000, paymentMethod: .ach)
+        // Handle response
+    }
+}
+```
+
+Choose the version that best fits your app's architecture and your preferred coding style.
+:::
+
+## Complete Example
+
+Here's a complete example putting it all together:
+
+```swift
+import SwiftUI
+import PayTheory
+
+struct ContentView: View {
+    let payTheory = PayTheory(apiKey: "your-api-key-here") { error in
+        print("Error: \(error.error)")
+    }
+
+    var body: some View {
+        PTForm {
+            VStack {
+                PTCardName()
+                PTCardNumber()
+                PTExp()
+                PTCvv()
+                PTCardPostalCode()
+
+                Button("Pay") {
+                    payTheory.transact(amount: 1000, paymentMethod: .ach) { response in
+                        switch response {
+                        case .success(let payment):
+                            print("Payment successful: \(payment.transactionId)")
+                        case .failure(let failure):
+                            print("Payment failed: \(failure.failureText)")
+                        case .error(let error):
+                            print("Error: \(error.error)")
+                        case .barcode:
+                            print("Barcode generation not applicable for ach payments")
+                        }
+                    }
+                }
+            }
+        }
+        .environmentObject(payTheory)
+    }
+}
+```
+
+This quick start guide demonstrates how to import the PayTheory package, initialize the PayTheory object, use the PTForm wrapper, add custom text fields for ach details, and implement a payment button to process a transaction.
+
+Remember to replace `"your-api-key-here"` with your actual PayTheory API key.
+
+For more advanced usage and additional payment methods, please refer to the full SDK documentation.
+
+  </TabItem>
+  <TabItem value="android">
+    <br/>
+
+    # Android Guide Coming Soon
+    Our Android SDK is fully functional. If you would like to implement our Android SDK select the link below for more information.
+    <a href= "../../sdk/android/main" class="button button--primary button--md">View Android SDK Reference</a>
+
+  </TabItem>
+</Tabs>
+
 ***
 
 ## Next steps
@@ -128,30 +303,3 @@ Once you are able to initiate the payment the following guides will help you get
 * [Testing Transactions](../testing)
 * [Styling and Managing States](../getting_started/styling_pay_theory_fields)
 * [Error Handling](../getting_started/error_handling)
-
-
-
-</TabItem>
-  <TabItem value="apple">
-
-# Documentation Coming Soon
-Our Apple SDK is fully functional. If you would like to implement our Apple SDK select the link below for more information.
-<a href= "../../sdk/apple/main" class="button button--primary button--md">View Apple SDK Reference</a>
-
-  </TabItem>
-
-  <TabItem value="android">
-
-# Documentation Coming Soon
-Our Android SDK is fully functional. If you would like to implement our Android SDK select the link below for more information.
-<a href= "../../sdk/android/main" class="button button--primary button--md">View Android SDK Reference</a>
-
-  </TabItem>
-
-</Tabs>
-
-
-
-
-
-

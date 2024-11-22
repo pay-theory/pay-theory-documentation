@@ -117,3 +117,37 @@ A 32-bit Int is between 2,147,483,647 and -2,147,483,648. Any value outside of t
 |-----------------|--------------|-------------------------------------------------------------------------------------|
 | items           | [Settlement] | The list of settlements that are returned from the query.                           |
 | total_row_count | Int          | The total number of settlements that match the query. Used to help with pagination. |
+
+## Create Batch Capture
+
+This mutation will capture all `PENDING` transactions for a merchant in a batch and shortly after create a settlement for the merchant.
+
+:::warning Sandbox Only
+This mutation will only work in sandbox environments.
+:::
+
+```js
+mutation {
+    createBatchCapture(merchant_uid: String!): Boolean
+}
+```
+
+**Parameters**
+
+| Key          | type   | description                                                              |
+|--------------|--------|--------------------------------------------------------------------------|
+| merchant_uid | String | The Pay Theory unique identifier assigned to the merchant to batch for.  |
+
+**Returns**
+
+```js
+{
+    "data": {
+        "createBatchCapture": true
+    }
+}
+```
+
+| Key               | type    | description                                            |
+|-------------------|---------|--------------------------------------------------------|
+| createBatchCapture| Boolean | Returns true if the batch capture was created successfully. |

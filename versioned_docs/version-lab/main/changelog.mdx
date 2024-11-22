@@ -7,6 +7,19 @@ title: "Changelog"
 # Changelog
 Additions and updates to Pay Theory’s API
 
+## November 20, 2024
+#### Added to API
+* `createBatchCapture` mutation added to API. Only works in sandbox environments. Captures all `PENDING` transactions for a merchant in a batch and shortly after creates a settlement for the merchant.
+* `metadata` added to Merchant schema
+  * Can be passed in when calling `createMerchant`
+  * Can be managed with the `updateMetadata` and `deleteMetadata` mutations
+  * Can be requested in the `merchant` and `merchants` queries
+  * Can be used to filter the `merchants` query
+* `skip_validation` added to the `createPaymentMethod` mutation. If set to true, the payment method will be created without validation.
+
+#### Added to JS SDK
+* `skipValidation` added to the `tokenizePaymentMethod` function. If set to true, the payment method will be created without validation.
+
 ## October 4, 2024
 #### Added to API
 * `country_code` was added to the Merchant and ListMerchant object

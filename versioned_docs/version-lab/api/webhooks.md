@@ -474,194 +474,216 @@ This is a subset of the [transaction object](transaction.md#the-transaction-obje
 
 ```graphql
 {
+  account_code
+  ach_return_details {
+    return_code
+    return_details
+    transfer_type
+  }
+  additional_purchase_data {
+    level3_data_summary {
+      dest_postal_code
+      discnt_amt
+      duty_amt
+      frght_amt
+      order_num
+      prod_desc
+      purch_idfr
+      tax_amt
+      tax_ind
+    }
+  }
+  authorization_id
+  avs_status
+  currency
+  device_id
+  dispute_status
+  failure_reasons
+  fee_mode
+  fees
+  flag_for_review
+  gross_amount
+  invoice {
     account_code
-    ach_return_details {
-        return_code
-        return_details
-        transfer_type
-    }
-    additional_purchase_data {
-        level3_data_summary {
-            dest_postal_code
-            discnt_amt
-            duty_amt
-            frght_amt
-            order_num
-            prod_desc
-            purch_idfr
-            tax_amt
-            tax_ind
-        }
-    }
-    authorization_id
+    created_date
     currency
-    device_id
-    dispute_status
-    failure_reasons
+    due_by
     fee_mode
-    fees
-    gross_amount
-    invoice {
-        account_code
-        created_date
-        currency
-        due_by
-        fee_mode
-        invoice_amount
-        invoice_date
-        invoice_description
-        invoice_id
-        invoice_name
-        merchant_invoice_number
-        merchant_uid
-        metadata
-        payor {
-            address_line1
-            address_line2
-            city
-            country
-            email
-            full_name
-            merchant_uid
-            metadata
-            payor_id
-            phone
-            postal_code
-            region
-        }
-        reference
-        settings {
-            accepted_payment_methods {
-                ach
-                card
-                cash
-            }
-            is_secure
-            require_payor_address
-        }
-        status
-        total_paid_amount
-    }
-    is_settled
+    invoice_amount
+    invoice_date
+    invoice_description
+    invoice_id
+    invoice_name
+    merchant_invoice_number
     merchant_uid
     metadata
-    net_amount
-    parent_id
-    payment_method {
-        address_line1
-        address_line2
-        card_brand
-        city
-        country
-        exp_date
-        full_name
-        is_active
-        last_four
-        merchant_uid
-        metadata
-        payment_method_id
-        payment_type
-        payor {
-            address_line1
-            address_line2
-            city
-            country
-            email
-            full_name
-            merchant_uid
-            metadata
-            payor_id
-            phone
-            postal_code
-            region
-        }
-        postal_code
-        region
-        wallet_type
-    }
-    recurring {
-        account_code
-        amount_per_payment
-        created_date
-        currency
-        fee_mode
-        fee_per_payment
-        is_active
-        is_processing
-        merchant_uid
-        metadata
-        mute_all_emails
-        next_payment_date
-        payment_interval
-        payment_method {
-            address_line1
-            address_line2
-            card_brand
-            city
-            country
-            exp_date
-            full_name
-            is_active
-            last_four
-            merchant_uid
-            metadata
-            payment_method_id
-            payment_type
-            payor {
-                address_line1
-                address_line2
-                city
-                country
-                email
-                full_name
-                merchant_uid
-                metadata
-                payor_id
-                phone
-                postal_code
-                region
-            }
-            postal_code
-            region
-            wallet_type
-        }
-        payor {
-            address_line1
-            address_line2
-            city
-            country
-            email
-            full_name
-            merchant_uid
-            metadata
-            payor_id
-            phone
-            postal_code
-            region
-        }
-        prev_payment_date
-        recurring_description
-        recurring_id
-        recurring_name
-        reference
-        remaining_payments
-        status
-        total_amount_per_payment
+    payor {
+      address_line1
+      address_line2
+      city
+      country
+      email
+      full_name
+      merchant_uid
+      metadata
+      payor_id
+      phone
+      postal_code
+      region
     }
     reference
-    refund_reason {
-        reason_code
-        reason_details
+    settings {
+      accepted_payment_methods {
+        ach
+        card
+        cash
+      }
+      is_secure
+      require_payor_address
     }
-    refund_voidable
-    refunded_amount
-    sale_id
-    settlement_batch
     status
-    timezone
-    transaction_date
-    transaction_id
-    transaction_type
-    updated_row_at
+    total_paid_amount
+  }
+  is_settled
+  merchant_uid
+  merchant {
+    ach_active
+    card_active
+    cash_active
+    country_code
+    is_system
+    merchant_name
+    merchant_uid
+    parent_merchant_uid
+    submitted_onboarding
+  }
+  metadata
+  net_amount
+  parent_id
+  payment_method {
+    address_line1
+    address_line2
+    bank_account_type
+    bank_code
+    barcode_id
+    card_brand
+    card_type
+    city
+    country
+    exp_date
+    full_name
+    is_active
+    issuing_country_code
+    last_four
+    merchant_uid
+    metadata
+    payment_method_id
+    payment_type
+    payor {
+      address_line1
+      address_line2
+      city
+      country
+      email
+      full_name
+      merchant_uid
+      metadata
+      payor_id
+      phone
+      postal_code
+      region
+    }
+    postal_code
+    region
+    wallet_type
+  }
+  recurring {
+    account_code
+    amount_per_payment
+    created_date
+    currency
+    fee_mode
+    fee_per_payment
+    is_active
+    is_processing
+    merchant_uid
+    metadata
+    mute_all_emails
+    next_payment_date
+    payment_interval
+    payment_method {
+      address_line1
+      address_line2
+      bank_account_type
+      bank_code
+      card_brand
+      card_type
+      city
+      country
+      exp_date
+      full_name
+      is_active
+      issuing_country_code
+      last_four
+      merchant_uid
+      metadata
+      payment_method_id
+      payment_type
+      payor {
+        address_line1
+        address_line2
+        city
+        country
+        email
+        full_name
+        merchant_uid
+        metadata
+        payor_id
+        phone
+        postal_code
+        region
+      }
+      postal_code
+      region
+      wallet_type
+    }
+    payor {
+      address_line1
+      address_line2
+      city
+      country
+      email
+      full_name
+      merchant_uid
+      metadata
+      payor_id
+      phone
+      postal_code
+      region
+    }
+    prev_payment_date
+    recurring_description
+    recurring_id
+    recurring_name
+    reference
+    remaining_payments
+    status
+    total_amount_per_payment
+  }
+  reference
+  refund_reason {
+    reason_code
+    reason_details
+  }
+  refund_voidable
+  refunded_amount
+  sale_id
+  settlement_batch
+  status
+  timezone
+  transaction_date
+  transaction_id
+  transaction_type
+  updated_row_at
 }
 ```

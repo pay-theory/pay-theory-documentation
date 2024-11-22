@@ -11,6 +11,19 @@ Metadata is used to pass customer data to track items in Pay Theory Systems.
 These calls allow you to update or delete metadata for an item you created with metadata.
 
 ***
+## MetadataAssociate
+These are the types of items you can associate metadata with.
+
+- `AUTHORIZATION`
+- `INVOICE`
+- `MERCHANT`
+- `PAYMENT_METHOD_TOKEN`
+- `PAYOR`
+- `RECURRING`
+- `TRANSACTION`
+- `SALE`
+
+***
 ## Update Metadata
 
 ```js
@@ -21,12 +34,12 @@ mutation {
 
 **Parameters**
 
-|Key                |type         |       description                     |
-|-------------------|-------------|---------------------------------------|
-|id                 |String       |The id of the item you want to update metadata for.|
-|merchant_uid       |String       |The Pay Theory merchant_uid of the item you want to update metadata for.|
-|metadata           |JSON         |The metadata you want to update the item with. Any keys passed in will overwrite the existing metadata.|
-|metadata_associate |MetadataAssociate|The type of item you want to update metadata for. Options are: `AUTHORIZATION`, `INVOICE`, `PAYMENT_METHOD_TOKEN`, `PAYMENT_SESSION`, `PAYOR`, `RECURRING`, `TRANSACTION`, `SALE`|
+|Key                | type                                    |       description                     |
+|-------------------|-----------------------------------------|---------------------------------------|
+|id                 | String                                  |The id of the item you want to update metadata for.|
+|merchant_uid       | String                                  |The Pay Theory merchant_uid of the item you want to update metadata for.|
+|metadata           | JSON                                    |The metadata you want to update the item with. Any keys passed in will overwrite the existing metadata.|
+|metadata_associate | [MetadataAssociate](#metadataassociate) |The type of item you want to update metadata for. Options are: `AUTHORIZATION`, `INVOICE`, `PAYMENT_METHOD_TOKEN`, `PAYMENT_SESSION`, `PAYOR`, `RECURRING`, `TRANSACTION`, `SALE`|
 
 **Returns**
 
@@ -46,7 +59,7 @@ mutation {
 |-------------------|-------------|---------------------------------------|
 |id                 |String       |The id of the item you want to delete metadata for.|
 |merchant_uid       |String       |The Pay Theory merchant_uid of the item you want to delete metadata for.|
-|metadata_associate |MetadataAssociate|The type of item you want to delete metadata for. Options are: `AUTHORIZATION`, `INVOICE`, `PAYMENT_METHOD_TOKEN`, `PAYMENT_SESSION`, `PAYOR`, `RECURRING`, `TRANSACTION`, `SALE`|
+|metadata_associate |[MetadataAssociate](#metadataassociate)|The type of item you want to delete metadata for. Options are: `AUTHORIZATION`, `INVOICE`, `PAYMENT_METHOD_TOKEN`, `PAYMENT_SESSION`, `PAYOR`, `RECURRING`, `TRANSACTION`, `SALE`|
 |metadata_keys      |[String]!    |The keys of the metadata you want to delete.|
 
 **Returns**
