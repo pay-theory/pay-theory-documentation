@@ -2,7 +2,7 @@
 sidebar_position: 2
 sidebar_label: "ACH Payments"
 title: "ACH Payments"
-
+hide_table_of_contents: true
 ---
 
 import Tabs from '@site/components/Tabs';
@@ -21,12 +21,14 @@ You will need access to your Pay Theory Sandbox. If you do not have a sandbox ac
 ***
 
 <Tabs
-  defaultValue="javascript"
-  values={[
-    {label: 'Javascript', value: 'javascript'},
-    {label: 'Apple', value: 'apple'},
-    {label: 'Android', value: 'android'},
-  ]}>
+    defaultValue="javascript"
+    groupId="current-os"
+    queryString
+    values={[
+        {label: 'Javascript', value: 'javascript'},
+        {label: 'Apple', value: 'apple'},
+        {label: 'Android', value: 'android'},
+    ]}>
 
   <TabItem value="javascript">
 
@@ -292,6 +294,7 @@ For more advanced usage and additional payment methods, please refer to the full
 
     # Android Guide Coming Soon
     Our Android SDK is fully functional. If you would like to implement our Android SDK select the link below for more information.
+      <br/>
     <a href= "../../sdk/android/main" class="button button--primary button--md">View Android SDK Reference</a>
 
   </TabItem>

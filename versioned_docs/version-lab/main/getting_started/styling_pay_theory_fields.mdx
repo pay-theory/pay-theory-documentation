@@ -2,6 +2,7 @@
 sidebar_position: 2
 sidebar_label: 'Styling and Managing States'
 title: "Styling and Managing States"
+hide_table_of_contents: true
 ---
 
 import Tabs from '@site/components/Tabs';
@@ -10,6 +11,8 @@ import Admonition from '@theme/Admonition';
 
 <Tabs
   defaultValue="javascript"
+  groupId="current-os"
+  queryString
   values={[
     {label: 'Javascript', value: 'javascript'},
     {label: 'Apple', value: 'apple'},
@@ -121,19 +124,97 @@ Once your Pay Theory fields are stylized you will need to make sure Error handli
 </TabItem>
   <TabItem value="apple">
 
-# Documentation Coming Soon
-Our Apple SDK is fully functional. If you would like to implement our Apple SDK select the link below for more information.
-<a href= "../../sdk/apple/main" class="button button--primary button--md">View Apple SDK Reference</a>
+# Styling Pay Theory TextFields
+
+The Pay Theory SDK provides TextFields that can be styled using SwiftUI's built-in styling capabilities. This guide will walk you through how to create and apply custom styles to our TextField components.
+
+## Basic Styling
+
+Pay Theory TextFields support all standard SwiftUI TextField modifiers. You can apply these directly to the components:
+
+```swift
+PTCardNumber()
+    .padding()
+    .background(Color.gray.opacity(0.1))
+    .cornerRadius(8)
+```
+
+## Custom TextField Style
+
+For consistent styling across your application, you can create a custom `TextFieldStyle`.
+
+Here's an example of a custom style:
+
+```swift
+struct CustomTextFieldStyle: TextFieldStyle {
+    func _body(configuration: TextField<Self._Label>) -> some View {
+        configuration
+            .padding(12)
+            .background(Color.white)
+            .cornerRadius(8)
+            .overlay(
+                RoundedRectangle(cornerRadius: 8)
+                    .stroke(Color.black, lineWidth: 1)
+            )
+    }
+}
+```
+
+## Applying Custom Styles
+
+You can apply your custom style to any Pay Theory TextField component:
+
+```swift
+VStack {
+    // Card payment fields
+    HStack(spacing: 12) {
+        PTCardNumber()
+            .textFieldStyle(CustomTextFieldStyle())
+            .frame(maxWidth: .infinity)
+
+        PTExp()
+            .textFieldStyle(CustomTextFieldStyle())
+            .frame(maxWidth: 80)
+
+        PTCvv()
+            .textFieldStyle(CustomTextFieldStyle())
+            .frame(maxWidth: 60)
+    }
+
+    // Address fields
+    PTCardLineOne()
+        .textFieldStyle(CustomTextFieldStyle())
+
+    PTCardLineTwo()
+        .textFieldStyle(CustomTextFieldStyle())
+
+    HStack(spacing: 12) {
+        PTCardCity()
+            .textFieldStyle(CustomTextFieldStyle())
+            .frame(maxWidth: .infinity)
+
+        PTCardRegion(placeholder: "State")
+            .textFieldStyle(CustomTextFieldStyle())
+            .frame(maxWidth: 80)
+
+        PTCardPostalCode(placeholder: "Zip")
+            .textFieldStyle(CustomTextFieldStyle())
+            .frame(maxWidth: 100)
+    }
+}
+```
+
+Remember that all Pay Theory TextField components support these styling options while maintaining their built-in validation and formatting functionality.
 
   </TabItem>
 
   <TabItem value="android">
 
-# Documentation Coming Soon
-Our Android SDK is fully functional. If you would like to implement our Android SDK select the link below for more information.
-<a href= "../../sdk/android/main" class="button button--primary button--md">View Android SDK Reference</a>
+    # Documentation Coming Soon
+    Our Android SDK is fully functional. If you would like to implement our Android SDK select the link below for more information.
+    <br/>
+    <a href= "../../sdk/android/main" class="button button--primary button--md">View Android SDK Reference</a>
 
   </TabItem>
 
 </Tabs>
-
