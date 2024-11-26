@@ -1,0 +1,76 @@
+---
+sidebar_position: 1
+sidebar_label: 'PT Form'
+title: "PT Form"
+---
+
+# PTForm
+
+`PTForm` is a SwiftUI view that serves as a container for Pay Theory payment fields. It ensures that all Pay Theory fields have access to the necessary data and environment objects required for proper functioning.
+
+## Overview
+
+`PTForm` is designed to wrap around your custom views that contain Pay Theory payment fields. It provides the necessary context for these fields to interact with the Pay Theory SDK.
+
+## Key Features
+
+- Provides environment objects required by Pay Theory fields
+- Manages app lifecycle changes for proper SDK interaction
+- Ensures consistent behavior across all wrapped Pay Theory components
+
+## Usage
+
+To use `PTForm`, you need to:
+
+1. Initialize a `PayTheory` object
+2. Wrap your view containing Pay Theory fields with `PTForm`
+3. Pass the `PayTheory` object as an environment object to `PTForm`
+
+### Example
+
+```swift
+struct ContentView: View {
+    let payTheory = PayTheory(apiKey: "your-api-key") { error in
+        print("Error: \(error.error)")
+    }
+
+    var body: some View {
+        PTForm {
+            VStack {
+                // Your custom views
+                PTCardNumber()
+                PTExp()
+                PTCvv()
+                // More Pay Theory fields as needed
+            }
+        }
+        .environmentObject(payTheory)
+    }
+}
+```
+
+## Important Notes
+
+- **Environment Object**: The `PTForm` must be provided with a `PayTheory` object as an environment object. This object contains the necessary context and methods for the Pay Theory SDK to function correctly.
+
+- **Wrapping Fields**: All Pay Theory fields (such as `PTCardNumber`, `PTExp`, `PTCvv`, etc.) must be descendants of the `PTForm` view in the view hierarchy. This ensures they have access to the required environment objects and context.
+
+- **Ancestor View**: While the Pay Theory fields must be descendants of `PTForm`, they don't need to be direct children. You can have intermediate views between `PTForm` and the actual fields:
+
+```swift
+PTForm {
+    VStack {
+        Text("Payment Information")
+        HStack {
+            VStack {
+                PTCardNumber()
+                PTExp()
+            }
+            PTCvv()
+        }
+    }
+}
+.environmentObject(payTheory)
+  ```
+
+- **App Lifecycle**: `PTForm` manages app lifecycle changes, ensuring proper interaction with the Pay Theory SDK as the app moves between active, inactive, and background states.

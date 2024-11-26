@@ -1,0 +1,110 @@
+---
+sidebar_position: 4
+sidebar_label: 'Enums'
+title: "Enums"
+---
+
+# Pay Theory Enum Documentation
+
+This document provides an overview of three important enumerations used in the Pay Theory SDK: `PAYMENT_TYPE`, `FEE_MODE`, and `HealthExpenseType`. These enums are crucial for specifying payment methods, fee structures, and health expense categories in various SDK operations.
+
+## PaymentType
+
+The `PaymentType` enum represents the different payment methods supported by the Pay Theory SDK.
+
+```swift
+public enum PaymentType: String, CaseIterable, Identifiable {
+    case card
+    case ach
+    case cash
+
+    public var id: Self { self }
+}
+```
+
+### Cases
+
+| Case | Description |
+|------|-------------|
+| `card` | Represents credit or debit card payments. |
+| `ach` | Represents Automated Clearing House (bank transfer) payments. |
+| `cash` | Represents cash payments (typically used with barcode generation for in-person payments). |
+
+### Usage
+
+```swift
+// Example: Specifying a card payment in a transaction
+payTheory.transact(amount: 1000, paymentMethod: .card) { response in
+    // Handle transaction response
+}
+```
+
+## FeeMode
+
+The `FeeMode` enum defines how transaction fees are handled in the Pay Theory system.
+
+```swift
+public enum FeeMode: String, Codable {
+    case merchantFee
+    case serviceFee
+}
+```
+
+### Cases
+
+| Case | Description |
+|------|-------------|
+| `merchantFee` | The merchant absorbs the transaction fee. The customer pays only the transaction amount. |
+| `serviceFee` | The customer pays the transaction fee in addition to the transaction amount. |
+
+### Usage
+
+```swift
+// Example: Setting up a transaction with a service fee
+payTheory.transact(amount: 1000,
+                   paymentMethod: .card,
+                   fee: 50,
+                   feeMode: .serviceFee) { response in
+    // Handle transaction response
+}
+```
+
+## HealthExpenseType
+
+The `HealthExpenseType` enum categorizes health-related expenses, which can be important for certain types of health savings accounts or flexible spending accounts.
+
+```swift
+public enum HealthExpenseType: String, Codable {
+    case healthcare
+    case perscription
+    case vision
+    case clinical
+    case copay
+    case dental
+    case transit
+}
+```
+
+### Cases
+
+| Case           | Description                                                 |
+|----------------|-------------------------------------------------------------|
+| `medical`      | Represents general medical expenses.                        |
+| `perscription` | Represents prescription medication expenses.                |
+| `vision`       | Represents vision-related expenses.                         |
+| `clinical`     | Represents clinical expenses.                               |
+| `copay`        | Represents copayments for medical services.                 |
+| `dental`       | Represents dental expenses.                                 |
+| `transit`      | Represents transportation expenses related to medical care. |
+
+
+### Usage
+
+```swift
+// Example: Processing a medical expense transaction
+payTheory.transact(amount: 15000,
+                   paymentMethod: .card,
+                   healthExpenseType: .medical) { response in
+    // Handle transaction response
+}
+```

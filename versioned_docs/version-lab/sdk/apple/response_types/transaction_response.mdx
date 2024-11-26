@@ -1,0 +1,122 @@
+---
+sidebar_position: 2
+sidebar_label: 'TransactResponse'
+title: "TransactResponse"
+---
+
+# TransactResponse
+
+`TransactResponse` is an enumeration that represents the possible responses from a transaction operation in the PayTheory system. It provides a structured way to handle different outcomes of a transaction, including success, failure, cash barcode generation, and errors.
+
+## Enum Cases
+
+| Case | Associated Value | Description |
+|------|------------------|-------------|
+| barcode | CashBarcode | Represents the successful generation of a cash barcode. |
+| error | PTError | Represents an error that occurred during the transaction process. |
+| failure | FailedTransaction | Represents a failed transaction. |
+| success | SuccessfulTransaction | Represents a successful transaction. |
+
+## Associated Types
+
+### CashBarcode
+
+Represents a cash barcode for payment in the PayTheory system.
+
+#### Properties
+
+| Property | Type | Description |
+|----------|------|-------------|
+| barcodeUrl | String | The URL for the barcode image. |
+| mapUrl | String | The URL for the map to find retail locations to pay the barcode. |
+
+### FailedTransaction
+
+Represents a failed transaction in the PayTheory system.
+
+#### Properties
+
+| Property | Type | Description |
+|----------|------|-------------|
+| transactionId | String | The Pay Theory receipt number. |
+| lastFour | String | The last four digits of the card number or account number. |
+| brand | String | The brand of the card. |
+| status | String | The state of the transaction. This will be "FAILURE". |
+| failureCode | String | The failure code for the failure. |
+| failureText | String | The message for the failure. |
+
+### SuccessfulTransaction
+
+Represents a successful transaction in the PayTheory system.
+
+#### Properties
+
+| Property | Type | Description |
+|----------|------|-------------|
+| transactionId | String | The Pay Theory receipt number. |
+| lastFour | String | The last four digits of the card number or account number. |
+| brand | String | The brand of the card. |
+| createdAt | String | The date and time the transaction was created. |
+| amount | Double | The amount of the transaction. |
+| serviceFee | Double | The service fee of the transaction. |
+| status | String | The status of the transaction. |
+| metadata | [String: Any] | The metadata of the transaction. |
+| payorId | String | The Pay Theory id for the payor that was used for the transaction. |
+| paymentMethodId | String | The Pay Theory id for the payment method token. |
+
+Note: The service fee is included in the amount.
+
+## Usage Example
+
+Here's an example of how to handle a `TransactResponse`:
+
+```swift
+func handleTransactionResponse(_ response: TransactResponse) {
+    switch response {
+    case .barcode(let barcode):
+        print("Cash barcode generated:")
+        print("Barcode URL: \(barcode.barcodeUrl)")
+        print("Payment locations map: \(barcode.mapUrl)")
+
+    case .errpr(let error):
+        print("Transaction error occurred:")
+        print("Error: \(error.code): \(error.error)")
+
+    case .failure(let failedTransaction):
+        print("Transaction failed:")
+        print("Transaction ID: \(failedTransaction.transactionId)")
+        print("Last Four: \(failedTransaction.lastFour)")
+        print("Brand: \(failedTransaction.brand)")
+        print("Status: \(failedTransaction.status)")
+        print("Failure Code: \(failedTransaction.failureCode)")
+        print("Failure Message: \(failedTransaction.failureText)")
+
+    case .success(let successfulTransaction):
+        print("Transaction successful:")
+        print("Transaction ID: \(successfulTransaction.transactionId)")
+        print("Last Four: \(successfulTransaction.lastFour)")
+        print("Brand: \(successfulTransaction.brand)")
+        print("Created At: \(successfulTransaction.createdAt)")
+        print("Amount: $\(successfulTransaction.amount)")
+        print("Service Fee: $\(successfulTransaction.serviceFee)")
+        print("Status: \(successfulTransaction.status)")
+        print("Payor ID: \(successfulTransaction.payorId)")
+        print("Payment Method ID: \(successfulTransaction.paymentMethodId)")
+
+        if !successfulTransaction.metadata.isEmpty {
+            print("Metadata:")
+            for (key, value) in successfulTransaction.metadata {
+                print("  \(key): \(value)")
+            }
+        }
+    }
+}
+
+// Usage
+let response: TransactResponse = // ... received from PayTheory SDK
+handleTransactionResponse(response)
+```
+
+This example demonstrates how to switch on the `TransactResponse` enum and handle each case appropriately. Depending on the outcome of the transaction, you can access the relevant information and take appropriate actions in your application.
+
+By using `TransactResponse`, the PayTheory SDK provides a consistent and type-safe way to handle various transaction outcomes, making it easier for developers to implement robust error handling and success flows in their applications.

@@ -1,0 +1,141 @@
+---
+sidebar_position: 1
+sidebar_label: 'Overview'
+title: "Overview"
+---
+
+# State Management in PayTheory SDK
+
+The PayTheory iOS SDK employs a robust state management system to handle payment information securely and efficiently. This system allows developers to track the status of payment fields without directly accessing sensitive data.
+
+## Overview
+
+State management in the PayTheory SDK is primarily handled through three main state classes:
+
+1. `CardState`
+2. `ACHState`
+3. `CashState`
+
+These classes encapsulate the state of different payment methods and provide a safe interface for interacting with payment data.
+
+## State Classes
+
+### CardState
+
+`CardState` manages the state of credit card payment fields. It includes properties for:
+
+- Card number
+- Expiration date
+- CVV
+- Postal code
+- Cardholder name
+- Billing address details
+
+### ACHState
+
+`ACHState` handles the state of ACH (Automated Clearing House) payment fields, including:
+
+- Account number
+- Routing number
+- Account holder name
+- Account type
+
+### CashState
+
+`CashState` manages the state for cash payments, typically including:
+
+- Payer name
+- Contact information
+
+## The ValidAndEmpty Protocol
+
+Each field within these state classes conforms to the `ValidAndEmpty` protocol, which is crucial for state management in the SDK.
+
+```swift
+public protocol ValidAndEmpty {
+    var isValid: Bool { get }
+    var isEmpty: Bool { get }
+}
+```
+
+This protocol provides two key properties:
+
+- `isValid`: Indicates whether the current value meets the validation criteria for that field.
+- `isEmpty`: Indicates whether the field contains any data.
+
+By using this protocol, the SDK can provide status information about payment fields without exposing the actual sensitive data.
+
+## Accessing State
+
+You can access the state of payment fields through the `PayTheory` object:
+
+```swift
+@EnvironmentObject var payTheory: PayTheory
+
+// Accessing card state
+let isCardNumberValid = payTheory.card.number.isValid
+let isCardNumberEmpty = payTheory.card.number.isEmpty
+
+// Accessing ACH state
+let isRoutingNumberValid = payTheory.ach.routingNumber.isValid
+
+// Accessing cash state
+let isCashNameEmpty = payTheory.cash.name.isEmpty
+```
+
+## State Updates
+
+The state is automatically updated as users interact with the PayTheory UI components (like `PTCardNumber`, `PTAchRoutingNumber`, etc.). When the state changes, it triggers updates in your SwiftUI views, allowing for real-time feedback.
+
+## Example: Using State for Form Validation
+
+Here's an example of how you might use the state management system to validate a card payment form:
+
+```swift
+struct CardPaymentForm: View {
+    @EnvironmentObject var payTheory: PayTheory
+
+    var body: some View {
+        VStack {
+            PTCardNumber()
+            PTExp()
+            PTCvv()
+            PTCardPostalCode()
+
+            Button("Submit Payment") {
+                submitPayment()
+            }
+            .disabled(!isFormValid)
+        }
+    }
+
+    private var isFormValid: Bool {
+        payTheory.card.number.isValid &&
+        payTheory.card.exp.isValid &&
+        payTheory.card.cvv.isValid &&
+        payTheory.card.postalCode.isValid
+    }
+
+    private func submitPayment() {
+        // Payment submission logic
+    }
+}
+```
+
+In this example, we use the `isValid` property of each field to determine whether the entire form is valid and can be submitted.
+
+## Benefits of this State Management Approach
+
+1. **Security**: Sensitive payment data is never exposed to your application code.
+2. **Simplicity**: You don't need to implement complex validation logic for payment fields.
+3. **Reactivity**: The state management integrates seamlessly with SwiftUI's reactive paradigm.
+4. **Consistency**: All payment fields are handled in a uniform way, simplifying your code.
+
+## Best Practices
+
+- Always use the provided PayTheory UI components (`PTCardNumber`, `PTAchRoutingNumber`, etc.) to ensure proper state management and security.
+- Observe the state properties to provide real-time feedback to users about the validity of their input.
+- Use the `isValid` properties to control the enabled state of your submission buttons or other UI elements.
+- Remember that while you can check if a field is valid or empty, you cannot access the actual payment data. This is by design to ensure the security of sensitive information.
+
+By leveraging the state management system provided by the PayTheory SDK, you can create responsive and secure payment forms while adhering to best practices in handling sensitive financial data.
