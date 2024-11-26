@@ -25,7 +25,7 @@ First let's look at a basic query object, then we can break down its parts.
 |sort_list          |[SortPair]   |A list of sort pairs to define how the data should be sorted.|
 
 ***
-## Query Pair
+### Query Pair
 A query pair is the object to build out a query. There are some required fields and some optional fields.
 
 ```graphql
@@ -49,7 +49,7 @@ A query pair is the object to build out a query. There are some required fields 
 | query_group          | [QueryPairs]        | A list of query pairs to use to build out a nested query.  A more detailed example is below under the examples section.                                                      |
 
 ***
-## Operators
+### Operators
 
 These operators are case-sensitive. The following are the available operators:
 
@@ -84,7 +84,7 @@ The data is less than the value.
 The data is less than or equal to the value.
 
 ***
-## Conjunctive Operators
+### Conjunctive Operators
 
 These operators are case-sensitive. Conjunctive operators in the same array must match for a query to work.
 To mix operators use nested queries with query pairs containing a `query_list`. The following are the available conjunctive operators:
@@ -99,7 +99,7 @@ To mix operators use nested queries with query pairs containing a `query_list`. 
  The final query pair in the list should use this operator since it has nothing to connect to.
 
 ***
-## Sort Pair
+### Sort Pair
 A sort pair is the object used to tell a query how the data should be sorted.
 
 ```graphql
@@ -115,7 +115,7 @@ A sort pair is the object used to tell a query how the data should be sorted.
 |key                |String       |The key to sort the data by.|
 
 ***
-## Sort Direction
+### Sort Direction
 
 The direction to sort the data. These are case-sensitive.
 
@@ -124,6 +124,104 @@ Begins with the least or smallest and ends with the greatest or largest
 
 `DESC`
 Begins with the greatest or largest and ends with the least or smallest
+
+***
+## Pagination
+
+When querying lists of items from the Pay Theory API, you can use pagination to break up large result sets into manageable chunks.
+
+The API uses cursor-based pagination, which is more reliable than traditional offset/limit pagination for real-time data.
+
+### How Pagination Works
+
+The basic pagination parameters are:
+
+- `limit`: The maximum number of items to return
+- `direction`: The direction of pagination
+  - `FORWARD`: Fetches the next set of items. Should be used if you are passing in the `offset_id` of the last item from the previous array.
+  - `BACKWARD`: Fetches the previous set of items. Should be used if you are passing in the `offset_id` of the first item from the previous array.
+- `offset_id`: The ID of the offset item from the previous page
+- `offset`: The sort value of the offset item from the previous page ***(only required when sorting)***
+
+### Basic Pagination Example
+
+Here's a simple example of paginating through transactions without sorting:
+
+```graphql
+{
+  transactions(
+    limit: 100,
+    direction: FORWARD
+  ) {
+    items {
+      transaction_id
+      transaction_date
+    }
+    total_row_count
+  }
+}
+```
+
+For the next page, you would only need to provide the `offset_id`:
+
+```graphql
+{
+  transactions(
+    limit: 100,
+    direction: FORWARD,
+    offset_id:  "ptl_txn_rbdg98004adg"  // Last transaction_id from previous data set
+  ) {
+    items {
+      transaction_id
+      transaction_date
+    }
+    total_row_count
+  }
+}
+```
+
+### Pagination with Sorting
+
+When your query includes sorting, you need to provide both the `offset_id` and the `offset` parameter. The `offset` should be the value of the sort column from the last item in your previous results.
+
+For example, if sorting by `transaction_date`:
+
+```graphql
+{
+  transactions(
+    limit: 100,
+    direction: FORWARD,
+    offset_id: "ptl_txn_rbdg98004adg",  // Last transaction_id from previous data set
+    offset: "2024-01-15T14:30:00Z",  // transaction_date from the same last item
+    query: {
+      sort_list: [{
+        key: "transaction_date",
+        direction: DESC
+      }]
+    }
+  ) {
+    items {
+      transaction_id
+      transaction_date
+    }
+    total_row_count
+  }
+}
+```
+
+### Determining if More Pages Exist
+
+Queries that can be paginated can return a `total_row_count` field that tells you the total number of items matching your query. You can compare this with the number of items you've retrieved to determine if there is more data to fetch.
+
+### Pagination Best Practices
+
+1. When sorting results, always use both `offset_id` and `offset` to ensure consistent pagination
+2. When not sorting, only `offset_id` is needed
+3. Keep track of the `total_row_count` to know when you've retrieved all items
+4. Maintain the same sort criteria throughout your pagination sequence
+
+<br/>
+Remember that when using sorting, the values for `offset_id` and `offset` should always come from the first or last item in your previous query's results to ensure consistent pagination through your data set.
 
 ***
 ## Examples

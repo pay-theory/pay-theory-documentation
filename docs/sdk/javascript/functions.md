@@ -56,15 +56,15 @@ const PAYOR_INFO = {
 }
 
 const BILLING_INFO = {
-    name: "Some Body",
-    address: {
-        line1: "123 Street St",
-        line2: "Apartment 17",
-        city: "Somewhere",
-        region: "OH",
-        postal_code: "12345",
-        country: "USA"
-    }
+  name: "Some Body",
+  address: {
+    line1: "123 Street St",
+    line2: "Apartment 17",
+    city: "Somewhere",
+    region: "OH",
+    postal_code: "12345",
+    country: "USA"
+  }
 }
 
 const PAYMENT_METADATA = {
@@ -73,21 +73,21 @@ const PAYMENT_METADATA = {
 
 // Parameters that you will pass into the transact function. More details below.
 const TRANSACTING_PARAMETERS = {
-    accountCode: "code-123456789", // optional
-    amount: AMOUNT,
-    billingInfo: BILLING_INFO, // optional
-    confirmation: false, // optional
-    fee: 100, // optional
-    feeMode: FEE_MODE, // optional
-    invoiceId: "pt_inv_XXXXXXXXX", // optional
-    metadata: PAYMENT_METADATA, // optional
-    oneTimeUseToken: false, // optional
-    payorId: "pt_pay_XXXXXXXXX", // optional
-    payorInfo: PAYOR_INFO, // optional
-    receiptDescription: "School Technology Fees", // optional
-    recurringId: "pt_rec_XXXXXXXXX", // optional
-    reference: "field-trip", // optional
-    sendReceipt: true, // optional
+  accountCode: "code-123456789", // optional
+  amount: AMOUNT,
+  billingInfo: BILLING_INFO, // optional
+  confirmation: false, // optional
+  fee: 100, // optional
+  feeMode: FEE_MODE, // optional
+  invoiceId: "pt_inv_XXXXXXXXX", // optional
+  metadata: PAYMENT_METADATA, // optional
+  oneTimeUseToken: false, // optional
+  payorId: "pt_pay_XXXXXXXXX", // optional
+  payorInfo: PAYOR_INFO, // optional
+  receiptDescription: "School Technology Fees", // optional
+  recurringId: "pt_rec_XXXXXXXXX", // optional
+  reference: "field-trip", // optional
+  sendReceipt: true, // optional
 }
 
 paytheory.transact(TRANSACTING_PARAMETERS)
@@ -194,6 +194,7 @@ const TOKENIZE_PAYMENT_METHOD_PARAMETERS = {
   billingInfo: BILLING_INFO, // optional
   payorId: "pt_pay_XXXXXXXXX", // optional
   metadata: TOKEN_METADATA, // optional
+  skipValidation: false // optional
 }
 
 
@@ -202,12 +203,13 @@ paytheory.tokenizePaymentMethod(TOKENIZE_PAYMENT_METHOD_PARAMETERS)
 
 These are the parameters that you can pass into the `tokenizePaymentMethod` function to tokenize a card or bank account.
 
-|Key                | type                                 | description                                                                                                                                       |
-|-------------------|--------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------|
-|payorInfo          | [Payor Info](#payor-info-object)     | The details of the payor that you are tokenizing the payment method for.                                                                          |
-|billingInfo        | [Billing Info](#billing-info-object) | Billing info for the payment method. This is required if you are not using the `zip` hosted field.                                                |
-|metadata           | Object                               | An object that will be stored with the token and can be used to track the token.                                                                  |
-|payorId            | String                               | The Pay Theory payor ID to use for the payment. Allows for user to manage identities. This cannot be used if also using the `payorInfo` parameter. |
+| Key            | type                                 | description                                                                                                                                        |
+|----------------|--------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|
+| payorInfo      | [Payor Info](#payor-info-object)     | The details of the payor that you are tokenizing the payment method for.                                                                           |
+| billingInfo    | [Billing Info](#billing-info-object) | Billing info for the payment method. This is required if you are not using the `zip` hosted field.                                                 |
+| metadata       | Object                               | An object that will be stored with the token and can be used to track the token.                                                                   |
+| payorId        | String                               | The Pay Theory payor ID to use for the payment. Allows for user to manage identities. This cannot be used if also using the `payorInfo` parameter. |
+| skipValidation | Boolean                              | Defaults to `false`. If set to `true` the payment method will not be validated before tokenizing.                                                  |
 
 
 The function returns a Promise that will contain an object with a key of `type`. You can expect the following values for `type`:

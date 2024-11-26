@@ -12,35 +12,37 @@ Merchants are the entities that are using Pay Theory to accept payments.
 ## The Merchant Object
 ```js
 {
-    ach_active: Boolean
-    api_key: String
-    card_active: Boolean
-    cash_active: Boolean
-    country_code: String
-    fee_matrix: FeeMatrix
-    is_system: Boolean
-    merchant_name: String
-    merchant_uid: String
-    parent_merchant_uid: String
-    settings: MerchantSettings
-    submitted_onboarding: Boolean
+  ach_active: Boolean
+  api_key: String
+  card_active: Boolean
+  cash_active: Boolean
+  country_code: String
+  fee_matrix: FeeMatrix
+  is_system: Boolean
+  merchant_name: String
+  merchant_uid: String
+  metadata: AWSJSON
+  parent_merchant_uid: String
+  settings: MerchantSettings
+  submitted_onboarding: Boolean
 }
 ```
 
-| Key                  | type                                       | description                                                                                                         |
-|----------------------|--------------------------------------------|---------------------------------------------------------------------------------------------------------------------|
-| ach_active           | Boolean                                    | If the merchant has successfully completed onboarding and has an ACH processor active.                              |
-| api_key              | String                                     | The API key of the merchant. This is used to authenticate use of the PayTheory Web and Native SDKs.                 |
-| card_active          | Boolean                                    | If the merchant has successfully completed onboarding and has a card processor active.                              |
-| cash_active          | Boolean                                    | If the merchant has successfully completed onboarding and has a cash processor active.                              |
-| country_code         | String                                     | The country code of the country the merchant operates from.                                                         |
-| fee_matrix           | FeeMatrix                                  | The fee matrix that the merchant is using.  This is used to calculate the fees that are charged to the payor.       |
-| is_system            | Boolean                                    | If the merchant is a system merchant.  System merchants are merchants that also have sub merchants.                 |
-| merchant_name        | String                                     | The name of the merchant.                                                                                           |
-| merchant_uid         | String                                     | The Pay Theory unique identifier assigned to the merchant.                                                          |
+| Key                  | type                                       | description                                                                                                          |
+|----------------------|--------------------------------------------|----------------------------------------------------------------------------------------------------------------------|
+| ach_active           | Boolean                                    | If the merchant has successfully completed onboarding and has an ACH processor active.                               |
+| api_key              | String                                     | The API key of the merchant. This is used to authenticate use of the PayTheory Web and Native SDKs.                  |
+| card_active          | Boolean                                    | If the merchant has successfully completed onboarding and has a card processor active.                               |
+| cash_active          | Boolean                                    | If the merchant has successfully completed onboarding and has a cash processor active.                               |
+| country_code         | String                                     | The country code of the country the merchant operates from.                                                          |
+| fee_matrix           | FeeMatrix                                  | The fee matrix that the merchant is using.  This is used to calculate the fees that are charged to the payor.        |
+| is_system            | Boolean                                    | If the merchant is a system merchant.  System merchants are merchants that also have sub merchants.                  |
+| merchant_name        | String                                     | The name of the merchant.                                                                                            |
+| merchant_uid         | String                                     | The Pay Theory unique identifier assigned to the merchant.                                                           |
+| metadata             | AWSJSON                                    | The metadata that has been set on the Merchant.                                                                      |
 | parent_merchant_uid  | String                                     | The `merchant_uid` of the parent merchant.  This is only set if the merchant is a sub merchant of a system merchant. |
-| settings             | [MerchantSettings](#merchant-settings-object) | The settings that the merchant has set.                                                                             |
-| submitted_onboarding | Boolean                                    | Whether the merchant has submitted their onboarding information.                                                    |
+| settings             | [MerchantSettings](#merchant-settings-object) | The settings that the merchant has set.                                                                              |
+| submitted_onboarding | Boolean                                    | Whether the merchant has submitted their onboarding information.                                                     |
 
 ### The Fee Matrix Object
 
@@ -222,6 +224,7 @@ This is a limited merchant object that is returned when you want to query a list
     is_system: Boolean
     merchant_name: String
     merchant_uid: String
+    metadata: AWSJSON
     parent_merchant_uid: String
     submitted_onboarding: Boolean
     updated_row_at: AWSDateTime
@@ -236,6 +239,7 @@ This is a limited merchant object that is returned when you want to query a list
 |is_system          |Boolean      |If the merchant is a system merchant.  System merchants are merchants that also have sub merchants.|
 |merchant_name      |String       |The name of the merchant.|
 |merchant_uid       |String       |The Pay Theory unique identifier assigned to the merchant.|
+|metadata           |AWSJSON      |The metadata that has been set on the Merchant.|
 |parent_merchant_uid|String       |The `merchant_uid` of the parent merchant.  This is only set if the merchant is a sub merchant of a system merchant.|
 |submitted_onboarding|Boolean     |Whether the merchant has submitted their onboarding information.|
 |updated_row_at     |AWSDateTime  |The date the merchant was last updated.|
@@ -253,6 +257,7 @@ This is a limited merchant object that is returned when you want to query a list
             is_system
             merchant_name
             merchant_uid
+            metadata(query_list: [QueryPair])
             parent_merchant_uid
             submitted_onboarding
         }
@@ -270,6 +275,12 @@ This is a limited merchant object that is returned when you want to query a list
 |offset             |String       |The value of the offset item for which the list is being sorted.|
 |offset_id          |String       |The `merchant_uid` of the offset item.|
 |query              |SqlQuery  |The query to filter the merchants with based on Pay Theory defined data.|
+
+**Nested Queries**
+Merchants can also be filtered by passing a query_list to the metadata tied to the Merchant.
+
+This will only return Merchants that have Metadata that match this query.  Detailed information about the query list can be found [here](query).
+
 
 **Returns**
 
@@ -302,6 +313,7 @@ This is a limited merchant object that is returned when you want to query a list
 ```js
 mutation {
     createMerchant(merchant_name: String,
+        metadata: AWSJSON,
         parent_merchant_uid: String,
         user: {
         email: AWSEmail,
@@ -322,11 +334,12 @@ mutation {
 
 **Parameters**
 
-|Key                |type         |       description                     |
-|-------------------|-------------|---------------------------------------|
-|merchant_name      |String       |The name of the merchant to create.|
-|parent_merchant_uid|String       |The `merchant_uid` of the parent merchant.  This is only set if the merchant belongs to another merchant account.|
-|user               |User         |The user that will be created for the merchant.  This user will be given access to the onboarding form on Merchant creation.|
+| Key                 | type    | description                                                                                                                  |
+|---------------------|---------|------------------------------------------------------------------------------------------------------------------------------|
+| merchant_name       | String  | The name of the merchant to create.                                                                                          |
+| metadata            | AWSJSON | The metadata that will be set on the Merchant.                                                                               |
+| parent_merchant_uid | String  | The `merchant_uid` of the parent merchant.  This is only set if the merchant belongs to another merchant account.            |
+| user                | User    | The user that will be created for the merchant.  This user will be given access to the onboarding form on Merchant creation. |
 
 **User Parameters**
 |Key                |type         |       description                     |
@@ -498,23 +511,23 @@ mutation {
 
 **Parameters**
 
-| Key | Type | Description |
-|-----|------|-------------|
-| merchant_uid | ID! | The unique identifier of the merchant whose settings are being updated. |
-| settings | MerchantSettingsInput! | The new settings for the merchant. |
+| Key          | Type                   | Description                                                             |
+|--------------|------------------------|-------------------------------------------------------------------------|
+| merchant_uid | ID!                    | The unique identifier of the merchant whose settings are being updated. |
+| settings     | MerchantSettingsInput! | The new settings for the merchant.                                      |
 
 **MerchantSettingsInput Object**
 
 ```graphql
 input MerchantSettingsInput {
-    contact_email: AWSEmail
-    contact_phone: AWSPhone
-    facebook: AWSURL
-    instagram: AWSURL
-    linkedin: AWSURL
-    tiktok: AWSURL
-    twitter: AWSURL
-    website: AWSURL
+  contact_email: AWSEmail
+  contact_phone: AWSPhone
+  facebook: AWSURL
+  instagram: AWSURL
+  linkedin: AWSURL
+  tiktok: AWSURL
+  twitter: AWSURL
+  website: AWSURL
 }
 ```
 
@@ -528,9 +541,9 @@ The `AWSEmail`,  `AWSPhone`, and `AWSURL` types must be valid according to AWS A
 
 ```js
 {
-    "data": {
-        "updateMerchantSettings": true
-    }
+  "data": {
+    "updateMerchantSettings": true
+  }
 }
 ```
 
