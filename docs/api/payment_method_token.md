@@ -105,30 +105,30 @@ The type of wallet that the payment method token is stored in. It can be one of 
 ## Query Payment Method Tokens
 ```graphql
 {
-    paymentMethodTokens(direction: MoveDirection, limit: Int, offset: String, offset_id: String, query: SqlQuery) {
-        items {
-          address_line1
-          address_line2
-          card_brand
-          city
-          country
-          exp_date
-          full_name
-          is_active
-          last_four
-          merchant_uid
-          metadata(query_list: [QueryPair])
-          payment_method_id
-          payment_type
-          payor(query_list: [QueryPair]) {
-            ...
-          }
-          postal_code
-          region
-          wallet_type
-        }
-        total_row_count
+  paymentMethodTokens(direction: MoveDirection, limit: Int, offset: String, offset_id: String, query: SqlQuery) {
+    items {
+      address_line1
+      address_line2
+      card_brand
+      city
+      country
+      exp_date
+      full_name
+      is_active
+      last_four
+      merchant_uid
+      metadata(query_list: [QueryPair])
+      payment_method_id
+      payment_type
+      payor(query_list: [QueryPair]) {
+        ...
+      }
+      postal_code
+      region
+      wallet_type
     }
+    total_row_count
+  }
 }
 ```
 
@@ -161,19 +161,22 @@ This mutation will create a payment method token for a payor. The payment method
 
 ```graphql
 mutation {
-    createPaymentMethod(payment_method: PaymentMethodInput!, merchant_uid: String!) {
-        payment_method_id
-        ...
-    }
+  createPaymentMethod(payment_method: PaymentMethodInput!,
+    merchant_uid: String!,
+    skip_validation: Boolean) {
+    payment_method_id
+    ...
+  }
 }
 ```
 
 **Parameters**
 
-| Key            | type               | description                                                                                                          |
-|----------------|--------------------|----------------------------------------------------------------------------------------------------------------------|
-| payment_method | PaymentMethodInput | The payment method input object. Refer to the [PaymentMethodInput](#payment-method-input-object) docs for more info. |
-| merchant_uid   | String             | The Pay Theory unique identifier assigned to the merchant that the payment_method_token belongs to.                  |
+| Key            | type               | description                                                                                                           |
+|----------------|--------------------|-----------------------------------------------------------------------------------------------------------------------|
+| payment_method | PaymentMethodInput | The payment method input object. Refer to the [PaymentMethodInput](#payment-method-input-object) docs for more info.  |
+| merchant_uid   | String             | The Pay Theory unique identifier assigned to the merchant that the payment_method_token belongs to.                   |
+| skip_validation| Boolean            | A boolean flag indicating whether to skip the validation of the payment method. Defaults to `false` if not passed in. |
 
 **Returns**
 The payment method token object. Refer to the [Payment Method Token](#the-payment-method-token-object) for more info.
@@ -185,12 +188,12 @@ This is the input object used when passing in payment method into any mutation t
 
 ```graphql
 {
-    ach: AchInput
-    card: CardInput
-    canadian_eft: CanadianEftInput
-    metadata: AWSJSON
-    payor: PayorInput
-    payor_id: String
+  ach: AchInput
+  card: CardInput
+  canadian_eft: CanadianEftInput
+  metadata: AWSJSON
+  payor: PayorInput
+  payor_id: String
 }
 ```
 
@@ -209,16 +212,16 @@ The ach input object. It contains the following fields:
 
 ```graphql
 {
-    address_line1: String
-    address_line2: String
-    account_number: String!
-    account_type: AchAccountType!
-    city: String
-    country: String
-    name_on_account: String!
-    postal_code: String
-    region: String
-    routing_number: String!
+  address_line1: String
+  address_line2: String
+  account_number: String!
+  account_type: AchAccountType!
+  city: String
+  country: String
+  name_on_account: String!
+  postal_code: String
+  region: String
+  routing_number: String!
 }
 ```
 
@@ -267,16 +270,16 @@ The card input object. It contains the following fields:
 
 ```graphql
 {
-    address_line1: String
-    address_line2: String
-    card_number: String!
-    city: String
-    country: String
-    exp_date: CardExpirationInput!
-    full_name: String
-    postal_code: String!
-    region: String
-    security_code: String!
+  address_line1: String
+  address_line2: String
+  card_number: String!
+  city: String
+  country: String
+  exp_date: CardExpirationInput!
+  full_name: String
+  postal_code: String!
+  region: String
+  security_code: String!
 }
 ```
 | Key           | type                 | description                                                                                                      |
@@ -298,8 +301,8 @@ The card expiration input object. It contains the following fields:
 
 ```graphql
 {
-    month: String!
-    year: String!
+  month: String!
+  year: String!
 }
 ```
 | Key   | type    | description                                    |

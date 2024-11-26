@@ -7,6 +7,19 @@ title: "Changelog"
 # Changelog
 Additions and updates to Pay Theory’s API
 
+## November 20, 2024
+#### Added to API
+* `createBatchCapture` mutation added to API. Only works in sandbox environments. Captures all `PENDING` transactions for a merchant in a batch and shortly after creates a settlement for the merchant.
+* `metadata` added to Merchant schema
+* Can be passed in when calling `createMerchant`
+* Can be managed with the `updateMetadata` and `deleteMetadata` mutations
+* Can be requested in the `merchant` and `merchants` queries
+* Can be used to filter the `merchants` query
+* `skip_validation` added to the `createPaymentMethod` mutation. If set to true, the payment method will be created without validation.
+
+#### Added to JS SDK
+* `skipValidation` added to the `tokenizePaymentMethod` function. If set to true, the payment method will be created without validation.
+
 ## October 4, 2024
 #### Added to API
 * `country_code` was added to the Merchant and ListMerchant object
@@ -32,11 +45,11 @@ Additions and updates to Pay Theory’s API
 * `country` added to the payTheoryFields function to tell the SDK what fields to look for when initializing the Bank Fields. Defaults to USA but also accepts CAN
 * `oneTimeUseToken` added to the transact function parameters to make it so that we immediately disable token after making the transaction
 * New div IDs added for initializing the CAN bank fields:
-  * bank-account-number - `pay-theory-bank-account-number`
-  * bank-account-name - `pay-theory-bank-account-name`
-  * bank-account-type - `pay-theory-bank-account-type`
-  * bank-institution-number - `pay-theory-bank-institution-number`
-  * bank-transit-number - `pay-theory-bank-transit-number`
+* bank-account-number - `pay-theory-bank-account-number`
+* bank-account-name - `pay-theory-bank-account-name`
+* bank-account-type - `pay-theory-bank-account-type`
+* bank-institution-number - `pay-theory-bank-institution-number`
+* bank-transit-number - `pay-theory-bank-transit-number`
 #### Changed
 * `avs_status` now included in the Authorization and Transaction schema
 * `bank_account_type`, `bank_code`, `barcode_id`, and `card_type` now included in the PaymentMethodToken schema
@@ -44,4 +57,4 @@ Additions and updates to Pay Theory’s API
 * `void_amount` argument is deprecated in the `createVoidForAuthorization` mutation as only full voids are supported
 * `createRefund` mutation is deprecated. Recommend using `createReversal` call now
 * All successful transactions from the SDK/API will now have the state/status of `PENDING` instead of the potential of both `PENDING` or `SUCCEEDED`
-  * `PENDING` transactions are now able to be voided to prevent funds from moving before settle
+* `PENDING` transactions are now able to be voided to prevent funds from moving before settle
