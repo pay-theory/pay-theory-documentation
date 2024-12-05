@@ -15,9 +15,11 @@ This function is used to initialize the Pay Theory Hosted Fields.
 
 ```javascript
 paytheory.payTheoryFields({
+  amount: number,
   apiKey: string,
+  country: string,
+  placeholders: PlaceholderObject,
   styles: StyleObject,
-  placeholders: PlaceholderObject
 })
 ```
 
@@ -26,6 +28,7 @@ These are the parameters that you can pass into the `payTheoryFields` function t
 | Key          | type                                        | description                                                                                                                                                                                                                                  |
 |--------------|---------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | apiKey       | String                                      | Your Pay Theory API key. This is required to initialize the Hosted Fields.                                                                                                                                                                   |
+| amount       | Int                                         | The amount of the transaction in cents. This is an optional field that will allow the SDK to calculate the service fee and return it to the [state observer](/docs/sdk/javascript/event_listeners#stateobserver).                                                                    |
 | country      | String                                      | The country code for the country of the merchant you are initializing the SDK for. This should alight with the `country_code` on their [merchant](/docs/api/merchant#the-merchant-object) object. Defaults to `USA` if nothing is passed in. |
 | placeholders | Object                                      | An object that contains any custom placeholders you would like to use for the fields.                                                                                                                                                        |
 | styles       | [Style Object](hosted_fields#styles-object) | An object that contains the styles for the Hosted Fields.                                                                                                                                                                                    |
@@ -56,15 +59,15 @@ const PAYOR_INFO = {
 }
 
 const BILLING_INFO = {
-    name: "Some Body",
-    address: {
-        line1: "123 Street St",
-        line2: "Apartment 17",
-        city: "Somewhere",
-        region: "OH",
-        postal_code: "12345",
-        country: "USA"
-    }
+  name: "Some Body",
+  address: {
+    line1: "123 Street St",
+    line2: "Apartment 17",
+    city: "Somewhere",
+    region: "OH",
+    postal_code: "12345",
+    country: "USA"
+  }
 }
 
 const PAYMENT_METADATA = {
@@ -73,21 +76,21 @@ const PAYMENT_METADATA = {
 
 // Parameters that you will pass into the transact function. More details below.
 const TRANSACTING_PARAMETERS = {
-    accountCode: "code-123456789", // optional
-    amount: AMOUNT,
-    billingInfo: BILLING_INFO, // optional
-    confirmation: false, // optional
-    fee: 100, // optional
-    feeMode: FEE_MODE, // optional
-    invoiceId: "pt_inv_XXXXXXXXX", // optional
-    metadata: PAYMENT_METADATA, // optional
-    oneTimeUseToken: false, // optional
-    payorId: "pt_pay_XXXXXXXXX", // optional
-    payorInfo: PAYOR_INFO, // optional
-    receiptDescription: "School Technology Fees", // optional
-    recurringId: "pt_rec_XXXXXXXXX", // optional
-    reference: "field-trip", // optional
-    sendReceipt: true, // optional
+  accountCode: "code-123456789", // optional
+  amount: AMOUNT,
+  billingInfo: BILLING_INFO, // optional
+  confirmation: false, // optional
+  fee: 100, // optional
+  feeMode: FEE_MODE, // optional
+  invoiceId: "pt_inv_XXXXXXXXX", // optional
+  metadata: PAYMENT_METADATA, // optional
+  oneTimeUseToken: false, // optional
+  payorId: "pt_pay_XXXXXXXXX", // optional
+  payorInfo: PAYOR_INFO, // optional
+  receiptDescription: "School Technology Fees", // optional
+  recurringId: "pt_rec_XXXXXXXXX", // optional
+  reference: "field-trip", // optional
+  sendReceipt: true, // optional
 }
 
 paytheory.transact(TRANSACTING_PARAMETERS)
@@ -218,7 +221,44 @@ The function returns a Promise that will contain an object with a key of `type`.
 - [`ERROR`](#error-response): The transact call had an error while processing and the error details will be in the `error` key.
 
 ***
-## Payor Info Object
+## updateAmount
+
+This function is used to update the amount for all hosted fields after they have been initialized. This will trigger a recalculation of any service fees.
+
+```javascript
+// Amount in cents
+paytheory.updateAmount(1000)
+```
+
+The function takes a single parameter:
+
+| Key    | type | description                            |
+|--------|------|----------------------------------------|
+| amount | Int  | The new amount in cents to update to |
+
+The function returns a Promise that will resolve to either:
+- `true`: The amount was successfully updated for all fields
+- [`ERROR`](#error-response): An error occurred while updating the amount. Possible error scenarios:
+  - `NOT_READY`: One or more fields are not ready to be updated
+  - `NO_FIELDS`: No PayTheory fields were found to update
+  - `INVALID_AMOUNT`: The amount provided is not valid (must be a positive integer)
+
+After a successful update, the [state observer](/docs/sdk/javascript/event_listeners#stateobserver) will receive an updated state object with the new amount and recalculated service fees.
+
+```javascript
+// Example usage
+const result = await paytheory.updateAmount(2000);
+if (result === true) {
+    console.log('Amount updated successfully');
+} else {
+    console.error('Error updating amount:', result);
+}
+```
+
+***
+## Parameter Schemas
+
+### Payor Info Object
 
 This data will be used to create a payor in Pay Theory system that will be represented by a Payor ID.
 
@@ -249,7 +289,7 @@ This data will be used to create a payor in Pay Theory system that will be repre
 |same_as_billing    | Boolean                    | Optional. If set to `true`, the address will be the same as the billing address. You only need to pass in `phone` and `email`. |
 
 ***
-## Billing Info Object
+### Billing Info Object
 
 This data will be used as the billing info for a card transaction. This is required if you are not using the billing hosted fields.
 
@@ -259,7 +299,7 @@ This data will be used as the billing info for a card transaction. This is requi
 |address            | [Address](#address-object) |The billing address of the card|
 
 ***
-## Address Object
+### Address Object
 
 This object is used to represent an address.
 
