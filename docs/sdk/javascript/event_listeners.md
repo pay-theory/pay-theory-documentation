@@ -61,7 +61,7 @@ The `stateObserver` fires when the state of any hosted field changes, providing 
 
 ```javascript
 const cleanupFunction = window.paytheory.stateObserver(state => {
-    // Logic to respond to state changes
+  // Logic to respond to state changes
 })
 ```
 
@@ -108,11 +108,11 @@ The callback receives a state object containing information about all possible p
 
 The state object includes a `service_fee` object with fee details:
 
-| Property | Type | Description |
-|----------|------|-------------|
-| amount | number | Total transaction amount in cents |
-| card_fee | number | Card processing fee in cents (undefined if not calculated or no amount) |
-| bank_fee | number | Bank/ACH processing fee in cents (undefined if not calculated or no amount) |
+| Property | Type | Description                                                                           |
+|----------|------|---------------------------------------------------------------------------------------|
+| amount | number | Total transaction amount in cents                                                     |
+| card_fee | number | Service fee in cents for card transactions (undefined if not calculated or no amount) |
+| bank_fee | number | Service fee in cents for bank transactions (undefined if not calculated or no amount) |
 
 Note: Both `card_fee` and `bank_fee` will be undefined if:
 - No amount has been passed to the SDK
