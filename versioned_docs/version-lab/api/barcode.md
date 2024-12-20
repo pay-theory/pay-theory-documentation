@@ -175,7 +175,7 @@ mutation MyMutation {
 
 Returns the barcode object that was created.
 
-
+***
 ## Create Barcode Payment
 
 :::warning Sandbox Only
