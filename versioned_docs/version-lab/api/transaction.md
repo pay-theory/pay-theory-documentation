@@ -367,30 +367,32 @@ mutation {
 ***If you get a `transaction_id` returned when `is_void` is `true` then it was a partial void and the `transaction_id` is the new transaction created for the adjusted amount and will be captured.***
 
 ***
+I'll help update the Calculate Service Fee documentation to include the payment_method_id parameter in the argument list. Here's the revised version:
+
 ## Calculate Service Fee
 
 This call will allow you to calculate what the fee amount should be if using `SERVICE_FEE` for a transaction.
 
 ```graphql
 {
-    serviceFee(amount: Int, merchant_uid: String, is_ach: Boolean, bank_id: String) {
+    serviceFee(amount: Int, merchant_uid: String, is_ach: Boolean, bank_id: String, payment_method_id: String) {
         adjusted_total
         fee
         fee_limit_reached
         total
     }
 }
-
 ```
 
 **Arguments**
 
-| Key          | type    | description                                                                                  |
-|--------------|---------|----------------------------------------------------------------------------------------------|
-| amount       | Int     | The amount of the transaction.                                                               |
-| merchant_uid | String  | The Pay Theory unique identifier for the merchant the transaction is for.                    |
-| is_ach       | Boolean | If the transaction is an ACH transaction.                                                    |
-| bank_id      | String  | The first 6 to 8 digits of a card number. An error will be thrown if it is any other length. |
+| Key               | type    | description                                                                                  |
+|-------------------|---------|----------------------------------------------------------------------------------------------|
+| amount            | Int     | The amount of the transaction.                                                               |
+| merchant_uid      | String  | The Pay Theory unique identifier for the merchant the transaction is for.                    |
+| is_ach            | Boolean | If the transaction is an ACH transaction.                                                    |
+| bank_id           | String  | The first 6 to 8 digits of a card number. An error will be thrown if it is any other length. |
+| payment_method_id | String  | The Pay Theory unique identifier for a tokenized payment method to calculate fees for.       |
 
 
 **Returns**
