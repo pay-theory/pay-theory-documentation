@@ -174,3 +174,49 @@ mutation MyMutation {
 **Returns**
 
 Returns the barcode object that was created.
+
+
+## Create Barcode Payment
+
+:::warning Sandbox Only
+This mutation will only work in sandbox environments. It is used to simulate barcode payments for testing purposes.
+:::
+
+```graphql
+mutation {
+    createBarcodePaymentSandbox(barcode_id: String!, amount_to_pay: Int!): BarcodePaymentResponse!
+}
+```
+
+**Parameters**
+
+| Key           | type    | description                                                     |
+|---------------|---------|----------------------------------------------------------------|
+| barcode_id    | String! | The unique identifier of the barcode to process payment for.    |
+| amount_to_pay | Int!    | The amount to process for the payment in cents.                 |
+
+**Returns**
+
+The mutation returns a `BarcodePaymentResponse` object with the following structure:
+
+```graphql
+type BarcodePaymentResponse {
+    confirmation_code: String!
+    status: BarcodePaymentStatus!
+    status_message: String!
+}
+```
+
+| Key               | type                | description                                                |
+|-------------------|---------------------|------------------------------------------------------------|
+| confirmation_code | String              | A unique code confirming the payment transaction.          |
+| status            | BarcodePaymentStatus| The status of the barcode payment attempt.                |
+| status_message    | String              | A detailed message describing the result of the payment.   |
+
+### BarcodePaymentStatus
+
+The status of the barcode payment can be one of the following values:
+
+- `PAYMENT_ACCEPTED` - The payment was successfully processed
+- `PAYMENT_DECLINED` - The payment was declined
+- `SYSTEM_ERROR` - An error occurred while processing the payment
