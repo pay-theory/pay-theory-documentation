@@ -1,0 +1,188 @@
+---
+sidebar_position: 3
+sidebar_label: 'Activity & Interface Setup'
+title: "Activity & Interface Setup"
+---
+
+# Activity & Interface Setup
+
+To use the Pay Theory SDK, your activity must extend `PayTheoryMerchantActivity` and implement the `Payable` interface. This setup is crucial for handling payment responses and managing the payment flow.
+
+## Implementation Requirements
+
+```kotlin
+class YourActivity : PayTheoryMerchantActivity(), Payable {
+    // Your activity implementation
+}
+```
+
+## PayTheoryMerchantActivity
+
+The `PayTheoryMerchantActivity` class provides essential functionality for managing the Pay Theory payment flow:
+
+- Manages the PayTheoryFragment lifecycle
+- Provides access to payment form operations
+- Handles UI thread operations for payment responses
+
+### Key Methods
+
+| Method | Description |
+|--------|-------------|
+| `initializePayTheoryActivity(fragment: PayTheoryFragment)` | Initializes the activity with a PayTheoryFragment instance |
+| `clearFields()` | Clears all payment form fields on the UI thread |
+
+## Payable Interface
+
+The `Payable` interface defines callback methods for handling various payment states and responses. Your activity must implement these methods to handle payment results.
+
+### Required Handlers
+
+```kotlin
+interface Payable {
+    // Payment State Handlers
+    fun handleReady(isReady: Boolean)
+    fun handlePaymentStart(paymentType: String)
+    fun handleTokenStart(paymentType: String)
+    
+    // Success Handlers
+    fun handleSuccess(successfulTransactionResult: SuccessfulTransactionResult)
+    fun handleBarcodeSuccess(barcodeResult: BarcodeResult)
+    fun handleTokenizeSuccess(paymentMethodToken: PaymentMethodTokenResults)
+    
+    // Failure/Error Handlers
+    fun handleFailure(failedTransactionResult: FailedTransactionResult)
+    fun handleError(error: PTError)
+    
+    // Additional Handlers
+    fun confirmation(confirmationMessage: ConfirmationMessage, payment: Payment)
+}
+```
+
+### Handler Details
+
+#### State Handlers
+
+| Handler | Description |
+|---------|-------------|
+| `handleReady` | Called when the SDK is ready to accept payments |
+| `handlePaymentStart` | Called when a payment transaction begins |
+| `handleTokenStart` | Called when a tokenization process begins |
+
+#### Success Handlers
+
+| Handler | Description |
+|---------|-------------|
+| `handleSuccess` | Called after a successful card/bank payment |
+| `handleBarcodeSuccess` | Called after successful cash barcode generation |
+| `handleTokenizeSuccess` | Called after successful payment method tokenization |
+
+#### Failure/Error Handlers
+
+| Handler | Description |
+|---------|-------------|
+| `handleFailure` | Called when a transaction fails but completes |
+| `handleError` | Called when a system error occurs during processing |
+
+## Example Implementation
+
+Here's a complete example showing how to implement the activity and interface:
+
+```kotlin
+class PaymentActivity : PayTheoryMerchantActivity(), Payable {
+    private lateinit var progressIndicator: ProgressBar
+    private lateinit var responseText: TextView
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_payment)
+        
+        // Initialize views
+        progressIndicator = findViewById(R.id.progress_indicator)
+        responseText = findViewById(R.id.response_text)
+        
+        // Get PayTheoryFragment reference
+        val payTheoryFragment = supportFragmentManager
+            .findFragmentById(R.id.payTheoryFragment) as PayTheoryFragment
+    }
+
+    // State Handlers
+    override fun handleReady(isReady: Boolean) {
+        runOnUiThread {
+            progressIndicator.visibility = View.GONE
+            if (isReady) {
+                // SDK is ready for payments
+            }
+        }
+    }
+
+    override fun handlePaymentStart(paymentType: String) {
+        runOnUiThread {
+            progressIndicator.visibility = View.VISIBLE
+            responseText.text = "Processing $paymentType payment..."
+        }
+    }
+
+    override fun handleTokenStart(paymentType: String) {
+        runOnUiThread {
+            progressIndicator.visibility = View.VISIBLE
+            responseText.text = "Tokenizing $paymentType..."
+        }
+    }
+
+    // Success Handlers
+    override fun handleSuccess(successfulTransactionResult: SuccessfulTransactionResult) {
+        runOnUiThread {
+            progressIndicator.visibility = View.GONE
+            responseText.text = """
+                Payment Successful!
+                Amount: ${successfulTransactionResult.amount}
+                Receipt: ${successfulTransactionResult.receiptNumber}
+            """.trimIndent()
+        }
+    }
+
+    override fun handleBarcodeSuccess(barcodeResult: BarcodeResult) {
+        runOnUiThread {
+            progressIndicator.visibility = View.GONE
+            responseText.text = """
+                Barcode Generated!
+                ID: ${barcodeResult.barcodeId}
+                Fee: ${barcodeResult.barcodeFee}
+            """.trimIndent()
+        }
+    }
+
+    override fun handleTokenizeSuccess(paymentMethodToken: PaymentMethodTokenResults) {
+        runOnUiThread {
+            progressIndicator.visibility = View.GONE
+            responseText.text = """
+                Payment Method Tokenized!
+                ID: ${paymentMethodToken.paymentMethodId}
+                Type: ${paymentMethodToken.paymentType}
+            """.trimIndent()
+        }
+    }
+
+    // Failure/Error Handlers
+    override fun handleFailure(failedTransactionResult: FailedTransactionResult) {
+        runOnUiThread {
+            progressIndicator.visibility = View.GONE
+            responseText.text = """
+                Payment Failed
+                Receipt: ${failedTransactionResult.receiptNumber}
+            """.trimIndent()
+        }
+    }
+
+    override fun handleError(error: PTError) {
+        runOnUiThread {
+            progressIndicator.visibility = View.GONE
+            responseText.text = "Error: ${error.error}"
+        }
+    }
+
+    override fun confirmation(confirmationMessage: ConfirmationMessage, payment: Payment) {
+        // Handle payment confirmation if needed
+    }
+}
+```

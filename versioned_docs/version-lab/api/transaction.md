@@ -367,7 +367,6 @@ mutation {
 ***If you get a `transaction_id` returned when `is_void` is `true` then it was a partial void and the `transaction_id` is the new transaction created for the adjusted amount and will be captured.***
 
 ***
-I'll help update the Calculate Service Fee documentation to include the payment_method_id parameter in the argument list. Here's the revised version:
 
 ## Calculate Service Fee
 

@@ -263,6 +263,10 @@ module.exports = {
           type: 'doc',
           id: 'sdk/android/ui_components/styling',
         },
+        {
+          type: 'doc',
+          id: 'sdk/android/ui_components/custom_placeholder',
+        },
       ],
     },
     {
@@ -312,6 +316,10 @@ module.exports = {
           id: 'sdk/android/data_models/enums',
         },
       ],
+    },
+    {
+      type: 'doc',
+      id: 'sdk/android/app_registration',
     },
   ],
   appleSidebar: [

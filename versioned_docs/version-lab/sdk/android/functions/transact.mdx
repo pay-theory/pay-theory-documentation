@@ -1,0 +1,84 @@
+---
+sidebar_position: 1
+sidebar_label: 'transact'
+title: "transact"
+---
+
+# transact
+
+The `transact` function is a method in the Pay Theory SDK that processes payments. It's called through a configured PayTheoryFragment instance after setting up the necessary payment configuration.
+
+## Implementation Flow
+
+1. Include PayTheoryFragment in your layout:
+```xml
+<fragment
+    android:id="@+id/payTheoryFragment"
+    android:name="com.paytheory.android.sdk.fragments.PayTheoryFragment"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" />
+```
+
+2. Configure the payment:
+```kotlin
+// Get reference to PayTheoryFragment
+val payTheoryFragment = getChildFragmentManager()
+    .findFragmentById(R.id.payTheoryFragment) as PayTheoryFragment
+
+// Create configuration
+val configuration = PayTheoryConfiguration(submitButton, apiKey).apply {
+    paymentMethodType = PaymentMethodType.CARD
+    amount = 1000  // $10.00
+    // ... other configuration options
+}
+
+// Configure the payment
+payTheoryFragment.configurePayment(
+    configuration,
+    requireActivity() as PayTheoryMerchantActivity
+)
+```
+
+3. Set up transaction trigger:
+```kotlin
+submitButton.setOnClickListener {
+    payTheoryFragment.transact()
+}
+```
+
+## Response Handling
+
+Your activity must extend `PayTheoryMerchantActivity` and implement the `Payable` interface to handle transaction responses. The following methods will be called based on the transaction outcome:
+
+```kotlin
+class YourActivity : PayTheoryMerchantActivity(), Payable {
+    
+    override fun handleSuccess(successfulTransactionResult: SuccessfulTransactionResult) {
+        // Handle successful payment
+        println("Transaction ID: ${successfulTransactionResult.transactionId}")
+    }
+
+    override fun handleFailure(failedTransactionResult: FailedTransactionResult) {
+        // Handle failed payment
+        println("Failure: ${failedTransactionResult.failureText}")
+    }
+
+    override fun handleError(error: PTError) {
+        // Handle system errors
+        println("Error: ${error.message}")
+    }
+
+    override fun handleBarcodeSuccess(barcodeResult: BarcodeResult) {
+        // Handle successful cash barcode generation
+        // Only triggered for cash payments
+    }
+}
+```
+
+## Important Notes
+
+- All amounts should be provided in cents (e.g., $10.00 = 1000)
+- The payment configuration must be properly set up before calling transact
+- Make sure to implement all required Payable interface methods to handle responses
+- For cash payments, the response will come through handleBarcodeSuccess instead of handleSuccess
+- The activity must extend PayTheoryMerchantActivity and implement the Payable interface 

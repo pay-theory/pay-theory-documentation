@@ -1,0 +1,78 @@
+---
+sidebar_position: 2
+sidebar_label: 'PayTheory Barcode'
+title: "PayTheory Barcode"
+---
+
+# PayTheory Barcode
+
+The `PayTheoryBarcode` is a custom ImageView component used to display SVG barcodes for cash payments. It extends `AppCompatImageView` and provides automatic SVG loading and rendering capabilities.
+
+## Usage
+
+Add the barcode view to your layout:
+
+```xml
+<com.paytheory.android.sdk.view.PayTheoryBarcode
+    android:id="@+id/barcode"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" />
+```
+
+## Features
+
+- Automatic SVG barcode loading and rendering
+- Handles network requests in the background
+- Automatic scaling and display of barcodes
+- Software rendering for SVG compatibility
+
+## Public Methods
+
+### displayBarcode()
+Loads and displays a barcode from a BarcodeResult:
+```kotlin
+fun displayBarcode(barcodeResult: BarcodeResult)
+```
+
+## Example Implementation
+
+```kotlin
+class PaymentActivity : PayTheoryMerchantActivity(), Payable {
+    private lateinit var payTheoryBarcode: PayTheoryBarcode
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_payment)
+
+        payTheoryBarcode = findViewById(R.id.barcode)
+    }
+
+    override fun handleBarcodeSuccess(result: BarcodeResult) {
+        // Display the barcode when received
+        payTheoryBarcode.displayBarcode(result)
+    }
+}
+```
+
+## Important Notes
+
+- Only used for cash payment transactions
+- Automatically handles SVG loading and rendering
+- Uses software rendering for SVG compatibility
+- Network operations are performed on background threads
+- The barcode URL is provided in the BarcodeResult after a successful cash payment setup
+
+## Error Handling
+
+The component includes built-in error handling for:
+- Network failures when loading SVG
+- SVG parsing errors
+- Invalid URLs
+
+## Best Practices
+
+1. Place the barcode view in a scrollable container
+2. Consider providing loading and error states
+3. Ensure proper network permissions are set
+4. Handle configuration changes appropriately
+5. Consider implementing retry logic for failed loads 
