@@ -1,0 +1,224 @@
+---
+sidebar_position: 1
+sidebar_label: 'Pay Theory Android SDK'
+title: "Pay Theory Android SDK"
+---
+
+# Pay Theory Android SDK
+
+## Requirements
+
+- Android SDK >= 26
+- Kotlin support
+- Android Studio
+
+## Installation
+
+The Pay Theory Android SDK is available through [Maven Repository](https://repo1.maven.org/maven2/com/paytheory/).
+
+### 1. Add Maven Repository
+
+Add mavenCentral() to your project level `build.gradle` file:
+
+```kotlin
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+}
+```
+
+### 2. Add SDK Dependency
+
+Add Pay Theory AndroidSDK to your app level `build.gradle` file:
+
+```kotlin
+dependencies {
+    implementation group: 'com.paytheory.android.sdk', name: 'AndroidSDK', version: 'LATEST_VERSION'
+}
+```
+
+### 3. Configure Build Settings
+
+Update your app level `build.gradle`:
+
+```kotlin
+android {
+    compileSdk 33
+    
+    defaultConfig {
+        minSdk 26
+        targetSdk 33
+    }
+}
+```
+
+## API Key Configuration
+
+While Pay Theory's API key is not considered a secret key, it's best practice to avoid exposing it in your source code repository.
+
+### 1. Add API Key to local.properties
+
+```properties
+API_KEY=YOUR-API-KEY
+```
+
+### 2. Configure Build Resources
+
+Update your app level `build.gradle`:
+
+```kotlin
+File secretPropsFile = project.rootProject.file('local.properties')
+Properties p = new Properties()
+new FileInputStream(secretPropsFile).withCloseable { is -> p.load(is) }
+p.each { name, value -> ext[name] = value }
+
+android {
+    buildTypes {
+        debug {
+            resValue("string", "api_key", "${API_KEY}")
+        }
+        release {
+            resValue("string", "api_key", "${API_KEY}")
+        }
+    }
+}
+```
+
+## Basic Implementation
+
+### 1. Layout Setup
+
+Add PayTheoryFragment to your activity's layout file:
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <fragment
+        android:id="@+id/payTheoryFragment"
+        android:name="com.paytheory.android.sdk.fragments.PayTheoryFragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <com.paytheory.android.sdk.view.PayTheoryButton
+        android:id="@+id/submit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Pay" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+
+### 2. Activity Implementation
+
+Create an activity that extends PayTheoryMerchantActivity and implements the Payable interface:
+
+```kotlin
+class MainActivity : PayTheoryMerchantActivity(), Payable {
+    private lateinit var payTheoryButton: PayTheoryButton
+    private lateinit var payTheoryConfig: PayTheoryConfiguration
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+        
+        // Initialize configuration
+        payTheoryConfig = PayTheoryConfiguration(
+            apiKey = getString(R.string.api_key),
+            paymentMethodType = PaymentMethodType.CARD
+        ).apply {
+            amount = 1000 // $10.00 in cents
+            metadata = mapOf(
+                "orderId" to "12345",
+                "customerName" to "John Doe"
+            )
+            sendReceipt = true
+        }
+
+        // Get PayTheory Fragment
+        val payTheoryFragment = supportFragmentManager
+            .findFragmentById(R.id.payTheoryFragment) as PayTheoryFragment
+
+        // Configure payment
+        payTheoryFragment.configurePayment(payTheoryConfig)
+
+        // Set up payment button
+        payTheoryButton = findViewById(R.id.submit)
+        payTheoryButton.setOnClickListener {
+            payTheoryFragment.transact()
+        }
+    }
+
+    // Implement Payable interface methods
+    override fun handleReady(isReady: Boolean) {
+        payTheoryButton.isEnabled = isReady
+    }
+
+    override fun handleSuccess(result: SuccessfulTransactionResult) {
+        // Handle successful payment
+    }
+
+    override fun handleFailure(result: FailedTransactionResult) {
+        // Handle failed payment
+    }
+
+    override fun handleError(error: PTError) {
+        // Handle errors
+    }
+
+    override fun handleBarcodeSuccess(result: BarcodeResult) {
+        // Handle barcode generation for cash payments
+    }
+
+    override fun handleTokenizeSuccess(result: PaymentMethodTokenResults) {
+        // Handle successful tokenization
+    }
+}
+```
+
+## Styling
+
+### Text Input Styling
+
+The SDK uses Material Design text inputs that can be styled through your theme:
+
+```xml
+<style name="Theme.MyCustomTheme" parent="Theme.MaterialComponents.DayNight">
+    <item name="textInputStyle">@style/MyInputStyle</item>
+</style>
+
+<style name="MyInputStyle" parent="Widget.Material3.TextInputLayout.FilledBox">
+    <!-- Customize your input style -->
+</style>
+```
+
+### Button Styling
+
+PayTheoryButton can be styled using Material Design button styles:
+
+```xml
+<style name="MyButtonStyle" parent="Widget.Material3.Button.ElevatedButton">
+    <!-- Customize your button style -->
+</style>
+
+<com.paytheory.android.sdk.view.PayTheoryButton
+    style="@style/MyButtonStyle"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" />
+```
+
+## Next Steps
+
+- Learn about [State Management](./state/overview)
+- Explore [Payment Functions](./functions/configure_payment)
+- Understand [Response Types](./response_types/transaction_response)
+
+## Support
+
+For issues or feedback:
+- [GitHub Issues](https://github.com/pay-theory/pay-theory-android/issues)
+- Email: [support@paytheory.com](mailto:support@paytheory.com) 

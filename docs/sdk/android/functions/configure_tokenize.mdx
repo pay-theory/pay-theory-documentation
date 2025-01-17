@@ -1,0 +1,85 @@
+---
+sidebar_position: 2
+sidebar_label: 'configureTokenize'
+title: "configureTokenize"
+---
+
+# configureTokenize
+
+The `configureTokenize` function initializes the PayTheory Fragment for tokenizing payment methods. It sets up the payment fields and validation for storing payment information without processing a payment.
+
+## Function Signature
+
+```kotlin
+fun configureTokenize(
+    configuration: PayTheoryConfiguration,
+    merchantActivity: PayTheoryMerchantActivity
+)
+```
+
+## Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| configuration | PayTheoryConfiguration | Configuration object containing all tokenization settings |
+| merchantActivity | PayTheoryMerchantActivity | Activity that implements the PayTheoryMerchantActivity interface |
+
+## Example Usage
+
+```kotlin
+// Create submit button
+val submitButton: PayTheoryButton = requireView().findViewById(R.id.submit)
+
+// Get PayTheoryFragment instance
+val payTheoryFragment = getChildFragmentManager()
+    .findFragmentById(R.id.payTheoryBankFragment) as PayTheoryFragment
+
+// Configure tokenization
+val configuration = PayTheoryConfiguration(submitButton, apiKey).apply {
+    paymentMethodType = PaymentMethodType.CARD
+    metadata = metadata                // Optional
+    payorInfo = payorInfo            // Optional
+    requireAccountName = true        // Optional
+    requireBillingAddress = true     // Optional
+    skipTokenizeValidation = true    // Optional
+}
+
+payTheoryFragment.configureTokenize(
+    configuration,
+    requireActivity() as PayTheoryMerchantActivity
+)
+
+// Set click listener for tokenization
+submitButton.setOnClickListener {
+    payTheoryFragment.tokenize()
+}
+```
+
+## Key Configuration Parameters for Tokenization
+
+| Parameter              | Type                   | Required | Description                                                                                                       |
+|------------------------|------------------------|----------|-------------------------------------------------------------------------------------------------------------------|
+| payTheoryButton        | PayTheoryButton        | Yes      | Button that triggers tokenization                                                                                 |
+| apiKey                 | String                 | Yes      | Your Pay Theory API key                                                                                           |
+| paymentMethodType      | PaymentMethodType      | Yes      | Type of payment method to tokenize (CARD or BANK)                                                                 |
+| requireAccountName     | Boolean                | No       | Whether to require account name field                                                                             |
+| requireBillingAddress  | Boolean                | No       | Whether to require billing address fields                                                                         |
+| metadata               | Map&lt;String, Any&gt; | No       | Additional data to associate with token                                                                           |
+| payorInfo              | PayorInfo              | No       | Information about the person paying                                                                               |
+| payorId                | String                 | No       | Existing payor ID to use                                                                                          |
+| skipTokenizeValidation | Boolean                | No       | Skip payment method validation. Should only be used if you intend to immediately use the tokenized payment method |
+
+## Important Notes
+
+- The `amount` parameter should not be set when tokenizing payment methods
+- Cash payment methods cannot be tokenized
+- The API key must be valid and contain the correct partner and stage information
+- A network connection is required for tokenization
+- The fragment must be configured before calling `tokenize()`
+
+## Related Documentation
+
+For complete details on all available configuration options, please see:
+- [PayTheoryConfiguration](../data-models/pay-theory-configuration)
+- [PayorInfo](../data-models/payor-info)
+- [Address](../data-models/address)

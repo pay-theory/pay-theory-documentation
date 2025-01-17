@@ -1,0 +1,101 @@
+---
+sidebar_position: 1
+sidebar_label: 'configurePayment'
+title: "configurePayment"
+---
+
+# configurePayment
+
+The `configurePayment` function initializes the PayTheory Fragment for processing payments. It sets up the payment fields and validation for collecting and processing payment information.
+
+## Function Signature
+
+```kotlin
+fun configurePayment(
+    configuration: PayTheoryConfiguration,
+    merchantActivity: PayTheoryMerchantActivity
+)
+```
+
+## Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| configuration | PayTheoryConfiguration | Configuration object containing all payment settings |
+| merchantActivity | PayTheoryMerchantActivity | Activity that implements the PayTheoryMerchantActivity interface |
+
+## Example Usage
+
+```kotlin
+// Create submit button
+val submitButton: PayTheoryButton = requireView().findViewById(R.id.submit)
+
+// Get PayTheoryFragment instance
+val payTheoryFragment = getChildFragmentManager()
+    .findFragmentById(R.id.payTheoryBankFragment) as PayTheoryFragment
+
+// Configure payment
+val configuration = PayTheoryConfiguration(submitButton, apiKey).apply {
+    amount = 1000                    // Required - Amount in cents
+    paymentMethodType = PaymentMethodType.CARD
+    metadata = metadata              // Optional
+    payorInfo = payorInfo           // Optional
+    requireAccountName = true        // Optional
+    requireBillingAddress = true     // Optional
+    feeMode = "service_fee"         // Optional
+    confirmation = true             // Optional
+    sendReceipt = true             // Optional
+    receiptDescription = "Test Payment" // Optional
+    paymentParameters = "params"    // Optional
+    reference = "reference123"      // Optional
+    accountCode = "ACC123"         // Optional
+    invoiceId = "INV123"          // Optional
+}
+
+payTheoryFragment.configurePayment(
+    configuration,
+    requireActivity() as PayTheoryMerchantActivity
+)
+
+// Set click listener for payment
+submitButton.setOnClickListener {
+    payTheoryFragment.transact()
+}
+```
+
+## Key Configuration Parameters for Payments
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| payTheoryButton | PayTheoryButton | Yes | Button that triggers payment |
+| apiKey | String | Yes | Your Pay Theory API key |
+| amount | Int | Yes | Payment amount in cents (must be > 0) |
+| paymentMethodType | PaymentMethodType | Yes | Type of payment (CARD, BANK, or CASH) |
+| requireAccountName | Boolean | No | Whether to require account name field |
+| requireBillingAddress | Boolean | No | Whether to require billing address fields |
+| feeMode | String | No | Fee handling mode ("service_fee", "surcharge", etc.) |
+| confirmation | Boolean | No | Whether to require payment confirmation |
+| metadata | Map&lt;String, Any&gt; | No | Additional data to associate with payment |
+| payorInfo | PayorInfo | No | Information about the person paying |
+| sendReceipt | Boolean | No | Whether to send a receipt |
+| receiptDescription | String | No | Description for the receipt |
+| paymentParameters | String | No | Additional payment parameters |
+| reference | String | No | Reference identifier for the payment |
+| accountCode | String | No | Account code for the payment |
+| invoiceId | String | No | Invoice identifier |
+
+## Important Notes
+
+- The `amount` parameter must be greater than 0 (will throw an exception if ≤ 0)
+- The API key must be valid and contain the correct partner and stage information
+- A network connection is required for payment processing
+- The fragment must be configured before calling `transact()`
+- Different payment methods (CARD, BANK, CASH) will display different input fields
+- Billing address zip code is always required, even if `requireBillingAddress` is false
+
+## Related Documentation
+
+For complete details on all available configuration options, please see:
+- [PayTheoryConfiguration](../data-models/pay-theory-configuration)
+- [PayorInfo](../data-models/payor-info)
+- [Address](../data-models/address)
