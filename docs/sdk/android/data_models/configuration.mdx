@@ -1,0 +1,90 @@
+---
+sidebar_position: 4
+sidebar_label: 'PayTheory Configuration'
+title: "PayTheory Configuration"
+---
+
+# PayTheory Configuration
+
+The PayTheoryConfiguration class handles all configuration settings for payment processing and tokenization.
+
+## Initialization
+
+The PayTheoryConfiguration requires two parameters when initializing:
+
+```kotlin
+val config = PayTheoryConfiguration(
+    payTheoryButton: PayTheoryButton,  // Button that triggers payment/tokenization
+    apiKey: String                     // Your Pay Theory API key
+)
+```
+
+## Configurable Properties
+
+After initialization, you can configure the following properties:
+
+| Property               | Type                   | Default                | Description                                                                                                       |
+|------------------------|------------------------|------------------------|-------------------------------------------------------------------------------------------------------------------|
+| amount                 | Int                    | 0                      | Transaction amount in cents (e.g., 1000 = $10.00)                                                                 |
+| paymentMethodType      | PaymentMethodType      | CARD                   | Type of payment method to accept                                                                                  |
+| requireAccountName     | Boolean                | false                  | Whether to require account name input                                                                             |
+| requireBillingAddress  | Boolean                | false                  | Whether to require billing address                                                                                |
+| feeMode                | String                 | MERCHANT_FEE           | Who pays the service fee                                                                                          |
+| metadata               | Map&lt;String, Any&gt; | empty                  | Additional transaction data                                                                                       |
+| payorInfo              | PayorInfo              | null                   | Information about the person paying                                                                               |
+| payorId                | String                 | null                   | Existing payor ID to use                                                                                          |
+| skipTokenizeValidation | Boolean                | False                  | Skip payment method validation. Should only be used if you intend to immediately use the tokenized payment method |
+| accountCode            | String                 | null                   | Account code for transaction                                                                                      |
+| reference              | String                 | null                   | Reference for transaction                                                                                         |
+| paymentParameters      | String                 | null                   | Additional payment parameters                                                                                     |
+| invoiceId              | String                 | null                   | Invoice ID for transaction                                                                                        |
+| sendReceipt            | Boolean                | false                  | Whether to send receipt email                                                                                     |
+| receiptDescription     | String                 | "Payment Confirmation" | Description for receipt                                                                                           |
+| serviceFee             | Int                    | 0                      | Service fee in cents                                                                                              |
+
+## Example Usage
+
+```kotlin
+val config = PayTheoryConfiguration(
+    payTheoryButton = submitButton,
+    apiKey = "your-api-key"
+).apply {
+    // Required for payments
+    amount = 1000                           // $10.00
+    paymentMethodType = PaymentMethodType.CARD
+
+    // Optional settings
+    requireBillingAddress = true
+    feeMode = FeeMode.SERVICE_FEE
+    metadata = hashMapOf(
+        "orderId" to "12345",
+        "customerName" to "John Doe"
+    )
+    payorInfo = PayorInfo(
+        first_name = "John",
+        last_name = "Doe",
+        email = "john@example.com"
+    )
+    sendReceipt = true
+    receiptDescription = "School Payment"
+}
+```
+
+## Usage Notes
+
+- The `payTheoryButton` and `apiKey` are required during initialization
+- `amount` is required for payments but should not be set for tokenization
+- `paymentMethodType` determines which payment fields are displayed
+- `metadata` can contain any key-value pairs for transaction tracking
+- `payorInfo` is recommended for receipt delivery and payment tracking
+- `feeMode` determines who pays the processing fee (merchant or customer)
+- `sendReceipt` requires valid email in `payorInfo`
+- `skipTokenizeValidation` should be used with caution
+- `serviceFee` is automatically calculated based on amount and fee mode
+
+## Related Types
+
+- [PaymentMethodType](./enums#paymentmethodtype)
+- [FeeMode](./enums#feemode)
+- [PayorInfo](./payor)
+- [Address](./address)

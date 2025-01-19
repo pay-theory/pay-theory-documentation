@@ -1,0 +1,67 @@
+---
+sidebar_position: 4
+sidebar_label: 'SuccessfulTransactionResult'
+title: "SuccessfulTransactionResult"
+---
+
+# SuccessfulTransactionResult
+
+The `SuccessfulTransactionResult` class represents a successful payment transaction.
+
+### Properties
+
+| Property | Type | Description |
+|----------|------|-------------|
+| state | String | The state of the transaction (e.g., "PENDING") |
+| amount | String | The transaction amount |
+| brand | String | The payment method brand |
+| lastFour | String | Last four digits of the payment method |
+| serviceFee | String | The service fee amount |
+| currency | String | The transaction currency |
+| metadata | Map&lt;String, Any&gt;? | Optional metadata associated with the transaction |
+| receiptNumber | String | The Pay Theory receipt number |
+| createdAt | String | Timestamp of when the transaction was created |
+| paymentMethodId | String | ID of the payment method used |
+| payorId | String | ID of the payor who made the payment |
+
+## Failed Transaction Result
+
+The `FailedTransactionResult` class represents a failed payment transaction.
+
+### Properties
+
+| Property | Type | Description |
+|----------|------|-------------|
+| state | String | The state of the transaction (e.g., "FAILURE") |
+| brand | String | The payment method brand |
+| lastFour | String | Last four digits of the payment method |
+| receiptNumber | String | The Pay Theory receipt number |
+| paymentMethodId | String | ID of the payment method used |
+| payorId | String | ID of the payor who attempted the payment |
+
+## Example Usage
+
+```kotlin
+class PaymentActivity : PayTheoryMerchantActivity(), Payable {
+    override fun handleSuccess(result: SuccessfulTransactionResult) {
+        // Handle successful payment
+        println("Payment Successful!")
+        println("Receipt Number: ${result.receiptNumber}")
+        println("Amount: ${result.amount}")
+        println("Payment Method: ${result.brand} ending in ${result.lastFour}")
+        
+        if (result.serviceFee.toInt() > 0) {
+            println("Service Fee: ${result.serviceFee}")
+        }
+    }
+
+    override fun handleFailure(result: FailedTransactionResult) {
+        // Handle failed payment
+        println("Payment Failed!")
+        println("Receipt Number: ${result.receiptNumber}")
+        println("Payment Method: ${result.brand} ending in ${result.lastFour}")
+        
+        // Show failure message to user
+        showError("Payment could not be processed. Please try again.")
+    }
+} 

@@ -1,0 +1,48 @@
+---
+sidebar_position: 3
+sidebar_label: 'clearFields'
+title: "clearFields"
+---
+
+# clearFields
+
+The `clearFields` function is a utility method in the PayTheory SDK that clears all input fields in the payment form and resets their validation states. This is useful after completing a transaction or when you need to reset the form for a new payment attempt.
+
+## Function Signature
+
+```kotlin
+fun clearFields()
+```
+
+## Functionality
+
+When called, the `clearFields` function performs the following actions:
+
+1. Clears all payment field data:
+   - Card fields (number, CVV, expiration)
+   - Bank account fields (account number, routing number, account type)
+   - Cash payment fields (name, contact)
+   - Billing address fields
+   - Account name field
+2. Resets all validation states:
+   - Card field validation
+   - Bank field validation
+   - Cash field validation
+3. Clears focus from all fields
+
+## Usage Example
+
+```kotlin
+// Get reference to PayTheoryFragment
+val payTheoryFragment = supportFragmentManager.findFragmentById(R.id.payment_fragment) as PayTheoryFragment
+
+// Clear all fields
+payTheoryFragment.clearFields()
+```
+
+## Important Notes
+
+- All payment fields will be cleared and reset to their initial state
+- All validation states will be reset
+- Field focus will be cleared
+- The form will be ready for new input after clearing 

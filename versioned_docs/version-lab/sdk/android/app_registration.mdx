@@ -1,0 +1,37 @@
+---
+sidebar_position: 2
+sidebar_label: 'Register Your App'
+title: "Register Your App"
+---
+
+# Android App Registration
+
+Before using the Pay Theory Android SDK in production, you need to register your app for App Attestation in the Pay Theory Portal. This step is crucial for securing your app's communication with our services.
+
+## Register Your App
+
+1. Log in to the Pay Theory Portal
+
+2. Navigate to Settings
+
+3. Find the Native App Registration Section
+
+4. Click Add Android App and Enter Your App Details
+   - Enter your app's app identifier
+     - Example: `com.paytheory.android.testsdk`
+     - This must match exactly with your app's `applicationId` in your `build.gradle` file
+   ```groovy
+   android {
+       defaultConfig {
+           applicationId "com.your.app.identifier"
+           ...
+       }
+   }
+   ```
+
+5. Save Your Registration
+
+## Important Notes
+
+- Your app identifier must match exactly between your app and the portal registration
+- You can register multiple apps under the same account
