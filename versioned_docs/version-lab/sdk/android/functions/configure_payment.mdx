@@ -27,40 +27,25 @@ fun configurePayment(
 ## Example Usage
 
 ```kotlin
-// Create submit button
-val submitButton: PayTheoryButton = requireView().findViewById(R.id.submit)
+// Get submit button reference and the PayTheoryFragment
+val submitButton = findViewById<PayTheoryButton>(R.id.submit_button)
+val payTheoryFragment = supportFragmentManager.findFragmentById(R.id.payment_fragment) as PayTheoryFragment
 
-// Get PayTheoryFragment instance
-val payTheoryFragment = getChildFragmentManager()
-    .findFragmentById(R.id.payTheoryBankFragment) as PayTheoryFragment
 
-// Configure payment
-val configuration = PayTheoryConfiguration(submitButton, apiKey).apply {
-    amount = 1000                    // Required - Amount in cents
-    paymentMethodType = PaymentMethodType.CARD
-    metadata = metadata              // Optional
-    payorInfo = payorInfo           // Optional
-    requireAccountName = true        // Optional
-    requireBillingAddress = true     // Optional
-    feeMode = "service_fee"         // Optional
-    confirmation = true             // Optional
-    sendReceipt = true             // Optional
-    receiptDescription = "Test Payment" // Optional
-    paymentParameters = "params"    // Optional
-    reference = "reference123"      // Optional
-    accountCode = "ACC123"         // Optional
-    invoiceId = "INV123"          // Optional
+// Create configuration
+val configuration = PayTheoryConfiguration(
+    apiKey = resources.getString(R.string.api_key),
+    payTheoryButton = submitButton
+).apply {
+    amount = 1000
+    paymentMethodType = PaymentMethodType.BANK
 }
 
+// Configure the payment after fragment is attached
 payTheoryFragment.configurePayment(
-    configuration,
-    requireActivity() as PayTheoryMerchantActivity
+    merchantActivity = requireActivity() as PayTheoryMerchantActivity,
+    configuration = configuration
 )
-
-// Set click listener for payment
-submitButton.setOnClickListener {
-    payTheoryFragment.transact()
-}
 ```
 
 ## Key Configuration Parameters for Payments
@@ -96,6 +81,6 @@ submitButton.setOnClickListener {
 ## Related Documentation
 
 For complete details on all available configuration options, please see:
-- [PayTheoryConfiguration](../data_models/configuration)
-- [PayorInfo](../data_models/payor)
-- [Address](../data_models/address)
+- [PayTheoryConfiguration](../data_models/configuration.mdx)
+- [PayorInfo](../data_models/payor.mdx)
+- [Address](../data_models/address.mdx)

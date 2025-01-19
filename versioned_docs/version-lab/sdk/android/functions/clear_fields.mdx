@@ -34,8 +34,7 @@ When called, the `clearFields` function performs the following actions:
 
 ```kotlin
 // Get reference to PayTheoryFragment
-val payTheoryFragment = getChildFragmentManager()
-    .findFragmentById(R.id.payTheoryFragment) as PayTheoryFragment
+val payTheoryFragment = supportFragmentManager.findFragmentById(R.id.payment_fragment) as PayTheoryFragment
 
 // Clear all fields
 payTheoryFragment.clearFields()

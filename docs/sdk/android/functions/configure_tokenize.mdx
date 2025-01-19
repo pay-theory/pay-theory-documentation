@@ -27,32 +27,24 @@ fun configureTokenize(
 ## Example Usage
 
 ```kotlin
-// Create submit button
-val submitButton: PayTheoryButton = requireView().findViewById(R.id.submit)
+// Get submit button reference and the PayTheoryFragment
+val submitButton = findViewById<PayTheoryButton>(R.id.submit_button)
+val payTheoryFragment = supportFragmentManager.findFragmentById(R.id.payment_fragment) as PayTheoryFragment
 
-// Get PayTheoryFragment instance
-val payTheoryFragment = getChildFragmentManager()
-    .findFragmentById(R.id.payTheoryBankFragment) as PayTheoryFragment
 
-// Configure tokenization
-val configuration = PayTheoryConfiguration(submitButton, apiKey).apply {
+// Create configuration
+val configuration = PayTheoryConfiguration(
+    apiKey = resources.getString(R.string.api_key),
+    payTheoryButton = submitButton
+).apply {
     paymentMethodType = PaymentMethodType.CARD
-    metadata = metadata                // Optional
-    payorInfo = payorInfo            // Optional
-    requireAccountName = true        // Optional
-    requireBillingAddress = true     // Optional
-    skipTokenizeValidation = true    // Optional
 }
 
+// Configure the payment after fragment is attached
 payTheoryFragment.configureTokenize(
-    configuration,
-    requireActivity() as PayTheoryMerchantActivity
+    merchantActivity = requireActivity() as PayTheoryMerchantActivity,
+    configuration = configuration
 )
-
-// Set click listener for tokenization
-submitButton.setOnClickListener {
-    payTheoryFragment.tokenize()
-}
 ```
 
 ## Key Configuration Parameters for Tokenization

@@ -21,27 +21,29 @@ The `tokenize` function is a method in the Pay Theory SDK that tokenizes payment
 
 2. Configure the tokenization:
 ```kotlin
-// Get reference to PayTheoryFragment
-val payTheoryFragment = getChildFragmentManager()
-    .findFragmentById(R.id.payTheoryFragment) as PayTheoryFragment
+// Get submit button reference and the PayTheoryFragment
+val submitButton = findViewById<PayTheoryButton>(R.id.submit_button)
+val payTheoryFragment = supportFragmentManager.findFragmentById(R.id.payment_fragment) as PayTheoryFragment
+
 
 // Create configuration
-val configuration = PayTheoryConfiguration(submitButton, apiKey).apply {
+val configuration = PayTheoryConfiguration(
+    apiKey = resources.getString(R.string.api_key),
+    payTheoryButton = submitButton
+).apply {
     paymentMethodType = PaymentMethodType.CARD
-    requireAccountName = true
-    requireBillingAddress = true
-    // ... other configuration options
 }
 
-// Configure the tokenization
-payTheoryFragment.configureTokenize(
-    configuration,
-    requireActivity() as PayTheoryMerchantActivity
+// Configure the payment after fragment is attached
+payTheoryFragment.configurePayment(
+    merchantActivity = this,
+    configuration = configuration
 )
 ```
 
 3. Set up tokenization trigger:
 ```kotlin
+// Set up button click listener
 submitButton.setOnClickListener {
     payTheoryFragment.tokenize()
 }

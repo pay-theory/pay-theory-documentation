@@ -38,61 +38,6 @@ payTheoryButton.setOnClickListener {
 }
 ```
 
-## Features
-
-- Automatically manages enabled/disabled states based on form validation
-- Built-in state management for payment processing
-- Inherits all styling capabilities from MaterialButton
-- Visual feedback during payment processing
-
-## Complete Implementation Examples
-
-### Payment Processing Activity
-
-```kotlin
-class PaymentActivity : PayTheoryMerchantActivity() {
-    private lateinit var payTheoryButton: PayTheoryButton
-    private lateinit var payTheoryFragment: PayTheoryFragment
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_payment)
-
-        payTheoryButton = findViewById(R.id.submit)
-        payTheoryFragment = supportFragmentManager
-            .findFragmentById(R.id.payTheoryFragment) as PayTheoryFragment
-        
-        // Configure click listener for payment processing
-        payTheoryButton.setOnClickListener {
-            payTheoryFragment.transact()
-        }
-    }
-}
-```
-
-### Tokenization Activity
-
-```kotlin
-class TokenizeActivity : PayTheoryMerchantActivity() {
-    private lateinit var payTheoryButton: PayTheoryButton
-    private lateinit var payTheoryFragment: PayTheoryFragment
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_tokenize)
-
-        payTheoryButton = findViewById(R.id.submit)
-        payTheoryFragment = supportFragmentManager
-            .findFragmentById(R.id.payTheoryFragment) as PayTheoryFragment
-        
-        // Configure click listener for tokenization
-        payTheoryButton.setOnClickListener {
-            payTheoryFragment.tokenize()
-        }
-    }
-}
-```
-
 ## Styling
 
 The button can be styled using Material Design button styles:

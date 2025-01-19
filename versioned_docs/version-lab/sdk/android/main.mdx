@@ -32,7 +32,7 @@ Add Pay Theory Android SDK to your app level `build.gradle` file:
 
 ```groovy
 dependencies {
-    implementation group: 'com.paytheory.android.sdk', name: 'AndroidSDK', version: 'LATEST_VERSION'
+    implementation group: 'com.paytheory.android.sdk', name: 'AndroidSDK', version: '3.0.4'
 }
 ```
 
@@ -97,46 +97,55 @@ For detailed instructions on app registration, see the [App Registration](app_re
 
 Your payment activity needs to extend `PayTheoryMerchantActivity` and implement the `Payable` interface to handle payment responses:
 
-```kotlin
+```kotlin title="PaymentActivity.kt"
 class PaymentActivity : PayTheoryMerchantActivity(), Payable {
-    private lateinit var payTheoryFragment: PayTheoryFragment
-    
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_payment)
-        
-        // Initialize PayTheoryFragment
-        payTheoryFragment = PayTheoryFragment()
-        initializePayTheoryActivity(payTheoryFragment)
+        setContentView(R.layout.activity_main)
+
+        if (savedInstanceState == null) {
+            // Create PayTheoryFragment
+            val payTheoryFragment = PayTheoryFragment()
+            
+            // Add fragment to container
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.payment_fragment, payTheoryFragment)
+                .commit()
+        }
     }
-    
+
     // Required Payable interface handlers
-    override fun handleReady() {
-        // SDK is ready to accept payments
+    override fun handleReady(isReady: Boolean) {
+        // Handle ready state
     }
-    
+
     override fun handleError(error: PTError) {
-        runOnUiThread {
-            // Handle error state
-        }
+        // Handle error
     }
-    
-    override fun handleSuccess(result: SuccessfulTransactionResult) {
-        runOnUiThread {
-            // Handle successful payment
-        }
+
+    override fun handleSuccess(successfulTransactionResult: SuccessfulTransactionResult) {
+        // Handle success
     }
-    
-    override fun handleFailure(result: FailedTransactionResult) {
-        runOnUiThread {
-            // Handle failed payment
-        }
+
+    override fun handleFailure(failedTransactionResult: FailedTransactionResult) {
+        // Handle failure
     }
-    
-    override fun handlePaymentStart() {
-        runOnUiThread {
-            // Payment process started
-        }
+
+    override fun handlePaymentStart(paymentType: String) {
+        // Handle payment start
+    }
+
+    override fun handleTokenStart(paymentType: String) {
+        // Handle token start
+    }
+
+    override fun handleBarcodeSuccess(barcodeResult: BarcodeResult) {
+        // Handle barcode success
+    }
+
+    override fun handleTokenizeSuccess(paymentMethodToken: PaymentMethodTokenResults) {
+        // Handle tokenization success
     }
 }
 ```
@@ -145,7 +154,7 @@ class PaymentActivity : PayTheoryMerchantActivity(), Payable {
 
 Create a layout file that includes the `PayTheoryFragment` and `PayTheoryButton`:
 
-```xml
+```xml title="activity_payment.xml"
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
@@ -171,16 +180,35 @@ Create a layout file that includes the `PayTheoryFragment` and `PayTheoryButton`
 
 Configure your payment settings using the `configurePayment` function:
 
-```kotlin
-payTheoryFragment.configurePayment(
-    apiKey = getString(R.string.api_key),
-    amount = 1000, // Amount in cents
-    paymentParameters = PaymentParameters(
-        paymentType = PaymentType.CARD,
-        requireName = true,
-        requireBillingAddress = false
-    )
-)
+```kotlin title="PaymentActivity.kt"
+class PaymentActivity : PayTheoryMerchantActivity(), Payable {
+... 
+
+    override fun onStart() {
+            super.onStart()
+            
+            // Get submit button reference and the PayTheoryFragment
+            val submitButton = findViewById<PayTheoryButton>(R.id.submit_button)
+            val payTheoryFragment = supportFragmentManager.findFragmentById(R.id.payment_fragment) as PayTheoryFragment
+
+
+            // Create configuration
+            val configuration = PayTheoryConfiguration(
+                apiKey = resources.getString(R.string.api_key),
+                payTheoryButton = submitButton
+            )
+            configuration.paymentMethodType = PaymentMethodType.CARD
+            configuration.amount = 1000
+
+            // Configure the payment after fragment is attached
+            payTheoryFragment.configurePayment(
+                merchantActivity = this,
+                configuration = configuration
+            )
+        }
+
+...
+}
 ```
 
 ## Step 6: Set Up Payment Button
@@ -197,15 +225,6 @@ findViewById<PayTheoryButton>(R.id.submit_button).setOnClickListener {
 Instead of immediately processing a payment with `transact()`, you can tokenize a payment method for later use:
 
 ```kotlin
-// Configure tokenization
-payTheoryFragment.configureTokenize(
-    apiKey = getString(R.string.api_key),
-    paymentParameters = PaymentParameters(
-        paymentType = PaymentType.CARD,
-        requireName = true
-    )
-)
-
 // Set up button for tokenization
 findViewById<PayTheoryButton>(R.id.submit_button).setOnClickListener {
     payTheoryFragment.tokenize()
@@ -217,62 +236,109 @@ findViewById<PayTheoryButton>(R.id.submit_button).setOnClickListener {
 
 Here's a complete example putting it all together:
 
-```kotlin
+```kotlin title="PaymentActivity.kt"
 class PaymentActivity : PayTheoryMerchantActivity(), Payable {
-    private lateinit var payTheoryFragment: PayTheoryFragment
-    
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_payment)
+        setContentView(R.layout.activity_main)
+
+        if (savedInstanceState == null) {
+            // Create PayTheoryFragment
+            val payTheoryFragment = PayTheoryFragment()
+            
+            // Add fragment to container
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.payment_fragment, payTheoryFragment)
+                .commit()
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
         
-        payTheoryFragment = PayTheoryFragment()
-        initializePayTheoryActivity(payTheoryFragment)
-        
-        // Configure payment
-        payTheoryFragment.configurePayment(
-            apiKey = getString(R.string.api_key),
-            amount = 1000,
-            paymentParameters = PaymentParameters(
-                paymentType = PaymentType.CARD,
-                requireName = true,
-                requireBillingAddress = false
-            )
+        // Get submit button reference and the PayTheoryFragment
+        val submitButton = findViewById<PayTheoryButton>(R.id.submit_button)
+        val payTheoryFragment = supportFragmentManager.findFragmentById(R.id.payment_fragment) as PayTheoryFragment
+
+
+        // Create configuration
+        val configuration = PayTheoryConfiguration(
+            apiKey = resources.getString(R.string.api_key),
+            payTheoryButton = submitButton
         )
-        
-        // Set up payment button
-        findViewById<PayTheoryButton>(R.id.submit_button).setOnClickListener {
+        configuration.paymentMethodType = PaymentMethodType.CARD
+        configuration.amount = 1000
+        configuration.accountCode = "Test Account Code"
+        configuration.reference = "Test Reference"
+
+        // Set up button click listener
+        submitButton.setOnClickListener {
             payTheoryFragment.transact()
         }
+
+        // Configure the payment after fragment is attached
+        payTheoryFragment.configurePayment(
+            merchantActivity = this,
+            configuration = configuration
+        )
     }
-    
-    override fun handleReady() {
-        Log.d("PayTheory", "SDK Ready")
+
+    // Required Payable interface handlers
+    override fun handleReady(isReady: Boolean) {
+        // Handle ready state
     }
-    
+
     override fun handleError(error: PTError) {
-        runOnUiThread {
-            Toast.makeText(this, "Error: ${error.error}", Toast.LENGTH_SHORT).show()
-        }
+        // Handle error
     }
-    
-    override fun handleSuccess(result: SuccessfulTransactionResult) {
-        runOnUiThread {
-            Toast.makeText(this, "Payment Successful!", Toast.LENGTH_SHORT).show()
-        }
+
+    override fun handleSuccess(successfulTransactionResult: SuccessfulTransactionResult) {
+        // Handle success
     }
-    
-    override fun handleFailure(result: FailedTransactionResult) {
-        runOnUiThread {
-            Toast.makeText(this, "Payment Failed", Toast.LENGTH_SHORT).show()
-        }
+
+    override fun handleFailure(failedTransactionResult: FailedTransactionResult) {
+        // Handle failure
     }
-    
-    override fun handlePaymentStart() {
-        runOnUiThread {
-            Toast.makeText(this, "Processing Payment...", Toast.LENGTH_SHORT).show()
-        }
+
+    override fun handlePaymentStart(paymentType: String) {
+        // Handle payment start
+    }
+
+    override fun handleTokenStart(paymentType: String) {
+        // Handle token start
+    }
+
+    override fun handleBarcodeSuccess(barcodeResult: BarcodeResult) {
+        // Handle barcode success
+    }
+
+    override fun handleTokenizeSuccess(paymentMethodToken: PaymentMethodTokenResults) {
+        // Handle tokenization success
     }
 }
+```
+
+```xml title="activity_payment.xml"
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/payment_fragment"
+        android:name="com.paytheory.android.sdk.fragments.PayTheoryFragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <com.paytheory.android.sdk.view.PayTheoryButton
+        android:id="@+id/submit_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/submit_payment" />
+
+</LinearLayout>
 ```
 
 This quick start guide demonstrates how to:

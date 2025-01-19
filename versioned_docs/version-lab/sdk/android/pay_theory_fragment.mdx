@@ -17,8 +17,8 @@ The fragment dynamically displays payment fields based on the configured payment
 Add the fragment to your layout:
 
 ```xml
-<fragment
-    android:id="@+id/payTheoryFragment"
+<androidx.fragment.app.FragmentContainerView
+    android:id="@+id/payment_fragment"
     android:name="com.paytheory.android.sdk.fragments.PayTheoryFragment"
     android:layout_width="match_parent"
     android:layout_height="wrap_content" />
@@ -33,7 +33,7 @@ When `paymentMethodType = PaymentMethodType.CARD`:
 - Card Number field
 - Expiration Date field
 - CVV field
-- Postal Code field (if `requireBillingAddress = true`)
+- Postal Code field
 - Billing Address fields (if `requireBillingAddress = true`)
   - Street Address
   - City
@@ -45,7 +45,7 @@ When `paymentMethodType = PaymentMethodType.BANK`:
 - Account Number field
 - Routing Number field
 - Account Type selector (Checking/Savings)
-- Account Name field (if `requireAccountName = true`)
+- Account Name field
 
 ### Cash Payment Fields
 When `paymentMethodType = PaymentMethodType.CASH`:
@@ -60,37 +60,42 @@ Additional fields may appear based on configuration properties:
 
 ### Payment States
 
-The fragment provides access to validation states for different payment methods:
+The fragment provides access to states for different payment methods. These states are all represented as a StateElement.
+
+#### StateElement
+
+StateElement contains two functions that return a boolean value.
+
+- `isValid()` - Returns true if the field is valid, false otherwise.
+- `isEmpty()` - Returns true if the field is empty, false otherwise.
 
 #### Card Payment State
 ```kotlin
 val card: CardState
 ```
-Tracks validation state for credit/debit card fields:
-- `cardFieldValid`: Boolean - Card number validation
-- `expFieldValid`: Boolean - Expiration date validation  
-- `cvvFieldValid`: Boolean - CVV code validation
-- `zipCodeFieldValid`: Boolean - ZIP/Postal code validation
-- `cardFieldsValid`: Boolean - Overall card fields validation
+Tracks state for credit/debit card fields:
+- `cardNumber`: StateElement - Card number state
+- `exp`: StateElement - Expiration date state  
+- `cvv`: StateElement - CVV code state
+- `postalCode`: StateElement - ZIP/Postal code state
 
 #### ACH Payment State
 ```kotlin
 val ach: ACHState  
 ```
-Tracks validation state for ACH/bank account fields:
-- `accountNumberValid`: Boolean - Account number validation
-- `routingNumberValid`: Boolean - Routing number validation
-- `accountTypeValid`: Boolean - Account type validation
-- `bankFieldsValid`: Boolean - Overall ACH fields validation
+Tracks state for ACH/bank account fields:
+- `accountNumber`: StateElement - Account number state
+- `routingNumber`: StateElement - Routing number state
+- `accountType`: StateElement - Account type state
+- `accountName`: StateElement - Account name state
 
 #### Cash Payment State
 ```kotlin
 val cash: CashState
 ```
-Tracks validation state for cash payment fields:
-- `cashNameFieldValid`: Boolean - Payer name validation
-- `cashContactFieldValid`: Boolean - Contact info validation
-- `cashFieldsValid`: Boolean - Overall cash fields validation
+Tracks state for cash payment fields:
+- `payerName`: StateElement - Payer name state
+- `contactInformation`: StateElement - Contact info state
 
 ## Public Methods
 
@@ -148,31 +153,34 @@ companion object {
 
 ## Example Implementation
 
-```kotlin
-class PaymentActivity : PayTheoryMerchantActivity() {
+```kotlin title="PaymentActivity.kt"
+class PaymentActivity: PayTheoryMerchantActivity(), Payable {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_payment)
+        setContentView(R.layout.activity_main)
 
-        val payTheoryFragment = supportFragmentManager
-            .findFragmentById(R.id.payTheoryFragment) as PayTheoryFragment
-
-        // Monitor validation states
-        payTheoryFragment.card.cardFieldsValid // Check if card fields are valid
-        payTheoryFragment.ach.bankFieldsValid  // Check if ACH fields are valid
-        payTheoryFragment.cash.cashFieldsValid // Check if cash fields are valid
-
-        // Configure payment
-        val config = PayTheoryConfiguration(
-            apiKey = getString(R.string.api_key),
-            paymentMethodType = PaymentMethodType.CARD
-        ).apply {
-            requireBillingAddress = true  // Will show billing address fields
-            requireAccountName = true     // Will show account name field
+        if (savedInstanceState == null) {
+            // Create PayTheoryFragment
+            val payTheoryFragment = PayTheoryFragment()
+            
+            // Add fragment to container
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.payment_fragment, payTheoryFragment)
+                .commit()
         }
-        payTheoryFragment.configurePayment(config)
     }
+
+    ...
 }
+```
+
+```xml title="activity_payment.xml"
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/payment_fragment"
+        android:name="com.paytheory.android.sdk.fragments.PayTheoryFragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 ```
 
 ## Important Notes
@@ -181,8 +189,6 @@ class PaymentActivity : PayTheoryMerchantActivity() {
 - Payment fields are displayed dynamically based on the configured payment method type
 - All validation states are updated in real-time as users enter information
 - The fragment must be configured before attempting any payment operations
-- Clear fields using `clearFields()` after successful transactions
-- Field validation rules and states are managed automatically
-- Input masking and formatting is handled automatically for sensitive fields
+- Clear fields using `clearFields()` if you want to clear the fields and reset the states.
 
 For more information about configuration options, see [Configure Payment](./functions/configure_payment) and [Configure Tokenize](./functions/configure_tokenize). 

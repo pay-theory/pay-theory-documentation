@@ -21,26 +21,30 @@ The `transact` function is a method in the Pay Theory SDK that processes payment
 
 2. Configure the payment:
 ```kotlin
-// Get reference to PayTheoryFragment
-val payTheoryFragment = getChildFragmentManager()
-    .findFragmentById(R.id.payTheoryFragment) as PayTheoryFragment
+// Get submit button reference and the PayTheoryFragment
+val submitButton = findViewById<PayTheoryButton>(R.id.submit_button)
+val payTheoryFragment = supportFragmentManager.findFragmentById(R.id.payment_fragment) as PayTheoryFragment
+
 
 // Create configuration
-val configuration = PayTheoryConfiguration(submitButton, apiKey).apply {
-    paymentMethodType = PaymentMethodType.CARD
-    amount = 1000  // $10.00
-    // ... other configuration options
+val configuration = PayTheoryConfiguration(
+    apiKey = resources.getString(R.string.api_key),
+    payTheoryButton = submitButton
+).apply {
+    amount = 1000
+    paymentMethodType = PaymentMethodType.BANK
 }
 
-// Configure the payment
+// Configure the payment after fragment is attached
 payTheoryFragment.configurePayment(
-    configuration,
-    requireActivity() as PayTheoryMerchantActivity
+    merchantActivity = this,
+    configuration = configuration
 )
 ```
 
 3. Set up transaction trigger:
 ```kotlin
+// Set up button click listener
 submitButton.setOnClickListener {
     payTheoryFragment.transact()
 }
