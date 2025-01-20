@@ -43,7 +43,7 @@ Update your app level `build.gradle` to set the required SDK versions:
 ```groovy
 android {
     compileSdk 33
-    
+
     defaultConfig {
         minSdk 26
         targetSdk 33
@@ -102,12 +102,12 @@ class PaymentActivity : PayTheoryMerchantActivity(), Payable {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.payment_activity)
 
         if (savedInstanceState == null) {
             // Create PayTheoryFragment
             val payTheoryFragment = PayTheoryFragment()
-            
+
             // Add fragment to container
             supportFragmentManager.beginTransaction()
                 .replace(R.id.payment_fragment, payTheoryFragment)
@@ -182,11 +182,11 @@ Configure your payment settings using the `configurePayment` function:
 
 ```kotlin title="PaymentActivity.kt"
 class PaymentActivity : PayTheoryMerchantActivity(), Payable {
-... 
+...
 
     override fun onStart() {
             super.onStart()
-            
+
             // Get submit button reference and the PayTheoryFragment
             val submitButton = findViewById<PayTheoryButton>(R.id.submit_button)
             val payTheoryFragment = supportFragmentManager.findFragmentById(R.id.payment_fragment) as PayTheoryFragment
@@ -241,12 +241,12 @@ class PaymentActivity : PayTheoryMerchantActivity(), Payable {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.payment_activity)
 
         if (savedInstanceState == null) {
             // Create PayTheoryFragment
             val payTheoryFragment = PayTheoryFragment()
-            
+
             // Add fragment to container
             supportFragmentManager.beginTransaction()
                 .replace(R.id.payment_fragment, payTheoryFragment)
@@ -256,7 +256,7 @@ class PaymentActivity : PayTheoryMerchantActivity(), Payable {
 
     override fun onStart() {
         super.onStart()
-        
+
         // Get submit button reference and the PayTheoryFragment
         val submitButton = findViewById<PayTheoryButton>(R.id.submit_button)
         val payTheoryFragment = supportFragmentManager.findFragmentById(R.id.payment_fragment) as PayTheoryFragment
@@ -354,4 +354,4 @@ For more advanced usage and additional payment methods, please refer to the full
 - [PayTheoryFragment](pay_theory_fragment.mdx) - Core payment functionality
 - [Activity & Interface Setup](merchant_activity_and_payable.mdx) - Detailed activity setup
 - [UI Components](ui_components/pay_theory_button.mdx) - Available UI components
-- [Response Types](response_types/successful_transaction_result.mdx) - Payment response handling 
+- [Response Types](response_types/successful_transaction_result.mdx) - Payment response handling

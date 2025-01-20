@@ -75,13 +75,13 @@ val card: CardState
 ```
 Tracks state for credit/debit card fields:
 - `cardNumber`: StateElement - Card number state
-- `exp`: StateElement - Expiration date state  
+- `exp`: StateElement - Expiration date state
 - `cvv`: StateElement - CVV code state
 - `postalCode`: StateElement - ZIP/Postal code state
 
 #### ACH Payment State
 ```kotlin
-val ach: ACHState  
+val ach: ACHState
 ```
 Tracks state for ACH/bank account fields:
 - `accountNumber`: StateElement - Account number state
@@ -158,12 +158,12 @@ class PaymentActivity: PayTheoryMerchantActivity(), Payable {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.payment_activity)
 
         if (savedInstanceState == null) {
             // Create PayTheoryFragment
             val payTheoryFragment = PayTheoryFragment()
-            
+
             // Add fragment to container
             supportFragmentManager.beginTransaction()
                 .replace(R.id.payment_fragment, payTheoryFragment)
@@ -191,4 +191,4 @@ class PaymentActivity: PayTheoryMerchantActivity(), Payable {
 - The fragment must be configured before attempting any payment operations
 - Clear fields using `clearFields()` if you want to clear the fields and reset the states.
 
-For more information about configuration options, see [Configure Payment](./functions/configure_payment) and [Configure Tokenize](./functions/configure_tokenize). 
+For more information about configuration options, see [Configure Payment](./functions/configure_payment) and [Configure Tokenize](./functions/configure_tokenize).
