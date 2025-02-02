@@ -1,0 +1,176 @@
+---
+sidebar_position: 3
+title: "Apple Pay Functions"
+---
+
+# Apple Pay Functions
+
+The Pay Theory SDK provides several functions for implementing and managing Apple Pay payments.
+
+## Configuration Functions
+
+### configureApplePaySheet
+
+Configures the Apple Pay payment sheet with custom settings.
+
+```swift
+func configureApplePaySheet(_ config: PTApplePaySheetConfig)
+```
+
+Example usage:
+```swift
+let requestConfig = PTApplePayRequestConfig(
+    merchantIdentifier: "merchant.com.example",
+    paymentSummaryItems: [
+        PKPaymentSummaryItem(label: "Total", amount: NSDecimalNumber(value: 99.99))
+    ]
+)
+
+let sheetConfig = PTApplePaySheetConfig(
+    requestConfiguration: requestConfig,
+    transactionDetails: ApplePayTransactionDetails(
+        accountCode: "TEST123",
+        reference: "ORDER123"
+    ),
+    onPaymentCompletion: { response in
+        // Handle payment completion
+    }
+)
+
+payTheory.configureApplePaySheet(sheetConfig)
+```
+
+## Availability Functions
+
+### canMakeApplePayments
+
+Checks if Apple Pay is available on the device.
+
+```swift
+func canMakeApplePayments() -> Bool
+```
+
+### canMakeApplePayments(supporting:)
+
+Checks if specific payment networks are supported.
+
+```swift
+func canMakeApplePayments(supporting networks: [PKPaymentNetwork]) -> Bool
+```
+
+Example usage:
+```swift
+if payTheory.canMakeApplePayments(supporting: [.visa, .masterCard, .amex]) {
+    // Device supports specified payment networks
+}
+```
+
+## Event Handling Functions
+
+The SDK provides several callback functions for handling various Apple Pay events:
+
+### Payment Completion
+
+```swift
+onPaymentCompletion: ((ApplePayResponse) -> Void)?
+```
+Handles the result of a payment transaction. Returns our custom `ApplePayResponse` type containing transaction details or error information.
+
+### Payment Tokenization
+
+```swift
+onPaymentTokenizationCompletion: ((String) -> Bool)?
+```
+Handles the result of payment method tokenization. Returns a token string that can be used to process the payment through your server.
+
+### Payment Method Updates
+
+```swift
+onPaymentMethodUpdate: ((PKPaymentMethod) -> PKPaymentRequestPaymentMethodUpdate)?
+```
+Handles changes in the selected payment method. 
+- Input: [`PKPaymentMethod`](https://developer.apple.com/documentation/passkit/pkpaymentmethod) - Contains the selected payment method details
+- Output: [`PKPaymentRequestPaymentMethodUpdate`](https://developer.apple.com/documentation/passkit/pkpaymentrequestpaymentmethodupdate) - Allows updating payment summary items based on the selected payment method
+
+### Shipping Contact Updates
+
+```swift
+onShippingContactUpdate: ((PKContact) -> PKPaymentRequestShippingContactUpdate)?
+```
+Handles changes in the shipping contact information.
+- Input: [`PKContact`](https://developer.apple.com/documentation/passkit/pkcontact) - Contains the updated shipping contact information
+- Output: [`PKPaymentRequestShippingContactUpdate`](https://developer.apple.com/documentation/passkit/pkpaymentrequestshippingcontactupdate) - Allows updating payment summary items and shipping methods based on the new contact
+
+### Shipping Method Updates
+
+```swift
+onShippingMethodUpdate: ((PKShippingMethod) -> PKPaymentRequestShippingMethodUpdate)?
+```
+Handles changes in the selected shipping method.
+- Input: [`PKShippingMethod`](https://developer.apple.com/documentation/passkit/pkshippingmethod) - Contains the selected shipping method details
+- Output: [`PKPaymentRequestShippingMethodUpdate`](https://developer.apple.com/documentation/passkit/pkpaymentrequestshippingmethodupdate) - Allows updating payment summary items based on the selected shipping method
+
+### Coupon Code Updates
+
+```swift
+onCouponCodeUpdate: ((String) -> PKPaymentRequestCouponCodeUpdate)?
+```
+Handles coupon code entry and validation.
+- Input: `String` - The entered coupon code
+- Output: [`PKPaymentRequestCouponCodeUpdate`](https://developer.apple.com/documentation/passkit/pkpaymentrequestcouponcodeupdate) - Allows updating payment summary items based on the applied coupon code
+
+## Example Implementation
+
+Here's a complete example showing how to implement various Apple Pay functions:
+
+```swift
+// Configure payment request
+let requestConfig = PTApplePayRequestConfig(
+    merchantIdentifier: "merchant.com.example",
+    paymentSummaryItems: [
+        PKPaymentSummaryItem(label: "Total", amount: NSDecimalNumber(value: 99.99))
+    ],
+    supportedNetworks: [.visa, .masterCard],
+    requiredBillingContactFields: [.name, .postalAddress],
+    requiredShippingContactFields: [.name, .postalAddress],
+    supportsCouponCode: true
+)
+
+// Create sheet configuration with handlers
+let sheetConfig = PTApplePaySheetConfig(
+    requestConfiguration: requestConfig,
+    onPaymentCompletion: { response in
+        switch response {
+        case .success(let transaction):
+            print("Payment successful: \(transaction.transactionId)")
+        case .failure(let failedTransaction):
+            print("Payment failed: \(failedTransaction.failureMessage)")
+        case .error(let error):
+            print("Error: \(error.localizedDescription)")
+        }
+    },
+    onShippingMethodUpdate: { method in
+        // Update totals based on shipping method
+        let update = PKPaymentRequestShippingMethodUpdate()
+        update.paymentSummaryItems = [
+            PKPaymentSummaryItem(label: "Subtotal", amount: NSDecimalNumber(value: 99.99)),
+            PKPaymentSummaryItem(label: "Shipping", amount: method.amount),
+            PKPaymentSummaryItem(label: "Total", amount: NSDecimalNumber(value: 99.99).adding(method.amount))
+        ]
+        return update
+    },
+    onCouponCodeUpdate: { code in
+        // Validate coupon code and update totals
+        let update = PKPaymentRequestCouponCodeUpdate()
+        if code == "DISCOUNT20" {
+            update.paymentSummaryItems = [
+                PKPaymentSummaryItem(label: "Total", amount: NSDecimalNumber(value: 79.99))
+            ]
+        }
+        return update
+    }
+)
+
+// Configure the payment sheet
+payTheory.configureApplePaySheet(sheetConfig)
+``` 

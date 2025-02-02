@@ -4,9 +4,19 @@ sidebar_label: 'Register Your App'
 title: "Register Your App"
 ---
 
-# Apple App Attestation Setup Guide
+# Apple App Registration Guide
 
 ## Introduction
+
+When integrating the Pay Theory SDK into your iOS app, there are two key registration processes to complete:
+
+1. **App Attestation Setup**: Required for verifying the authenticity of your app. This is a mandatory security feature in production and recommended for testing in sandbox.
+
+2. **Apple Pay Registration** (Optional): If you plan to accept Apple Pay payments, you'll need to complete an additional registration process after setting up App Attestation.
+
+This guide will walk you through both processes, starting with App Attestation setup and concluding with Apple Pay registration.
+
+## App Attestation Overview
 
 Apple's App Attestation is a crucial security feature that verifies the authenticity of your app. When integrating with the Pay Theory SDK, it's important to understand how App Attestation is used in different environments:
 
@@ -28,7 +38,7 @@ By testing App Attestation in the sandbox environment, you can identify and reso
 
 Now, let's proceed with obtaining the necessary credentials for Apple's App Attestation.
 
-## Obtaining the Necessary Credentials
+## Setting Up App Attestation
 
 To set up Apple's App Attestation, you'll need to obtain the following:
 
@@ -38,7 +48,7 @@ To set up Apple's App Attestation, you'll need to obtain the following:
 
 These credentials are essential for registering your app and enabling it to go through Apple's App Attestation process.
 
-## 1. Obtaining the App ID
+### 1. Obtaining the App ID
 
 The App ID consists of two parts: the App ID Prefix and the Bundle ID. Here's how to obtain both:
 
@@ -62,7 +72,7 @@ If you haven't created an App ID yet:
 
 After registration, you'll be able to see both the App ID Prefix and Bundle ID for your app.
 
-## 2. Creating a DeviceCheck Key
+### 2. Creating a DeviceCheck Key
 
 The DeviceCheck Key is used to authenticate your server with Apple's servers.
 
@@ -77,7 +87,7 @@ This is your only chance to download the key. Store it securely!
 :::
 7. Click "Done".
 
-## 3. Obtaining the DeviceCheck Key ID
+### 3. Obtaining the DeviceCheck Key ID
 
 The Key ID is a unique identifier for your DeviceCheck Key.
 
@@ -85,7 +95,7 @@ The Key ID is a unique identifier for your DeviceCheck Key.
 2. Find your newly created DeviceCheck Key in the list.
 3. The "Key ID" column shows your DeviceCheck Key ID.
 
-## Using the Credentials
+### 4. Submitting the Credentials
 
 Now that you have obtained the necessary information:
 
@@ -118,11 +128,33 @@ Omitting these lines will result in an invalid key and authentication failures.
 
 By adding these credentials to the Pay Theory portal, you're enabling the system to properly authenticate and verify your app during the App Attestation process.
 
-## Next Steps
+## Registering for Apple Pay
 
-1. Ensure your app is properly configured to use App Attestation.
-2. Test your app thoroughly in the sandbox environment.
-3. When ready, transition to the production environment.
-4. Keep your credentials secure and up to date in the Pay Theory portal.
+In addition to App Attestation, you'll need to register your app for Apple Pay capabilities. Here's how:
 
-For any additional assistance or questions about integrating these credentials with Pay Theory, please refer to the Pay Theory documentation or contact their support team.
+1. Log in to your Pay Theory account portal
+2. Navigate to the Settings section
+3. Look for "Apple Pay Configuration" or "iOS App Settings"
+4. Click the "Configure Apple Pay" button
+5. A modal will appear with instructions to:
+   - Download a Certificate Signing Request (CSR) file
+   - Visit the Apple Developer portal to upload this CSR
+   - Download the resulting payment processing certificate
+   - Upload the certificate back to the Pay Theory portal
+
+### Detailed Steps for Apple Developer Portal
+
+1. Log in to your [Apple Developer Account](https://developer.apple.com/account/)
+2. Navigate to "Certificates, Identifiers & Profiles"
+3. Click the "+" button to create a new certificate
+4. Select "Apple Pay Payment Processing Certificate"
+5. Choose your app's Merchant ID
+6. Upload the CSR file you downloaded from the Pay Theory portal
+7. Generate and download the payment processing certificate
+8. Return to the Pay Theory portal and upload this certificate
+
+:::note
+The Apple Pay payment processing certificate is valid for 25 months. Make sure to renew it before expiration to maintain uninterrupted Apple Pay functionality.
+:::
+
+For any additional assistance with Apple Pay registration, please contact Pay Theory support.

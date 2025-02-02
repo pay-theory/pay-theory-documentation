@@ -1,0 +1,174 @@
+---
+sidebar_position: 4
+title: "Apple Pay Models"
+---
+
+# Apple Pay Models
+
+The Pay Theory SDK includes several models for configuring and handling Apple Pay payments.
+
+## Configuration Models
+
+### PTApplePaySheetConfig
+
+Main configuration object for the Apple Pay payment sheet.
+
+```swift
+public struct PTApplePaySheetConfig {
+    public var requestConfiguration: PTApplePayRequestConfig
+    public var transactionDetails: ApplePayTransactionDetails
+    public var onPaymentCompletion: ((ApplePayResponse) -> Void)?
+    public var onPaymentTokenizationCompletion: ((String) -> Bool)?
+    public var onPaymentMethodUpdate: ((PKPaymentMethod) -> PKPaymentRequestPaymentMethodUpdate)?
+    public var onShippingContactUpdate: ((PKContact) -> PKPaymentRequestShippingContactUpdate)?
+    public var onShippingMethodUpdate: ((PKShippingMethod) -> PKPaymentRequestShippingMethodUpdate)?
+    public var onCouponCodeUpdate: ((String) -> PKPaymentRequestCouponCodeUpdate)?
+}
+```
+
+| Property | Type | Description |
+|----------|------|-------------|
+| requestConfiguration | [PTApplePayRequestConfig](#ptapplepayrequestconfig) | Configuration for the Apple Pay payment request |
+| transactionDetails | [ApplePayTransactionDetails](#applepaytransactiondetails) | Details for the transaction being processed |
+| onPaymentCompletion | ((ApplePayResponse) -> Void)? | Optional callback for handling payment completion |
+| onPaymentTokenizationCompletion | ((String) -> Bool)? | Optional callback for handling payment method tokenization |
+| onPaymentMethodUpdate | ((PKPaymentMethod) -> PKPaymentRequestPaymentMethodUpdate)? | Optional callback for handling payment method changes |
+| onShippingContactUpdate | ((PKContact) -> PKPaymentRequestShippingContactUpdate)? | Optional callback for handling shipping contact changes |
+| onShippingMethodUpdate | ((PKShippingMethod) -> PKPaymentRequestShippingMethodUpdate)? | Optional callback for handling shipping method changes |
+| onCouponCodeUpdate | ((String) -> PKPaymentRequestCouponCodeUpdate)? | Optional callback for handling coupon code entry |
+
+### PTApplePayRequestConfig
+
+Configuration for the Apple Pay payment request.
+
+```swift
+public struct PTApplePayRequestConfig {
+    let merchantIdentifier: String
+    var paymentSummaryItems: Array<PKPaymentSummaryItem>
+    public var supportedNetworks: Array<PKPaymentNetwork>
+    public var merchantCapabilities: PKMerchantCapability
+    public var requiredBillingContactFields: Array<PKContactField>
+    public var requiredShippingContactFields: Array<PKContactField>
+    public var billingContact: PKContact?
+    public var shippingContact: PKContact?
+    public var shippingMethods: Array<PKShippingMethod>?
+    public var shippingType: PKShippingType?
+    public var supportsCouponCode: Bool
+    public var applicationData: Data?
+    public var serviceFeeSummaryItemLabels: serviceFeeSummaryItemLabels
+}
+```
+
+| Property | Type | Description |
+|----------|------|-------------|
+| merchantIdentifier | String | Your Apple Pay merchant identifier |
+| paymentSummaryItems | Array of [`PKPaymentSummaryItem`](https://developer.apple.com/documentation/passkit/pkpaymentsummaryitem) | Array of items showing payment breakdown |
+| supportedNetworks | Array of [`PKPaymentNetwork`](https://developer.apple.com/documentation/passkit/pkpaymentnetwork) | Supported payment networks (e.g., Visa, Mastercard) |
+| merchantCapabilities | [`PKMerchantCapability`](https://developer.apple.com/documentation/passkit/pkmerchantcapability) | Payment capabilities supported by the merchant |
+| requiredBillingContactFields | Array of [`PKContactField`](https://developer.apple.com/documentation/passkit/pkcontactfield) | Required billing contact information fields |
+| requiredShippingContactFields | Array of [`PKContactField`](https://developer.apple.com/documentation/passkit/pkcontactfield) | Required shipping contact information fields |
+| billingContact | [`PKContact`](https://developer.apple.com/documentation/passkit/pkcontact)? | Optional pre-filled billing contact |
+| shippingContact | [`PKContact`](https://developer.apple.com/documentation/passkit/pkcontact)? | Optional pre-filled shipping contact |
+| shippingMethods | Array of [`PKShippingMethod`](https://developer.apple.com/documentation/passkit/pkshippingmethod)? | Available shipping methods |
+| shippingType | [`PKShippingType`](https://developer.apple.com/documentation/passkit/pkshippingtype)? | Type of shipping (e.g., shipping, delivery) |
+| supportsCouponCode | Bool | Whether coupon codes are supported |
+| applicationData | Data? | Optional additional data to pass with the payment |
+| serviceFeeSummaryItemLabels | [ServiceFeeSummaryItemLabels](#servicefeesummaryitemlabels) | Custom labels for service fee display |
+
+### ServiceFeeSummaryItemLabels
+
+Customizable labels for service fee display.
+
+```swift
+public struct serviceFeeSummaryItemLabels {
+    public var serviceFee: String
+    public var total: String
+    public var subtotal: String
+    
+    public init(
+        serviceFee: String = "Service Fee",
+        total: String = "Total",
+        subtotal: String = "Subtotal"
+    )
+}
+```
+
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| serviceFee | String | "Service Fee" | Label for the service fee line item |
+| total | String | "Total" | Label for the total amount |
+| subtotal | String | "Subtotal" | Label for the subtotal amount |
+
+## Transaction Models
+
+### ApplePayTransactionDetails
+
+Details for the Apple Pay transaction.
+
+```swift
+public struct ApplePayTransactionDetails: Encodable {
+    public var accountCode: String?
+    public var feeMode: FeeMode
+    public var healthExpenseType: HealthExpenseType?
+    public var invoiceId: String?
+    public var level3DataSummary: Level3DataSummary?
+    public var metadata: Record<String, String>?
+    public var payor: Payor?
+    public var payorId: String?
+    public var receiptDescription: String?
+    public var recurringId: String?
+    public var reference: String?
+    public var sendReceipt: Bool
+}
+```
+
+| Property | Type | Required | Description |
+|----------|------|----------|-------------|
+| accountCode | String? | No | Account code for the transaction |
+| feeMode | FeeMode | Yes | Fee handling mode for the transaction |
+| healthExpenseType | HealthExpenseType? | No | Type of health expense if applicable |
+| invoiceId | String? | No | Associated invoice ID |
+| level3DataSummary | Level3DataSummary? | No | Level 3 processing data |
+| metadata | `Record<String, String>?` | No | Additional transaction metadata |
+| payor | Payor? | No | Payor information |
+| payorId | String? | No | Unique identifier for the payor |
+| receiptDescription | String? | No | Description for the receipt |
+| recurringId | String? | No | ID for recurring payments |
+| reference | String? | No | Reference identifier |
+| sendReceipt | Bool | Yes | Whether to send a receipt |
+
+### ApplePayResponse
+
+Enum representing possible responses from a transaction.
+
+```swift
+public enum ApplePayResponse {
+    case error(PTError)
+    case failure(FailedTransaction)
+    case success(SuccessfulTransaction)
+}
+```
+
+### ApplePayTokenDetails
+
+Details of the tokenized payment method.
+
+```swift
+public struct ApplePayTokenDetails: Encodable {
+    let paymentData: String
+    let paymentNetwork: String
+    let cardDisplayName: String
+    let cardType: String
+    let billingDetails: Payor
+    let shippingDetails: Payor
+}
+```
+
+| Property | Type | Required | Description |
+|----------|------|----------|-------------|
+| paymentData | String | Yes | Encrypted payment data |
+| paymentNetwork | String | Yes | Payment network identifier |
+| cardDisplayName | String | Yes | Display name for the card |
+| cardType | String | Yes | Type of card used |
+| billingDetails | Payor | Yes | Billing contact information |
+| shippingDetails | Payor | Yes | Shipping contact information |

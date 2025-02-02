@@ -438,6 +438,28 @@ module.exports = {
       ],
     },
     {
+      type: 'category',
+      label: 'Apple Pay',
+      items: [
+        {
+          type: 'doc',
+          id: 'sdk/apple/apple_pay/overview',
+        },
+        {
+          type: 'doc',
+          id: 'sdk/apple/apple_pay/button',
+        },
+        {
+          type: 'doc',
+          id: 'sdk/apple/apple_pay/functions',
+        },
+        {
+          type: 'doc',
+          id: 'sdk/apple/apple_pay/models',
+        },
+      ],
+    },
+    {
       type: 'doc',
       id: 'sdk/apple/app_registration',
     },
