@@ -34,6 +34,9 @@ Here's a basic example of setting up Apple Pay:
 Pay Theory offers two ways to process Apple Pay payments:
 1. **Direct SDK Processing**: Use `onPaymentCompletion` to process the payment immediately through our SDK
 2. **Server-Side Processing**: Use `onPaymentTokenizationCompletion` to receive a token string that can be used to process the payment through your server using our API
+
+<br/>
+***You can use either option, but you cannot use both.***
 :::
 
 ```swift

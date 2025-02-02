@@ -31,11 +31,19 @@ public struct PTApplePaySheetConfig {
 | requestConfiguration | [PTApplePayRequestConfig](#ptapplepayrequestconfig) | Configuration for the Apple Pay payment request |
 | transactionDetails | [ApplePayTransactionDetails](#applepaytransactiondetails) | Details for the transaction being processed |
 | onPaymentCompletion | ((ApplePayResponse) -> Void)? | Optional callback for handling payment completion |
-| onPaymentTokenizationCompletion | ((String) -> Bool)? | Optional callback for handling payment method tokenization |
+| onPaymentTokenizationCompletion | ((String) -> Bool)? | Optional callback for handling payment tokenization. This allows you to take this string and process the payment through your server. |
 | onPaymentMethodUpdate | ((PKPaymentMethod) -> PKPaymentRequestPaymentMethodUpdate)? | Optional callback for handling payment method changes |
 | onShippingContactUpdate | ((PKContact) -> PKPaymentRequestShippingContactUpdate)? | Optional callback for handling shipping contact changes |
 | onShippingMethodUpdate | ((PKShippingMethod) -> PKPaymentRequestShippingMethodUpdate)? | Optional callback for handling shipping method changes |
 | onCouponCodeUpdate | ((String) -> PKPaymentRequestCouponCodeUpdate)? | Optional callback for handling coupon code entry |
+
+:::note
+The `onPaymentTokenizationCompletion` callback should return a boolean value. If the value is `true`, the payment was successful and the sheet will dismiss with a success response. If the value is `false`, the payment failed and the sheet will dismiss with a failure response.
+:::
+
+:::note
+You need to implement either the `onPaymentTokenizationCompletion` or the `onPaymentCompletion` callback, but not both.
+:::
 
 ### PTApplePayRequestConfig
 
