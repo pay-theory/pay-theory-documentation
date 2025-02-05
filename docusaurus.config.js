@@ -242,6 +242,13 @@ const config = {
         //     ],
         //   },
         // ],
+        links: [
+          {
+            html: `
+                 <a href= "https://www.paytheory.com/contact#release-notes" target="_blank" style="margin: 0;" class="button button--text button--md">Join the Release Notes Email List</a>
+              `,
+          },
+        ],
         copyright: `Copyright Pay Theory © ${new Date().getFullYear()}`,
       },
       prism: {
