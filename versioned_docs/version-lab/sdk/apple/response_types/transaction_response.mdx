@@ -38,7 +38,7 @@ Represents a failed transaction in the PayTheory system.
 
 | Property | Type | Description |
 |----------|------|-------------|
-| transactionId | String | The Pay Theory receipt number. |
+| transactionId | String | The unique transaction_id assigned to a transaction by Pay Theory. |
 | lastFour | String | The last four digits of the card number or account number. |
 | brand | String | The brand of the card. |
 | status | String | The state of the transaction. This will be "FAILURE". |
@@ -53,7 +53,7 @@ Represents a successful transaction in the PayTheory system.
 
 | Property | Type | Description |
 |----------|------|-------------|
-| transactionId | String | The Pay Theory receipt number. |
+| transactionId | String | The unique transaction_id assigned to a transaction by Pay Theory. |
 | lastFour | String | The last four digits of the card number or account number. |
 | brand | String | The brand of the card. |
 | createdAt | String | The date and time the transaction was created. |

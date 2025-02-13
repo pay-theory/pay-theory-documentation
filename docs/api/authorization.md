@@ -161,6 +161,50 @@ mutation {
 The authorization object.  Refer to the [Authorization Object](#the-authorization-object) for more info.
 
 ***
+## Create Wallet Authorization
+
+This call is used to create an authorization for a wallet payment via Apple Pay or Google Pay. It works in conjunction with our SDKs to allow you to create an authorization via our API.
+
+```graphql
+mutation {
+  createWalletAuthorization(
+    merchant_uid: String!,
+    sale_id: String,
+    digital_wallet_payload: String!,
+    payor_id: String,
+    payor: PayorInput,
+    invoice_id: String,
+    account_code: String,
+    reference: String,
+    metadata: AWSJSON,
+    health_expense_type: HealthExpenseType) {
+      authorization_id
+      ...
+  }
+}
+```
+
+**Parameters**
+
+| Key                  | type               | description                                                                                                                                             |
+|---------------------|--------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|
+| merchant_uid        | String!            | The Pay Theory unique identifier assigned to the merchant that the authorization belongs to.                                                            |
+| sale_id             | String             | The Pay Theory unique identifier assigned to the sale that the authorization belongs to. Sales can be used to tie together multiple auths and captures. |
+| digital_wallet_payload | String!         | The encrypted payload from the PayTheory SDK containing payment information.                                                                            |
+| payor_id            | String             | The Pay Theory unique identifier for the payor making the payment.                                                                                      |
+| payor               | PayorInput         | The payor information if a new payor needs to be created.                                                                                               |
+| invoice_id          | String             | The Pay Theory unique identifier assigned to the invoice that the authorization belongs to.                                                             |
+| account_code        | String             | Custom defined value passed in as the account code for the authorization.                                                                               |
+| reference           | String             | Custom defined value passed in as the reference for the authorization.                                                                                  |
+| metadata            | AWSJSON            | Any additional data that should be stored with the authorization.                                                                                       |
+| health_expense_type | HealthExpenseType  | The health expense type for the authorization. Can be one of: `CLINICAL`, `COPAY`, `DENTAL`, `HEALTHCARE`, `RX`, `TRANSIT`, `VISION`                    |
+
+
+**Returns**
+
+The authorization object.  Refer to the [Authorization Object](#the-authorization-object) for more info.
+
+***
 ## Capture Authorization
 
 ```graphql

@@ -83,6 +83,7 @@ onPaymentTokenizationCompletion: ((String) -> Bool)?
 ```
 Handles the result of payment method tokenization. Returns a token string that can be used to process the payment through your server.
 
+You can take the string returned to you and call the [`createWalletAuthorization`](../../../api/authorization#create-wallet-authorization) or [`createWalletTransaction`](../../../api/transaction#create-wallet-transaction) API call to process the payment.
 ### Payment Method Updates
 
 ```swift

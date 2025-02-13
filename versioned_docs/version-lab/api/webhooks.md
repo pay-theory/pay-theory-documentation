@@ -191,7 +191,7 @@ The payload for each event will contain the following values:
 
 | Key     | Type   | Description                                                                                                                                                  |
 |---------|--------|--------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| event   | String | The type of event that was sent. Should be one of the following: `AUTHORIZATION`, `DISPUTE`, `MERCHANT`, `PAYMENT`, `PAYMENT_METHOD`, `PAYOR`, `SETTLEMENT`. |
+| event   | String | The type of event that was sent. Should be one of the following: `AUTHORIZATION`, `DISPUTE`, `MERCHANT`, `TRANSACTION`, `PAYMENT_METHOD`, `PAYOR`, `SETTLEMENT`. |
 | subtype | String | The subtype of the event. Should be either `CREATED` or `UPDATED`                                                                                            |
 | payload | Object | The payload of the event. Examples of the payload for each event are below.                                                                                  |
 

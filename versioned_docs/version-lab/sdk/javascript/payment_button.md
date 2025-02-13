@@ -18,26 +18,26 @@ const PAYMENT_METADATA = {
 };
 
 // Parameters that you will pass in to configure the checkout page that opens when the button is clicked.
-const CHECKOUT_DETAILS = { 
-        amount: AMOUNT, 
+const CHECKOUT_DETAILS = {
+        amount: AMOUNT,
         paymentName: "School Technology Fees",
-        paymentDescription: "Technology Fee for the 2019-2020 school year", 
-        requirePhone: true, 
-        callToAction: paytheory.DONATE, 
-        acceptedPaymentMethods: paytheory.CARD_ONLY, 
-        payorId: "pt_pay_XXXXXXXXX", 
-        metadata: PAYMENT_METADATA,  
-        feeMode: paytheory.MERCHANT_FEE, 
-        accountCode: "code-123456789",  
-        invoiceId: "pt_inv_XXXXXXXXX", 
-        recurringId: "pt_rec_XXXXXXXXX", 
+        paymentDescription: "Technology Fee for the 2019-2020 school year",
+        requirePhone: true,
+        callToAction: paytheory.DONATE,
+        acceptedPaymentMethods: paytheory.CARD_ONLY,
+        payorId: "pt_pay_XXXXXXXXX",
+        metadata: PAYMENT_METADATA,
+        feeMode: paytheory.MERCHANT_FEE,
+        accountCode: "code-123456789",
+        invoiceId: "pt_inv_XXXXXXXXX",
+        recurringId: "pt_rec_XXXXXXXXX",
 }
 
 // Object that will style the payment button
-const STYLE_OBJECT = { 
-    color: paytheory.WHITE, 
-    callToAction: paytheory.DONATE, 
-    pill: true, 
+const STYLE_OBJECT = {
+    color: paytheory.WHITE,
+    callToAction: paytheory.DONATE,
+    pill: true,
     height: "48px"
 }
 
@@ -56,13 +56,13 @@ const OPTIONS = {
 paytheory.button(OPTIONS)
 ```
 
-These are the parameters that you can pass into the `button` function to customize the payment session.  
+These are the parameters that you can pass into the `button` function to customize the payment session.
 You pass a single object into the function with the following keys.
 
 **Required Parameters**
 
 |Key                |type         |       description                     |
-|-------------------|-------------|---------------------------------------|     
+|-------------------|-------------|---------------------------------------|
 |apiKey             |String       |The API key for your Pay Theory account. You can find this in your Pay Theory Portal.|
 |checkoutDetails    |Object       |The details for the checkout page that opens when the button is clicked. Details Below.|
 
@@ -70,7 +70,7 @@ You pass a single object into the function with the following keys.
 **Optional Parameters**
 
 |Key                |type         | description                                                                                                                                                 |
-|-------------------|-------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------|     
+|-------------------|-------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------|
 |style              |Object       | The style object that will style the payment button. Details Below.                                                                                         |
 |onReady            |Function     | A function that will be called when the button is ready to be clicked.                                                                                      |
 |onClick            |Function     | A function that will be called when the button is clicked.                                                                                                  |
@@ -82,11 +82,11 @@ You pass a single object into the function with the following keys.
 ## Success Response
 
 |Key                |type         | description                                                       |
-|-------------------|-------------|-------------------------------------------------------------------|     
+|-------------------|-------------|-------------------------------------------------------------------|
 |last_four          |String       | The last four digits of the card number or account number         |
 |amount             |Int          | The amount of the transaction **(service fee is included)**       |
 |service_fee        |Int          | The service fee of the transaction                                |
-|receipt_number     |String       | The Pay Theory receipt number                                     |
+|receipt_number     |String       | The unique transaction_id assigned to a transaction by Pay Theory                                     |
 |brand              |String       | The brand of the card                                             |
 |created_at         |String       | The date and time the transaction was created                     |
 |state              |String       | The status of the transaction                                     |
@@ -109,14 +109,14 @@ These are the parameters that you can pass into the `checkoutDetails` object to 
 **Required Parameters**
 
 |Key                |type         |       description                     |
-|-------------------|-------------|---------------------------------------|     
+|-------------------|-------------|---------------------------------------|
 |amount             |Int          |The amount of the payment in cents.|
 |paymentName        |String       |The name of the payment that will be displayed on the checkout page. Will also be passed in to the `reference` field of the transaction.|
 
 **Optional Parameters**
 
 | Key                    | type     | description                                                                                                                             |
-|------------------------|----------|-----------------------------------------------------------------------------------------------------------------------------------------|     
+|------------------------|----------|-----------------------------------------------------------------------------------------------------------------------------------------|
 | paymentDescription     | String   | The description of the payment that will be displayed on the checkout page.                                                             |
 | requirePhone           | Boolean  | Pass `true` to require the user to enter a phone number on the checkout page.                                                           |
 | callToAction           | String   | The call to action that will be displayed on the payment button. Defaults to `paytheory.PAY`. All Options [Here](#call-to-action)       |
@@ -126,7 +126,7 @@ These are the parameters that you can pass into the `checkoutDetails` object to 
 | feeMode                | String   | The fee mode that will be used for the payment. Defaults to `paytheory.MERCHANT_FEE`.                                                   |
 | accountCode            | String   | The account code that will be used for the payment.                                                                                     |
 
-**Style Object**  
+**Style Object**
 These are the parameters that you can pass into the `style` object to customize the payment button.
 
 **Optional Parameters**

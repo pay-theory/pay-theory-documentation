@@ -330,6 +330,86 @@ This call will return a [Transaction](#the-transaction-object) object with the d
 
 
 ***
+## Create Wallet Transaction
+
+This call is used to create a transaction for a wallet payment via Apple Pay or Google Pay. It works in conjunction with our SDKs to allow you to create a transaction via our API.
+
+```graphql
+mutation {
+  createWalletTransaction(
+    merchant_uid: String!,
+    digital_wallet_payload: String!,
+    payor_id: String,
+    payor: PayorInput,
+    recurring_id: String,
+    invoice_id: String,
+    account_code: String,
+    reference: String,
+    send_receipt: Boolean,
+    receipt_description: String,
+    metadata: AWSJSON,
+    health_expense_type: HealthExpenseType) {
+      account_code
+      currency
+      dispute_status
+      failure_reasons
+      fee_mode
+      fees
+      gross_amount
+      is_settled
+      merchant_uid
+      metadata
+      net_amount
+      parent_id
+      payment_method {
+          payment_method_id
+          payor {
+              payor_id
+          }
+      }
+      recurring {
+          recurring_id
+      }
+      reference
+      refund_reason {
+          reason_code
+          reason_details
+          transfer_type
+      }
+      refunded_amount
+      settlement_batch
+      status
+      timezone
+      transaction_date
+      transaction_id
+      transaction_type
+  }
+}
+```
+
+**Arguments**
+
+| Key                  | type                | description                                                                                                                                                                                      |
+|---------------------|---------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| merchant_uid        | String!             | The Pay Theory unique identifier for the merchant the transaction is for.                                                                                                                        |
+| digital_wallet_payload | String!          | The encrypted payload from the PayTheory SDK containing payment information.                                                                                                                    |
+| payor_id            | String              | The Pay Theory unique identifier for the payor making the payment.                                                                                                                               |
+| payor               | PayorInput          | The payor information if a new payor needs to be created.                                                                                                                                       |
+| recurring_id        | String              | The Pay Theory unique identifier for the recurring payment the transaction is for.                                                                                                               |
+| invoice_id          | String              | The Pay Theory unique identifier for the invoice the transaction is for.                                                                                                                         |
+| account_code        | String              | Customer defined account code for the transaction.                                                                                                                                               |
+| reference           | String              | Customer defined reference for the transaction.                                                                                                                                                  |
+| send_receipt        | Boolean             | If the receipt should be sent to the payor. Defaults to `false`. It is sent to the email address on file with the payment method.                                                                |
+| receipt_description | String              | The description of the transaction that will be displayed on the receipt.                                                                                                                        |
+| metadata            | AWSJSON             | Custom defined JSON object to be stored with the transaction.                                                                                                                                    |
+| health_expense_type | HealthExpenseType   | The type of health expense for the transaction. Can be one of: `CLINICAL`, `COPAY`, `DENTAL`, `HEALTHCARE`, `RX`, `TRANSIT`, `VISION`                                                           |
+
+**Returns**
+
+This call will return a [Transaction](#the-transaction-object) object with the details of the transaction that was created.
+
+
+***
 
 ## Create Reversal
 

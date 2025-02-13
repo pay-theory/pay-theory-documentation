@@ -20,19 +20,19 @@ const PAYMENT_METADATA = {
 };
 
 // Parameters that you will pass in to configure the checkout page that opens when the qrCode is scanned.
-const CHECKOUT_DETAILS = { 
-        amount: AMOUNT, 
+const CHECKOUT_DETAILS = {
+        amount: AMOUNT,
         paymentName: "School Technology Fees",
-        paymentDescription: "Technology Fee for the 2019-2020 school year", 
-        requirePhone: true, 
-        callToAction: paytheory.DONATE, 
-        acceptedPaymentMethods: paytheory.CARD_ONLY, 
-        payorId: "pt_pay_XXXXXXXXX", 
-        metadata: PAYMENT_METADATA,  
-        feeMode: paytheory.MERCHANT_FEE, 
-        accountCode: "code-123456789",  
-        invoiceId: "pt_inv_XXXXXXXXX", 
-        recurringId: "pt_rec_XXXXXXXXX", 
+        paymentDescription: "Technology Fee for the 2019-2020 school year",
+        requirePhone: true,
+        callToAction: paytheory.DONATE,
+        acceptedPaymentMethods: paytheory.CARD_ONLY,
+        payorId: "pt_pay_XXXXXXXXX",
+        metadata: PAYMENT_METADATA,
+        feeMode: paytheory.MERCHANT_FEE,
+        accountCode: "code-123456789",
+        invoiceId: "pt_inv_XXXXXXXXX",
+        recurringId: "pt_rec_XXXXXXXXX",
 }
 
 const OPTIONS = {
@@ -47,20 +47,20 @@ const OPTIONS = {
 paytheory.qrCode(OPTIONS)
 ```
 
-These are the values that you can pass into the `qrCode` function to customize the payment session.  
+These are the values that you can pass into the `qrCode` function to customize the payment session.
 You pass a single object into the function with the following keys.
 
 **Required Values**
 
 | Key             | type   | description                                                                                               |
-|-----------------|--------|-----------------------------------------------------------------------------------------------------------|     
+|-----------------|--------|-----------------------------------------------------------------------------------------------------------|
 | apiKey          | String | The API key for your Pay Theory account. You can find this in your Pay Theory Portal.                     |
 | checkoutDetails | Object | The details for the checkout page that opens when the qrCode is scanned. Details [Below](#checkout-details). |
 
 **Optional Values**
 
 | Key              | type        | description                                                                                                             |
-|------------------|-------------|-------------------------------------------------------------------------------------------------------------------------|     
+|------------------|-------------|-------------------------------------------------------------------------------------------------------------------------|
 | size             | Int         | This is the size, height and width, of the qrCode in pixels. Defaults to `128` and must be above `128` and below `300`. |
 | onReady          | Function    | A function that will be called when the qrCode is ready to be displayed.                                                |
 | onError          | Function    | A function that will be called when an error occurs. It is passed an error string.                                      |
@@ -70,11 +70,11 @@ You pass a single object into the function with the following keys.
 ## Success Response
 
 | Key               | type     | description                                                       |
-|-------------------|----------|-------------------------------------------------------------------|     
+|-------------------|----------|-------------------------------------------------------------------|
 | last_four         | String   | The last four digits of the card number or account number         |
 | amount            | Int      | The amount of the transaction **(service fee is included)**       |
 | service_fee       | Int      | The service fee of the transaction                                |
-| receipt_number    | String   | The Pay Theory receipt number                                     |
+| receipt_number    | String   | The unique transaction_id assigned to a transaction by Pay Theory                                     |
 | brand             | String   | The brand of the card                                             |
 | created_at        | String   | The date and time the transaction was created                     |
 | state             | String   | The status of the transaction                                     |
@@ -90,14 +90,14 @@ These are the values that you can pass into the `checkoutDetails` object to cust
 **Required Values**
 
 | Key         | type   | description                                                                                                                              |
-|-------------|--------|------------------------------------------------------------------------------------------------------------------------------------------|     
+|-------------|--------|------------------------------------------------------------------------------------------------------------------------------------------|
 | amount      | Int    | The amount of the payment in cents.                                                                                                      |
 | paymentName | String | The name of the payment that will be displayed on the checkout page. Will also be passed in to the `reference` field of the transaction. |
 
 **Optional Values**
 
 | Key                    | type    | description                                                                                                                                                                                                                              |
-|------------------------|---------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|     
+|------------------------|---------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | paymentDescription     | String  | The description of the payment that will be displayed on the checkout page.                                                                                                                                                              |
 | requirePhone           | Boolean | Pass `true` to require the user to enter a phone number on the checkout page.                                                                                                                                                            |
 | callToAction           | String  | The call to action that will be displayed on the payment button. Defaults to `paytheory.PAY`. All Options [Here](#call-to-action)                                                                                                        |
