@@ -1,0 +1,125 @@
+---
+sidebar_position: 6
+sidebar_label: 'Understanding Transaction Statuses'
+title: "Understanding Transaction Statuses"
+---
+
+# Understanding Transaction Statuses
+
+When processing payments through Pay Theory, transactions go through various states as they move through the payment lifecycle. Understanding these statuses is crucial for properly managing your payment operations and reconciling your accounts.
+
+## Transaction Status Types
+
+Pay Theory transactions can have the following statuses:
+
+### PENDING
+
+A transaction with a `PENDING` status has been successfully authorized but not yet captured. This is the initial status for all successful transactions that have not failed during authorization. 
+
+#### Card
+- This transaction has passed payment method checks and has been authorized.
+- The funds are reserved on the customer's card.
+- The transaction will automatically move to `SUCCEEDED` status after the settlement batch is created.
+
+#### ACH
+- This transaction has passed a prenote check and has been marked in our system to send to the ACH network at batch settlement.
+- The transaction will automatically move to `SUCCEEDED` status after the settlement batch is created.
+
+:::note More Details on ACH
+While card transactions have funds reserved on the customer's card after `PENDING` is returned, ACH transactions do not. ACH transactions can still fail to move funds after the `PENDING` status is returned if the customer's bank returns the transaction or there are other issues with sending the [NACHA file](https://www.moderntreasury.com/learn/nacha-files).
+:::
+
+***
+### SUCCEEDED
+
+A `SUCCEEDED` transaction has been successfully captured, meaning the payment processor has confirmed the payment. 
+
+#### Card
+- The authorization has been captured and the transaction will be added to the next settlement batch.
+
+#### ACH
+- The transaction has been added to the NACHA file and has been sent to the ACH network.
+- The transaction will be added to the next settlement batch.
+
+#### Cash
+- The payor has take a barcode to a retailer and given them cash to complete the transaction.
+- The transaction will be added to the next settlement batch.
+
+:::note Details on Capture Times
+Our capture window varies depending on the payment method and processor.
+
+Typically you will see all transactions of a certain payment method captured at the following times:
+- Card - 09:00 PM EST
+- ACH - 07:00 PM EST
+
+*If you need more specific capture times, please reach out to support at support@paytheory.com*
+:::
+
+***
+### FAILED
+
+A transaction with `FAILED` status did not pass initial checks and authorization was not successful. This means the payment attempt was rejected before it could be processed.
+
+#### Card
+- The transaction failed to pass payment method checks and failed the authorization.
+
+#### ACH
+- The transaction failed to pass a prenote check and was not marked to send to the ACH network.
+
+***
+### SETTLED
+
+A `SETTLED` transaction has been added to a settlement batch and will be transferred to your merchant account. This means the funds are in the process of being deposited.
+
+:::note Details on Settlement Times
+Our settlement window varies depending on the processor.
+
+Typically you will see all settlements created around 11AM EST.
+
+*If you need more specific settlement times, please reach out to support at support@paytheory.com*
+
+:::
+
+***
+### REFUNDED
+
+A transaction with `REFUNDED` status has been fully refunded to the customer. The entire amount of the original transaction has been returned.
+
+***
+### PARTIALLY_REFUNDED
+
+A `PARTIALLY_REFUNDED` transaction has had a portion of the original amount refunded to the customer, but not the entire amount.
+
+***
+### VOIDED
+
+A `VOIDED` transaction was canceled before it was captured. This means the transaction was authorized but then canceled before the funds were transferred. No fees or funds will be transferred for this transaction.
+
+***
+### RETURNED
+
+A `RETURNED` status applies specifically to ACH transactions that have had an `ACH_RETURN` created for them. This means the ACH transaction was initially processed but then returned by the customer's bank.
+
+
+***
+## Status Flow
+
+Typically, transactions follow this general flow:
+1. `PENDING` (after successful authorization)
+2. `SUCCEEDED` (after capture)
+3. `SETTLED` (after being included in a settlement batch)
+
+Alternative flows may include:
+- `PENDING` → `VOIDED` (if reversed before capture)
+- `SUCCEEDED/SETTLED` → `REFUNDED` or `PARTIALLY_REFUNDED` (if refunded after capture)
+- `SUCCEEDED/SETTLED` → `RETURNED` (for ACH transactions that are returned)
+
+***
+## Monitoring Transaction Statuses
+
+You can monitor transaction statuses through:
+- The Pay Theory Dashboard
+- API queries using the [transactions query](../../api/transaction#query-transactions)
+- Webhook notifications for status changes
+
+Understanding these statuses will help you effectively manage your payment operations and provide accurate information to your customers about the state of their payments. 

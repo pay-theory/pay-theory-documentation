@@ -133,11 +133,11 @@ Transactions are a data object that can represent a payment, failed or successfu
 ***
 ### Transaction Status
 
-- `PENDING` - The transaction is pending capture. For a sale this automatically changes to `SUCCEEDED` typically within the hour. For an auth that has been set to capture, this will change to `SUCCEEDED` when the settlement batch is created.
-- `SUCCEEDED` - The transaction has been captured.
-- `FAILED` - The transaction failed to authorize.
-- `SETTLED` - The transaction has been settled.
-- `REFUNDED` - The transaction has been refunded.
+- `PENDING` - The transaction is succesfull pending capture. This is what will be returned for all transactions that did not fail. 
+- `SUCCEEDED` - The transaction has been captured. 
+- `FAILED` - The transaction failed to pass initial checks and authorization was not successful.
+- `SETTLED` - The transaction has been added to a settlement batch and will settle to the merchant.
+- `REFUNDED` - The transaction has been fully refunded.
 - `PARTIALLY_REFUNDED` - The transaction has been refunded for a portion of the amount.
 - `VOIDED` - The transaction has been voided which means it was never captured and will not be settled.
 - `RETURNED` - The transaction is an ACH transaction that has had an `ACH_RETURN` created for it.
