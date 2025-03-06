@@ -14,25 +14,25 @@ An authorization is used to reserve funds on a card for a future transaction.  I
 
 ```graphql
 {
-  account_code: String
-  amount: Int!
-  authorization_date: AWSDateTime!
-  authorization_id: String!
-  avs_status: String
-  currency: String!
-  expiration_date: AWSDateTime
-  failure_reasons: [String]
-  fee_mode: FeeMode!
-  fees: Int!
-  invoice: Invoice
-  merchant_uid: String!
-  metadata: AWSJSON
-  payment_method: PaymentMethodToken!
-  reference: String
-  sale_id: String
-  status: AuthorizationStatus!
-  timezone: String
-  updated_row_at: AWSDateTime
+    account_code: String
+    amount: Int!
+    authorization_date: AWSDateTime!
+    authorization_id: String!
+    avs_status: String
+    currency: String!
+    expiration_date: AWSDateTime
+    failure_reasons: [String]
+    fee_mode: FeeMode!
+    fees: Int!
+    invoice: Invoice
+    merchant_uid: String!
+    metadata: AWSJSON
+    payment_method: PaymentMethodToken!
+    reference: String
+    sale_id: String
+    status: AuthorizationStatus!
+    timezone: String
+    updated_row_at: AWSDateTime
 }
 ```
 
@@ -63,37 +63,37 @@ An authorization is used to reserve funds on a card for a future transaction.  I
 
 ```graphql
 {
-  authorizations(direction: MoveDirection, limit: Int, offset: String, offset_id: String, query: SqlQuery) {
-    items {
-      account_code
-      amount
-      authorization_date
-      authorization_id
-      currency
-      device_id
-      expiration_date
-      failure_reasons
-      fee_mode
-      fees
-      invoice {
-        invoice_id
-      }
-      merchant_uid
-      metadata(query_list: [])
-      payment_method(query_list: []) {
-        payment_method_id
-        payor(query_list: []) {
-          payor_id
+    authorizations(direction: MoveDirection, limit: Int, offset: String, offset_id: String, query: SqlQuery) {
+        items {
+            account_code
+            amount
+            authorization_date
+            authorization_id
+            currency
+            device_id
+            expiration_date
+            failure_reasons
+            fee_mode
+            fees
+            invoice {
+                invoice_id
+            }
+            merchant_uid
+            metadata(query_list: [])
+            payment_method(query_list: []) {
+                payment_method_id
+                payor(query_list: []) {
+                    payor_id
+                }
+            }
+            reference
+            sale_id
+            status
+            timezone
+            updated_row_at
         }
-      }
-      reference
-      sale_id
-      status
-      timezone
-      updated_row_at
+        total_row_count
     }
-    total_row_count
-  }
 }
 ```
 
@@ -119,20 +119,20 @@ This will only return Authorizations that have Metadata, Payment Methods, or Pay
 ```graphql
 mutation {
   createAuthorization( account_code: String,
-    amount: Int,
-    fee: Int,
-    fee_mode: MERCHANT_FEE,
-    health_expense_type: CLINICAL,
-    invoice_id: String,
-    merchant_uid: String,
-    metadata: AWSJSON,
-    one_time_use_token: Boolean,
-    payment_method: {},
-    payment_method_id: String,
-    reference: String,
-    sale_id: String) {
-    authorization_id
-    ...
+                       amount: Int,
+                       fee: Int,
+                       fee_mode: MERCHANT_FEE,
+                       health_expense_type: CLINICAL,
+                       invoice_id: String,
+                       merchant_uid: String,
+                       metadata: AWSJSON,
+                       one_time_use_token: Boolean,
+                       payment_method: {},
+                       payment_method_id: String,
+                       reference: String,
+                       sale_id: String) {
+      authorization_id
+      ...
   }
 }
 ```
@@ -209,17 +209,18 @@ The authorization object.  Refer to the [Authorization Object](#the-authorizatio
 
 ```graphql
 mutation {
-  createCapture( allow_exceeded_amount: false,
-    allow_reauth: false,
-    amount: 10,
-    fee: 10,
-    authorization_id: "",
-    merchant_uid: "",
-    receipt_description: "",
-    send_receipt: false) {
-    transaction_id
-    ...
-  }
+    createCapture( allow_exceeded_amount: false,
+                   allow_reauth: false,
+                   amount: 10,
+                   fee: 10,
+                   authorization_id: "",
+                   merchant_uid: "",
+                   receipt_description: "",
+                   send_receipt: false,
+                   split: [SplitInput]) {
+        transaction_id
+        ...
+    }
 }
 
 ```
@@ -236,9 +237,10 @@ mutation {
 |merchant_uid       |String!      | The Pay Theory unique identifier assigned to the merchant that the authorization belongs to.                                                                                                                                                                                                                                                                   |
 |receipt_description|String       | A custom description that will be displayed on the receipt.                                                                                                                                                                                                                                                                                                    |
 |send_receipt       |Boolean      | Can be set to `true` to send a receipt to the payor.                                                                                                                                                                                                                                                                                                           |
+|split              |[[SplitInput]](split.md#creating-splits) | An array of split objects to distribute the transaction amount to different accounts. The sum of all split amounts must equal the transaction amount.                                                                                                                                                                              |
 
 
-**Returns**git
+**Returns**
 
 The transaction object.  Refer to the [Transaction Object](transaction.md) for more info.
 

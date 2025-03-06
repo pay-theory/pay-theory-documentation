@@ -1,0 +1,89 @@
+---
+sidebar_position: 7
+sidebar_label: 'Split Transactions'
+title: "Split Transactions"
+---
+
+# Split Transactions
+
+This guide will walk you through how to create a transaction that distributes funds to multiple accounts using splits.
+
+## What are Splits?
+
+Splits allow you to distribute a transaction's funds across multiple accounts. This is useful for scenarios like:
+
+- Distributing fees between different departments
+- Revenue sharing between partners
+- Collecting fees for different services in a single transaction
+
+## Creating a Transaction with Splits
+
+When creating a transaction, you can specify how the funds should be distributed by including an array of split objects.
+
+```graphql title="Create Transaction With Splits"
+mutation {
+  createTransaction(
+    merchant_uid: "54c3d3ae-cabc-4eb8-9ff4-44789385a36b",
+    amount: 10000,
+    payment_method_id: "pt_pmt_1234567890",
+    fee_mode: MERCHANT_FEE,
+    split: [
+      {
+        merchant_uid: "67e8f2b1-d59a-42c3-b718-90a56cd7e124",
+        amount: 500,
+        account_code: "PARTNER_A",
+        reference: "Partner A fee"
+      },
+      {
+        merchant_uid: "3f9c8d7e-6b5a-4321-9876-12345abcdef0",
+        amount: 500,
+        account_code: "PARTNER_B",
+        reference: "Partner B fee"
+      }
+    ]
+  ) {
+    transaction_id
+    status
+    gross_amount
+    splits {
+      id
+      amount
+      account_code
+      reference
+      merchant_uid
+    }
+  }
+}
+```
+
+In this example, we're creating a $100.00 transaction (10000 cents) and splitting it three ways:
+- $90.00 to the main merchant account
+- $5.00 to Partner A
+- $5.00 to Partner B
+
+### Required Split Arguments
+
+|Key          |type    |description                                                             |
+|-------------|--------|------------------------------------------------------------------------|
+|merchant_uid |ID!     |The Pay Theory unique identifier for the merchant receiving the split.  |
+|amount       |Int!    |The amount of the split in cents.                                       |
+
+### Optional Split Arguments
+
+|Key          |type    |description                                                             |
+|-------------|--------|------------------------------------------------------------------------|
+|account_code |String  |Customer defined account code for the split.                            |
+|reference    |String  |Customer defined reference for the split.                               |
+|metadata     |AWSJSON |Custom defined JSON object to be stored with the split.                 |
+
+## Important Rules for Splits
+
+1. **Total Split Amount**: The sum of all split amounts must be less than or equal to the total transaction amount.
+2. **Valid Merchant UIDs**: Each split must be associated with a valid merchant_uid.
+3. **Settlement**: Splits are settled seperately to each merchant.
+4. **Metadata**: You can attach metadata to splits for additional tracking and reporting.
+
+## Next Steps
+
+- Learn more about [Split Objects](/docs/api/split) in our API documentation
+- Explore the [createCapture](/docs/api/authorization#capture-authorization) mutation to capture funds from an authorization while splitting the funds.

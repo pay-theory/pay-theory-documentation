@@ -22,6 +22,7 @@ These are the types of items you can associate metadata with.
 - `RECURRING`
 - `TRANSACTION`
 - `SALE`
+- `SPLIT`
 
 ***
 ## Update Metadata

@@ -16,7 +16,7 @@ Transactions are a data object that can represent a payment, failed or successfu
   account_code: String
   ach_return_details: AchReturnDetails
   authorization_id: String!
-    avs_status: String
+  avs_status: String
   currency: String
   dispute_status: DisputeStatus
   failure_reasons: [String]
@@ -39,6 +39,7 @@ Transactions are a data object that can represent a payment, failed or successfu
   refunded_amount: Int
   sale_id: String
   settlement_batch: Int
+  splits: [Split]
   status: TransactionStatus
   timezone: String
   transaction_date: AWSDateTime
@@ -76,6 +77,7 @@ Transactions are a data object that can represent a payment, failed or successfu
 | refunded_amount    | Int                                                                        | The amount of the transaction that has been refunded if any.                                                                                           |
 | sale_id            | String                                                                     | The sale id for the transaction if any.                                                                                                                |
 | settlement_batch   | Int                                                                        | The unique settlement batch number the transaction belongs to if settled.                                                                              |
+| splits             | [[Split]](split#the-split-object)                                          | An array of split objects associated with this transaction, if any.                                                                                    |
 | status             | [TransactionStatus](#transaction-status)                                   | The status of the transaction.                                                                                                                         |
 | timezone           | String                                                                     | The timezone the transaction was made in.                                                                                                              |
 | transaction_date   | AWSDateTime                                                                | The date the transaction was made.                                                                                                                     |
@@ -111,8 +113,8 @@ Transactions are a data object that can represent a payment, failed or successfu
 
 ```graphql
 {
-  reason_code: RefundReasonCode
-  reason_details: String
+    reason_code: RefundReasonCode
+    reason_details: String
 }
 ```
 
@@ -178,7 +180,7 @@ Transactions are a data object that can represent a payment, failed or successfu
       payment_method(query_list: []) {
         payment_method_id
         payor(query_list: []) {
-          payor_id
+            payor_id
         }
       }
       recurring {
@@ -192,6 +194,14 @@ Transactions are a data object that can represent a payment, failed or successfu
       }
       refunded_amount
       settlement_batch
+      splits {
+        id
+        amount
+        account_code
+        reference
+        merchant_uid
+        metadata
+      }
       status
       timezone
       transaction_date
@@ -223,20 +233,20 @@ This will only return Transactions that have Metadata, Payment Methods, or Payor
 
 ```js
 {
-  "data": {
-    "transactions": {
-      "items": [
-        {
-          "transaction_id": "pt-start-paytheorylab-rbdg98004adg"
-        },
-        {
-          "transaction_id": "pt-start-paytheorylab-rbdgaf004adh"
-        },
-        ...
-      ],
-        "total_row_count": 256
+    "data": {
+        "transactions": {
+            "items": [
+                {
+                    "transaction_id": "pt-start-paytheorylab-rbdg98004adg"
+                },
+                {
+                    "transaction_id": "pt-start-paytheorylab-rbdgaf004adh"
+                },
+              ...
+            ],
+            "total_row_count": 256
+        }
     }
-  }
 }
 ```
 
@@ -251,54 +261,63 @@ This will only return Transactions that have Metadata, Payment Methods, or Payor
 ```graphql
 mutation {
   createTransaction(amount: Int,
-    merchant_uid: String,
-    payment_method_id: String,
-    payment_method: PaymentMethodInput,
-    account_code: String,
-    currency: String,
-    fee: Int,
-    fee_mode: FeeMode,
-    invoice_id: String,
-    metadata: JSON,
-    one_time_use_token: Boolean,
-    receipt_description: String,
-    recurring_id: String,
-    reference: String,
-    send_receipt: Boolean) {
-    account_code
-    currency
-    dispute_status
-    failure_reasons
-    fee_mode
-    fees
-    gross_amount
-    is_settled
-    merchant_uid
-    metadata
-    net_amount
-    parent_id
-    payment_method {
-      payment_method_id
-      payor {
-        payor_id
+          merchant_uid: String,
+          payment_method_id: String,
+          payment_method: PaymentMethodInput,
+          account_code: String,
+          currency: String,
+          fee: Int,
+          fee_mode: FeeMode,
+          invoice_id: String,
+          metadata: JSON,
+          one_time_use_token: Boolean,
+          receipt_description: String,
+          recurring_id: String,
+          reference: String,
+          send_receipt: Boolean,
+          split: [SplitInput]) {
+      account_code
+      currency
+      dispute_status
+      failure_reasons
+      fee_mode
+      fees
+      gross_amount
+      is_settled
+      merchant_uid
+      metadata
+      net_amount
+      parent_id
+      payment_method {
+          payment_method_id
+          payor {
+              payor_id
+          }
       }
-    }
-    recurring {
-      recurring_id
-    }
-    reference
-    refund_reason {
-      reason_code
-      reason_details
-      transfer_type
-    }
-    refunded_amount
-    settlement_batch
-    status
-    timezone
-    transaction_date
-    transaction_id
-    transaction_type
+      recurring {
+          recurring_id
+      }
+      reference
+      refund_reason {
+          reason_code
+          reason_details
+          transfer_type
+      }
+      refunded_amount
+      settlement_batch
+      splits {
+          id
+          amount
+          account_code
+          reference
+          merchant_uid
+          metadata
+      }
+      status
+      timezone
+      transaction_date
+      transaction_id
+      transaction_type
   }
 }
 ```
@@ -322,6 +341,7 @@ mutation {
 | recurring_id        | String                 | The Pay Theory unique identifier for the recurring payment the transaction is for.                                                                                                               |
 | reference           | String                 | Customer defined reference for the transaction.                                                                                                                                                  |
 | send_receipt        | Boolean                | If the receipt should be sent to the payor. Defaults to `false`. It is sent to the email address on file with the payment method.                                                                |
+| split               | [[SplitInput]](split.md#creating-splits) | An array of split objects to distribute the transaction amount to different accounts. The sum of all split amounts must equal less than or equal to the amount of the transaction.                          |
 
 
 **Returns**
@@ -418,9 +438,9 @@ This call will create a refund or a void for a transaction.
 ```graphql
 mutation {
   createReversal(amount: Int,
-    refund_reason: { reason_code: RefundReasonCode, reason_details: String },
-    transaction_id: String,
-    refund_email: String ) {
+                 refund_reason: { reason_code: RefundReasonCode, reason_details: String },
+                 transaction_id: String,
+                 refund_email: String ) {
     is_void
     transaction_id
   }
@@ -454,12 +474,12 @@ This call will allow you to calculate what the fee amount should be if using `SE
 
 ```graphql
 {
-  serviceFee(amount: Int, merchant_uid: String, is_ach: Boolean, bank_id: String, payment_method_id: String) {
-    adjusted_total
-    fee
-    fee_limit_reached
-    total
-  }
+    serviceFee(amount: Int, merchant_uid: String, is_ach: Boolean, bank_id: String, payment_method_id: String) {
+        adjusted_total
+        fee
+        fee_limit_reached
+        total
+    }
 }
 ```
 
@@ -491,8 +511,8 @@ This call will send a receipt for a transaction to the email address on file wit
 ```graphql
 mutation MyMutation($email: AWSEmail, $receipt_description: String, $transaction_id: String!) {
   createReceiptEmail(transaction_id: $transaction_id,
-    email: $email,
-    receipt_description: $receipt_description)
+                     email: $email,
+                     receipt_description: $receipt_description)
 }
 ```
 
