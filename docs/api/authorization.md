@@ -216,7 +216,8 @@ mutation {
                    authorization_id: "",
                    merchant_uid: "",
                    receipt_description: "",
-                   send_receipt: false) {
+                   send_receipt: false,
+                   split: [SplitInput]) {
         transaction_id
         ...
     }
@@ -236,9 +237,10 @@ mutation {
 |merchant_uid       |String!      | The Pay Theory unique identifier assigned to the merchant that the authorization belongs to.                                                                                                                                                                                                                                                                   |
 |receipt_description|String       | A custom description that will be displayed on the receipt.                                                                                                                                                                                                                                                                                                    |
 |send_receipt       |Boolean      | Can be set to `true` to send a receipt to the payor.                                                                                                                                                                                                                                                                                                           |
+|split              |[[SplitInput]](split.md#creating-splits) | An array of split objects to distribute the transaction amount to different accounts. The sum of all split amounts must equal the transaction amount.                                                                                                                                                                              |
 
 
-**Returns**git
+**Returns**
 
 The transaction object.  Refer to the [Transaction Object](transaction.md) for more info.
 

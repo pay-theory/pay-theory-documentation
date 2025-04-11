@@ -39,6 +39,7 @@ Transactions are a data object that can represent a payment, failed or successfu
   refunded_amount: Int
   sale_id: String
   settlement_batch: Int
+  splits: [Split]
   status: TransactionStatus
   timezone: String
   transaction_date: AWSDateTime
@@ -76,6 +77,7 @@ Transactions are a data object that can represent a payment, failed or successfu
 | refunded_amount    | Int                                                                        | The amount of the transaction that has been refunded if any.                                                                                           |
 | sale_id            | String                                                                     | The sale id for the transaction if any.                                                                                                                |
 | settlement_batch   | Int                                                                        | The unique settlement batch number the transaction belongs to if settled.                                                                              |
+| splits             | [[Split]](split#the-split-object)                                          | An array of split objects associated with this transaction, if any.                                                                                    |
 | status             | [TransactionStatus](#transaction-status)                                   | The status of the transaction.                                                                                                                         |
 | timezone           | String                                                                     | The timezone the transaction was made in.                                                                                                              |
 | transaction_date   | AWSDateTime                                                                | The date the transaction was made.                                                                                                                     |
@@ -192,6 +194,14 @@ Transactions are a data object that can represent a payment, failed or successfu
       }
       refunded_amount
       settlement_batch
+      splits {
+        id
+        amount
+        account_code
+        reference
+        merchant_uid
+        metadata
+      }
       status
       timezone
       transaction_date
@@ -264,7 +274,8 @@ mutation {
           receipt_description: String,
           recurring_id: String,
           reference: String,
-          send_receipt: Boolean) {
+          send_receipt: Boolean,
+          split: [SplitInput]) {
       account_code
       currency
       dispute_status
@@ -294,6 +305,14 @@ mutation {
       }
       refunded_amount
       settlement_batch
+      splits {
+          id
+          amount
+          account_code
+          reference
+          merchant_uid
+          metadata
+      }
       status
       timezone
       transaction_date
@@ -322,6 +341,7 @@ mutation {
 | recurring_id        | String                 | The Pay Theory unique identifier for the recurring payment the transaction is for.                                                                                                               |
 | reference           | String                 | Customer defined reference for the transaction.                                                                                                                                                  |
 | send_receipt        | Boolean                | If the receipt should be sent to the payor. Defaults to `false`. It is sent to the email address on file with the payment method.                                                                |
+| split               | [[SplitInput]](split.md#creating-splits) | An array of split objects to distribute the transaction amount to different accounts. The sum of all split amounts must equal less than or equal to the amount of the transaction.                          |
 
 
 **Returns**

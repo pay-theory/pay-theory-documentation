@@ -1,0 +1,243 @@
+---
+sidebar_position: 4
+sidebar_label: 'Google Pay'
+title: "Google Pay"
+hide_table_of_contents: true
+---
+
+# Google Pay™
+
+Accept Google Pay on your website using Pay Theory.
+
+This guide details how to get started accepting Google Pay on web.
+
+## Requirements
+
+Before you can add Google Pay to your website with Pay Theory:
+
+- A Pay Theory API Key
+- You need to complete merchant onboarding
+- Review and follow Google Pay's [Acceptable Use Policy](https://payments.developers.google.com/terms/aup)
+- Your website must be served on an HTTPS webpage that has a valid SSL certificate and supports TLS
+- Refer to Google's official documentation:
+  - [Google Pay Web developer documentation](https://developers.google.com/pay/api/web)
+  - [Google Pay Web integration checklist](https://developers.google.com/pay/api/web/guides/test-and-deploy/integration-checklist)
+  - [Google Pay Web Brand Guidelines](https://developers.google.com/pay/api/web/guides/brand-guidelines)
+
+:::info
+We recommend that you pass the address field as shown in the steps below. If the address is not passed, you will be charged additional fees from the card network.
+:::
+
+## Step 1: Add the Google Pay Library
+
+First, load the Google Pay API JavaScript library into your app:
+
+```html
+<script async src="https://pay.google.com/gp/p/js/pay.js" onload="onGooglePayLoaded()">
+ function onGooglePayLoaded() {
+   window.googlePayClient = new google.payments.api.PaymentsClient({
+     environment: "TEST"
+   });
+ }
+</script>
+```
+
+Once you've added the code and the library loads, create a PaymentsClient object:
+- For sandbox environment, use `TEST` for environment
+- For production, use `LIVE` for environment
+
+```javascript
+const paymentsClient = new google.payments.api.PaymentsClient({
+    environment: "TEST",
+});
+```
+
+## Step 2: Define Google Pay API Version
+
+Declare the version of the Google Pay API that your site uses:
+
+```javascript
+const baseRequest = {
+    apiVersion: 2,
+    apiVersionMinor: 0,
+};
+```
+
+## Step 3: Request a Pay Theory Payment Token
+
+Configure your request to use Pay Theory as the payment gateway:
+
+```javascript
+const tokenizationSpecification = {
+    type: "PAYMENT_GATEWAY",
+    parameters: {
+        gateway: "paytheory",
+        gatewayMerchantId: "YOUR_MERCHANT_UID",
+    },
+};
+```
+
+**Request Arguments**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| gateway | string, required | Pass in `paytheory` |
+| gatewayMerchantId | string, required | Your Pay Theory merchant_uid |
+
+## Step 4: Define Allowed Card Networks
+
+Set which card networks will be accepted on your site:
+
+```javascript
+const allowedCardNetworks = [
+    "AMEX",
+    "DISCOVER",
+    "JCB",
+    "MASTERCARD",
+    "VISA",
+];
+const allowedCardAuthMethods = ["PAN_ONLY", "CRYPTOGRAM_3DS"];
+```
+
+Pay Theory accepts both `PAN_ONLY` and `CRYPTOGRAM_3DS` authorization methods.
+
+## Step 5: Describe Allowed Payment Methods
+
+Combine your settings to describe how your site supports the CARD payment method:
+
+```javascript
+const baseCardPaymentMethod = {
+    type: "CARD",
+    parameters: {
+        allowedAuthMethods: allowedCardAuthMethods,
+        allowedCardNetworks: allowedCardNetworks,
+        billingAddressRequired: true,
+    },
+};
+const cardPaymentMethod = Object.assign(
+    { tokenizationSpecification: tokenizationSpecification },
+    baseCardPaymentMethod
+);
+```
+
+## Step 6: Check Readiness to Pay with Google Pay
+
+Check if Google Pay's API is supported by the current device and browser:
+
+```javascript
+const isReadyToPayRequest = Object.assign({}, baseRequest);
+isReadyToPayRequest.allowedPaymentMethods = [baseCardPaymentMethod];
+
+paymentsClient
+    .isReadyToPay(isReadyToPayRequest)
+    .then(function (response) {
+        if (response.result) {
+            // add a Google Pay payment button
+        }
+    })
+    .catch(function (err) {
+        // show error in developer console for debugging
+        console.error(err);
+    });
+```
+
+## Step 7: Add the Google Pay Button
+
+Add a Google Pay payment button to your website:
+
+```javascript
+const button = paymentsClient.createButton({
+    onClick: () => console.log("TODO: click handler"),
+    allowedPaymentMethods: [baseCardPaymentMethod],
+}); 
+document.getElementById("container").appendChild(button);
+```
+
+**CSS Properties**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| button-color | string, optional | Color of the button. Available values are default, black, and white |
+| button-type | string, optional | Available values are black, white, and white-outline |
+| button-locale | string, required | Set the language of the button |
+
+For information about the different button types and display requirements, see [Google's Brand guidelines](https://developers.google.com/pay/api/web/guides/brand-guidelines).
+
+## Step 8: Create a Payment Data Request
+
+Build a JavaScript object that describes your site's support for the Google Pay API:
+
+```javascript
+const paymentDataRequest = Object.assign({}, baseRequest);
+paymentDataRequest.allowedPaymentMethods = [cardPaymentMethod];
+paymentDataRequest.transactionInfo = {
+  countryCode: 'US',
+  currencyCode: 'USD',
+  totalPrice: '123.45',
+  totalPriceStatus: 'FINAL'
+};
+paymentDataRequest.merchantInfo = {
+  merchantId: '12345678901234567890',
+  merchantName: 'Your Merchant Name'
+};
+```
+
+**transactionInfo Request Arguments**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| countryCode | string, required | The ISO country code |
+| currencyCode | string, required | The currency code of the locale |
+| totalPrice | string, required | Total value of the transaction with an optional decimal precision of two decimal places |
+| totalPriceStatus | string, required | The status of the total price used. Use `FINAL` if the total price doesn't change, `ESTIMATED` if it might adjust, or `NOTCURRENTLYKNOWN` for capability checks |
+
+**merchantInfo Request Arguments**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| merchantID | string, required | A Google merchant identifier issued after registration with the Google Pay Business Console. Required for LIVE environment |
+| merchantName | string, required | Pass in the name of your business |
+
+:::info
+Merchants processing transactions in the European Economic Area (EEA) or any other countries subject to Strong Customer Authentication (SCA) must include the countryCode, totalPrice, and merchantName parameters to meet SCA requirements.
+:::
+
+## Step 9: Create a Payment
+
+After calling loadPaymentData, a token will be returned in the response:
+
+```javascript
+paymentsClient
+    .loadPaymentData(paymentDataRequest)
+    .then(function (paymentData) {
+        // Payment token to send to Pay Theory
+        const paymentToken = paymentData.paymentMethodData.tokenizationData.token;
+        
+        // Billing details
+        const name = paymentData.paymentMethodData.info.billingAddress.name;
+        const address = {
+            postal_code: paymentData.paymentMethodData.info.billingAddress.postalCode,
+            country: paymentData.paymentMethodData.info.billingAddress.countryCode,
+        };
+        
+        // Send to Pay Theory
+        // Include your code to send this data to Pay Theory API
+    })
+    .catch(function (err) {
+        // show error in developer console for debugging
+        console.error(err);
+    });
+```
+
+Now you can pass the token to Pay Theory's API to complete the payment.
+
+:::warning
+For security purposes, Google Pay tokens are only active for a short period of time. Ensure you process them quickly after receiving them.
+:::
+
+## Testing
+
+For testing purposes, use the TEST environment with Google Pay's test cards. This allows you to verify your integration without processing real payments.
+
+Once your integration is complete and tested, switch to the LIVE environment for production transactions.
+

@@ -108,6 +108,10 @@
         },
         {
           "type": "doc",
+          "id": "main/online_payments/google_pay"
+        },
+        {
+          "type": "doc",
           "id": "main/online_payments/payment_button"
         },
         {

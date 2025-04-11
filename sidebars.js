@@ -73,6 +73,10 @@ module.exports = {
     },
     {
       type: 'doc',
+      id: 'api/split',
+    },
+    {
+      type: 'doc',
       id: 'api/transaction',
     },
     {
@@ -130,6 +134,10 @@ module.exports = {
         {
           type: 'doc',
           id: 'main/online_payments/qr_code',
+        },
+        {
+          type: 'doc',
+          id: 'main/online_payments/split_transactions',
         },
         {
           type: 'category',
