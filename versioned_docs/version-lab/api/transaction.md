@@ -199,8 +199,10 @@ Transactions are a data object that can represent a payment, failed or successfu
         amount
         account_code
         reference
-        merchant_uid
         metadata
+        merchant {
+          merchant_uid
+        }
       }
       status
       timezone
@@ -310,7 +312,9 @@ mutation {
           amount
           account_code
           reference
-          merchant_uid
+          merchant {
+            merchant_uid
+          }
           metadata
       }
       status
