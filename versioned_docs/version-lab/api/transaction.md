@@ -199,8 +199,10 @@ Transactions are a data object that can represent a payment, failed or successfu
         amount
         account_code
         reference
-        merchant_uid
         metadata
+        merchant {
+          merchant_uid
+        }
       }
       status
       timezone
@@ -310,7 +312,9 @@ mutation {
           amount
           account_code
           reference
-          merchant_uid
+          merchant {
+            merchant_uid
+          }
           metadata
       }
       status
@@ -464,7 +468,21 @@ mutation {
 | is_void        | Boolean | If the reversal was a void. If `true`, the reversal was a void. If `false`, the reversal was a refund. |
 | transaction_id | String  | The Pay Theory unique identifier for the transaction that was created due to the call.             |
 
-***If you get a `transaction_id` returned when `is_void` is `true` then it was a partial void and the `transaction_id` is the new transaction created for the adjusted amount and will be captured.***
+:::note Understanding Create Reversal Return Values
+The response will vary based on transaction timing and amount:
+
+1. **Full void (before capture)**
+   - Returns: `is_void: true, transaction_id: null`
+   - Result: Transaction completely voided, no funds movement or fees
+
+2. **Partial void (before capture)**
+   - Returns: `is_void: true, transaction_id: "pt_txn_..."`
+   - Result: Original transaction voided; returned `transaction_id` is the new transaction created for the adjusted amount and will settle
+
+3. **Refund (after capture)**
+   - Returns: `is_void: false, transaction_id: "pt_txn_..."`
+   - Result: New `REVERSAL` transaction created; both original and refund transactions will settle
+:::
 
 ***
 

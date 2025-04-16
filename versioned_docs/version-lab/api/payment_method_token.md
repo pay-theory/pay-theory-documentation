@@ -157,7 +157,10 @@ This will only return Payment Method Tokens that have Metadata or Payors that ma
 ***
 ## Create Payment Method
 This mutation will create a payment method token for a payor. The payment method token can be used to create a payment method for a merchant.
-*You must be PCI L1 compliant to use this mutation.*
+
+:::note
+You must be PCI L1 compliant to use this mutation. For more details contact support@paytheory.com
+:::
 
 ```graphql
 mutation {
@@ -184,7 +187,10 @@ The payment method token object. Refer to the [Payment Method Token](#the-paymen
 ***
 ### Payment Method Input Object
 This is the input object used when passing in payment method into any mutation that requires it.
-*You must be PCI L1 compliant to use this. For more details contact support@paytheory.com*
+
+:::note
+You must be PCI L1 compliant to use this in a mutation. For more details contact support@paytheory.com
+:::
 
 ```graphql
 {
@@ -336,4 +342,44 @@ mutation MyMutation {
     "updatePaymentMethodToDisabled": true
   }
 }
+```
+
+***
+## Validate Payment Method Ownership
+
+This mutation validates whether a provided card or bank account number matches a specific payment method.
+
+:::note
+You must be PCI L1 compliant to use this mutation. For more details contact support@paytheory.com
+:::
+
+```graphql
+query {
+  validatePaymentMethodOwnership(
+    number: String!,
+    payment_method_id: String!
+  )
+}
+```
+
+**Parameters**
+
+| Key               | type   | description                                                                                          |
+|-------------------|--------|------------------------------------------------------------------------------------------------------|
+| number            | String | The card number or account number to validate. For card payment methods, this is the full card number. For ACH payment methods, this is the full account number. |
+| payment_method_id | String | The unique payment method id that identifies the payment method to validate against.                 |
+
+**Returns**
+
+A boolean value indicating whether the provided number matches the payment method:
+- `true` if the number matches the payment method
+- `false` if the number does not match the payment method
+
+```js
+{
+  "data": {
+    "validatePaymentMethodOwnership": true
+  }
+}
+```
 ```

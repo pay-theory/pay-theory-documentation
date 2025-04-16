@@ -50,7 +50,9 @@ mutation {
       amount
       account_code
       reference
-      merchant_uid
+      merchant {
+        merchant_uid
+      }
     }
   }
 }
