@@ -1,0 +1,306 @@
+---
+sidebar_position: 3
+sidebar_label: "Implementation"
+title: "Google Pay Implementation"
+---
+
+# Google Pay Implementation
+
+This guide walks through implementing Google Pay on your website using the Google Pay API and Pay Theory SDK.
+
+***
+
+## Basic Implementation
+
+### 1. Load Google Pay Library
+
+```html
+<script src="https://pay.google.com/gp/p/js/pay.js"></script>
+```
+
+### 2. Configure Google Pay
+
+```javascript
+// Configuration
+const baseRequest = {
+  apiVersion: 2,
+  apiVersionMinor: 0
+};
+
+const tokenizationSpecification = {
+  type: 'PAYMENT_GATEWAY',
+  parameters: {
+    gateway: 'paytheory',
+    gatewayMerchantId: 'YOUR_PAY_THEORY_MERCHANT_ID'
+  }
+};
+
+const cardPaymentMethod = {
+  type: 'CARD',
+  parameters: {
+    allowedAuthMethods: ['PAN_ONLY', 'CRYPTOGRAM_3DS'],
+    allowedCardNetworks: ['AMEX', 'DISCOVER', 'MASTERCARD', 'VISA']
+  },
+  tokenizationSpecification: tokenizationSpecification
+};
+
+// Initialize client
+const paymentsClient = new google.payments.api.PaymentsClient({
+  environment: 'TEST' // Use 'PRODUCTION' for live
+});
+```
+
+### 3. Check Google Pay Availability
+
+```javascript
+async function isGooglePayAvailable() {
+  const isReadyToPayRequest = Object.assign({}, baseRequest);
+  isReadyToPayRequest.allowedPaymentMethods = [cardPaymentMethod];
+
+  try {
+    const response = await paymentsClient.isReadyToPay(isReadyToPayRequest);
+    return response.result;
+  } catch (err) {
+    console.error('Google Pay not available:', err);
+    return false;
+  }
+}
+
+// Check and show button
+isGooglePayAvailable().then(available => {
+  if (available) {
+    addGooglePayButton();
+  }
+});
+```
+
+### 4. Add Google Pay Button
+
+```javascript
+function addGooglePayButton() {
+  const button = paymentsClient.createButton({
+    onClick: onGooglePayButtonClick,
+    buttonType: 'pay'
+  });
+  
+  document.getElementById('google-pay-button-container').appendChild(button);
+}
+```
+
+***
+
+## Handle Payment
+
+### Create Payment Request
+
+```javascript
+function onGooglePayButtonClick() {
+  const paymentDataRequest = Object.assign({}, baseRequest);
+  paymentDataRequest.allowedPaymentMethods = [cardPaymentMethod];
+  
+  paymentDataRequest.transactionInfo = {
+    totalPriceStatus: 'FINAL',
+    totalPrice: '10.00',
+    currencyCode: 'USD'
+  };
+  
+  paymentDataRequest.merchantInfo = {
+    merchantName: 'Your Business Name'
+    // merchantId: 'YOUR_GOOGLE_MERCHANT_ID' // Required for production
+  };
+  
+  paymentsClient.loadPaymentData(paymentDataRequest)
+    .then(handlePaymentSuccess)
+    .catch(handlePaymentError);
+}
+```
+
+### Process with Pay Theory
+
+```javascript
+async function handlePaymentSuccess(paymentData) {
+  // Extract token
+  const token = paymentData.paymentMethodData.tokenizationData.token;
+  
+  // Initialize Pay Theory Messenger
+  const messenger = new PayTheoryMessenger({
+    apiKey: 'YOUR_PAY_THEORY_API_KEY'
+  });
+  
+  try {
+    // Process wallet transaction
+    const result = await messenger.walletTransaction({
+      token: token,
+      amount: 1000, // Amount in cents
+      currency: 'USD'
+    });
+    
+    if (result.state === 'SUCCEEDED') {
+      alert('Payment successful!');
+    } else {
+      alert('Payment failed');
+    }
+  } catch (error) {
+    console.error('Payment error:', error);
+    alert('Payment processing failed');
+  }
+}
+
+function handlePaymentError(error) {
+  if (error.statusCode === 'CANCELED') {
+    // User cancelled - no action needed
+    console.log('Payment cancelled');
+  } else {
+    console.error('Google Pay error:', error);
+    alert('Payment failed. Please try again.');
+  }
+}
+```
+
+***
+
+## Complete Example
+
+Here's a minimal working implementation:
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Google Pay Example</title>
+  <script src="https://pay.google.com/gp/p/js/pay.js"></script>
+  <script src="https://cdn.paytheory.com/messenger/latest/messenger.js"></script>
+</head>
+<body>
+  <h1>Checkout</h1>
+  <p>Total: $10.00</p>
+  <div id="google-pay-button-container"></div>
+  
+  <script>
+    // Configuration
+    const PAY_THEORY_API_KEY = 'YOUR_API_KEY';
+    const PAY_THEORY_MERCHANT_ID = 'YOUR_MERCHANT_ID';
+    
+    const baseRequest = {
+      apiVersion: 2,
+      apiVersionMinor: 0
+    };
+    
+    const tokenizationSpecification = {
+      type: 'PAYMENT_GATEWAY',
+      parameters: {
+        gateway: 'paytheory',
+        gatewayMerchantId: PAY_THEORY_MERCHANT_ID
+      }
+    };
+    
+    const cardPaymentMethod = {
+      type: 'CARD',
+      parameters: {
+        allowedAuthMethods: ['PAN_ONLY', 'CRYPTOGRAM_3DS'],
+        allowedCardNetworks: ['AMEX', 'DISCOVER', 'MASTERCARD', 'VISA']
+      },
+      tokenizationSpecification: tokenizationSpecification
+    };
+    
+    const paymentsClient = new google.payments.api.PaymentsClient({
+      environment: 'TEST'
+    });
+    
+    // Check availability
+    async function checkGooglePay() {
+      const isReadyToPayRequest = Object.assign({}, baseRequest);
+      isReadyToPayRequest.allowedPaymentMethods = [cardPaymentMethod];
+      
+      try {
+        const response = await paymentsClient.isReadyToPay(isReadyToPayRequest);
+        if (response.result) {
+          addGooglePayButton();
+        }
+      } catch (err) {
+        console.error('Google Pay not available');
+      }
+    }
+    
+    // Add button
+    function addGooglePayButton() {
+      const button = paymentsClient.createButton({
+        onClick: onGooglePayClick
+      });
+      document.getElementById('google-pay-button-container').appendChild(button);
+    }
+    
+    // Handle click
+    function onGooglePayClick() {
+      const paymentDataRequest = Object.assign({}, baseRequest);
+      paymentDataRequest.allowedPaymentMethods = [cardPaymentMethod];
+      paymentDataRequest.transactionInfo = {
+        totalPriceStatus: 'FINAL',
+        totalPrice: '10.00',
+        currencyCode: 'USD'
+      };
+      paymentDataRequest.merchantInfo = {
+        merchantName: 'Your Business Name'
+      };
+      
+      paymentsClient.loadPaymentData(paymentDataRequest)
+        .then(handlePaymentData)
+        .catch(handleError);
+    }
+    
+    // Process payment
+    async function handlePaymentData(paymentData) {
+      const token = paymentData.paymentMethodData.tokenizationData.token;
+      
+      const messenger = new PayTheoryMessenger({
+        apiKey: PAY_THEORY_API_KEY
+      });
+      
+      const result = await messenger.walletTransaction({
+        token: token,
+        amount: 1000, // $10.00 in cents
+        currency: 'USD'
+      });
+      
+      if (result.state === 'SUCCEEDED') {
+        alert('Payment successful!');
+      } else {
+        alert('Payment failed');
+      }
+    }
+    
+    // Handle errors
+    function handleError(error) {
+      if (error.statusCode !== 'CANCELED') {
+        console.error('Payment error:', error);
+        alert('Payment failed');
+      }
+    }
+    
+    // Initialize
+    checkGooglePay();
+  </script>
+</body>
+</html>
+```
+
+***
+
+## Production Requirements
+
+Before going live:
+
+1. Switch environment to `PRODUCTION`
+2. Add your Google merchant ID
+3. Ensure SSL certificate is valid
+4. Review [Google Pay Brand Guidelines](https://developers.google.com/pay/api/web/guides/brand-guidelines)
+
+***
+
+## Next Steps
+
+- Test your implementation in the TEST environment
+- Complete the [Google Pay Integration Checklist](https://developers.google.com/pay/api/web/guides/test-and-deploy/integration-checklist)
+- Monitor transactions in your Pay Theory dashboard
+
+For additional Google Pay features and options, refer to [Google's official documentation](https://developers.google.com/pay/api/web).

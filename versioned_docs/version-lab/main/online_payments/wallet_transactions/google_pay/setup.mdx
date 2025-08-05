@@ -1,0 +1,215 @@
+---
+sidebar_position: 2
+sidebar_label: "Setup & Requirements"
+title: "Google Pay Setup & Requirements"
+---
+
+# Google Pay Setup & Requirements
+
+Configure your Google Pay integration and ensure your environment meets all requirements before implementation.
+
+***
+
+## Prerequisites
+
+### 1. Pay Theory Account
+
+You'll need an active Pay Theory account with:
+- Valid API credentials (API Key and Merchant ID)
+- Configured payment processing
+- Access to the Pay Theory dashboard
+
+:::tip Getting Started
+Don't have a Pay Theory account? [Contact our sales team](https://paytheory.com/contact) to get started.
+:::
+
+### 2. Google Pay Registration
+
+Google Pay requires:
+- Google Pay merchant account via [Google Pay & Wallet Console](https://pay.google.com/business/console)
+- Accepted [Google Pay API Terms of Service](https://payments.developers.google.com/terms/sellertos)
+- Compliance with [Google Pay APIs Acceptable Use Policy](https://payments.developers.google.com/terms/aup)
+
+### 3. Technical Requirements
+
+Your website must have:
+- **Valid SSL certificate** (HTTPS required for production)
+- **Modern browser support**
+- **JavaScript enabled**
+
+***
+
+## Step 1: Register with Google Pay
+
+### Create Google Pay Account
+
+1. Visit [Google Pay & Wallet Console](https://pay.google.com/business/console)
+2. Sign in with your Google account
+3. Click **Get Started** to create a business profile
+
+### Complete Business Profile
+
+Provide the following information:
+- Business name
+- Business type
+- Website URL
+- Contact information
+- Business address
+
+:::note Verification Time
+Google may take 1-2 business days to verify your business information.
+:::
+
+***
+
+## Step 2: Configure Pay Theory Gateway
+
+### Gateway Parameters
+
+Google Pay needs to know how to process payments through Pay Theory. Use these parameters:
+
+```javascript
+const tokenizationSpecification = {
+  type: 'PAYMENT_GATEWAY',
+  parameters: {
+    gateway: 'paytheory',
+    gatewayMerchantId: 'YOUR_PAY_THEORY_MERCHANT_ID'
+  }
+};
+```
+
+### Obtain Your Merchant ID
+
+1. Log in to [Pay Theory Dashboard](https://portal.paytheory.com)
+2. Navigate to **Account Settings**
+3. Copy your **Merchant ID**
+
+***
+
+## Step 3: Environment Setup
+
+### Development Environment
+
+For testing, use Google's TEST environment:
+
+```javascript
+const paymentsClient = new google.payments.api.PaymentsClient({
+  environment: 'TEST'
+});
+```
+
+:::tip Test Environment
+In TEST mode, you can use Google's test cards without being charged.
+:::
+
+### Production Environment
+
+For live payments, switch to PRODUCTION:
+
+```javascript
+const paymentsClient = new google.payments.api.PaymentsClient({
+  environment: 'PRODUCTION'
+});
+```
+
+***
+
+## Step 4: Brand Compliance
+
+### Trademark Requirements
+
+- Include the trademark symbol (™) on first mention of Google Pay on each page
+- Use only official Google Pay buttons and assets
+- Follow [Google Pay Web Brand Guidelines](https://developers.google.com/pay/api/web/guides/brand-guidelines)
+
+### Button Guidelines
+
+Acceptable button configurations:
+- Types: `pay`, `buy`, `donate`, `checkout`, `order`, `subscribe`
+- Themes: `dark`, `light`
+- Sizes: Various, maintain aspect ratio
+
+Example:
+```javascript
+const button = paymentsClient.createButton({
+  buttonType: 'pay',
+  buttonColor: 'dark',
+  buttonSizeMode: 'fill'
+});
+```
+
+***
+
+## Step 5: Initialize Pay Theory SDK
+
+### Include the SDK
+
+Add the Pay Theory Messenger SDK to your project:
+
+```html
+<script src="https://cdn.paytheory.com/messenger/latest/messenger.js"></script>
+```
+
+### Configure Messenger
+
+Initialize with your credentials:
+
+```javascript title="javascript"
+const messenger = new PayTheoryMessenger({
+  apiKey: 'YOUR_PAY_THEORY_API_KEY',
+  environment: 'production' // or 'sandbox' for testing
+});
+```
+
+***
+
+## Configuration Checklist
+
+Before proceeding to implementation, verify:
+
+- [ ] Google Pay business account created
+- [ ] Business verification complete
+- [ ] Pay Theory merchant ID obtained
+- [ ] SSL certificate installed
+- [ ] Pay Theory API credentials ready
+- [ ] Brand guidelines reviewed
+- [ ] Test environment accessible
+
+***
+
+## Security Considerations
+
+### HTTPS Requirements
+
+Google Pay requires HTTPS in production:
+- Valid SSL certificate (not self-signed)
+- No mixed content warnings
+- Secure cookie settings
+
+### Content Security Policy
+
+If using CSP headers, allow Google Pay domains:
+
+```
+Content-Security-Policy: 
+  script-src 'self' https://pay.google.com;
+  frame-src 'self' https://pay.google.com;
+  connect-src 'self' https://pay.google.com;
+```
+
+### PCI Compliance
+
+Google Pay reduces PCI scope but doesn't eliminate it:
+- Follow PCI DSS guidelines
+- Use Pay Theory's secure token handling
+- Never log payment tokens
+
+***
+
+## Next Steps
+
+With setup complete, you're ready to implement Google Pay on your website:
+
+<a href="./implementation" class="button button--primary button--lg">
+  Continue to Implementation →
+</a>
