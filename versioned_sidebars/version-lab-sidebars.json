@@ -138,20 +138,18 @@
             "main/online_payments/wallet_transactions/overview",
             {
               "type": "category",
-              "label": "Apple Pay",
+              "label": "Apple Pay™",
               "items": [
-                "main/online_payments/wallet_transactions/apple_pay/overview",
-                "main/online_payments/wallet_transactions/apple_pay/setup",
-                "main/online_payments/wallet_transactions/apple_pay/implementation"
+                "main/online_payments/wallet_transactions/apple_pay/getting_started",
+                "main/online_payments/wallet_transactions/apple_pay/apple_pay_on_web"
               ]
             },
             {
               "type": "category",
-              "label": "Google Pay",
+              "label": "Google Pay™",
               "items": [
-                "main/online_payments/wallet_transactions/google_pay/overview",
-                "main/online_payments/wallet_transactions/google_pay/setup",
-                "main/online_payments/wallet_transactions/google_pay/implementation"
+                "main/online_payments/wallet_transactions/google_pay/getting_started",
+                "main/online_payments/wallet_transactions/google_pay/google_pay_on_web"
               ]
             }
           ]

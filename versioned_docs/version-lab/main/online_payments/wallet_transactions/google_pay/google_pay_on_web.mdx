@@ -1,0 +1,323 @@
+---
+sidebar_position: 2
+sidebar_label: "Google Pay™ on Web"
+title: "Google Pay™ on Web"
+---
+
+# Google Pay™ on Web
+
+Implement Google Pay™ payments on your website using the Pay Theory JavaScript SDK.
+
+***
+
+## Google Pay™ Console Setup
+
+### 1. Register Your Business
+
+1. Visit [Google Pay & Wallet Console](https://pay.google.com/business/console)
+2. Sign in with your Google account
+3. Complete the business profile:
+   - Business name and type
+   - Website URL
+   - Business address
+4. Accept Google Pay™ API Terms of Service
+
+### 2. Configure Gateway Integration
+
+1. Select **Web** as your integration type
+2. Choose **Gateway** integration
+3. Enter gateway details:
+   - **Gateway**: Pay Theory
+   - **Gateway Merchant ID**: Your Pay Theory Merchant ID
+
+### 3. Add Your Website
+
+1. Click **Add website** in the console
+2. Enter your production domain
+3. Google will verify your SSL certificate
+4. Status should show as "Active"
+
+:::note Development Testing
+Use `environment: 'TEST'` for local development. Production domain registration is only required for live transactions.
+:::
+
+***
+
+## Implementation
+
+### 1. Include Required Scripts
+
+```html
+<!-- Google Pay API -->
+<script src="https://pay.google.com/gp/p/js/pay.js"></script>
+
+<!-- Pay Theory SDK -->
+<script src="https://cdn.paytheory.com/messenger/latest/messenger.js"></script>
+```
+
+### 2. Initialize Pay Theory Messenger
+
+```javascript
+// Initialize Pay Theory Messenger
+let messenger;
+
+async function initializePayTheory() {
+  try {
+    messenger = new window.PayTheoryMessenger({ 
+      apiKey: 'YOUR_PAY_THEORY_API_KEY' 
+    });
+    await messenger.initialize();
+    console.log('Pay Theory Messenger initialized');
+  } catch (error) {
+    console.error('Failed to initialize:', error);
+  }
+}
+
+// Initialize on page load
+window.addEventListener('DOMContentLoaded', initializePayTheory);
+```
+
+### 3. Configure Google Pay™
+
+```javascript
+// Google Pay configuration
+const GOOGLE_PAY_CONFIG = {
+  environment: 'PRODUCTION', // Use 'TEST' for development
+  apiVersion: 2,
+  apiVersionMinor: 0,
+  merchantInfo: {
+    merchantName: 'Your Business Name',
+    merchantId: 'YOUR_GOOGLE_MERCHANT_ID' // Required for PRODUCTION
+  },
+  allowedPaymentMethods: [{
+    type: 'CARD',
+    parameters: {
+      allowedAuthMethods: ['PAN_ONLY', 'CRYPTOGRAM_3DS'],
+      allowedCardNetworks: ['AMEX', 'DISCOVER', 'JCB', 'MASTERCARD', 'VISA'],
+      billingAddressRequired: true,
+      billingAddressParameters: {
+        format: 'FULL',
+        phoneNumberRequired: true
+      }
+    },
+    tokenizationSpecification: {
+      type: 'PAYMENT_GATEWAY',
+      parameters: {
+        gateway: 'paytheory',
+        gatewayMerchantId: 'YOUR_PAY_THEORY_MERCHANT_ID'
+      }
+    }
+  }]
+};
+
+// Initialize Google Pay client
+let googlePaymentsClient;
+```
+
+### 4. Check Google Pay™ Availability
+
+```javascript
+async function checkGooglePayAvailability() {
+  // Create payments client
+  googlePaymentsClient = new google.payments.api.PaymentsClient({
+    environment: GOOGLE_PAY_CONFIG.environment
+  });
+
+  // Check if Google Pay is available
+  const isReadyToPayRequest = {
+    apiVersion: GOOGLE_PAY_CONFIG.apiVersion,
+    apiVersionMinor: GOOGLE_PAY_CONFIG.apiVersionMinor,
+    allowedPaymentMethods: GOOGLE_PAY_CONFIG.allowedPaymentMethods
+  };
+
+  try {
+    const response = await googlePaymentsClient.isReadyToPay(isReadyToPayRequest);
+    if (response.result) {
+      renderGooglePayButton();
+    } else {
+      console.log('Google Pay is not available');
+    }
+  } catch (error) {
+    console.error('Error checking Google Pay availability:', error);
+  }
+}
+```
+
+### 5. Render Google Pay™ Button
+
+```javascript
+function renderGooglePayButton() {
+  const button = googlePaymentsClient.createButton({
+    onClick: handleGooglePay,
+    buttonType: 'plain',
+    buttonColor: 'black',
+    buttonSizeMode: 'fill'
+  });
+
+  // Add button to the page
+  const container = document.getElementById('google-pay-container');
+  container.appendChild(button);
+}
+```
+
+### 6. Handle Google Pay™ Transaction
+
+```javascript
+async function handleGooglePay() {
+  if (!messenger) {
+    console.error('Pay Theory not initialized');
+    return;
+  }
+
+  const amount = 1000; // Amount in cents ($10.00)
+
+  // Create payment data request
+  const paymentDataRequest = {
+    ...GOOGLE_PAY_CONFIG,
+    transactionInfo: {
+      countryCode: 'US',
+      currencyCode: 'USD',
+      totalPriceStatus: 'FINAL',
+      totalPrice: (amount / 100).toFixed(2) // Convert cents to dollars
+    }
+  };
+
+  try {
+    // Show Google Pay payment sheet
+    const paymentData = await googlePaymentsClient.loadPaymentData(paymentDataRequest);
+    
+    // Process with Pay Theory
+    const result = await messenger.processWalletTransaction({
+      amount: amount,
+      digitalWalletPayload: JSON.stringify(paymentData),
+      walletType: window.PayTheoryMessenger.googlePay
+    });
+
+    if (result.type === 'SUCCESS') {
+      const transaction = result.transaction;
+      
+      if (transaction.status === 'PENDING' || transaction.status === 'SUCCEEDED') {
+        showSuccessMessage(transaction);
+      } else {
+        showErrorMessage(transaction.failure_reasons);
+      }
+    } else {
+      showErrorMessage(result.error);
+    }
+  } catch (error) {
+    if (error.statusCode === 'CANCELED') {
+      console.log('Payment cancelled by user');
+    } else {
+      showErrorMessage(error.message);
+    }
+  }
+}
+```
+
+### 7. Handle Transaction Results
+
+```javascript
+function showSuccessMessage(transaction) {
+  console.log('Payment successful!', {
+    transactionId: transaction.transaction_id,
+    amount: transaction.gross_amount,
+    status: transaction.status,
+    cardBrand: transaction.payment_method?.card_brand,
+    lastFour: transaction.payment_method?.last_four
+  });
+  // Update UI to show success
+}
+
+function showErrorMessage(error) {
+  console.error('Payment failed:', error);
+  // Update UI to show error
+}
+```
+
+***
+
+## Complete Example
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Google Pay™ Example</title>
+  <script src="https://pay.google.com/gp/p/js/pay.js"></script>
+  <script src="https://cdn.paytheory.com/messenger/latest/messenger.js"></script>
+  <style>
+    #google-pay-container {
+      display: flex;
+      justify-content: center;
+      margin: 20px 0;
+    }
+  </style>
+</head>
+<body>
+  <h1>Checkout</h1>
+  <p>Total: $10.00</p>
+  <div id="google-pay-container"></div>
+  
+  <script>
+    // Initialize when page loads
+    window.addEventListener('DOMContentLoaded', async () => {
+      await initializePayTheory();
+      await checkGooglePayAvailability();
+    });
+    
+    // Your implementation code here
+  </script>
+</body>
+</html>
+```
+
+***
+
+## Environment Configuration
+
+### Development/Testing
+```javascript
+const GOOGLE_PAY_CONFIG = {
+  environment: 'TEST',
+  // merchantId not required for TEST
+  // Use test card numbers provided by Google
+}
+```
+
+### Production
+```javascript
+const GOOGLE_PAY_CONFIG = {
+  environment: 'PRODUCTION',
+  merchantInfo: {
+    merchantId: 'YOUR_GOOGLE_MERCHANT_ID' // Required
+  }
+}
+```
+
+***
+
+## Browser Support
+
+Google Pay™ works across multiple browsers:
+- Chrome 61+
+- Safari 11.1+
+- Firefox 60+
+- Edge 79+
+- Opera 48+
+
+***
+
+## Testing
+
+1. Use `environment: 'TEST'` for development
+2. Test cards are automatically provided in TEST mode
+3. No merchant registration required for TEST environment
+4. Switch to `PRODUCTION` only after testing is complete
+
+***
+
+## Additional Resources
+
+- [Google Pay Web Demo](https://developers.google.com/pay/api/web/guides/resources/demos)
+- [Google Pay API Documentation](https://developers.google.com/pay/api/web)
+- [Pay Theory Messenger SDK](../../../../sdk/javascript/messenger/pay_theory_messenger)

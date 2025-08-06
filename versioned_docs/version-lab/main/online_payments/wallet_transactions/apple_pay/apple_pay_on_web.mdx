@@ -1,0 +1,264 @@
+---
+sidebar_position: 2
+sidebar_label: "Apple Pay™ on Web"
+title: "Apple Pay™ on Web"
+---
+
+# Apple Pay™ on Web
+
+Implement Apple Pay™ payments on your website using the Pay Theory JavaScript SDK.
+
+***
+
+## Domain Verification
+
+Before implementing Apple Pay™, verify your domain through Pay Theory:
+
+1. **Download verification file** from Pay Theory's partner portal
+2. **Upload the file** to your server at:
+   ```
+   https://yourdomain.com/.well-known/apple-developer-merchantid-domain-association
+   ```
+3. **Ensure HTTPS** is properly configured on your domain
+4. **Click verify** in the Pay Theory portal to complete registration
+
+Once verified, you're ready to implement Apple Pay™ on your website.
+
+***
+
+## Implementation
+
+### 1. Include Required Scripts
+
+```html
+<!-- Apple Pay SDK -->
+<script crossorigin src="https://applepay.cdn-apple.com/jsapi/1.latest/apple-pay-sdk.js"></script>
+
+<!-- Pay Theory SDK -->
+<script src="https://cdn.paytheory.com/messenger/latest/messenger.js"></script>
+```
+
+### 2. Initialize Pay Theory Messenger
+
+```javascript
+// Initialize Pay Theory Messenger
+let messenger;
+
+async function initializePayTheory() {
+  try {
+    messenger = new window.PayTheoryMessenger({ 
+      apiKey: 'YOUR_PAY_THEORY_API_KEY' 
+    });
+    await messenger.initialize();
+    console.log('Pay Theory Messenger initialized');
+  } catch (error) {
+    console.error('Failed to initialize:', error);
+  }
+}
+
+// Initialize on page load
+window.addEventListener('DOMContentLoaded', initializePayTheory);
+```
+
+### 3. Check Apple Pay™ Availability
+
+```javascript
+function checkApplePayAvailability() {
+  // Check if Apple Pay is supported
+  if (window.ApplePaySession && ApplePaySession.canMakePayments()) {
+    // Show Apple Pay button
+    document.getElementById('apple-pay-button').style.display = 'block';
+  } else {
+    console.log('Apple Pay is not available on this device');
+  }
+}
+```
+
+### 4. Add Apple Pay™ Button
+
+```html
+<style>
+  .apple-pay-button {
+    display: none;
+    -webkit-appearance: -apple-pay-button;
+    -apple-pay-button-type: plain;
+    -apple-pay-button-style: black;
+    width: 240px;
+    height: 45px;
+    cursor: pointer;
+  }
+</style>
+
+<button id="apple-pay-button" class="apple-pay-button" onclick="handleApplePay()">
+  Make Payment
+</button>
+```
+
+### 5. Create Payment Request
+
+```javascript
+function createPaymentRequest(amount) {
+  return {
+    countryCode: 'US',
+    currencyCode: 'USD',
+    supportedNetworks: ['visa', 'masterCard', 'amex', 'discover'],
+    merchantCapabilities: ['supports3DS'],
+    total: {
+      label: 'Your Business Name',
+      amount: (amount / 100).toFixed(2) // Convert cents to dollars
+    }
+  };
+}
+```
+
+### 6. Handle Apple Pay™ Transaction
+
+```javascript
+async function handleApplePay() {
+  if (!messenger) {
+    console.error('Pay Theory not initialized');
+    return;
+  }
+
+  const amount = 1000; // Amount in cents ($10.00)
+  const request = createPaymentRequest(amount);
+  
+  // Create Apple Pay session
+  const session = new ApplePaySession(3, request);
+  
+  // Handle merchant validation
+  session.onvalidatemerchant = async (event) => {
+    try {
+      // Get Apple Pay session from Pay Theory
+      const response = await messenger.getApplePaySession();
+      
+      if (response.type === 'SUCCESS' && response.session) {
+        const sessionData = response.session.session || response.session;
+        session.completeMerchantValidation(sessionData);
+      } else {
+        throw new Error('Merchant validation failed');
+      }
+    } catch (error) {
+      console.error('Validation error:', error);
+      session.abort();
+    }
+  };
+  
+  // Handle payment authorization
+  session.onpaymentauthorized = async (event) => {
+    try {
+      // Process with Pay Theory
+      const result = await messenger.processWalletTransaction({
+        amount: amount,
+        digitalWalletPayload: JSON.stringify(event.payment),
+        walletType: window.PayTheoryMessenger.applePay
+      });
+      
+      if (result.type === 'SUCCESS') {
+        const transaction = result.transaction;
+        
+        if (transaction.status === 'PENDING' || transaction.status === 'SUCCEEDED') {
+          session.completePayment(ApplePaySession.STATUS_SUCCESS);
+          showSuccessMessage(transaction);
+        } else {
+          session.completePayment(ApplePaySession.STATUS_FAILURE);
+          showErrorMessage(transaction.failure_reasons);
+        }
+      } else {
+        session.completePayment(ApplePaySession.STATUS_FAILURE);
+        showErrorMessage(result.error);
+      }
+    } catch (error) {
+      session.completePayment(ApplePaySession.STATUS_FAILURE);
+      showErrorMessage(error.message);
+    }
+  };
+  
+  // Start the session
+  session.begin();
+}
+```
+
+### 7. Handle Transaction Results
+
+```javascript
+function showSuccessMessage(transaction) {
+  console.log('Payment successful!', {
+    transactionId: transaction.transaction_id,
+    amount: transaction.gross_amount,
+    status: transaction.status
+  });
+  // Update UI to show success
+}
+
+function showErrorMessage(error) {
+  console.error('Payment failed:', error);
+  // Update UI to show error
+}
+```
+
+***
+
+## Complete Example
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Apple Pay™ Example</title>
+  <script crossorigin src="https://applepay.cdn-apple.com/jsapi/1.latest/apple-pay-sdk.js"></script>
+  <script src="https://cdn.paytheory.com/messenger/latest/messenger.js"></script>
+  <style>
+    .apple-pay-button {
+      display: none;
+      -webkit-appearance: -apple-pay-button;
+      -apple-pay-button-type: plain;
+      -apple-pay-button-style: black;
+      width: 240px;
+      height: 45px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>Checkout</h1>
+  <p>Total: $10.00</p>
+  <button id="apple-pay-button" class="apple-pay-button" onclick="handleApplePay()">
+    Make Payment
+  </button>
+  
+  <script>
+    // Your implementation code here
+  </script>
+</body>
+</html>
+```
+
+***
+
+## Browser Support
+
+Apple Pay™ is only available in Safari on:
+- Mac with Touch ID or authenticated Apple Watch
+- iPhone and iPad with Touch ID or Face ID
+
+:::note Browser Limitations
+Apple Pay™ is not supported in Chrome, Firefox, or Edge browsers. Consider offering alternative payment methods for users on other browsers.
+:::
+
+***
+
+## Testing
+
+- Use Safari on a real Apple device
+- Ensure your domain is verified in Pay Theory portal
+- Test with sandbox API keys before going live
+- Monitor transactions in Pay Theory dashboard
+
+***
+
+## Additional Resources
+
+- [Apple Pay Demo](https://applepaydemo.apple.com/)
+- [Apple Pay JS API Documentation](https://developer.apple.com/documentation/applepayontheweb/apple-pay-js-api)
+- [Pay Theory Messenger SDK](../../../../sdk/javascript/messenger/pay_theory_messenger)

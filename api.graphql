@@ -1,0 +1,1924 @@
+type AcceptedPaymentMethods @aws_lambda @aws_iam @aws_cognito_user_pools {
+  ach: Boolean
+  card: Boolean
+  cash: Boolean
+}
+
+enum AcceptedPaymentMethodsEnum {
+  ALL
+  NOT_ACH
+  NOT_CARD
+  NOT_CASH
+  ONLY_ACH
+  ONLY_CARD
+  ONLY_CASH
+}
+
+input AcceptedPaymentMethodsInput {
+  ach: Boolean
+  card: Boolean
+  cash: Boolean
+}
+
+type AchFee @aws_lambda @aws_iam @aws_cognito_user_pools {
+  merchant_fee: AchMerchantFee
+  service_fee: AchServiceFee
+}
+
+input AchFeeInput {
+  merchant_fee: AchMerchantFeeInput!
+  service_fee: AchServiceFeeInput!
+}
+
+input AchInput {
+  account_number: String!
+  account_type: BankAccountType!
+  address_line1: String
+  address_line2: String
+  city: String
+  country: String
+  name_on_account: String!
+  postal_code: String
+  region: String
+  routing_number: String!
+}
+
+type AchMerchantFee @aws_lambda @aws_iam @aws_cognito_user_pools {
+  basis_points: Int!
+  fixed: Int!
+  max_fee: Int
+}
+
+input AchMerchantFeeInput {
+  basis_points: Int
+  fixed: Int
+  max_fee: Int
+}
+
+type AchReturnDetails @aws_lambda @aws_iam @aws_cognito_user_pools {
+  return_code: String
+  return_details: String
+  transfer_type: AchReturnTransferType
+}
+
+enum AchReturnTransferType {
+  CREDIT
+  DEBIT
+}
+
+type AchServiceFee @aws_lambda @aws_iam @aws_cognito_user_pools {
+  basis_points: Int
+  fixed: Int
+  max_fee: Int
+  min_fee: Int
+}
+
+input AchServiceFeeInput {
+  basis_points: Int!
+  fixed: Int!
+  max_fee: Int
+  min_fee: Int
+}
+
+type AdditionalPurchaseData @aws_lambda @aws_iam @aws_cognito_user_pools {
+  level3_data_line_item: [Level3DataLineItem]
+  level3_data_summary: Level3DataSummary
+}
+
+input AdditionalPurchaseDataInput {
+  level3_data_line_item: [Level3DataLineItemInput]
+  level3_data_summary: Level3DataSummaryInput
+}
+
+type AdditionalUnderwritingData @aws_lambda @aws_iam @aws_cognito_user_pools {
+  annual_ach_volume: String
+  average_ach_transfer_amount: Int
+  average_card_transfer_amount: Int
+  business_description: String
+  card_volume_distribution: CardVolumeDistribution
+  credit_check_allowed: Boolean
+  credit_check_ip_address: AWSIPAddress
+  credit_check_timestamp: AWSDateTime
+  credit_check_user_agent: String
+  merchant_agreement_accepted: Boolean
+  merchant_agreement_ip_address: AWSIPAddress
+  merchant_agreement_timestamp: AWSDateTime
+  merchant_agreement_user_agent: String
+  statement_descriptor: String
+  refund_policy: RefundPolicy
+  volume_distribution_by_business_type: VolumeDistributionByBusinessType
+}
+
+input AdditionalUnderwritingDataInput {
+  annual_ach_volume: String
+  average_ach_transfer_amount: Int
+  average_card_transfer_amount: Int
+  business_description: String
+  card_volume_distribution: CardVolumeDistributionInput
+  credit_check_allowed: Boolean
+  credit_check_ip_address: AWSIPAddress
+  credit_check_timestamp: AWSDateTime
+  credit_check_user_agent: String
+  merchant_agreement_accepted: Boolean
+  merchant_agreement_ip_address: AWSIPAddress
+  merchant_agreement_timestamp: AWSDateTime
+  merchant_agreement_user_agent: String
+  statement_descriptor: String
+  refund_policy: RefundPolicy
+  volume_distribution_by_business_type: VolumeDistributionByBusinessTypeInput
+}
+
+type Address @aws_lambda @aws_iam @aws_cognito_user_pools {
+  city: String
+  country: String
+  line1: String
+  line2: String
+  postal_code: String
+  region: String
+}
+
+input AddressInput {
+  city: String
+  country: String
+  line1: String
+  line2: String
+  postal_code: String
+  region: String
+}
+
+type Authorization @aws_lambda @aws_iam @aws_cognito_user_pools {
+  account_code: String
+  additional_purchase_data: AdditionalPurchaseData
+  amount: Int!
+  authorization_date: AWSDateTime!
+  authorization_id: String!
+  avs_status: String
+  captured_amount: Int
+  currency: String!
+  device_id: String
+  expiration_date: AWSDateTime
+  failure_reasons: [String]
+  fee_mode: FeeMode!
+  fees: Int!
+  invoice: Invoice
+  merchant_uid: String!
+  metadata(query_list: [QueryPair]): AWSJSON
+  payment_method(query_list: [QueryPair]): PaymentMethodToken!
+  processor: String
+  reference: String
+  sale_id: String
+  status: AuthorizationStatus!
+  timezone: String
+  transaction_id: String
+  updated_row_at: AWSDateTime
+}
+
+type Authorizations @aws_lambda @aws_iam @aws_cognito_user_pools {
+  items: [Authorization]
+  total_row_count: Int
+}
+
+enum AuthorizationStatus {
+  CANCELED
+  FAILED
+  SUCCEEDED
+}
+
+enum BankAccountType {
+  BUSINESS_CHECKING
+  BUSINESS_SAVINGS
+  PERSONAL_CHECKING
+  PERSONAL_SAVINGS
+}
+
+enum BankAccountUse {
+  CHARGEBACK
+  CREDIT
+  DEBIT
+}
+
+type Barcode @aws_lambda @aws_iam @aws_cognito_user_pools {
+  account_code: String
+  amount: Int!
+  barcode_id: String!
+  barcode_url: String
+  email_or_phone: String!
+  expiration_date: AWSDate
+  fees: Int
+  full_name: String!
+  invoice_id: String
+  merchant_uid: String!
+  metadata: AWSJSON
+  payor: Payor
+  payor_id: String
+  reference: String
+  sale_id: String
+}
+
+input BarcodeInput {
+  account_code: String
+  amount: Int!
+  days_until_expiration: Int
+  email_or_phone: String!
+  expiration_date: AWSDate
+  full_name: String!
+  invoice_id: String
+  merchant_uid: String!
+  metadata: AWSJSON
+  payor: PayorInput
+  payor_id: String
+  reference: String
+  sale_id: String
+}
+
+type BarcodePaymentResponse @aws_lambda @aws_iam @aws_cognito_user_pools {
+  confirmation_code: String!
+  status: BarcodePaymentStatus!
+  status_message: String!
+}
+
+enum BarcodePaymentStatus {
+  PAYMENT_ACCEPTED
+  PAYMENT_DECLINED
+  SYSTEM_ERROR
+}
+
+input BillingAddressInput {
+  address_line1: String
+  address_line2: String
+  city: String
+  country: String
+  full_name: String
+  postal_code: String
+  region: String
+}
+
+type Business @aws_lambda @aws_iam @aws_cognito_user_pools {
+  additional_underwriting_data: AdditionalUnderwritingData
+  underwriting_data: UnderwritingData
+}
+
+type BusinessBank @aws_lambda @aws_iam @aws_cognito_user_pools {
+  account_number: String
+  account_type: BankAccountType
+  account_uses: [BankAccountUse]
+  bank_code: String
+  bank_name: String
+  institution_number: String
+  name: String
+  transit_number: String
+}
+
+input BusinessBankInput {
+  account_number: String
+  account_type: BankAccountType
+  account_uses: [BankAccountUse]
+  bank_code: String
+  bank_name: String
+  institution_number: String
+  name: String
+  transit_number: String
+}
+
+input BusinessInput {
+  additional_underwriting_data: AdditionalUnderwritingDataInput
+  underwriting_data: UnderwritingDataInput
+}
+
+type BusinessOwner @aws_lambda @aws_iam @aws_cognito_user_pools {
+  address: Address
+  dob: AWSDate
+  email: AWSEmail
+  first_name: String
+  last_name: String
+  middle_name: String
+  nationality: CountryCodes_Alpha3
+  owner_position: OwnerPosition
+  percentage_ownership: Int
+  phone: AWSPhone
+  primary_owner: Boolean
+  tax_id: String
+  title: String
+  uid: ID!
+}
+
+input BusinessOwnerInput {
+  address: AddressInput
+  dob: AWSDate
+  email: AWSEmail
+  first_name: String
+  last_name: String
+  middle_name: String
+  nationality: CountryCodes_Alpha3
+  owner_position: OwnerPosition
+  percentage_ownership: Int
+  phone: AWSPhone
+  primary_owner: Boolean
+  tax_id: String
+  title: String
+  uid: ID!
+}
+
+enum BusinessType {
+  CORP
+  GOV
+  INTERNATIONAL
+  LLC
+  PARTNERSHIP
+  SOLE_PROPRIETORSHIP
+  TAX_EXEMPT
+  TRUST
+}
+
+enum CallToActionType {
+  BOOK
+  DONATE
+  PAY
+}
+
+input CanadianEftInput {
+  account_number: String!
+  account_type: BankAccountType!
+  institution_number: String!
+  name_on_account: String!
+  transit_number: String!
+}
+
+type CardBrandFee @aws_lambda @aws_iam @aws_cognito_user_pools {
+  merchant_fee: CardMerchantFee
+}
+
+input CardBrandFeeInput {
+  merchant_fee: CardMerchantFeeInput!
+}
+
+input CardExpirationInput {
+  month: String!
+  year: String!
+}
+
+type CardFee @aws_lambda @aws_iam @aws_cognito_user_pools {
+  merchant_fee: CardMerchantFee
+  service_fee: CardServiceFee
+}
+
+input CardFeeInput {
+  merchant_fee: CardMerchantFeeInput!
+  service_fee: CardServiceFeeInput!
+}
+
+input CardInput {
+  address_line1: String
+  address_line2: String
+  card_number: String!
+  city: String
+  country: String
+  exp_date: CardExpirationInput!
+  full_name: String
+  postal_code: String!
+  region: String
+  security_code: String!
+}
+
+type CardMerchantFee @aws_lambda @aws_iam @aws_cognito_user_pools {
+  basis_points: Int
+  fixed: Int
+}
+
+input CardMerchantFeeInput {
+  basis_points: Int!
+  fixed: Int!
+}
+
+type CardServiceFee @aws_lambda @aws_iam @aws_cognito_user_pools {
+  basis_points: Int
+  fixed: Int
+  min_fee: Int
+}
+
+input CardServiceFeeInput {
+  basis_points: Int!
+  fixed: Int!
+  min_fee: Int
+}
+
+enum CardType {
+  BUSINESS_CREDIT
+  BUSINESS_DEBIT
+  CREDIT_CARD
+  DEBIT_CARD
+  PREPAID_CARD
+}
+
+type CardVolumeDistribution @aws_lambda @aws_iam @aws_cognito_user_pools {
+  card_present_percentage: Int
+  ecommerce_percentage: Int
+}
+
+input CardVolumeDistributionInput {
+  card_present_percentage: Int
+  ecommerce_percentage: Int
+}
+
+enum ConjunctiveOperator {
+  AND_NEXT
+  NONE_NEXT
+  OR_NEXT
+}
+
+enum CountryCodes_Alpha3 {
+  AFG
+  ALA
+  ALB
+  DZA
+  ASM
+  AND
+  AGO
+  AIA
+  ATA
+  ATG
+  ARG
+  ARM
+  ABW
+  AUS
+  AUT
+  AZE
+  BHS
+  BHR
+  BGD
+  BRB
+  BLR
+  BEL
+  BLZ
+  BEN
+  BMU
+  BTN
+  BOL
+  BES
+  BIH
+  BWA
+  BVT
+  BRA
+  IOT
+  BRN
+  BGR
+  BFA
+  BDI
+  CPV
+  KHM
+  CMR
+  CAN
+  CYM
+  CAF
+  TCD
+  CHL
+  CHN
+  CXR
+  CCK
+  COL
+  COM
+  COG
+  COD
+  COK
+  CRI
+  CIV
+  HRV
+  CUB
+  CUW
+  CYP
+  CZE
+  DNK
+  DJI
+  DMA
+  DOM
+  ECU
+  EGY
+  SLV
+  GNQ
+  ERI
+  EST
+  SWZ
+  ETH
+  FLK
+  FRO
+  FJI
+  FIN
+  FRA
+  GUF
+  PYF
+  ATF
+  GAB
+  GMB
+  GEO
+  DEU
+  GHA
+  GIB
+  GRC
+  GRL
+  GRD
+  GLP
+  GUM
+  GTM
+  GGY
+  GIN
+  GNB
+  GUY
+  HTI
+  HMD
+  VAT
+  HND
+  HKG
+  HUN
+  ISL
+  IND
+  IDN
+  IRN
+  IRQ
+  IRL
+  IMN
+  ISR
+  ITA
+  JAM
+  JPN
+  JEY
+  JOR
+  KAZ
+  KEN
+  KIR
+  PRK
+  KOR
+  KWT
+  KGZ
+  LAO
+  LVA
+  LBN
+  LSO
+  LBR
+  LBY
+  LIE
+  LTU
+  LUX
+  MAC
+  MDG
+  MWI
+  MYS
+  MDV
+  MLI
+  MLT
+  MHL
+  MTQ
+  MRT
+  MUS
+  MYT
+  MEX
+  FSM
+  MDA
+  MCO
+  MNG
+  MNE
+  MSR
+  MAR
+  MOZ
+  MMR
+  NAM
+  NRU
+  NPL
+  NLD
+  NCL
+  NZL
+  NIC
+  NER
+  NGA
+  NIU
+  NFK
+  MKD
+  MNP
+  NOR
+  OMN
+  PAK
+  PLW
+  PSE
+  PAN
+  PNG
+  PRY
+  PER
+  PHL
+  PCN
+  POL
+  PRT
+  PRI
+  QAT
+  REU
+  ROU
+  RUS
+  RWA
+  BLM
+  SHN
+  KNA
+  LCA
+  MAF
+  SPM
+  VCT
+  WSM
+  SMR
+  STP
+  SAU
+  SEN
+  SRB
+  SYC
+  SLE
+  SGP
+  SXM
+  SVK
+  SVN
+  SLB
+  SOM
+  ZAF
+  SGS
+  SSD
+  ESP
+  LKA
+  SDN
+  SUR
+  SJM
+  SWE
+  CHE
+  SYR
+  TWN
+  TJK
+  TZA
+  THA
+  TLS
+  TGO
+  TKL
+  TON
+  TTO
+  TUN
+  TUR
+  TKM
+  TCA
+  TUV
+  UGA
+  UKR
+  ARE
+  GBR
+  USA
+  UMI
+  URY
+  UZB
+  VUT
+  VEN
+  VNM
+  VGB
+  VIR
+  WLF
+  ESH
+  YEM
+  ZMB
+  ZWE
+}
+
+type Device @aws_lambda @aws_iam @aws_cognito_user_pools {
+  device_id: String
+  device_description: String
+  device_name: String
+  device_properties: AWSJSON
+  is_active: Boolean
+  merchant_uid: String
+  processor: String
+  processor_device_id: String
+}
+
+type Devices @aws_lambda @aws_iam @aws_cognito_user_pools {
+  items: [Device]
+  total_row_count: Int
+}
+
+input DigitalWalletInput {
+  address_line1: String
+  dpan: String!
+  exp_date: String!
+  postal_code: String
+  wallet_type: WalletType!
+}
+
+type Dispute @aws_lambda @aws_iam @aws_cognito_user_pools {
+  amount: Int
+  dispute_date: AWSDateTime
+  dispute_id: String
+  evidence_last_send_date: AWSDateTime
+  expiration_date: AWSDateTime
+  merchant_uid: ID
+  status: DisputeStatus
+  reason: DisputeReason
+  reason_message: String
+  settlement_deposit_batch: String
+  settlement_withdrawal_batch: String
+  transaction: Transaction
+  updated_date: AWSDateTime
+  updated_row_at: AWSDateTime
+}
+
+enum DisputeReason {
+  CLERICAL
+  FRAUD
+  INQUIRY
+  QUALITY
+  TECHNICAL
+}
+
+type Disputes @aws_lambda @aws_iam @aws_cognito_user_pools {
+  items: [Dispute]
+  total_row_count: Int
+}
+
+enum DisputeStatus {
+  INQUIRY
+  LOST
+  PENDING
+  WON
+}
+
+type Document @aws_lambda @aws_iam @aws_cognito_user_pools {
+  attachment_id: ID!
+  doc_type: SupportDocumentType!
+  name: String!
+}
+
+input DocumentInput {
+  body: String!
+  doc_type: SupportDocumentType!
+  mime_type: String!
+  name: String!
+}
+
+type FeeMatrix @aws_lambda @aws_iam @aws_cognito_user_pools {
+  ach: AchFee!
+  ach_return_fee: Int!
+  ach_return_disputed_fee: Int!
+  business_credit: CardFee
+  business_debit: CardFee
+  amex: CardBrandFee
+  card: CardFee!
+  card_account_updater: Int!
+  cash: Int!
+  chargeback_fee: Int!
+  credit_card: CardFee
+  debit_card: CardFee
+  discover: CardBrandFee
+  interchange_plus: Boolean!
+  international_card_basis: Int!
+  mastercard: CardBrandFee
+  merchant_uid: String!
+  prepaid_card: CardFee
+  service_fee_enabled: Boolean!
+  visa: CardBrandFee
+}
+
+input FeeMatrixInput {
+  ach: AchFeeInput
+  ach_return_fee: Int
+  ach_return_disputed_fee: Int
+  business_credit: CardFeeInput
+  business_debit: CardFeeInput
+  amex: CardBrandFeeInput
+  card: CardFeeInput
+  card_account_updater: Int
+  cash: Int
+  chargeback_fee: Int
+  credit_card: CardFeeInput
+  debit_card: CardFeeInput
+  discover: CardBrandFeeInput
+  interchange_plus: Boolean
+  international_card_basis: Int
+  mastercard: CardBrandFeeInput
+  merchant_uid: String!
+  prepaid_card: CardFeeInput
+  service_fee_enabled: Boolean
+  visa: CardBrandFeeInput
+}
+
+enum FeeMode {
+  CUSTOM_FEE
+  INTERCHANGE
+  MERCHANT_FEE
+  SERVICE_FEE
+}
+
+type FeeModel @aws_lambda @aws_iam @aws_cognito_user_pools {
+  interchange_plus: Boolean
+  merchant_fee: FeeModelDetail
+  service_fee: FeeModelDetail
+  service_fee_min: FeeModelDetail
+}
+
+type FeeModelDetail @aws_lambda @aws_iam @aws_cognito_user_pools {
+  ach_basis: Int
+  ach_fixed: Int
+  card_basis: Int
+  card_fixed: Int
+}
+
+enum HealthExpenseType {
+  CLINICAL
+  COPAY
+  DENTAL
+  HEALTHCARE
+  RX
+  TRANSIT
+  VISION
+}
+
+type Invoice @aws_lambda @aws_iam @aws_cognito_user_pools {
+  account_code: String
+  created_date: AWSDateTime
+  currency: String
+  due_by: AWSDate
+  fee_mode: FeeMode
+  invoice_amount: Int
+  invoice_date: AWSDate
+  invoice_description: String
+  invoice_id: String
+  invoice_name: String
+  merchant_invoice_number: String
+  merchant_uid: String
+  metadata(query_list: [QueryPair]): AWSJSON
+  offline_transactions: [OfflineTransaction]
+  payor(query_list: [QueryPair]): Payor
+  reference: String
+  settings: InvoiceSettings
+  status: InvoiceStatus
+  total_paid_amount: Int
+}
+
+input InvoiceInput {
+  account_code: String
+  currency: String!
+  due_by: AWSDate
+  fee_mode: FeeMode
+  invoice_amount: Int!
+  invoice_date: AWSDate
+  invoice_description: String
+  invoice_name: String!
+  merchant_uid: String!
+  merchant_invoice_number: String
+  metadata: AWSJSON
+  payor_id: String
+  payor: PayorInput
+  reference: String
+  send_email: Boolean
+  settings: InvoiceSettingsInput
+}
+
+type Invoices @aws_lambda @aws_iam @aws_cognito_user_pools {
+  items: [Invoice]
+  total_row_count: Int
+}
+
+type InvoiceSettings @aws_lambda @aws_iam @aws_cognito_user_pools {
+  accepted_payment_methods: AcceptedPaymentMethods
+  is_secure: Boolean
+  require_payor_address: Boolean
+  security_pin: String
+}
+
+input InvoiceSettingsInput {
+  accepted_payment_methods: AcceptedPaymentMethodsInput
+  is_secure: Boolean
+  require_payor_address: Boolean
+}
+
+enum InvoiceStatus {
+  NOT_PAID
+  PARTIALLY_PAID
+  PAID
+}
+
+input InvoiceUpdateInput {
+  account_code: String
+  currency: String
+  due_by: AWSDate
+  fee_mode: FeeMode
+  invoice_amount: Int
+  invoice_date: AWSDate
+  invoice_name: String
+  invoice_description: String
+  merchant_invoice_number: String
+  reference: String
+  send_email: Boolean
+  settings: InvoiceSettingsInput
+}
+
+type Level3DataLineItem @aws_lambda @aws_iam @aws_cognito_user_pools {
+  item_code: String
+  item_description: String
+  item_qty_exp: Int
+  prod_code: String
+  qty: Int
+  tax_amount: Int
+  tax_ind: TaxIndicatorType
+  tax_rate: Int
+  tax_rt_exp: Int
+  tax_type_id: TaxType
+  unit_cost: Int
+  unit_of_msure: String
+}
+
+input Level3DataLineItemInput {
+  item_code: String
+  item_description: String
+  item_qty_exp: Int
+  prod_code: String
+  qty: Int
+  tax_amount: Int
+  tax_ind: TaxIndicatorType
+  tax_rate: Int
+  tax_rt_exp: Int
+  tax_type_id: TaxType
+  unit_cost: Int
+  unit_of_msure: String
+}
+
+type Level3DataSummary @aws_lambda @aws_iam @aws_cognito_user_pools {
+  dest_postal_code: String
+  discnt_amt: Int
+  duty_amt: Int
+  frght_amt: Int
+  order_num: String
+  prod_desc: [String]
+  purch_idfr: String
+  tax_amt: Int
+  tax_ind: TaxIndicatorType
+}
+
+input Level3DataSummaryInput {
+  dest_postal_code: String
+  discnt_amt: Int
+  duty_amt: Int
+  frght_amt: Int
+  order_num: String
+  prod_desc: [String]
+  purch_idfr: String
+  tax_amt: Int
+  tax_ind: TaxIndicatorType
+}
+
+type ListMerchant @aws_lambda @aws_iam @aws_cognito_user_pools {
+  ach_active: Boolean
+  card_active: Boolean
+  cash_active: Boolean
+  country_code: String
+  is_system: Boolean
+  merchant_name: String
+  merchant_uid: String
+  metadata(query_list: [QueryPair]): AWSJSON
+  parent_merchant_uid: String
+  submitted_onboarding: Boolean
+  updated_row_at: AWSDateTime
+}
+
+type Merchant @aws_lambda @aws_iam @aws_cognito_user_pools {
+  ach_active: Boolean
+  api_key: String
+  card_active: Boolean
+  cash_active: Boolean
+  country_code: String
+  fee_matrix: FeeMatrix
+  fee_model: FeeModel @deprecated(reason: "Use fee_matrix instead.")
+  is_system: Boolean
+  merchant_name: String
+  merchant_uid: String
+  metadata: AWSJSON
+  parent_merchant_uid: String
+  settings: MerchantSettings
+  submitted_onboarding: Boolean
+}
+
+type MerchantOnboarding @aws_lambda @aws_iam @aws_cognito_user_pools {
+  banks: [BusinessBank]
+  business: Business
+  business_owners: [BusinessOwner]
+  country_code_of_operation: CountryCodes_Alpha3
+  is_locked: Boolean
+  merchant_uid: ID!
+  needs_docs: Boolean
+  ticket_id: Int
+  user_email: String
+  user_full_name: String
+}
+
+input MerchantOnboardingInput {
+  banks: [BusinessBankInput]
+  business: BusinessInput
+  business_owners: [BusinessOwnerInput]
+  country_code_of_operation: CountryCodes_Alpha3
+  merchant_uid: ID!
+  needs_docs: Boolean
+  ticket_id: Int
+  user_email: String
+  user_full_name: String
+}
+
+type Merchants @aws_lambda @aws_iam @aws_cognito_user_pools {
+  items: [ListMerchant]
+  total_row_count: Int
+}
+
+type MerchantSettings @aws_lambda @aws_iam @aws_cognito_user_pools {
+  contact_email: AWSEmail
+  contact_phone: AWSPhone
+  facebook: AWSURL
+  instagram: AWSURL
+  linkedin: AWSURL
+  tiktok: AWSURL
+  twitter: AWSURL
+  website: AWSURL
+}
+
+input MerchantSettingsInput {
+  contact_email: AWSEmail
+  contact_phone: AWSPhone
+  facebook: AWSURL
+  instagram: AWSURL
+  linkedin: AWSURL
+  tiktok: AWSURL
+  twitter: AWSURL
+  website: AWSURL
+}
+
+input MerchantUserInput {
+  email: AWSEmail!
+  first_name: String!
+  last_name: String!
+  phone: AWSPhone
+}
+
+type Metadata @aws_lambda @aws_iam @aws_cognito_user_pools {
+  id: String
+  metadata_associate: MetadataAssociate
+  metadata_associate_id: String
+  metadata_key: String
+  metadata_type: MetadataType
+  merchant_uid: String
+  metadata_value: String
+  updated_row_at: AWSDateTime
+}
+
+enum MetadataAssociate {
+  AUTHORIZATION
+  INVOICE
+  MERCHANT
+  PAYMENT_INTENT
+  PAYMENT_METHOD_TOKEN
+  PAYMENT_SESSION
+  PAYOR
+  RECURRING
+  TRANSACTION
+  SALE
+  SPLIT
+}
+
+enum MetadataType {
+  BOOLEAN
+  DATETIME
+  INT
+  STRING
+}
+
+type MissedRecurringPaymentData @aws_lambda @aws_iam @aws_cognito_user_pools {
+  fee: Int
+  number_of_payments_missed: Int
+  total_amount_owed: Int
+}
+
+enum MoveDirection {
+  BACKWARD
+  FORWARD
+}
+
+type Mutation @aws_lambda @aws_iam @aws_cognito_user_pools {
+  cancelRecurringPayment(recurring_id: String!): Boolean
+  createAuthorization(merchant_uid: String!, sale_id: String, amount: Int!, payment_method_id: String, payment_method: PaymentMethodInput, invoice_id: String, fee: Int, fee_mode: FeeMode, account_code: String, reference: String, metadata: AWSJSON, health_expense_type: HealthExpenseType, digital_wallet: DigitalWalletInput @deprecated(reason: "Use createWalletAuthorization."), additional_purchase_data: AdditionalPurchaseDataInput, one_time_use_token: Boolean): Authorization!
+  createBarcode(input: BarcodeInput!): Barcode!
+  createBarcodePaymentSandbox(barcode_id: String!, amount_to_pay: Int!): BarcodePaymentResponse!
+  createBatchCapture(merchant_uid: String!): Boolean
+  createCapture(merchant_uid: String!, authorization_id: String!, amount: Int!, fee: Int, send_receipt: Boolean, receipt_description: String, allow_reauth: Boolean, allow_exceeded_amount: Boolean, split: [SplitInput]): Transaction!
+  createInvoice(input: InvoiceInput!): Invoice
+  createInvoiceEmail(invoice_id: String!): Boolean
+  createMerchant(merchant_name: String!, parent_merchant_uid: String, user: MerchantUserInput, metadata: AWSJSON): ListMerchant
+  createMerchantOnboarding(merchant_onboarding: MerchantOnboardingInput!, support_note: SupportNoteInput, is_form_completed: Boolean!, full_name: String, email: String): Boolean
+  createOfflineTransaction(input: OfflineTransactionInput!): OfflineTransaction
+  createOneTimePayment(merchant_uid: String!, amount: Int!, payment_method_id: String, payment_method: PaymentMethodInput, recurring_id: String, invoice_id: String, fee: Int, fee_mode: FeeMode, payment_parameters_name: String, account_code: String, reference: String, send_receipt: Boolean, receipt_description: String, metadata: AWSJSON, health_expense_type: HealthExpenseType, additional_purchase_data: AdditionalPurchaseDataInput): OneTimePayment @deprecated(reason: "Use createTransaction instead.")
+  createPaymentLink(input: PaymentLinkInput!): PaymentLink
+  createPaymentMethod(payment_method: PaymentMethodInput!, merchant_uid: String!, skip_validation: Boolean): PaymentMethodToken
+  createPayor(input: PayorInput!): Payor
+  createReceiptEmail(transaction_id: String!, receipt_description: String, email: AWSEmail): Boolean
+  createRecurringPayment(input: RecurringPaymentInput!): RecurringPayment
+  createRefund(transaction_id: String!, amount: Int!, refund_reason: RefundReasonInput!, refund_email: String): Boolean @deprecated(reason: "Use createReversal instead.")
+  createRetryForFailedRecurringPayment(recurring_id: String!): Boolean
+  createReversal(transaction_id: String!, amount: Int!, refund_reason: RefundReasonInput!, refund_email: String): ReversalResponse!
+  createTransaction(merchant_uid: String!, amount: Int!, payment_method_id: String, payment_method: PaymentMethodInput, recurring_id: String, invoice_id: String, fee: Int, fee_mode: FeeMode, account_code: String, reference: String, send_receipt: Boolean, receipt_description: String, metadata: AWSJSON, health_expense_type: HealthExpenseType, digital_wallet: DigitalWalletInput @deprecated(reason: "Use createWalletTransaction."), additional_purchase_data: AdditionalPurchaseDataInput, one_time_use_token: Boolean, split: [SplitInput]): Transaction!
+  createUser(input: UserInput!): User
+  createUserPasswordReset(username: String!, user_pool: UserPool!): Boolean
+  createUserV2(input: UserInputV2!): Boolean
+  createVoidForAuthorization(authorization_id: String!, void_amount: Int @deprecated(reason: "Only full voids are supported.")): Boolean
+  createVoidForRefund(transaction_id: String!): Boolean
+  createWalletAuthorization(app_id: String, merchant_uid: String!, sale_id: String, wallet_type: WalletType, digital_wallet_payload: String!, amount: Int, fee: Int, billing_address: BillingAddressInput, payor_id: String, payor: PayorInput, invoice_id: String, account_code: String, reference: String, metadata: AWSJSON, health_expense_type: HealthExpenseType, additional_purchase_data: AdditionalPurchaseDataInput): Authorization!
+  createWalletTransaction(app_id: String, merchant_uid: String!, wallet_type: WalletType, digital_wallet_payload: String!, amount: Int, fee: Int, billing_address: BillingAddressInput, payor_id: String, payor: PayorInput, recurring_id: String, invoice_id: String, account_code: String, reference: String, send_receipt: Boolean, receipt_description: String, metadata: AWSJSON, health_expense_type: HealthExpenseType, additional_purchase_data: AdditionalPurchaseDataInput, split: [SplitInput]): Transaction!
+  createWebhook(endpoint: String!, name: String!): Boolean!
+  deleteInvoice(invoice_id: String!): Boolean
+  deleteMetadata(id: String!, metadata_associate: MetadataAssociate!, merchant_uid: String!, metadata_keys: [String]!): Boolean
+  deleteUser(username: String!, user_pool: UserPool!): Boolean
+  deleteUserV2(username: String!, user_pool: UserPool!): Boolean
+  deleteWebhook(endpoint: String!): Boolean!
+  updateDevice(merchant_uid: String!, device_id: String!, device_description: String!): Boolean
+  updateFeeMatrix(fee_matrix: FeeMatrixInput!): FeeMatrix
+  updateInvoice(invoice_id: String!, invoice_update_input: InvoiceUpdateInput!): Boolean
+  updateMerchantSettings(merchant_uid: ID!, settings: MerchantSettingsInput!): Boolean
+  updateMetadata(id: String!, metadata_associate: MetadataAssociate!, merchant_uid: String!, metadata: AWSJSON!): Boolean
+  updatePaymentLink(input: UpdatePaymentLinkInput!): PaymentLink
+  updatePaymentMethodToDisabled(merchant_uid: ID!, payment_method_id: String!): Boolean!
+  updatePayor(payor_id: String!, payor_data: PayorData!): Boolean
+  updateRecurringPayment(input: UpdateRecurringPaymentInput!): RecurringPayment
+  updateTransactionInReview(transaction_id: String!, action: TransactionReviewAction!): Boolean
+  updateWebhook(endpoint: String!, name: String, is_active: Boolean): Boolean!
+}
+
+type OfflineTransaction @aws_lambda @aws_iam @aws_cognito_user_pools {
+  amount: Int
+  instance_id: String
+  invoice_id: String
+  note: String
+  transaction_date: AWSDate
+  type: OfflineTransactionType
+}
+
+input OfflineTransactionInput {
+  amount: Int!
+  invoice_id: String!
+  note: String
+  transaction_date: AWSDate!
+  type: OfflineTransactionType!
+}
+
+enum OfflineTransactionType {
+  ACH
+  CARD
+  CASH
+  OTHER
+}
+
+type OneTimePayment @aws_lambda @aws_iam @aws_cognito_user_pools {
+  amount: Int
+  card_brand: String
+  created_at: AWSDateTime
+  currency: String
+  failure_reason: String
+  last_four: String
+  service_fee: Int
+  status: TransactionStatus
+  transaction_id: String
+}
+
+enum Operator {
+  EQUAL
+  EQUAL_FALSE
+  EQUAL_TRUE
+  GREATER_EQUAL
+  GREATER_THAN
+  IN_LIST
+  IS_NOT_NULL
+  IS_NULL
+  LESS_EQUAL
+  LESS_THAN
+  LIKE
+  NOT_EQUAL
+  NOT_IN_LIST
+  NOT_LIKE
+}
+
+enum OwnerPosition {
+  CEO
+  CFO
+  COO
+  DIRECTOR
+  MEMBER_LLC
+  OTHER
+  OWNER
+  PARTNER
+  PRESIDENT
+  SECRETARY
+  SOLE_PROPRIETOR
+  TREASURER
+  VICE_PRESIDENT
+}
+
+enum OwnershipType {
+  PRIVATE
+  PUBLIC
+}
+
+type PaymentLink @aws_lambda @aws_iam @aws_cognito_user_pools {
+  accepted_payment_methods: AcceptedPaymentMethodsEnum
+  account_code: String
+  amount: Int
+  amount_is_variable: Boolean
+  call_to_action: CallToActionType
+  created_date: AWSDateTime
+  currency: String
+  custom_success_message: String
+  fee_mode: FeeMode
+  is_active: Boolean
+  link_id: String
+  link_name: String
+  link_url: String
+  max_amount: Int
+  merchant_uid: String
+  min_amount: Int
+  payment_name: String
+  payment_description: String
+  redirect_url: String
+  require_phone: Boolean
+}
+
+input PaymentLinkInput {
+  accepted_payment_methods: AcceptedPaymentMethodsEnum
+  account_code: String
+  amount: Int
+  amount_is_variable: Boolean
+  call_to_action: CallToActionType
+  currency: String
+  custom_success_message: String
+  fee_mode: FeeMode
+  link_name: String!
+  max_amount: Int
+  merchant_uid: String!
+  min_amount: Int
+  payment_description: String
+  payment_name: String!
+  redirect_url: String
+  require_phone: Boolean
+}
+
+type PaymentLinks @aws_lambda @aws_iam @aws_cognito_user_pools {
+  items: [PaymentLink]
+  total_row_count: Int
+}
+
+input PaymentMethodInput {
+  ach: AchInput
+  canadian_eft: CanadianEftInput
+  card: CardInput
+  metadata: AWSJSON
+  payor: PayorInput
+  payor_id: String
+}
+
+type PaymentMethodToken @aws_lambda @aws_iam @aws_cognito_user_pools {
+  address_line1: String
+  address_line2: String
+  bank_account_type: BankAccountType
+  bank_code: String
+  barcode_id: String
+  card_brand: String
+  card_type: CardType
+  city: String
+  country: String
+  exp_date: String
+  full_name: String
+  is_active: Boolean
+  issuing_country_code: String
+  last_four: String
+  merchant_uid: String
+  metadata(query_list: [QueryPair]): AWSJSON
+  payment_method_id: String
+  payment_type: PaymentType
+  payor(query_list: [QueryPair]): Payor
+  postal_code: String
+  region: String
+  wallet_type: WalletType
+}
+
+type PaymentMethodTokens @aws_lambda @aws_iam @aws_cognito_user_pools {
+  items: [PaymentMethodToken]
+  total_row_count: Int
+}
+
+enum PaymentType {
+  ACH
+  CARD
+  CASH
+}
+
+type Payor @aws_lambda @aws_iam @aws_cognito_user_pools {
+  address_line1: String
+  address_line2: String
+  city: String
+  country: String
+  email: String
+  full_name: String
+  merchant_uid: String
+  metadata(query_list: [QueryPair]): AWSJSON
+  payor_id: String
+  phone: String
+  postal_code: String
+  region: String
+}
+
+input PayorData {
+  address_line1: String
+  address_line2: String
+  city: String
+  country: String
+  email: String
+  full_name: String
+  phone: String
+  postal_code: String
+  region: String
+}
+
+input PayorInput {
+  address_line1: String
+  address_line2: String
+  city: String
+  country: String
+  email: String
+  full_name: String
+  merchant_uid: String
+  metadata: AWSJSON
+  phone: String
+  postal_code: String
+  region: String
+}
+
+type Payors @aws_lambda @aws_iam @aws_cognito_user_pools {
+  items: [Payor]
+  total_row_count: Int
+}
+
+type Query @aws_lambda @aws_iam @aws_cognito_user_pools {
+  authorizations(query: SqlQuery, limit: Int, offset: String, direction: MoveDirection, offset_id: String): Authorizations
+  barcode(merchant_uid: ID!, barcode_id: String!): Barcode
+  devices(query: SqlQuery, limit: Int, offset: String, direction: MoveDirection, offset_id: String): Devices
+  disputes(query: SqlQuery, limit: Int, offset: String, direction: MoveDirection, offset_id: String): Disputes
+  errorText(language_code: String!, error_codes: [String]!): [String]!
+  invoices(query: SqlQuery, limit: Int, offset: String, direction: MoveDirection, offset_id: String): Invoices
+  merchant(merchant_uid: String, merchant_name: String): Merchant
+  merchantOnboarding(merchant_uid: ID!): MerchantOnboarding
+  merchants(query: SqlQuery, limit: Int, offset: String, direction: MoveDirection, offset_id: String): Merchants
+  missedRecurringPaymentData(recurring_id: String!): MissedRecurringPaymentData
+  paymentLinks(query: SqlQuery, limit: Int, offset: String, direction: MoveDirection, offset_id: String): PaymentLinks
+  paymentMethodTokens(query: SqlQuery, limit: Int, offset: String, direction: MoveDirection, offset_id: String): PaymentMethodTokens
+  payors(query: SqlQuery, limit: Int, offset: String, direction: MoveDirection, offset_id: String): Payors
+  recurringPayments(query: SqlQuery, limit: Int, offset: String, direction: MoveDirection, offset_id: String): RecurringPayments
+  serviceFee(merchant_uid: String!, amount: Int!, bank_id: String, payment_type: String @deprecated(reason: "Either pass in bank_id or payment_method_id"), is_ach: Boolean, payment_method_id: String): ServiceFeeCalculation!
+  serviceFeeAmount(merchant_uid: String!, amount: Int!): ServiceFeeAmount @deprecated(reason: "Use serviceFee instead.")
+  settlements(query: SqlQuery, limit: Int, offset: String, direction: MoveDirection, offset_id: String): Settlements
+  splits(query: SqlQuery, limit: Int, offset: String, direction: MoveDirection, offset_id: String): Splits
+  transactions(query: SqlQuery, limit: Int, offset: String, direction: MoveDirection, offset_id: String): Transactions
+  users(user_pool: UserPool!, merchant_uid: String): [User]
+  usersV2(user_pool: UserPool!, merchant_uid: String): [UserV2]
+  validatePaymentMethodOwnership(payment_method_id: String!, number: String!): Boolean!
+  webhookEvents(id: ID, endpoint: String, result: WebhookNotificationResult, last_evaluated_key: String, limit: Int): WebhookEvents!
+  webhooks(endpoint: String): [Webhook]!
+}
+
+input QueryPair {
+  conjunctive_operator: ConjunctiveOperator
+  in_values: [String]
+  key: String
+  operator: Operator
+  query_group: [QueryPair]
+  value: String
+}
+
+enum RecurringInterval {
+  ANNUAL
+  BI_ANNUAL
+  BI_WEEKLY
+  MONTHLY
+  QUARTERLY
+  WEEKLY
+}
+
+type RecurringPayment @aws_lambda @aws_iam @aws_cognito_user_pools {
+  account_code: String
+  amount_per_payment: Int
+  created_date: AWSDateTime
+  currency: String
+  fee_mode: FeeMode
+  fee_per_payment: Int
+  is_active: Boolean
+  is_processing: Boolean
+  recurring_id: String
+  merchant_uid: String
+  metadata(query_list: [QueryPair]): AWSJSON
+  mute_all_emails: Boolean
+  next_payment_date: AWSDate
+  payment_interval: RecurringInterval
+  payment_method(query_list: [QueryPair]): PaymentMethodToken
+  payor(query_list: [QueryPair]): Payor
+  prev_payment_date: AWSDate
+  recurring_description: String
+  recurring_name: String
+  reference: String
+  remaining_payments: Int
+  status: RecurringStatus
+  total_amount_per_payment: Int
+}
+
+input RecurringPaymentInput {
+  account_code: String
+  amount: Int!
+  fee_mode: FeeMode
+  first_payment_date: AWSDate
+  merchant_uid: String!
+  metadata: AWSJSON
+  mute_all_emails: Boolean
+  payment_count: Int
+  payment_interval: RecurringInterval!
+  payment_method_id: String!
+  payor: PayorInput
+  payor_id: String
+  recurring_description: String
+  recurring_name: String!
+  reference: String
+}
+
+type RecurringPayments @aws_lambda @aws_iam @aws_cognito_user_pools {
+  items: [RecurringPayment]
+  total_row_count: Int
+}
+
+enum RecurringStatus {
+  INSTRUMENT_FAILURE
+  SUCCESS
+  SYSTEM_FAILURE
+}
+
+enum RefundPolicy {
+  EXCHANGE
+  NONE
+  OTHER
+  THIRTY
+}
+
+type RefundReason @aws_lambda @aws_iam @aws_cognito_user_pools {
+  reason_code: RefundReasonCode
+  reason_details: String
+}
+
+enum RefundReasonCode {
+  DUPLICATE
+  FRAUDULENT
+  OTHER
+  REQUESTED_BY_CUSTOMER
+}
+
+input RefundReasonInput {
+  reason_code: RefundReasonCode!
+  reason_details: String
+}
+
+type ReversalResponse @aws_lambda @aws_iam @aws_cognito_user_pools {
+  is_void: Boolean!
+  transaction_id: String
+}
+
+type ServiceFeeAmount @aws_lambda @aws_iam @aws_cognito_user_pools {
+  ach: ServiceFeeCalculation
+  card: ServiceFeeCalculation
+}
+
+type ServiceFeeCalculation @aws_lambda @aws_iam @aws_cognito_user_pools {
+  fee_limit_reached: Boolean
+  fee: Int
+  total: Int
+  adjusted_total: Int
+}
+
+type Settlement @aws_lambda @aws_iam @aws_cognito_user_pools {
+  currency: String
+  gross_amount: Int @deprecated(reason: "Use gross_amount_64bit instead")
+  gross_amount_64bit: String
+  merchant_uid: String
+  net_amount: Int @deprecated(reason: "Use net_amount_64bit instead")
+  net_amount_64bit: String
+  settlement_batch: Int
+  settlement_date: AWSDateTime
+  status: String
+  transaction_debit_count: Int
+  transaction_dispute_count: Int
+  transaction_reversal_count: Int
+  transfer_date: AWSDateTime
+  total_adjustments: Int @deprecated(reason: "Use total_adjustments_64bit instead")
+  total_adjustments_64bit: String
+  total_fees: Int @deprecated(reason: "Use total_fees_64bit instead")
+  total_fees_64bit: String
+  updated_row_at: AWSDateTime
+}
+
+type Settlements @aws_lambda @aws_iam @aws_cognito_user_pools {
+  items: [Settlement]
+  total_row_count: Int
+}
+
+enum SettlementStatus {
+  PENDING
+  SUCCEEDED
+}
+
+enum SortDirection {
+  ASC
+  DESC
+}
+
+input SortPair {
+  direction: SortDirection
+  key: String
+}
+
+type Split @aws_lambda @aws_iam @aws_cognito_user_pools {
+  account_code: String
+  amount: Int!
+  currency: String!
+  created_at: AWSDateTime!
+  id: String!
+  merchant: ListMerchant!
+  metadata(query_list: [QueryPair]): AWSJSON
+  payment_method: PaymentMethodToken!
+  reference: String
+  settlement_batch: Int
+  transaction_id: String!
+  updated_row_at: AWSDateTime!
+}
+
+input SplitInput {
+  account_code: String
+  amount: Int!
+  metadata: AWSJSON
+  merchant_uid: ID!
+  reference: String
+}
+
+type Splits @aws_lambda @aws_iam @aws_cognito_user_pools {
+  items: [Split]
+  total_row_count: Int
+}
+
+input SqlQuery {
+  query_list: [QueryPair]
+  sort_list: [SortPair]
+}
+
+type SupportConversation @aws_lambda @aws_iam @aws_cognito_user_pools {
+  support_notes: [SupportNote]
+  ticket_id: ID!
+}
+
+enum SupportDocumentType {
+  BANK_STATEMENT
+  BUSINESS_ADDRESS_VERIFICATION
+  BUSINESS_REGISTRATION
+  DRIVERS_LICENSE_BACK
+  DRIVERS_LICENSE_FRONT
+  IDENTIFICATION_CARD_BACK
+  IDENTIFICATION_CARD_FRONT
+  PASSPORT
+  PCI_DOCUMENT
+  OTHER
+  TAX_DOCUMENT
+}
+
+type SupportNote @aws_lambda @aws_iam @aws_cognito_user_pools {
+  body: String
+  support_docs: [Document]
+}
+
+input SupportNoteInput {
+  body: String
+  support_docs: [DocumentInput]
+}
+
+enum TaxIndicatorType {
+  NO_TAX_INFO_PROVIDED
+  NOT_TAXABLE
+  TAX_AMOUNT_PROVIDED
+}
+
+enum TaxType {
+  CITY_SALES
+  ENERGY
+  GST
+  LOCAL_SALES
+  MUNICIPAL_SALES
+  NATIONAL_SALES
+  NOT_SUPPORTED
+  OTHER
+  PST
+  ROOM
+  OCCUPANCY
+  STATE_SALES
+  UNKNOWN
+  VAT
+}
+
+type Transaction @aws_lambda @aws_iam @aws_cognito_user_pools {
+  account_code: String
+  ach_return_details: AchReturnDetails
+  additional_purchase_data: AdditionalPurchaseData
+  authorization_id: String
+  avs_status: String
+  currency: String
+  device_id: String
+  dispute_status: DisputeStatus
+  failure_reasons: [String]
+  fee_mode: FeeMode
+  fees: Int
+  flag_for_review: TransactionReviewStatus
+  gross_amount: Int
+  invoice: Invoice
+  is_settled: Boolean
+  merchant: ListMerchant
+  merchant_uid: String
+  metadata(query_list: [QueryPair]): AWSJSON
+  net_amount: Int
+  parent_id: String
+  payment_method(query_list: [QueryPair]): PaymentMethodToken
+  processor: String
+  recurring: RecurringPayment
+  reference: String
+  refund_reason: RefundReason
+  refund_voidable: Boolean
+  refunded_amount: Int
+  sale_id: String
+  settlement_batch: Int
+  splits: [Split]
+  status: TransactionStatus
+  timezone: String
+  transaction_date: AWSDateTime
+  transaction_id: String
+  transaction_type: TransactionType
+  updated_row_at: AWSDateTime
+}
+
+enum TransactionReviewAction {
+  ACCEPT
+  REJECT
+}
+
+enum TransactionReviewStatus {
+  EXCEEDS_AUTH
+  EXCEEDS_FEE_LIMIT
+  EXCEEDS_THRESHOLD
+  POTENTIAL_DUPLICATE
+}
+
+type Transactions @aws_lambda @aws_iam @aws_cognito_user_pools {
+  items: [Transaction]
+  total_row_count: Int
+}
+
+enum TransactionStatus {
+  CANCELED
+  FAILED
+  PARTIALLY_REFUNDED
+  PENDING
+  REFUNDED
+  RETURNED
+  SETTLED
+  SUCCEEDED
+  VOIDED
+}
+
+enum TransactionType {
+  ACH_RETURN
+  DEBIT
+  FAILURE
+  REVERSAL
+}
+
+type UnderwritingData @aws_lambda @aws_iam @aws_cognito_user_pools {
+  annual_card_volume: String
+  business_address: Address
+  has_accepted_credit_cards_previously: Boolean
+  business_name: String
+  business_type: BusinessType
+  delivery_0_days_percent: Int
+  delivery_1_to_7_days_percent: Int
+  delivery_8_to_14_days_percent: Int
+  delivery_15_to_30_days_percent: Int
+  delivery_over_30_days_percent: Int
+  doing_business_as: String
+  incorporation_date: AWSDate
+  incorporation_state: UsStates
+  max_transaction_amount: Int
+  mcc: String
+  phone: AWSPhone
+  prod_serv_sold: String
+  ownership_type: OwnershipType
+  tax_id: String
+  url: AWSURL
+}
+
+input UnderwritingDataInput {
+  annual_card_volume: String
+  business_address: AddressInput
+  has_accepted_credit_cards_previously: Boolean
+  business_name: String
+  business_type: BusinessType
+  delivery_0_days_percent: Int
+  delivery_1_to_7_days_percent: Int
+  delivery_8_to_14_days_percent: Int
+  delivery_15_to_30_days_percent: Int
+  delivery_over_30_days_percent: Int
+  doing_business_as: String
+  incorporation_date: AWSDate
+  incorporation_state: UsStates
+  max_transaction_amount: Int
+  mcc: String
+  phone: AWSPhone
+  prod_serv_sold: String
+  ownership_type: OwnershipType
+  tax_id: String
+  url: AWSURL
+}
+
+input UpdatePaymentLinkInput {
+  accepted_payment_methods: AcceptedPaymentMethodsEnum
+  account_code: String
+  amount: Int
+  amount_is_variable: Boolean
+  call_to_action: CallToActionType
+  currency: String
+  custom_success_message: String
+  fee_mode: FeeMode
+  is_active: Boolean
+  link_id: String!
+  link_name: String
+  max_amount: Int
+  merchant_uid: String!
+  min_amount: Int
+  payment_description: String
+  payment_name: String
+  redirect_url: String
+  require_phone: Boolean
+}
+
+input UpdateRecurringPaymentInput {
+  mute_all_emails: Boolean
+  pay_all_missed_payments: Boolean
+  payment_method_id: String
+  recurring_id: String!
+}
+
+type User @aws_lambda @aws_iam @aws_cognito_user_pools {
+  email: String
+  full_name: String
+  phone: String
+  user_status: String
+  username: String
+}
+
+input UserInput {
+  bypass_merchant_validation: Boolean
+  email: AWSEmail!
+  first_name: String!
+  last_name: String!
+  merchant_uid: String
+  phone: AWSPhone
+  user_pool: UserPool!
+}
+
+input UserInputV2 {
+  bypass_merchant_validation: Boolean
+  email: AWSEmail!
+  first_name: String!
+  last_name: String!
+  merchant_uid: String
+  user_pool: UserPool!
+  permissions: AWSJSON
+}
+
+enum UserPool {
+  MERCHANT
+  PARTNER
+  SYSTEM
+}
+
+type UserV2 @aws_lambda @aws_iam @aws_cognito_user_pools {
+  user_id: String
+  email: AWSEmail
+  full_name: String
+  user_pool_id: UserPool
+  merchant_uid: String
+  permissions: AWSJSON
+}
+
+enum UsStates {
+  AL
+  AK
+  AZ
+  AR
+  CA
+  CO
+  CT
+  DE
+  FL
+  GA
+  HI
+  ID
+  IL
+  IN
+  IA
+  KS
+  KY
+  LA
+  ME
+  MD
+  MA
+  MI
+  MN
+  MS
+  MO
+  MT
+  NE
+  NV
+  NH
+  NJ
+  NM
+  NY
+  NC
+  ND
+  OH
+  OK
+  OR
+  PA
+  RI
+  SC
+  SD
+  TN
+  TX
+  UT
+  VT
+  VA
+  WA
+  WV
+  WI
+  WY
+}
+
+type VolumeDistributionByBusinessType @aws_lambda @aws_iam @aws_cognito_user_pools {
+  business_to_business_volume_percentage: Int
+  business_to_consumer_volume_percentage: Int
+  other_volume_percentage: Int
+}
+
+input VolumeDistributionByBusinessTypeInput {
+  business_to_business_volume_percentage: Int
+  business_to_consumer_volume_percentage: Int
+  other_volume_percentage: Int
+}
+
+enum WalletType {
+  APPLE_PAY
+  CLICK_TO_PAY
+  GOOGLE_PAY
+  SAMSUNG_PAY
+  VISA_STAGED
+}
+
+type Webhook @aws_lambda @aws_iam @aws_cognito_user_pools {
+  endpoint: String!
+  is_active: Boolean!
+  name: String!
+}
+
+type WebhookEvent @aws_lambda @aws_iam @aws_cognito_user_pools {
+  endpoint: String!
+  error: String
+  event: String!
+  finished_at: String!
+  id: ID!
+  request: AWSJSON!
+  response: AWSJSON
+  result: WebhookNotificationResult!
+  started_at: String!
+  status_code: Int
+}
+
+type WebhookEvents @aws_lambda @aws_iam @aws_cognito_user_pools {
+  events: [WebhookEvent]!
+  last_evaluated_key: String
+}
+
+enum WebhookNotificationResult {
+  FAILURE
+  IGNORED
+  SUCCESS
+}
+
+schema {
+  query: Query
+  mutation: Mutation
+}

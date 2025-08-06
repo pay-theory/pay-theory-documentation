@@ -6,108 +6,50 @@ title: "Wallet Transactions Overview"
 
 # Wallet Transactions Overview
 
-Wallet transactions allow your customers to make payments using digital wallets like Apple Pay™ and Google Pay™. These payment methods provide a fast, secure, and convenient checkout experience by eliminating the need to manually enter card details.
+Learn how to integrate digital wallet payments into your application using Pay Theory's wallet transaction APIs.
 
 ***
 
-## What are Wallet Transactions?
+## Basic Setup
 
-Digital wallet transactions use tokenized payment credentials stored on a customer's device. When a customer pays with Apple Pay or Google Pay, the actual card number is never shared with the merchant. Instead, a device-specific token is used, making these transactions highly secure.
-
-***
-
-## Benefits of Wallet Transactions
-
-* **Faster Checkout** - Customers can pay with a single touch or click
-* **Enhanced Security** - Card numbers are never exposed through tokenization
-* **Higher Conversion Rates** - Reduced checkout friction leads to fewer abandoned carts
-* **Mobile Optimized** - Designed for seamless mobile experiences
+1. **Configure your merchant account** - Ensure wallet payments are enabled
+2. **Add wallet buttons** - Implement Apple Pay or Google Pay buttons in your UI
+3. **Handle wallet tokens** - Capture the payment token from the wallet provider
 
 ***
 
-## How Wallet Transactions Work
+## Processing Wallet Transactions
 
-The wallet transaction flow involves three main steps:
-
-1. **Customer Initiates Payment** - The customer selects their preferred wallet payment method
-2. **Authentication** - The wallet provider authenticates the customer (Touch ID, Face ID, or passcode)
-3. **Token Generation** - A payment token is generated and sent to your application
-4. **Process with Pay Theory** - Your application sends the token to Pay Theory for processing
-
-***
-
-## Pay Theory Messenger Integration
-
-The Pay Theory Messenger class provides methods to handle wallet transactions seamlessly. After receiving the payment token from Apple Pay or Google Pay, you can process it using our SDK.
+After receiving a payment token from Apple Pay™ or Google Pay™, send it to Pay Theory for processing:
 
 ```javascript title="javascript"
-// Initialize Pay Theory Messenger
-const messenger = new PayTheoryMessenger({
-  apiKey: 'your-api-key',
-  // other configuration
-});
-
-// Process wallet transaction
 const walletTransaction = await messenger.walletTransaction({
-  token: walletPaymentToken, // Token from Apple Pay or Google Pay
-  amount: 1000, // Amount in cents
+  token: walletPaymentToken,
+  amount: 1000,
   // Additional transaction details
 });
 ```
 
-:::note Prerequisites
-Before implementing wallet transactions, ensure you have:
-- A Pay Theory merchant account
-- Proper API credentials configured
-- SSL certificate installed (required for production)
-:::
-
 ***
 
-## Supported Wallet Types
+## Available Wallet Options
 
-Pay Theory currently supports the following digital wallets:
-
-### Apple Pay
-Available on iOS devices and Safari browsers on Mac. Supports all major card networks including Visa, Mastercard, American Express, and Discover.
-
-[Learn more about Apple Pay integration →](./apple_pay)
-
-### Google Pay
-Available on Android devices and Chrome browsers. Supports all major card networks and provides a consistent experience across devices.
-
-[Learn more about Google Pay integration →](./google_pay)
-
-***
-
-## Security Considerations
-
-Wallet transactions include several security features:
-
-* **Tokenization** - Real card numbers are never transmitted
-* **Device Authentication** - Biometric or passcode verification required
-* **Encryption** - All data is encrypted end-to-end
-* **PCI Compliance** - Reduces PCI compliance scope for merchants
-
-***
-
-## Next Steps
-
-Choose your wallet integration path:
-
-<div style={{display: 'flex', gap: '1rem', marginTop: '2rem'}}>
-  <a href="./apple_pay" class="button button--primary button--lg">
-    Implement Apple Pay
-  </a>
-  <a href="./google_pay" class="button button--primary button--lg">
-    Implement Google Pay
-  </a>
+<div style={{display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', marginTop: '2rem'}}>
+  <div style={{border: '1px solid #e0e0e0', borderRadius: '8px', padding: '1.5rem', textAlign: 'center'}}>
+    <h3>Apple Pay™</h3>
+    <p>Fast checkout for iOS and Safari users</p>
+    <a href="./apple_pay" class="button button--primary button--md">Get Started</a>
+  </div>
+  
+  <div style={{border: '1px solid #e0e0e0', borderRadius: '8px', padding: '1.5rem', textAlign: 'center'}}>
+    <h3>Google Pay™</h3>
+    <p>Seamless payments for Android and Chrome</p>
+    <a href="./google_pay" class="button button--primary button--md">Get Started</a>
+  </div>
+  
+  <div style={{border: '1px solid #e0e0e0', borderRadius: '8px', padding: '1.5rem', textAlign: 'center'}}>
+    <h3>Paze</h3>
+    <p>Coming soon</p>
+    <a href="#" class="button button--secondary button--md" disabled>Learn More</a>
+  </div>
 </div>
-
-***
-
-## Additional Resources
-
-* [Pay Theory Messenger SDK Documentation](../../../sdk/javascript/messenger/pay_theory_messenger)
-* [Wallet Transaction SDK Reference](../../../sdk/javascript/messenger/wallet_transaction)
-* [API Reference](../../../api)
