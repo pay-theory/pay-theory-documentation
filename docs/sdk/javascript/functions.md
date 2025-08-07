@@ -361,7 +361,7 @@ This is the value of the `body` key in the response if the `type` is `FAILED`:
 
 | Key          | type   | description                                                                           |
 |--------------|--------|---------------------------------------------------------------------------------------|
-| failure_code | String | The failure code for the failure. You can find a list of failure codes [here](errors) |
+| failure_code | String | The failure code for the failure. You can find a list of failure codes [here](/docs/main/after_payments/failed_transactions) |
 | failure_text | String | The message for the failure                                                           |
 
 ### Confirmation Response

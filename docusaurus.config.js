@@ -77,6 +77,21 @@ const config = {
     ],
   ],
   plugins: [
+    [
+      '@docusaurus/plugin-client-redirects',
+      {
+        redirects: [
+          {
+            from: '/docs/sdk/javascript/failed_transactions',
+            to: '/docs/main/after_payments/failed_transactions',
+          },
+          {
+            from: '/docs/lab/sdk/javascript/failed_transactions',
+            to: '/docs/lab/main/after_payments/failed_transactions',
+          },
+        ],
+      },
+    ],
     // [
     //   'docusaurus-plugin-typedoc',
     //

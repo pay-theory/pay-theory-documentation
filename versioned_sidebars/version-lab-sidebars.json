@@ -496,10 +496,6 @@
     },
     {
       "type": "doc",
-      "id": "sdk/javascript/failed_transactions"
-    },
-    {
-      "type": "doc",
       "id": "sdk/javascript/errors"
     },
     {
