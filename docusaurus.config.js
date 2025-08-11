@@ -76,6 +76,13 @@ const config = {
       }),
     ],
   ],
+
+  themes: ['@docusaurus/theme-mermaid'],
+
+  markdown: {
+    mermaid: true,
+  },
+
   plugins: [
     [
       '@docusaurus/plugin-client-redirects',
@@ -143,6 +150,21 @@ const config = {
       },
       // Replace with your project's social card
       image: 'img/logo.svg',
+      mermaid: {
+        theme: { light: 'default', dark: 'dark' },
+        options: {
+          maxTextSize: 50000,
+          fontFamily:
+            'halyard-text, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+          flowchart: {
+            htmlLabels: true,
+            curve: 'basis',
+            rankSpacing: 60,
+            nodeSpacing: 30,
+            padding: 15,
+          },
+        },
+      },
       algolia: {
         apiKey: 'fa68347e5d228c27e710aa15ccda53de',
         indexName: 'paytheory',

@@ -1,14 +1,14 @@
 ---
 sidebar_position: 2
-sidebar_label: "Google Pay™ on Web"
-title: "Google Pay™ on Web"
+sidebar_label: 'Google Pay™ on Web'
+title: 'Google Pay™ on Web'
 ---
 
 # Google Pay™ on Web
 
 Implement Google Pay™ payments on your website using the Pay Theory JavaScript SDK.
 
-***
+---
 
 ## Google Pay™ Console Setup
 
@@ -16,10 +16,7 @@ Implement Google Pay™ payments on your website using the Pay Theory JavaScript
 
 1. Visit [Google Pay & Wallet Console](https://pay.google.com/business/console)
 2. Sign in with your Google account
-3. Complete the business profile:
-   - Business name and type
-   - Website URL
-   - Business address
+3. Complete the business profile
 4. Accept Google Pay™ API Terms of Service
 
 ### 2. Configure Gateway Integration
@@ -41,18 +38,82 @@ Implement Google Pay™ payments on your website using the Pay Theory JavaScript
 Use `environment: 'TEST'` for local development. Production domain registration is only required for live transactions.
 :::
 
-***
+---
+
+## Billing Address Requirements
+
+:::danger Required for All Transactions
+**Billing address is REQUIRED for all Google Pay™ transactions.** Pay Theory requires complete billing information to process payments successfully. Transactions without billing address will be rejected.
+:::
+
+### Required Billing Address Fields
+
+When configuring Google Pay™, you must set `billingAddressRequired: true` with the following parameters:
+
+```javascript
+billingAddressParameters: {
+  format: 'FULL',           // Required - returns complete address
+  phoneNumberRequired: true  // Required - phone number must be included
+}
+```
+
+### Billing Address Validation
+
+The billing address returned from Google Pay™ will include:
+
+- Full name
+- Street address (line 1 and optional line 2)
+- City
+- State/Province
+- Postal/ZIP code
+- Country code
+- Phone number
+
+Pay Theory validates all billing address fields before processing. Missing or invalid billing information will result in transaction failure.
+
+---
+
+## Gateway Configuration
+
+### Required Gateway Parameters
+
+When configuring the tokenization specification for Google Pay™, you must use the exact values below:
+
+```javascript
+tokenizationSpecification: {
+  type: 'PAYMENT_GATEWAY',
+  parameters: {
+    gateway: 'paytheory',              // MUST be exactly 'paytheory' (lowercase)
+    gatewayMerchantId: 'PAY_THEORY_MERCHANT_UID'  // Your Pay Theory Merchant ID
+  }
+}
+```
+
+:::warning Important Gateway Values
+
+- **gateway**: Must be exactly `'paytheory'` (all lowercase, no spaces)
+- **gatewayMerchantId**: Your Pay Theory Merchant ID (found in your Pay Theory dashboard)
+  :::
+
+### Finding Your Merchant ID
+
+1. Log in to your Pay Theory Dashboard
+2. Navigate to Settings → Developers
+3. Your Merchant ID is displayed at the top of the page
+4. Use this exact value for `gatewayMerchantId`
+
+---
 
 ## Implementation
 
 ### 1. Include Required Scripts
 
 ```html
-<!-- Google Pay API -->
+<!-- Google Pay™ API -->
 <script src="https://pay.google.com/gp/p/js/pay.js"></script>
 
 <!-- Pay Theory SDK -->
-<script src="https://cdn.paytheory.com/messenger/latest/messenger.js"></script>
+<script src="SDK IMPORT URL"></script>
 ```
 
 ### 2. Initialize Pay Theory Messenger
@@ -63,8 +124,8 @@ let messenger;
 
 async function initializePayTheory() {
   try {
-    messenger = new window.PayTheoryMessenger({ 
-      apiKey: 'YOUR_PAY_THEORY_API_KEY' 
+    messenger = new window.PayTheoryMessenger({
+      apiKey: 'YOUR_PAY_THEORY_API_KEY',
     });
     await messenger.initialize();
     console.log('Pay Theory Messenger initialized');
@@ -80,34 +141,36 @@ window.addEventListener('DOMContentLoaded', initializePayTheory);
 ### 3. Configure Google Pay™
 
 ```javascript
-// Google Pay configuration
+// Google Pay™ configuration
 const GOOGLE_PAY_CONFIG = {
   environment: 'PRODUCTION', // Use 'TEST' for development
   apiVersion: 2,
   apiVersionMinor: 0,
   merchantInfo: {
     merchantName: 'Your Business Name',
-    merchantId: 'YOUR_GOOGLE_MERCHANT_ID' // Required for PRODUCTION
+    merchantId: 'YOUR_GOOGLE_MERCHANT_ID', // Required for PRODUCTION
   },
-  allowedPaymentMethods: [{
-    type: 'CARD',
-    parameters: {
-      allowedAuthMethods: ['PAN_ONLY', 'CRYPTOGRAM_3DS'],
-      allowedCardNetworks: ['AMEX', 'DISCOVER', 'JCB', 'MASTERCARD', 'VISA'],
-      billingAddressRequired: true,
-      billingAddressParameters: {
-        format: 'FULL',
-        phoneNumberRequired: true
-      }
-    },
-    tokenizationSpecification: {
-      type: 'PAYMENT_GATEWAY',
+  allowedPaymentMethods: [
+    {
+      type: 'CARD',
       parameters: {
-        gateway: 'paytheory',
-        gatewayMerchantId: 'YOUR_PAY_THEORY_MERCHANT_ID'
-      }
-    }
-  }]
+        allowedAuthMethods: ['PAN_ONLY', 'CRYPTOGRAM_3DS'],
+        allowedCardNetworks: ['AMEX', 'DISCOVER', 'JCB', 'MASTERCARD', 'VISA'],
+        billingAddressRequired: true,
+        billingAddressParameters: {
+          format: 'FULL',
+          phoneNumberRequired: true,
+        },
+      },
+      tokenizationSpecification: {
+        type: 'PAYMENT_GATEWAY',
+        parameters: {
+          gateway: 'paytheory',
+          gatewayMerchantId: 'YOUR_PAY_THEORY_MERCHANT_ID',
+        },
+      },
+    },
+  ],
 };
 
 // Initialize Google Pay client
@@ -120,22 +183,23 @@ let googlePaymentsClient;
 async function checkGooglePayAvailability() {
   // Create payments client
   googlePaymentsClient = new google.payments.api.PaymentsClient({
-    environment: GOOGLE_PAY_CONFIG.environment
+    environment: GOOGLE_PAY_CONFIG.environment,
   });
 
-  // Check if Google Pay is available
+  // Check if Google Pay™ is available
   const isReadyToPayRequest = {
     apiVersion: GOOGLE_PAY_CONFIG.apiVersion,
     apiVersionMinor: GOOGLE_PAY_CONFIG.apiVersionMinor,
-    allowedPaymentMethods: GOOGLE_PAY_CONFIG.allowedPaymentMethods
+    allowedPaymentMethods: GOOGLE_PAY_CONFIG.allowedPaymentMethods,
   };
 
   try {
-    const response = await googlePaymentsClient.isReadyToPay(isReadyToPayRequest);
+    const response =
+      await googlePaymentsClient.isReadyToPay(isReadyToPayRequest);
     if (response.result) {
       renderGooglePayButton();
     } else {
-      console.log('Google Pay is not available');
+      console.log('Google Pay™ is not available');
     }
   } catch (error) {
     console.error('Error checking Google Pay availability:', error);
@@ -151,7 +215,7 @@ function renderGooglePayButton() {
     onClick: handleGooglePay,
     buttonType: 'plain',
     buttonColor: 'black',
-    buttonSizeMode: 'fill'
+    buttonSizeMode: 'fill',
   });
 
   // Add button to the page
@@ -178,25 +242,29 @@ async function handleGooglePay() {
       countryCode: 'US',
       currencyCode: 'USD',
       totalPriceStatus: 'FINAL',
-      totalPrice: (amount / 100).toFixed(2) // Convert cents to dollars
-    }
+      totalPrice: (amount / 100).toFixed(2), // Convert cents to dollars
+    },
   };
 
   try {
-    // Show Google Pay payment sheet
-    const paymentData = await googlePaymentsClient.loadPaymentData(paymentDataRequest);
-    
+    // Show Google Pay™ payment sheet
+    const paymentData =
+      await googlePaymentsClient.loadPaymentData(paymentDataRequest);
+
     // Process with Pay Theory
     const result = await messenger.processWalletTransaction({
       amount: amount,
       digitalWalletPayload: JSON.stringify(paymentData),
-      walletType: window.PayTheoryMessenger.googlePay
+      walletType: window.PayTheoryMessenger.googlePay,
     });
 
     if (result.type === 'SUCCESS') {
       const transaction = result.transaction;
-      
-      if (transaction.status === 'PENDING' || transaction.status === 'SUCCEEDED') {
+
+      if (
+        transaction.status === 'PENDING' ||
+        transaction.status === 'SUCCEEDED'
+      ) {
         showSuccessMessage(transaction);
       } else {
         showErrorMessage(transaction.failure_reasons);
@@ -223,7 +291,7 @@ function showSuccessMessage(transaction) {
     amount: transaction.gross_amount,
     status: transaction.status,
     cardBrand: transaction.payment_method?.card_brand,
-    lastFour: transaction.payment_method?.last_four
+    lastFour: transaction.payment_method?.last_four,
   });
   // Update UI to show success
 }
@@ -234,78 +302,178 @@ function showErrorMessage(error) {
 }
 ```
 
-***
+---
 
-## Complete Example
+## Payment Data Transmission
 
-```html
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Google Pay™ Example</title>
-  <script src="https://pay.google.com/gp/p/js/pay.js"></script>
-  <script src="https://cdn.paytheory.com/messenger/latest/messenger.js"></script>
-  <style>
-    #google-pay-container {
-      display: flex;
-      justify-content: center;
-      margin: 20px 0;
-    }
-  </style>
-</head>
-<body>
-  <h1>Checkout</h1>
-  <p>Total: $10.00</p>
-  <div id="google-pay-container"></div>
-  
-  <script>
-    // Initialize when page loads
-    window.addEventListener('DOMContentLoaded', async () => {
-      await initializePayTheory();
-      await checkGooglePayAvailability();
-    });
-    
-    // Your implementation code here
-  </script>
-</body>
-</html>
+### Preparing the Token
+
+After receiving payment data from Google Pay™, stringify it for use with Pay Theory:
+
+```javascript
+// Get payment data from Google Pay™
+const paymentData =
+  await googlePaymentsClient.loadPaymentData(paymentDataRequest);
+
+// Stringify the entire response
+const walletPayload = JSON.stringify(paymentData);
 ```
 
-***
+### Processing Options
+
+You can now use `walletPayload` with either:
+
+#### Option 1: Pay Theory Messenger SDK
+
+Pass the stringified payload to the `digitalWalletPayload` parameter:
+
+```javascript
+await messenger.processWalletTransaction({
+  amount: 1000, // Amount in cents
+  digitalWalletPayload: walletPayload,
+  walletType: window.PayTheoryMessenger.googlePay,
+});
+```
+
+See [processWalletTransaction documentation](../../../../sdk/javascript/messenger/processWalletTransaction) for details.
+
+#### Option 2: GraphQL API
+
+Use the stringified payload in the `digital_wallet` field:
+
+- For authorization: Pass to `digital_wallet` in the wallet authorization endpoint - see [API Reference](../../../../api/authorization#create-wallet-authorization)
+- For direct transaction: Pass to `digital_wallet` in the wallet transaction endpoint - see [API Reference](../../../../api/transaction#create-wallet-transaction)
+
+See the respective API documentation for complete implementation details.
+
+---
+
+## Token Processing
+
+### Pay Theory's Role
+
+Pay Theory handles only the final encrypted payment token processing:
+
+1. **You handle**: Google Pay™ SDK setup, user interaction, collecting payment data
+2. **Pay Theory handles**: Token decryption, payment processing, 3DS (if needed), settlement
+
+### Token Payload Requirements
+
+The Google Pay™ payment data must include:
+
+- `paymentMethodData.tokenizationData.token` - Encrypted payment token
+- `paymentMethodData.info.billingAddress` - Complete billing information
+- Valid `apiVersion` and `apiVersionMinor` values
+
+### Processing Flow
+
+```mermaid
+flowchart TB
+    A[User Clicks<br/>Pay Button]
+    B[Google Pay™<br/>Sheet Opens]
+    C[Payment Data<br/>Returned]
+    D[Stringify<br/>Payload]
+    E[Send to<br/>Pay Theory]
+    F[Pay Theory<br/>Processes Token]
+    G[Transaction<br/>Complete]
+
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+    E --> F
+    F --> G
+
+    style A fill:#FAF1FF,stroke:#600075,stroke-width:2px,color:#420050
+    style B fill:#FAF1FF,stroke:#600075,stroke-width:2px,color:#420050
+    style C fill:#FAF1FF,stroke:#600075,stroke-width:2px,color:#420050
+    style D fill:#FAF1FF,stroke:#600075,stroke-width:2px,color:#420050
+    style E fill:#FAF1FF,stroke:#600075,stroke-width:2px,color:#420050
+    style F fill:#FAF1FF,stroke:#600075,stroke-width:2px,color:#420050
+    style G fill:#F4E2FF,stroke:#600075,stroke-width:3px,color:#420050
+```
+
+:::note Token Validity
+Google Pay™ tokens are single-use and expire quickly. Process them immediately after receiving from Google Pay™.
+:::
+
+---
 
 ## Environment Configuration
 
 ### Development/Testing
+
 ```javascript
 const GOOGLE_PAY_CONFIG = {
   environment: 'TEST',
-  // merchantId not required for TEST
-  // Use test card numbers provided by Google
-}
+  merchantInfo: {
+    merchantName: 'My Merchant Name',
+    // merchantId not required for TEST
+    // Use test card numbers provided by Google
+  },
+};
 ```
 
 ### Production
+
 ```javascript
 const GOOGLE_PAY_CONFIG = {
   environment: 'PRODUCTION',
   merchantInfo: {
-    merchantId: 'YOUR_GOOGLE_MERCHANT_ID' // Required
-  }
-}
+    merchantId: 'YOUR_GOOGLE_MERCHANT_ID', // Required
+    merchantName: 'My Merchant Name',
+  },
+};
 ```
 
-***
+---
+
+## 3D Secure Support
+
+### Authentication Methods
+
+Pay Theory supports both authentication methods for Google Pay™:
+
+- **PAN_ONLY**: Card number with billing address (may trigger 3DS)
+- **CRYPTOGRAM_3DS**: Pre-authenticated with device authentication
+
+```javascript
+allowedAuthMethods: ['PAN_ONLY', 'CRYPTOGRAM_3DS'];
+```
+
+### How 3D Secure Works
+
+1. **CRYPTOGRAM_3DS**: Already authenticated via device (fingerprint/PIN) - no additional 3DS needed
+2. **PAN_ONLY**: May require additional 3DS verification based on:
+   - Transaction amount
+   - Card issuer requirements
+   - Merchant risk settings
+
+### Enabling 3D Secure
+
+3D Secure is automatically handled by Pay Theory when:
+
+- Processing PAN_ONLY credentials that require additional authentication
+- Your merchant account has 3DS enabled (contact support@paytheory.com to verify)
+- The transaction meets the criteria for 3DS verification
+
+:::info 3DS Processing
+When 3DS is triggered for PAN_ONLY transactions, Pay Theory handles the entire authentication flow automatically. The transaction response will include the 3DS verification status.
+:::
+
+---
 
 ## Browser Support
 
 Google Pay™ works across multiple browsers:
+
 - Chrome 61+
 - Safari 11.1+
 - Firefox 60+
 - Edge 79+
 - Opera 48+
 
-***
+---
 
 ## Testing
 
@@ -314,10 +482,23 @@ Google Pay™ works across multiple browsers:
 3. No merchant registration required for TEST environment
 4. Switch to `PRODUCTION` only after testing is complete
 
-***
+---
 
 ## Additional Resources
 
-- [Google Pay Web Demo](https://developers.google.com/pay/api/web/guides/resources/demos)
-- [Google Pay API Documentation](https://developers.google.com/pay/api/web)
+### Google Pay™ Documentation
+
+- [Google Pay™ Web Demo](https://developers.google.com/pay/api/web/guides/resources/demos)
+- [Google Pay™ API Documentation](https://developers.google.com/pay/api/web)
+- [Google Pay™ Web Integration Checklist](https://developers.google.com/pay/api/web/guides/test-and-deploy/integration-checklist)
+- [Google Pay™ Web Brand Guidelines](https://developers.google.com/pay/api/web/guides/brand-guidelines)
+
+### Policies & Terms
+
+- [Google Pay™ APIs Acceptable Use Policy](https://payments.developers.google.com/terms/aup)
+- [Google Pay™ API Terms of Service](https://payments.developers.google.com/terms/sellertos)
+
+### Pay Theory Documentation
+
 - [Pay Theory Messenger SDK](../../../../sdk/javascript/messenger/pay_theory_messenger)
+- [processWalletTransaction](../../../../sdk/javascript/messenger/processWalletTransaction)

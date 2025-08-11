@@ -1557,3 +1557,73 @@ code{
 
 }
 
+/* Mermaid Diagram Styling */
+.mermaid {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 2rem auto;
+  padding: 2rem 1rem;
+  background: var(--ifm-color-emphasis-100);
+  border-radius: 8px;
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+.mermaid svg {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Style Mermaid flowchart nodes */
+.mermaid .node rect,
+.mermaid .node circle,
+.mermaid .node ellipse,
+.mermaid .node polygon {
+  fill: var(--ifm-color-primary-lightest) !important;
+  stroke: var(--ifm-color-primary) !important;
+  stroke-width: 2px !important;
+}
+
+/* Style Mermaid text */
+.mermaid .node .label {
+  color: var(--ifm-color-primary-darkest) !important;
+  font-family: var(--ifm-font-family-base) !important;
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  line-height: 1.4 !important;
+}
+
+/* Style Mermaid edges/arrows */
+.mermaid .edgePath .path {
+  stroke: var(--ifm-color-primary) !important;
+  stroke-width: 2px !important;
+}
+
+.mermaid .edgePath marker {
+  fill: var(--ifm-color-primary) !important;
+}
+
+/* Dark mode overrides for Mermaid */
+[data-theme='dark'] .mermaid {
+  background: var(--ifm-color-emphasis-100);
+}
+
+[data-theme='dark'] .mermaid .node rect,
+[data-theme='dark'] .mermaid .node circle,
+[data-theme='dark'] .mermaid .node ellipse,
+[data-theme='dark'] .mermaid .node polygon {
+  fill: var(--ifm-color-primary-darker) !important;
+  stroke: var(--ifm-color-primary-light) !important;
+}
+
+[data-theme='dark'] .mermaid .node .label {
+  color: var(--ifm-color-white) !important;
+}
+
+[data-theme='dark'] .mermaid .edgePath .path,
+[data-theme='dark'] .mermaid .edgePath marker {
+  stroke: var(--ifm-color-primary-light) !important;
+  fill: var(--ifm-color-primary-light) !important;
+}
+
