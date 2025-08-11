@@ -141,7 +141,8 @@
               "label": "Apple Pay™",
               "items": [
                 "main/online_payments/wallet_transactions/apple_pay/getting_started",
-                "main/online_payments/wallet_transactions/apple_pay/apple_pay_on_web"
+                "main/online_payments/wallet_transactions/apple_pay/apple_pay_on_web",
+                "main/online_payments/wallet_transactions/apple_pay/apple_pay_on_ios"
               ]
             },
             {
