@@ -10,19 +10,58 @@ Implement Apple Pay™ payments on your website using the Pay Theory JavaScript 
 
 ---
 
-## Domain Verification
+## Apple Pay™ Setup
 
-Before implementing Apple Pay™, verify your domain through Pay Theory:
+### 1. Register Your Domain
 
-1. **Download verification file** from Pay Theory's partner portal
-2. **Upload the file** to your server at:
+1. Log in to [Pay Theory Portal](https://portal.paytheory.com)
+2. Navigate to Settings → Apple Pay Configuration
+3. Download the domain verification file
+4. Upload file to your server at:
    ```
    https://yourdomain.com/.well-known/apple-developer-merchantid-domain-association
    ```
-3. **Ensure HTTPS** is properly configured on your domain
-4. **Click verify** in the Pay Theory portal to complete registration
 
-Once verified, you're ready to implement Apple Pay™ on your website.
+### 2. Verify Your Domain
+
+1. Return to Pay Theory Portal
+2. Click **Verify Domain** button
+3. Ensure verification shows "Active" status
+4. Your domain is now ready for Apple Pay™
+
+---
+
+## Merchant Configuration
+
+### Required Session Parameters
+
+When creating an Apple Pay™ session, you must configure:
+
+```javascript
+const paymentRequest = {
+  countryCode: 'US', // Your merchant country
+  currencyCode: 'USD', // Transaction currency
+  supportedNetworks: ['visa', 'masterCard', 'amex', 'discover'],
+  merchantCapabilities: ['supports3DS'],
+  total: {
+    label: 'Your Business Name', // Your merchant display name
+    amount: '10.00', // Transaction amount
+  },
+};
+```
+
+:::warning Important Configuration
+
+- **countryCode**: Must match your merchant registration country
+- **merchantCapabilities**: Must include `supports3DS` for Pay Theory processing
+  :::
+
+### Finding Your Configuration
+
+1. Log in to your Pay Theory Dashboard
+2. Navigate to Settings → Developers
+3. Your Merchant ID is displayed at the top of the page
+4. Use this for Apple Pay™ session configuration
 
 ---
 
@@ -31,13 +70,13 @@ Once verified, you're ready to implement Apple Pay™ on your website.
 ### 1. Include Required Scripts
 
 ```html
-<!-- Apple Pay SDK -->
+<!-- Apple Pay™ SDK -->
 <script
   crossorigin
   src="https://applepay.cdn-apple.com/jsapi/1.latest/apple-pay-sdk.js"></script>
 
 <!-- Pay Theory SDK -->
-<script src="https://cdn.paytheory.com/messenger/latest/messenger.js"></script>
+<script src="SDK IMPORT URL"></script>
 ```
 
 ### 2. Initialize Pay Theory Messenger
@@ -62,21 +101,55 @@ async function initializePayTheory() {
 window.addEventListener('DOMContentLoaded', initializePayTheory);
 ```
 
-### 3. Check Apple Pay™ Availability
+### 3. Configure Apple Pay™
 
 ```javascript
+// Apple Pay™ configuration
+const APPLE_PAY_CONFIG = {
+  countryCode: 'US',
+  currencyCode: 'USD',
+  supportedNetworks: ['visa', 'masterCard', 'amex', 'discover'],
+  merchantCapabilities: ['supports3DS'],
+};
+
+// Check if Apple Pay™ is available
 function checkApplePayAvailability() {
-  // Check if Apple Pay is supported
   if (window.ApplePaySession && ApplePaySession.canMakePayments()) {
-    // Show Apple Pay button
-    document.getElementById('apple-pay-button').style.display = 'block';
+    renderApplePayButton();
   } else {
-    console.log('Apple Pay is not available on this device');
+    console.log('Apple Pay™ is not available');
   }
 }
 ```
 
-### 4. Add Apple Pay™ Button
+### 4. Check Apple Pay™ Availability
+
+```javascript
+async function checkApplePayAvailability() {
+  // Check browser support
+  if (!window.ApplePaySession) {
+    console.log('Apple Pay™ is not supported in this browser');
+    return;
+  }
+
+  // Check if device has cards
+  if (ApplePaySession.canMakePayments()) {
+    renderApplePayButton();
+  } else {
+    console.log('No cards configured for Apple Pay™');
+  }
+}
+```
+
+### 5. Render Apple Pay™ Button
+
+```javascript
+function renderApplePayButton() {
+  const button = document.getElementById('apple-pay-button');
+  button.style.display = 'block';
+  button.onclick = handleApplePay;
+}
+```
 
 ```html
 <style>
@@ -91,32 +164,14 @@ function checkApplePayAvailability() {
   }
 </style>
 
-<button
-  id="apple-pay-button"
-  class="apple-pay-button"
-  onclick="handleApplePay()">
-  Make Payment
-</button>
-```
-
-### 5. Create Payment Request
-
-```javascript
-function createPaymentRequest(amount) {
-  return {
-    countryCode: 'US',
-    currencyCode: 'USD',
-    supportedNetworks: ['visa', 'masterCard', 'amex', 'discover'],
-    merchantCapabilities: ['supports3DS'],
-    total: {
-      label: 'Your Business Name',
-      amount: (amount / 100).toFixed(2), // Convert cents to dollars
-    },
-  };
-}
+<button id="apple-pay-button" class="apple-pay-button">Apple Pay</button>
 ```
 
 ### 6. Handle Apple Pay™ Transaction
+
+:::note Merchant Validation
+Merchant validation is required for Apple Pay™ transactions. You can use the `getApplePaySession` method to get the session data and complete the merchant validation.
+:::
 
 ```javascript
 async function handleApplePay() {
@@ -126,15 +181,23 @@ async function handleApplePay() {
   }
 
   const amount = 1000; // Amount in cents ($10.00)
-  const request = createPaymentRequest(amount);
 
-  // Create Apple Pay session
-  const session = new ApplePaySession(3, request);
+  // Create payment request
+  const paymentRequest = {
+    ...APPLE_PAY_CONFIG,
+    total: {
+      label: 'Your Business Name',
+      amount: (amount / 100).toFixed(2), // Convert cents to dollars
+    },
+  };
+
+  // Create Apple Pay™ session
+  const session = new ApplePaySession(3, paymentRequest);
 
   // Handle merchant validation
   session.onvalidatemerchant = async event => {
     try {
-      // Get Apple Pay session from Pay Theory
+      // Get session from Pay Theory
       const response = await messenger.getApplePaySession();
 
       if (response.type === 'SUCCESS' && response.session) {
@@ -195,6 +258,8 @@ function showSuccessMessage(transaction) {
     transactionId: transaction.transaction_id,
     amount: transaction.gross_amount,
     status: transaction.status,
+    cardBrand: transaction.payment_method?.card_brand,
+    lastFour: transaction.payment_method?.last_four,
   });
   // Update UI to show success
 }
@@ -207,9 +272,107 @@ function showErrorMessage(error) {
 
 ---
 
+## Payment Data Transmission
+
+### Preparing the Token
+
+After receiving payment data from Apple Pay™, stringify it for use with Pay Theory:
+
+```javascript
+// Get payment data from Apple Pay™
+const paymentData = event.payment;
+
+// Stringify the entire response
+const walletPayload = JSON.stringify(paymentData);
+```
+
+### Processing Options
+
+You can now use `walletPayload` with either:
+
+#### Option 1: Pay Theory Messenger SDK
+
+Pass the stringified payload to the `digitalWalletPayload` parameter:
+
+```javascript
+await messenger.processWalletTransaction({
+  amount: 1000, // Amount in cents
+  digitalWalletPayload: walletPayload,
+  walletType: window.PayTheoryMessenger.applePay,
+});
+```
+
+See [processWalletTransaction documentation](../../../../sdk/javascript/messenger/processWalletTransaction) for details.
+
+#### Option 2: GraphQL API
+
+Use the stringified payload in the `digital_wallet` field:
+
+- For authorization: Pass to `digital_wallet` in the wallet authorization endpoint - see [API Reference](../../../../api/authorization#create-wallet-authorization)
+- For direct transaction: Pass to `digital_wallet` in the wallet transaction endpoint - see [API Reference](../../../../api/transaction#create-wallet-transaction)
+
+See the respective API documentation for complete implementation details.
+
+---
+
+## Token Processing
+
+### Pay Theory's Role
+
+Pay Theory handles only the final encrypted payment token processing:
+
+1. **You handle**: Apple Pay™ session setup, merchant validation, user interaction
+2. **Pay Theory handles**: Token decryption, payment processing, 3DS (if needed), settlement
+
+### Token Payload Requirements
+
+The Apple Pay™ payment data must include:
+
+- Valid payment token from Apple
+- Payment network information
+- Transaction details
+
+### Processing Flow
+
+```mermaid
+flowchart TB
+    A[User Clicks<br/>Pay Button]
+    B[Apple Pay™<br/>Sheet Opens]
+    C[Merchant<br/>Validation]
+    D[Payment<br/>Authorized]
+    E[Stringify<br/>Payload]
+    F[Send to<br/>Pay Theory]
+    G[Pay Theory<br/>Processes Token]
+    H[Transaction<br/>Complete]
+
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+    E --> F
+    F --> G
+    G --> H
+
+    style A fill:#FAF1FF,stroke:#600075,stroke-width:2px,color:#420050
+    style B fill:#FAF1FF,stroke:#600075,stroke-width:2px,color:#420050
+    style C fill:#FAF1FF,stroke:#600075,stroke-width:2px,color:#420050
+    style D fill:#FAF1FF,stroke:#600075,stroke-width:2px,color:#420050
+    style E fill:#FAF1FF,stroke:#600075,stroke-width:2px,color:#420050
+    style F fill:#FAF1FF,stroke:#600075,stroke-width:2px,color:#420050
+    style G fill:#FAF1FF,stroke:#600075,stroke-width:2px,color:#420050
+    style H fill:#F4E2FF,stroke:#600075,stroke-width:3px,color:#420050
+```
+
+:::note Token Validity
+Apple Pay™ tokens are single-use and expire quickly. Process them immediately after receiving from Apple Pay™.
+:::
+
+---
+
 ## Testing
 
-- Use Safari on a real Apple device
-- Ensure your domain is verified in Pay Theory portal
-- Test with sandbox API keys before going live
-- Monitor transactions in Pay Theory dashboard
+1. Use Safari on a real Apple device
+2. Test with sandbox API keys from Pay Theory
+3. Add test cards to your Apple Wallet
+4. Ensure domain is verified in Pay Theory portal
+5. Switch to production keys when ready to go live
