@@ -7,6 +7,67 @@ title: "Changelog"
 # Changelog
 Additions and updates to Pay Theory’s API
 
+
+## August 14, 2025
+#### Added to JS SDK
+* **PayTheory Messenger SDK** - New module for digital wallet transaction processing
+  * `PayTheoryMessenger` class for handling Apple Pay™, Google Pay™, and Paze transactions
+  * `initialize()` function to establish secure messenger connection
+  * `getApplePaySession()` function for Apple Pay merchant validation
+  * `processWalletTransaction()` function for processing wallet payments with support for:
+    - Apple Pay™ payment tokens
+    - Google Pay™ payment tokens
+    - Paze digital wallets
+    - Transaction metadata and billing information
+  * `on()` function for event listener registration supporting events:
+    - `ready` - Messenger initialization complete
+    - `error` - Error handling
+    - `success` - Transaction success
+  * `destroy()` function for cleanup and resource management
+  * Static wallet type constants: `PayTheoryMessenger.applePay`, `PayTheoryMessenger.googlePay`, `PayTheoryMessenger.paze`
+
+#### Added to API
+* `createWalletTransaction` mutation added for processing digital wallet payments
+  * Supports Apple Pay™, Google Pay™, and other wallet types via `wallet_type` parameter
+  * Accepts encrypted `digital_wallet_payload` from wallet providers
+  * Returns standard transaction response with wallet-specific details
+
+* `createWalletAuthorization` mutation added for wallet payment authorizations
+  * Creates authorization holds for digital wallet transactions
+  * Same parameters as `createWalletTransaction` but for auth-only flows
+  * Returns authorization object for later capture
+
+---
+
+## March 6, 2025
+#### Added to API
+* **Split Transactions** - New comprehensive split functionality for distributing transaction funds
+  * `splits` query added to retrieve split transactions with filtering and pagination
+  * `Split` object schema introduced with fields for:
+    - `amount` - Split amount in cents
+    - `account_code` - Customer defined account code
+    - `reference` - Customer defined reference
+    - `merchant` - Associated merchant object
+    - `payment_method` - Payment method used for transaction
+    - `settlement_batch` - Settlement batch number when settled
+    - `metadata` - Custom JSON metadata storage
+  * `SPLIT` added as a new value to the `MetadataAssociate` enum for metadata management
+
+---
+
+## February 12, 2025
+#### Added to API
+* `validatePaymentMethodOwnership` query added to verify payment method ownership
+  * Validates whether a provided card or bank account number matches a specific payment method
+  * Returns boolean confirmation of ownership match
+  * Requires PCI L1 compliance for usage
+
+* `updateMerchantSettings` mutation added for merchant configuration management
+  * Allows updating merchant contact information (email, phone)
+  * Supports social media links (Facebook, Instagram, LinkedIn, TikTok, Twitter)
+  * Enables website URL configuration
+  * Uses `MerchantSettingsInput` with all fields optional for partial updates
+
 ## November 20, 2024
 #### Added to API
 * `createBatchCapture` mutation added to API. Only works in sandbox environments. Captures all `PENDING` transactions for a merchant in a batch and shortly after creates a settlement for the merchant.
