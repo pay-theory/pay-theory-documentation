@@ -1,0 +1,66 @@
+---
+sidebar_position: 1
+sidebar_label: "Overview"
+title: "Wallet Transactions Overview"
+---
+
+# Wallet Transactions Overview
+
+Learn how to integrate digital wallet payments into your application using Pay Theory's wallet transaction APIs.
+
+***
+
+## Basic Setup
+
+1. **Configure your merchant account** - Ensure wallet payments are enabled
+2. **Add wallet buttons** - Implement Apple Pay or Google Pay buttons in your UI
+3. **Handle wallet tokens** - Capture the payment token from the wallet provider
+
+***
+
+## Processing Wallet Transactions
+
+After receiving a payment token from Apple Pay™, Google Pay™, or Paze™, you can use either our JavaScript SDK or our API to process the transaction:
+
+### Using JavaScript SDK
+```javascript title="javascript"
+const walletTransaction = await messenger.processWalletTransaction({
+  digitalWalletPayload: walletPaymentToken,
+  amount: 1000,
+  walletType: "APPLE_PAY",
+  // Additional transaction details
+});
+```
+
+**Documentation:** [JavaScript SDK Wallet Transaction](../../../sdk/javascript/messenger/processWalletTransaction)
+
+### Using API
+For server-side processing, you can call our wallet APIs directly:
+
+**Documentation:** 
+- [API Reference - Create Wallet Transaction](../../../api/transaction#create-wallet-transaction)
+- [API Reference - Create Wallet Authorization](../../../api/authorization#create-wallet-authorization)
+
+***
+
+## Available Wallet Options
+
+<div style={{display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', marginTop: '2rem'}}>
+  <div style={{border: '1px solid #e0e0e0', borderRadius: '8px', padding: '1.5rem', textAlign: 'center'}}>
+    <h3 style={{marginTop: '0'}}>Apple Pay™</h3>
+    <p>Fast checkout using cards from your Apple wallet</p>
+    <a href="./apple_pay/getting_started" class="button button--primary button--md">Get Started</a>
+  </div>
+  
+  <div style={{border: '1px solid #e0e0e0', borderRadius: '8px', padding: '1.5rem', textAlign: 'center'}}>
+    <h3 style={{marginTop: '0'}}>Google Pay™</h3>
+    <p>Seamless payments using cards from your Google wallet</p>
+    <a href="./google_pay/getting_started" class="button button--primary button--md">Get Started</a>
+  </div>
+  
+  <div style={{border: '1px solid #e0e0e0', borderRadius: '8px', padding: '1.5rem', textAlign: 'center'}}>
+    <h3 style={{marginTop: '0'}}>Paze™</h3>
+    <p>Coming soon</p>
+    <a href="#" class="button button--secondary button--md" disabled>Learn More</a>
+  </div>
+</div>

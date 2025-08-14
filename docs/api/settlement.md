@@ -12,24 +12,24 @@ Settlements are a batch of payments, disputes, and refunds that are grouped toge
 
 ```graphql
 {
-  currency: String
-  gross_amount: Int @deprecated(reason: "Use gross_amount_64bit instead")
-  gross_amount_64bit: String
-  merchant_uid: String
-  net_amount: Int @deprecated(reason: "Use net_amount_64bit instead")
-  net_amount_64bit: String
-  settlement_batch: Int
-  settlement_date: AWSDateTime
-  status: String
-  transaction_debit_count: Int
-  transaction_dispute_count: Int
-  transaction_reversal_count: Int
-  transfer_date: AWSDateTime
-  total_adjustments: Int @deprecated(reason: "Use total_adjustments_64bit instead")
-  total_adjustments_64bit: String
-  total_fees: Int @deprecated(reason: "Use total_fees_64bit instead")
-  total_fees_64bit: String
-  updated_row_at: AWSDateTime
+    currency: String
+    gross_amount: Int @deprecated(reason: "Use gross_amount_64bit instead")
+    gross_amount_64bit: String
+    merchant_uid: String
+    net_amount: Int @deprecated(reason: "Use net_amount_64bit instead")
+    net_amount_64bit: String
+    settlement_batch: Int
+    settlement_date: AWSDateTime
+    status: String
+    transaction_debit_count: Int
+    transaction_dispute_count: Int
+    transaction_reversal_count: Int
+    transfer_date: AWSDateTime
+    total_adjustments: Int @deprecated(reason: "Use total_adjustments_64bit instead")
+    total_adjustments_64bit: String
+    total_fees: Int @deprecated(reason: "Use total_fees_64bit instead")
+    total_fees_64bit: String
+    updated_row_at: AWSDateTime
 }
 ```
 
@@ -63,23 +63,23 @@ A 32-bit Int is between 2,147,483,647 and -2,147,483,648. Any value outside of t
 ## Query Settlements
 ```js
 {
-  settlements(limit: Int, direction: MoveDirection, offset: String, offset_id: String, query: SqlQuery) {
-    items {
-      currency
-      gross_amount
-      merchant_uid
-      net_amount
-      settlement_batch
-      settlement_date
-      status
-      total_adjustments
-      total_fees
-      transaction_dispute_count
-      transaction_debit_count
-      transaction_reversal_count
+    settlements(limit: Int, direction: MoveDirection, offset: String, offset_id: String, query: SqlQuery) {
+        items {
+            currency
+            gross_amount
+            merchant_uid
+            net_amount
+            settlement_batch
+            settlement_date
+            status
+            total_adjustments
+            total_fees
+            transaction_dispute_count
+            transaction_debit_count
+            transaction_reversal_count
+        }
+        total_row_count
     }
-    total_row_count
-  }
 }
 ```
 
@@ -97,20 +97,20 @@ A 32-bit Int is between 2,147,483,647 and -2,147,483,648. Any value outside of t
 
 ```js
 {
-  "data": {
-    "settlements": {
-      "items": [
-        {
-          "settlement_batch": "42"
-        },
-        {
-          "settlement_batch": "41"
-        },
-        ...
-      ],
-        "total_row_count": 256
+    "data": {
+        "settlements": {
+            "items": [
+                {
+                    "settlement_batch": "42"
+                },
+                {
+                    "settlement_batch": "41"
+                },
+                ...
+            ],
+                "total_row_count": 256
+        }
     }
-  }
 }
 ```
 | Key             | type         | description                                                                         |

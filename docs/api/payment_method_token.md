@@ -105,30 +105,30 @@ The type of wallet that the payment method token is stored in. It can be one of 
 ## Query Payment Method Tokens
 ```graphql
 {
-  paymentMethodTokens(direction: MoveDirection, limit: Int, offset: String, offset_id: String, query: SqlQuery) {
-    items {
-      address_line1
-      address_line2
-      card_brand
-      city
-      country
-      exp_date
-      full_name
-      is_active
-      last_four
-      merchant_uid
-      metadata(query_list: [QueryPair])
-      payment_method_id
-      payment_type
-      payor(query_list: [QueryPair]) {
-        ...
-      }
-      postal_code
-      region
-      wallet_type
+    paymentMethodTokens(direction: MoveDirection, limit: Int, offset: String, offset_id: String, query: SqlQuery) {
+        items {
+          address_line1
+          address_line2
+          card_brand
+          city
+          country
+          exp_date
+          full_name
+          is_active
+          last_four
+          merchant_uid
+          metadata(query_list: [QueryPair])
+          payment_method_id
+          payment_type
+          payor(query_list: [QueryPair]) {
+            ...
+          }
+          postal_code
+          region
+          wallet_type
+        }
+        total_row_count
     }
-    total_row_count
-  }
 }
 ```
 
@@ -164,12 +164,12 @@ You must be PCI L1 compliant to use this mutation. For more details contact supp
 
 ```graphql
 mutation {
-  createPaymentMethod(payment_method: PaymentMethodInput!,
-    merchant_uid: String!,
-    skip_validation: Boolean) {
-    payment_method_id
-    ...
-  }
+    createPaymentMethod(payment_method: PaymentMethodInput!,
+                        merchant_uid: String!,
+                        skip_validation: Boolean) {
+        payment_method_id
+        ...
+    }
 }
 ```
 
@@ -194,12 +194,12 @@ You must be PCI L1 compliant to use this in a mutation. For more details contact
 
 ```graphql
 {
-  ach: AchInput
-  card: CardInput
-  canadian_eft: CanadianEftInput
-  metadata: AWSJSON
-  payor: PayorInput
-  payor_id: String
+    ach: AchInput
+    card: CardInput
+    canadian_eft: CanadianEftInput
+    metadata: AWSJSON
+    payor: PayorInput
+    payor_id: String
 }
 ```
 
@@ -218,16 +218,16 @@ The ach input object. It contains the following fields:
 
 ```graphql
 {
-  address_line1: String
-  address_line2: String
-  account_number: String!
-  account_type: AchAccountType!
-  city: String
-  country: String
-  name_on_account: String!
-  postal_code: String
-  region: String
-  routing_number: String!
+    address_line1: String
+    address_line2: String
+    account_number: String!
+    account_type: AchAccountType!
+    city: String
+    country: String
+    name_on_account: String!
+    postal_code: String
+    region: String
+    routing_number: String!
 }
 ```
 
@@ -276,16 +276,16 @@ The card input object. It contains the following fields:
 
 ```graphql
 {
-  address_line1: String
-  address_line2: String
-  card_number: String!
-  city: String
-  country: String
-  exp_date: CardExpirationInput!
-  full_name: String
-  postal_code: String!
-  region: String
-  security_code: String!
+    address_line1: String
+    address_line2: String
+    card_number: String!
+    city: String
+    country: String
+    exp_date: CardExpirationInput!
+    full_name: String
+    postal_code: String!
+    region: String
+    security_code: String!
 }
 ```
 | Key           | type                 | description                                                                                                      |
@@ -307,8 +307,8 @@ The card expiration input object. It contains the following fields:
 
 ```graphql
 {
-  month: String!
-  year: String!
+    month: String!
+    year: String!
 }
 ```
 | Key   | type    | description                                    |
@@ -340,6 +340,45 @@ mutation MyMutation {
 {
   "data": {
     "updatePaymentMethodToDisabled": true
+  }
+}
+```
+
+***
+## Validate Payment Method Ownership
+
+This mutation validates whether a provided card or bank account number matches a specific payment method.
+
+:::note
+You must be PCI L1 compliant to use this mutation. For more details contact support@paytheory.com
+:::
+
+```graphql
+query {
+  validatePaymentMethodOwnership(
+    number: String!,
+    payment_method_id: String!
+  )
+}
+```
+
+**Parameters**
+
+| Key               | type   | description                                                                                          |
+|-------------------|--------|------------------------------------------------------------------------------------------------------|
+| number            | String | The card number or account number to validate. For card payment methods, this is the full card number. For ACH payment methods, this is the full account number. |
+| payment_method_id | String | The unique payment method id that identifies the payment method to validate against.                 |
+
+**Returns**
+
+A boolean value indicating whether the provided number matches the payment method:
+- `true` if the number matches the payment method
+- `false` if the number does not match the payment method
+
+```js
+{
+  "data": {
+    "validatePaymentMethodOwnership": true
   }
 }
 ```

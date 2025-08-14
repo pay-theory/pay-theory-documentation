@@ -382,4 +382,3 @@ A boolean value indicating whether the provided number matches the payment metho
   }
 }
 ```
-```

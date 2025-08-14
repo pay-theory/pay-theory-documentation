@@ -14,8 +14,8 @@ First let's look at a basic query object, then we can break down its parts.
 ## The Query Object
 ```graphql
 {
-    query_list: [QueryPair]
-    sort_list: [SortPair]
+query_list: [QueryPair]
+sort_list: [SortPair]
 }
 ```
 
@@ -90,13 +90,13 @@ These operators are case-sensitive. Conjunctive operators in the same array must
 To mix operators use nested queries with query pairs containing a `query_list`. The following are the available conjunctive operators:
 
 `AND_NEXT`
- The results of the query have to meet all the conditions in the query pair list.
+The results of the query have to meet all the conditions in the query pair list.
 
 `OR_NEXT`
- The results of the query have to meet one of the conditions in the query pair list.
+The results of the query have to meet one of the conditions in the query pair list.
 
 `NONE_NEXT`
- The final query pair in the list should use this operator since it has nothing to connect to.
+The final query pair in the list should use this operator since it has nothing to connect to.
 
 ***
 ### Sort Pair
@@ -232,27 +232,27 @@ If you wanted to build a query that looked for any settlements that had a gross_
 
 ```graphql
 {
-    settlements(limit: 10, query:
-          {
-            query_list: [
-              {
-                key: "gross_amount",
-                value: "1000",
-                operator: GREATER_THAN,
-                conjunctive_operator: NONE_NEXT
-              }
-            ],
-            sort_pair: [{
-              direction: ASC,
-              key: "gross_amount"
-            }]
-          }) {
-        items {
-            currency
-            gross_amount
-        }
-        total_row_count
+  settlements(limit: 10, query:
+  {
+    query_list: [
+      {
+        key: "gross_amount",
+        value: "1000",
+        operator: GREATER_THAN,
+        conjunctive_operator: NONE_NEXT
+      }
+    ],
+    sort_pair: [{
+      direction: ASC,
+      key: "gross_amount"
+    }]
+  }) {
+    items {
+      currency
+      gross_amount
     }
+    total_row_count
+  }
 }
 ```
 
@@ -264,23 +264,23 @@ If you wanted to build a query that looked for any transactions that had a statu
 ```graphql
 {
   transactions(limit: 5, query: {query_list: [
-  {
-    key: "reference",
-    value: "test%",
-    operator: LIKE,
-    conjunctive_operator: AND_NEXT
-  },
-  {
+    {
+      key: "reference",
+      value: "test%",
+      operator: LIKE,
+      conjunctive_operator: AND_NEXT
+    },
+    {
       key: "status",
       value: "SETTLED",
       operator: EQUAL,
       conjunctive_operator: NONE_NEXT
-  }
-]}) {
+    }
+  ]}) {
     items {
-        transaction_id
-        reference
-        gross_amount
+      transaction_id
+      reference
+      gross_amount
     }
     total_row_count
   }
@@ -337,35 +337,35 @@ This allows for more advanced queries and for you to group `AND_NEXT` and `OR_NE
 Due to the fact payment method is a nested data object payment method queries be made by passing a separate array of query pairs for the metadata.
 ```graphql
 {
-    transactions(limit: 10, query:
-          {
-            query_list: [
-                {
-                    key: "gross_amount",
-                    value: "1000",
-                    operator: GREATER_THAN,
-                    conjunctive_operator: NONE_NEXT
-                }
-            ],
-            sort_pair: [{
-              direction: ASC,
-              key: "gross_amount"
-            }]
-          }
-          ) {
-        items {
-            currency
-            gross_amount
-            payment_method(query_list: [
-                {
-                    key: "last_four",
-                    value: "1234",
-                    operator: EQUAL
-                }
-            ])
+  transactions(limit: 10, query:
+  {
+    query_list: [
+      {
+        key: "gross_amount",
+        value: "1000",
+        operator: GREATER_THAN,
+        conjunctive_operator: NONE_NEXT
+      }
+    ],
+    sort_pair: [{
+      direction: ASC,
+      key: "gross_amount"
+    }]
+  }
+  ) {
+    items {
+      currency
+      gross_amount
+      payment_method(query_list: [
+        {
+          key: "last_four",
+          value: "1234",
+          operator: EQUAL
         }
-        total_row_count
+      ])
     }
+    total_row_count
+  }
 }
 ```
 This would return 10 transactions where the `gross_amount` is greater than 1000 and the payment has a payment method in which `last_four` is equal to 1234. It would be sorted by gross_amount in ascending order.
@@ -377,36 +377,36 @@ Metadata queries work similarly but do not support nested queries using `query_g
 
 ```graphql
 {
-    transactions(limit: 10, query:
-          {
-            query_list: [
-                {
-                    key: "gross_amount",
-                    value: "1000",
-                    operator: GREATER_THAN,
-                    conjunctive_operator: NONE_NEXT
-                }
-            ],
-            sort_pair: [{
-              direction: ASC,
-              key: "gross_amount"
-            }]
-          }
-          ) {
-        items {
-            currency
-            gross_amount
-            metadata(query_list: [
-                {
-                    key:"user_defined_payer_id",
-                    value:"1234",
-                    operator: EQUAL,
-                    conjunctive_operator: NONE_NEXT
-                }
-            ])
+  transactions(limit: 10, query:
+  {
+    query_list: [
+      {
+        key: "gross_amount",
+        value: "1000",
+        operator: GREATER_THAN,
+        conjunctive_operator: NONE_NEXT
+      }
+    ],
+    sort_pair: [{
+      direction: ASC,
+      key: "gross_amount"
+    }]
+  }
+  ) {
+    items {
+      currency
+      gross_amount
+      metadata(query_list: [
+        {
+          key:"user_defined_payer_id",
+          value:"1234",
+          operator: EQUAL,
+          conjunctive_operator: NONE_NEXT
         }
-        total_row_count
+      ])
     }
+    total_row_count
+  }
 }
 ```
 

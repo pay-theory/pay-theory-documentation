@@ -97,16 +97,16 @@ A webhook event object represents a webhook trigger, meaning it may have sent a 
 
 ```graphql
 {
-  id: ID
-  endpoint: String
-  error: String
-  event: String
-  started_at: String
-  finished_at: String
-  request: String
-  response: String
-  status_code: Int
-  result: WebhookNotificationResult
+    id: ID
+    endpoint: String
+    error: String
+    event: String
+    started_at: String
+    finished_at: String
+    request: String
+    response: String
+    status_code: Int
+    result: WebhookNotificationResult
 }
 ```
 
@@ -164,8 +164,8 @@ The object `WebhookEvents` consists of the following fields:
 
 ```graphql
 {
-events: [WebhookEvent]!
-last_evaluated_key: String
+  events: [WebhookEvent]!
+  last_evaluated_key: String
 }
 ```
 
@@ -189,11 +189,11 @@ You can expect webhooks for the following events:
 
 The payload for each event will contain the following values:
 
-| Key     | Type   | Description                                                                                                                                                     |
-|---------|--------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Key     | Type   | Description                                                                                                                                                  |
+|---------|--------|--------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | event   | String | The type of event that was sent. Should be one of the following: `AUTHORIZATION`, `DISPUTE`, `MERCHANT`, `TRANSACTION`, `PAYMENT_METHOD`, `PAYOR`, `SETTLEMENT`. |
-| subtype | String | The subtype of the event. Should be either `CREATED` or `UPDATED`                                                                                               |
-| payload | Object | The payload of the event. Examples of the payload for each event are below.                                                                                     |
+| subtype | String | The subtype of the event. Should be either `CREATED` or `UPDATED`                                                                                            |
+| payload | Object | The payload of the event. Examples of the payload for each event are below.                                                                                  |
 
 ### Authorization
 
@@ -359,25 +359,25 @@ This is a subset of the [merchant object](merchant.md#the-fee-matrix-object)
 
 ```graphql
 {
-  ach_active
-  api_key
-  card_active
-  cash_active
-  is_system
-  merchant_name
-  merchant_uid
-  parent_merchant_uid
-  settings {
-    contact_email
-    contact_phone
-    facebook
-    instagram
-    linkedin
-    tiktok
-    twitter
-    website
-  }
-  submitted_onboarding
+    ach_active
+    api_key
+    card_active
+    cash_active
+    is_system
+    merchant_name
+    merchant_uid
+    parent_merchant_uid
+    settings {
+        contact_email
+        contact_phone
+        facebook
+        instagram
+        linkedin
+        tiktok
+        twitter
+        website
+    }
+    submitted_onboarding
 }
 ```
 
@@ -426,18 +426,18 @@ This is a subset of the [payor object](payor.md#the-payor-object)
 
 ```graphql
 {
-  address_line1
-  address_line2
-  city
-  country
-  email
-  full_name
-  merchant_uid
-  metadata
-  payor_id
-  phone
-  postal_code
-  region
+    address_line1
+    address_line2
+    city
+    country
+    email
+    full_name
+    merchant_uid
+    metadata
+    payor_id
+    phone
+    postal_code
+    region
 }
 ```
 
@@ -447,24 +447,24 @@ This is a subset of the [settlement object](settlement.md#the-settlement-object)
 
 ```graphql
 {
-  currency
-  gross_amount
-  gross_amount_64bit
-  merchant_uid
-  net_amount
-  net_amount_64bit
-  settlement_batch
-  settlement_date
-  status
-  total_adjustments
-  total_adjustments_64bit
-  total_fees
-  total_fees_64bit
-  transaction_debit_count
-  transaction_dispute_count
-  transaction_reversal_count
-  transfer_date
-  updated_row_at
+    currency
+    gross_amount
+    gross_amount_64bit
+    merchant_uid
+    net_amount
+    net_amount_64bit
+    settlement_batch
+    settlement_date
+    status
+    total_adjustments
+    total_adjustments_64bit
+    total_fees
+    total_fees_64bit
+    transaction_debit_count
+    transaction_dispute_count
+    transaction_reversal_count
+    transfer_date
+    updated_row_at
 }
 ```
 

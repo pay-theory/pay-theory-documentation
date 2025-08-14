@@ -1,14 +1,15 @@
 ---
 sidebar_position: 50
 sidebar_label: 'Transaction'
-title: "Transaction"
+title: 'Transaction'
 ---
 
 # Transaction
 
 Transactions are a data object that can represent a payment, failed or successful, or a refund.
 
-***
+---
+
 ## The Transaction Object
 
 ```js
@@ -39,6 +40,7 @@ Transactions are a data object that can represent a payment, failed or successfu
   refunded_amount: Int
   sale_id: String
   settlement_batch: Int
+  splits: [Split]
   status: TransactionStatus
   timezone: String
   transaction_date: AWSDateTime
@@ -49,14 +51,14 @@ Transactions are a data object that can represent a payment, failed or successfu
 ```
 
 | Key                | type                                                                       | description                                                                                                                                            |
-|--------------------|----------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ------------------ | -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | account_code       | String                                                                     | Customer defined account code for the transaction.                                                                                                     |
 | ach_return_details | [AchReturnDetails](#ach-return-details)                                    | The details of the ACH return if any.                                                                                                                  |
 | authorization_id   | String                                                                     | The authorization id for the transaction.                                                                                                              |
 | avs_status         | String                                                                     | The AVS status for the transaction.                                                                                                                    |
 | currency           | String                                                                     | The type of currency for the transaction.                                                                                                              |
 | dispute_status     | [DisputeStatus](dispute#dispute-status)                                    | The status of the dispute if any.                                                                                                                      |
-| failure_reasons    | [String]                                                                   | List of strings, if any, detailing the reason a transaction failed. See [Failure Codes](/docs/main/after_payments/failed_transactions) for a complete list of failure codes and descriptions.                                                                                    |
+| failure_reasons    | [String]                                                                   | List of strings, if any, detailing the reason a transaction failed. See [Failure Codes](../../main/after_payments/failed_transactions) for a complete list of failure codes and descriptions.                                                                                    |
 | fee_mode           | FeeMode                                                                    | The fee mode on the transaction.                                                                                                                       |
 | fees               | Int                                                                        | The amount of the fees charged for the transaction.                                                                                                    |
 | flag_for_review    | [TransactionReviewStatus](#transaction-review-status)                      | A status indiciator for any transactions that are in review. When a transaction is in review the funds will not settle to the merchant until resolved. |
@@ -76,6 +78,7 @@ Transactions are a data object that can represent a payment, failed or successfu
 | refunded_amount    | Int                                                                        | The amount of the transaction that has been refunded if any.                                                                                           |
 | sale_id            | String                                                                     | The sale id for the transaction if any.                                                                                                                |
 | settlement_batch   | Int                                                                        | The unique settlement batch number the transaction belongs to if settled.                                                                              |
+| splits             | [[Split]](split#the-split-object)                                          | An array of split objects associated with this transaction, if any.                                                                                    |
 | status             | [TransactionStatus](#transaction-status)                                   | The status of the transaction.                                                                                                                         |
 | timezone           | String                                                                     | The timezone the transaction was made in.                                                                                                              |
 | transaction_date   | AWSDateTime                                                                | The date the transaction was made.                                                                                                                     |
@@ -83,7 +86,8 @@ Transactions are a data object that can represent a payment, failed or successfu
 | transaction_type   | [TransactionType](#transaction-type)                                       | The type of transfer that was made.                                                                                                                    |
 | updated_row_at     | AWSDateTime                                                                | The date and time the transaction was last updated.                                                                                                    |
 
-***
+---
+
 ### Ach Return Details
 
 ```graphql
@@ -95,33 +99,36 @@ Transactions are a data object that can represent a payment, failed or successfu
 ```
 
 | Key            | type                                               | description                                      |
-|----------------|----------------------------------------------------|--------------------------------------------------|
+| -------------- | -------------------------------------------------- | ------------------------------------------------ |
 | return_code    | String                                             | The return code for the ACH return.              |
 | return_details | String                                             | The details of the ACH return.                   |
 | transfer_type  | [AchReturnTransferType](#ach-return-transfer-type) | The type of transfer that the ACH return is for. |
 
-***
+---
+
 ### Ach Return Transfer Type
 
 - `DEBIT` - The ACH return is going to debit the merchant funds.
 - `CREDIT` - The ACH return is going to credit the merchant funds.
 
-***
+---
+
 ### Refund Reason
 
 ```graphql
 {
-    reason_code: RefundReasonCode
-    reason_details: String
+  reason_code: RefundReasonCode
+  reason_details: String
 }
 ```
 
-|Key                | type                           | description                                                                          |
-|-------------------|--------------------------------|--------------------------------------------------------------------------------------|
-|reason_code        | [RefundReasonCode](#refund-reason-code) |The reason code for the refund.|
-|reason_details     | String                         |The details of the refund reason.|
+| Key            | type                                    | description                       |
+| -------------- | --------------------------------------- | --------------------------------- |
+| reason_code    | [RefundReasonCode](#refund-reason-code) | The reason code for the refund.   |
+| reason_details | String                                  | The details of the refund reason. |
 
-***
+---
+
 ### Refund Reason Code
 
 - `DUPLICATE`
@@ -129,12 +136,12 @@ Transactions are a data object that can represent a payment, failed or successfu
 - `OTHER`
 - `REQUESTED_BY_CUSTOMER`
 
+---
 
-***
 ### Transaction Status
 
-- `PENDING` - The transaction is succesfull pending capture. This is what will be returned for all transactions that did not fail. 
-- `SUCCEEDED` - The transaction has been captured. 
+- `PENDING` - The transaction is succesfull pending capture. This is what will be returned for all transactions that did not fail.
+- `SUCCEEDED` - The transaction has been captured.
 - `FAILED` - The transaction failed to pass initial checks and authorization was not successful.
 - `SETTLED` - The transaction has been added to a settlement batch and will settle to the merchant.
 - `REFUNDED` - The transaction has been fully refunded.
@@ -142,14 +149,16 @@ Transactions are a data object that can represent a payment, failed or successfu
 - `VOIDED` - The transaction has been voided which means it was never captured and will not be settled.
 - `RETURNED` - The transaction is an ACH transaction that has had an `ACH_RETURN` created for it.
 
-***
+---
+
 ### Transaction Review Status
 
 - `EXCEEDS_AUTH` - Transaction was flagged for greatly exceeding the auth amount.
 - `EXCEEDS_THRESHOLD` - Transaction was flagged for exceeding the threshold set on the merchant account by Pay Theory.
 - `POTENTIAL_DUPLICATE` - Transaction was flagged for being a potential duplicate based on settings configured in the partner environment.
 
-***
+---
+
 ### Transaction Type
 
 - `ACH_RETURN` - The transaction is an ACH return for an ACH Debit or Reversal. Check `parent_id` to find origin.
@@ -157,11 +166,19 @@ Transactions are a data object that can represent a payment, failed or successfu
 - `FAILURE` - The transaction is a failed debit to a payors payment method.
 - `REVERSAL` - The transaction is a reversal on a debit to a payors payment method. Check `parent_id` to find origin.
 
-***
+---
+
 ## Query Transactions
+
 ```graphql
 {
-  transactions(direction: FORWARD, limit: 10, offset: "", offset_id: "", query: SqlQuery) {
+  transactions(
+    direction: FORWARD
+    limit: 10
+    offset: ""
+    offset_id: ""
+    query: SqlQuery
+  ) {
     items {
       account_code
       currency
@@ -178,7 +195,7 @@ Transactions are a data object that can represent a payment, failed or successfu
       payment_method(query_list: []) {
         payment_method_id
         payor(query_list: []) {
-            payor_id
+          payor_id
         }
       }
       recurring {
@@ -192,6 +209,16 @@ Transactions are a data object that can represent a payment, failed or successfu
       }
       refunded_amount
       settlement_batch
+      splits {
+        id
+        amount
+        account_code
+        reference
+        metadata
+        merchant {
+          merchant_uid
+        }
+      }
       status
       timezone
       transaction_date
@@ -205,19 +232,18 @@ Transactions are a data object that can represent a payment, failed or successfu
 
 **Arguments**
 
-|Key                |type         |       description                     |
-|-------------------|-------------|---------------------------------------|
-|direction          |MoveDirection|The direction of the pagination. Makes sure the results are returned in the correct order.|
-|limit              |Int          |The number of transactions to return.|
-|offset             |String       |The value of the offset item for which the list is being sorted.|
-|offset_id          |String       |The `transaction_id` of the offset item.|
-|query              |SqlQuery  |The query to filter the transactions with based on Pay Theory defined data. Detailed information about the query object can be found [here](query).|
+| Key       | type          | description                                                                                                                                         |
+| --------- | ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| direction | MoveDirection | The direction of the pagination. Makes sure the results are returned in the correct order.                                                          |
+| limit     | Int           | The number of transactions to return.                                                                                                               |
+| offset    | String        | The value of the offset item for which the list is being sorted.                                                                                    |
+| offset_id | String        | The `transaction_id` of the offset item.                                                                                                            |
+| query     | SqlQuery      | The query to filter the transactions with based on Pay Theory defined data. Detailed information about the query object can be found [here](query). |
 
 **Nested Queries**
 Transactions can also be filtered by passing a query_list to the metadata, payment method, or payor tied to the payment method.
 
-This will only return Transactions that have Metadata, Payment Methods, or Payors that match these queries.  Detailed information about the query list can be found [here](query).
-
+This will only return Transactions that have Metadata, Payment Methods, or Payors that match these queries. Detailed information about the query list can be found [here](query).
 
 **Returns**
 
@@ -240,96 +266,110 @@ This will only return Transactions that have Metadata, Payment Methods, or Payor
 }
 ```
 
-|Key                | type          | description                                                                          |
-|-------------------|---------------|--------------------------------------------------------------------------------------|
-|items              | [Transaction] | The list of transactions that are returned from the query.                           |
-|total_row_count    | Int           | The total number of transactions that match the query. Used to help with pagination. |
+| Key             | type          | description                                                                          |
+| --------------- | ------------- | ------------------------------------------------------------------------------------ |
+| items           | [Transaction] | The list of transactions that are returned from the query.                           |
+| total_row_count | Int           | The total number of transactions that match the query. Used to help with pagination. |
 
-***
+---
+
 ## Create Transaction
 
 ```graphql
 mutation {
-  createTransaction(amount: Int,
-          merchant_uid: String,
-          payment_method_id: String,
-          payment_method: PaymentMethodInput,
-          account_code: String,
-          currency: String,
-          fee: Int,
-          fee_mode: FeeMode,
-          invoice_id: String,
-          metadata: JSON,
-          one_time_use_token: Boolean,
-          receipt_description: String,
-          recurring_id: String,
-          reference: String,
-          send_receipt: Boolean) {
+  createTransaction(
+    amount: Int
+    merchant_uid: String
+    payment_method_id: String
+    payment_method: PaymentMethodInput
+    account_code: String
+    currency: String
+    fee: Int
+    fee_mode: FeeMode
+    invoice_id: String
+    metadata: JSON
+    one_time_use_token: Boolean
+    receipt_description: String
+    recurring_id: String
+    reference: String
+    send_receipt: Boolean
+    split: [SplitInput]
+  ) {
+    account_code
+    currency
+    dispute_status
+    failure_reasons
+    fee_mode
+    fees
+    gross_amount
+    is_settled
+    merchant_uid
+    metadata
+    net_amount
+    parent_id
+    payment_method {
+      payment_method_id
+      payor {
+        payor_id
+      }
+    }
+    recurring {
+      recurring_id
+    }
+    reference
+    refund_reason {
+      reason_code
+      reason_details
+      transfer_type
+    }
+    refunded_amount
+    settlement_batch
+    splits {
+      id
+      amount
       account_code
-      currency
-      dispute_status
-      failure_reasons
-      fee_mode
-      fees
-      gross_amount
-      is_settled
-      merchant_uid
-      metadata
-      net_amount
-      parent_id
-      payment_method {
-          payment_method_id
-          payor {
-              payor_id
-          }
-      }
-      recurring {
-          recurring_id
-      }
       reference
-      refund_reason {
-          reason_code
-          reason_details
-          transfer_type
+      merchant {
+        merchant_uid
       }
-      refunded_amount
-      settlement_batch
-      status
-      timezone
-      transaction_date
-      transaction_id
-      transaction_type
+      metadata
+    }
+    status
+    timezone
+    transaction_date
+    transaction_id
+    transaction_type
   }
 }
 ```
 
 **Arguments**
 
-| Key                 | type                   | description                                                                                                                                                                                      |
-|---------------------|------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| amount              | Int!                   | The amount of the transaction. If the FeeMode is `SERVICE_FEE`, this is the amount of the transaction before fees.                                                                               |
-| merchant_uid        | String!                | The Pay Theory unique identifier for the merchant the transaction is for.                                                                                                                        |
-| payment_method_id   | String                 | The Pay Theory unique identifier for the payment method the transaction will be charged to.                                                                                                      |
+| Key                 | type                                                                      | description                                                                                                                                                                                      |
+| ------------------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| amount              | Int!                                                                      | The amount of the transaction. If the FeeMode is `SERVICE_FEE`, this is the amount of the transaction before fees.                                                                               |
+| merchant_uid        | String!                                                                   | The Pay Theory unique identifier for the merchant the transaction is for.                                                                                                                        |
+| payment_method_id   | String                                                                    | The Pay Theory unique identifier for the payment method the transaction will be charged to.                                                                                                      |
 | payment_method      | [PaymentMethodInput](payment_method_token.md#payment-method-input-object) | The payment method to be used for the transaction. This is required if you are not passing in a `payment_method_id`.                                                                             |
-| account_code        | String                 | Customer defined account code for the transaction.                                                                                                                                               |
-| currency            | String                 | The type of currency for the transaction. Defaults to `USD`.                                                                                                                                     |
-| fee                 | Int                    | The amount of the fee that will be charged to the payor for the transaction if the FeeMode is `SERVICE_FEE`.                                                                                     |
-| fee_mode            | FeeMode                | The fee mode on the transaction. `SERVICE_FEE` charges the fees to the payor. `MERCHANT_FEE` charges the fees to the merchant. Options are:                                                      |
-| invoice_id          | String                 | The Pay Theory unique identifier for the invoice the transaction is for.                                                                                                                         |
-| metadata            | JSON                   | Custom defined JSON object to be stored with the transaction.                                                                                                                                    |
-| one_time_use_token  | Boolean                | If the payment method token should be used for a single transaction. Defaults to `false`. If set to `true` the `is_active` flag on the payment method will be set to false after the transaction |
-| receipt_description | String                 | The description of the transaction that will be displayed on the receipt.                                                                                                                        |
-| recurring_id        | String                 | The Pay Theory unique identifier for the recurring payment the transaction is for.                                                                                                               |
-| reference           | String                 | Customer defined reference for the transaction.                                                                                                                                                  |
-| send_receipt        | Boolean                | If the receipt should be sent to the payor. Defaults to `false`. It is sent to the email address on file with the payment method.                                                                |
-
+| account_code        | String                                                                    | Customer defined account code for the transaction.                                                                                                                                               |
+| currency            | String                                                                    | The type of currency for the transaction. Defaults to `USD`.                                                                                                                                     |
+| fee                 | Int                                                                       | The amount of the fee that will be charged to the payor for the transaction if the FeeMode is `SERVICE_FEE`.                                                                                     |
+| fee_mode            | FeeMode                                                                   | The fee mode on the transaction. `SERVICE_FEE` charges the fees to the payor. `MERCHANT_FEE` charges the fees to the merchant. Options are:                                                      |
+| invoice_id          | String                                                                    | The Pay Theory unique identifier for the invoice the transaction is for.                                                                                                                         |
+| metadata            | JSON                                                                      | Custom defined JSON object to be stored with the transaction.                                                                                                                                    |
+| one_time_use_token  | Boolean                                                                   | If the payment method token should be used for a single transaction. Defaults to `false`. If set to `true` the `is_active` flag on the payment method will be set to false after the transaction |
+| receipt_description | String                                                                    | The description of the transaction that will be displayed on the receipt.                                                                                                                        |
+| recurring_id        | String                                                                    | The Pay Theory unique identifier for the recurring payment the transaction is for.                                                                                                               |
+| reference           | String                                                                    | Customer defined reference for the transaction.                                                                                                                                                  |
+| send_receipt        | Boolean                                                                   | If the receipt should be sent to the payor. Defaults to `false`. It is sent to the email address on file with the payment method.                                                                |
+| split               | [[SplitInput]](split.md#creating-splits)                                  | An array of split objects to distribute the transaction amount to different accounts. The sum of all split amounts must equal less than or equal to the amount of the transaction.               |
 
 **Returns**
 
 This call will return a [Transaction](#the-transaction-object) object with the details of the transaction that was created.
 
+---
 
-***
 ## Create Wallet Transaction
 
 This call is used to create a transaction for a wallet payment via Apple Pay or Google Pay. It works in conjunction with our SDKs to allow you to create a transaction via our API.
@@ -337,8 +377,13 @@ This call is used to create a transaction for a wallet payment via Apple Pay or 
 ```graphql
 mutation {
   createWalletTransaction(
+    app_id: String,
     merchant_uid: String!,
+    wallet_type: WalletType,
     digital_wallet_payload: String!,
+    amount: Int,
+    fee: Int,
+    billing_address: BillingAddressInput,
     payor_id: String,
     payor: PayorInput,
     recurring_id: String,
@@ -348,7 +393,9 @@ mutation {
     send_receipt: Boolean,
     receipt_description: String,
     metadata: AWSJSON,
-    health_expense_type: HealthExpenseType) {
+    health_expense_type: HealthExpenseType,
+    additional_purchase_data: AdditionalPurchaseDataInput,
+    split: [SplitInput]) {
       account_code
       currency
       dispute_status
@@ -389,27 +436,33 @@ mutation {
 
 **Arguments**
 
-| Key                  | type                | description                                                                                                                                                                                      |
-|---------------------|---------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| merchant_uid        | String!             | The Pay Theory unique identifier for the merchant the transaction is for.                                                                                                                        |
-| digital_wallet_payload | String!          | The encrypted payload from the PayTheory SDK containing payment information.                                                                                                                    |
-| payor_id            | String              | The Pay Theory unique identifier for the payor making the payment.                                                                                                                               |
-| payor               | PayorInput          | The payor information if a new payor needs to be created.                                                                                                                                       |
-| recurring_id        | String              | The Pay Theory unique identifier for the recurring payment the transaction is for.                                                                                                               |
-| invoice_id          | String              | The Pay Theory unique identifier for the invoice the transaction is for.                                                                                                                         |
-| account_code        | String              | Customer defined account code for the transaction.                                                                                                                                               |
-| reference           | String              | Customer defined reference for the transaction.                                                                                                                                                  |
-| send_receipt        | Boolean             | If the receipt should be sent to the payor. Defaults to `false`. It is sent to the email address on file with the payment method.                                                                |
-| receipt_description | String              | The description of the transaction that will be displayed on the receipt.                                                                                                                        |
-| metadata            | AWSJSON             | Custom defined JSON object to be stored with the transaction.                                                                                                                                    |
-| health_expense_type | HealthExpenseType   | The type of health expense for the transaction. Can be one of: `CLINICAL`, `COPAY`, `DENTAL`, `HEALTHCARE`, `RX`, `TRANSIT`, `VISION`                                                           |
+| Key                      | type                                                               | description                                                                                                                                           |
+| ------------------------ | ------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| app_id                   | String                                                             | The Pay Theory unique identifier for the application.                                                                                                 |
+| merchant_uid             | String!                                                            | The Pay Theory unique identifier for the merchant the transaction is for.                                                                             |
+| wallet_type              | [WalletType](authorization#wallettype-enum)                        | The type of digital wallet being used. Can be one of: `APPLE_PAY`, `GOOGLE_PAY`, `CLICK_TO_PAY`, `SAMSUNG_PAY`, `VISA_STAGED`                         |
+| digital_wallet_payload   | String!                                                            | The encrypted payload from the PayTheory SDK containing payment information.                                                                          |
+| amount                   | Int                                                                | The amount of the transaction in cents.                                                                                                               |
+| fee                      | Int                                                                | The amount of the service fee in cents. Required if fee_mode is `SERVICE_FEE`.                                                                        |
+| billing_address          | [BillingAddressInput](authorization#billingaddressinput-object)    | The billing address information for the transaction.                                                                                                  |
+| payor_id                 | String                                                             | The Pay Theory unique identifier for the payor making the payment.                                                                                    |
+| payor                    | [PayorInput](payor#the-payor-input-object)                         | The payor information if a new payor needs to be created.                                                                                             |
+| recurring_id             | String                                                             | The Pay Theory unique identifier for the recurring payment the transaction is for.                                                                    |
+| invoice_id               | String                                                             | The Pay Theory unique identifier for the invoice the transaction is for.                                                                              |
+| account_code             | String                                                             | Customer defined account code for the transaction.                                                                                                    |
+| reference                | String                                                             | Customer defined reference for the transaction.                                                                                                       |
+| send_receipt             | Boolean                                                            | If the receipt should be sent to the payor. Defaults to `false`. It is sent to the email address on file with the payment method.                     |
+| receipt_description      | String                                                             | The description of the transaction that will be displayed on the receipt.                                                                             |
+| metadata                 | AWSJSON                                                            | Custom defined JSON object to be stored with the transaction.                                                                                         |
+| health_expense_type      | HealthExpenseType                                                  | The type of health expense for the transaction. Can be one of: `CLINICAL`, `COPAY`, `DENTAL`, `HEALTHCARE`, `RX`, `TRANSIT`, `VISION`                 |
+| additional_purchase_data | [AdditionalPurchaseDataInput](#additionalpurchasedatainput-object) | Additional purchase data for Level 3 processing requirements.                                                                                         |
+| split                    | [[SplitInput]](split#creating-splits)                              | An array of split objects to distribute the transaction amount to different accounts. The sum of all split amounts must equal the transaction amount. |
 
 **Returns**
 
 This call will return a [Transaction](#the-transaction-object) object with the details of the transaction that was created.
 
-
-***
+---
 
 ## Create Reversal
 
@@ -417,10 +470,12 @@ This call will create a refund or a void for a transaction.
 
 ```graphql
 mutation {
-  createReversal(amount: Int,
-                 refund_reason: { reason_code: RefundReasonCode, reason_details: String },
-                 transaction_id: String,
-                 refund_email: String ) {
+  createReversal(
+    amount: Int
+    refund_reason: { reason_code: RefundReasonCode, reason_details: String }
+    transaction_id: String
+    refund_email: String
+  ) {
     is_void
     transaction_id
   }
@@ -429,38 +484,39 @@ mutation {
 
 **Arguments**
 
-|Key                | type                           |       description                     |
-|-------------------|--------------------------------|---------------------------------------|
-|amount             | Int                            |The amount of the refund. This must be less than or equal to the amount of the transaction.|
-|refund_reason      | [RefundReason](#refund-reason) |The reason for the refund. This is required for all refunds and is made up of the following.|
-|transaction_id     | String                         |The Pay Theory unique identifier for the transaction to refund.|
-|refund_email       | String                         |The email address to send the refund receipt to. If not provided an email will not be sent out.|
-
+| Key            | type                           | description                                                                                     |
+| -------------- | ------------------------------ | ----------------------------------------------------------------------------------------------- |
+| amount         | Int                            | The amount of the refund. This must be less than or equal to the amount of the transaction.     |
+| refund_reason  | [RefundReason](#refund-reason) | The reason for the refund. This is required for all refunds and is made up of the following.    |
+| transaction_id | String                         | The Pay Theory unique identifier for the transaction to refund.                                 |
+| refund_email   | String                         | The email address to send the refund receipt to. If not provided an email will not be sent out. |
 
 **Returns**
 
-| Key            | type    | description                                                                                        |
-|----------------|---------|----------------------------------------------------------------------------------------------------|
+| Key            | type    | description                                                                                            |
+| -------------- | ------- | ------------------------------------------------------------------------------------------------------ |
 | is_void        | Boolean | If the reversal was a void. If `true`, the reversal was a void. If `false`, the reversal was a refund. |
-| transaction_id | String  | The Pay Theory unique identifier for the transaction that was created due to the call.             |
+| transaction_id | String  | The Pay Theory unique identifier for the transaction that was created due to the call.                 |
 
 :::note Understanding Create Reversal Return Values
 The response will vary based on transaction timing and amount:
 
 1. **Full void (before capture)**
+
    - Returns: `is_void: true, transaction_id: null`
    - Result: Transaction completely voided, no funds movement or fees
 
 2. **Partial void (before capture)**
+
    - Returns: `is_void: true, transaction_id: "pt_txn_..."`
-   - Result: Original transaction voided; returned transaction_id is the new transaction created for the adjusted amount and will settle
+   - Result: Original transaction voided; returned `transaction_id` is the new transaction created for the adjusted amount and will settle
 
 3. **Refund (after capture)**
    - Returns: `is_void: false, transaction_id: "pt_txn_..."`
-   - Result: New REVERSAL transaction created; both original and refund transactions will settle
-:::
+   - Result: New `REVERSAL` transaction created; both original and refund transactions will settle
+     :::
 
-***
+---
 
 ## Calculate Service Fee
 
@@ -468,67 +524,83 @@ This call will allow you to calculate what the fee amount should be if using `SE
 
 ```graphql
 {
-    serviceFee(amount: Int, merchant_uid: String, is_ach: Boolean, bank_id: String, payment_method_id: String) {
-        adjusted_total
-        fee
-        fee_limit_reached
-        total
-    }
+  serviceFee(
+    amount: Int
+    merchant_uid: String
+    is_ach: Boolean
+    bank_id: String
+    payment_method_id: String
+  ) {
+    adjusted_total
+    fee
+    fee_limit_reached
+    total
+  }
 }
 ```
 
 **Arguments**
 
 | Key               | type    | description                                                                                  |
-|-------------------|---------|----------------------------------------------------------------------------------------------|
+| ----------------- | ------- | -------------------------------------------------------------------------------------------- |
 | amount            | Int     | The amount of the transaction.                                                               |
 | merchant_uid      | String  | The Pay Theory unique identifier for the merchant the transaction is for.                    |
 | is_ach            | Boolean | If the transaction is an ACH transaction.                                                    |
 | bank_id           | String  | The first 6 to 8 digits of a card number. An error will be thrown if it is any other length. |
 | payment_method_id | String  | The Pay Theory unique identifier for a tokenized payment method to calculate fees for.       |
 
-
 **Returns**
 
 | Key               | type    | description                                            |
-|-------------------|---------|--------------------------------------------------------|
+| ----------------- | ------- | ------------------------------------------------------ |
 | adjusted_total    | Int     | The total amount of the transaction after fees.        |
 | fee               | Int     | The amount of the fees charged for the transaction.    |
 | fee_limit_reached | Boolean | If the fee limit has been reached for the transaction. |
 | total             | Int     | The amount of the transaction before adding fees.      |
 
-***
+---
+
 ## Send Transaction Receipt
 
 This call will send a receipt for a transaction to the email address on file with the payor or an email passed in.
 
 ```graphql
-mutation MyMutation($email: AWSEmail, $receipt_description: String, $transaction_id: String!) {
-  createReceiptEmail(transaction_id: $transaction_id,
-                     email: $email,
-                     receipt_description: $receipt_description)
+mutation MyMutation(
+  $email: AWSEmail
+  $receipt_description: String
+  $transaction_id: String!
+) {
+  createReceiptEmail(
+    transaction_id: $transaction_id
+    email: $email
+    receipt_description: $receipt_description
+  )
 }
 ```
 
 **Arguments**
 
-| Key                  | type     | description                                                                                                                               |
-|----------------------|----------|-------------------------------------------------------------------------------------------------------------------------------------------|
-| transaction_id       | String!  | The Pay Theory unique identifier for the transaction to send the receipt for.                                                             |
-| email                | AWSEmail | The email address to send the receipt to. If not provided the email address on file with the payor will be used.                          |
-| receipt_description  | String   | The description of the transaction that will be displayed on the receipt. If not provided it will just say "Payment to `merchant_name`".  |
+| Key                 | type     | description                                                                                                                              |
+| ------------------- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| transaction_id      | String!  | The Pay Theory unique identifier for the transaction to send the receipt for.                                                            |
+| email               | AWSEmail | The email address to send the receipt to. If not provided the email address on file with the payor will be used.                         |
+| receipt_description | String   | The description of the transaction that will be displayed on the receipt. If not provided it will just say "Payment to `merchant_name`". |
 
 **Returns**
 
 The call will return a boolean `true` if the receipt was sent successfully or errors if it fails.
 
+---
 
-***
 ## Update Transaction In Review
 
 This call can be used by a partner to approve or decline a transcation that is in review for reason `POTEENTIAL_DUPLICATE`.
+
 ```graphql
-mutation MyMutation($action: TransactionReviewAction!, $transaction_id: String!) {
+mutation MyMutation(
+  $action: TransactionReviewAction!
+  $transaction_id: String!
+) {
   updateTransactionInReview(action: $action, transaction_id: $transaction_id)
 }
 ```
@@ -536,10 +608,160 @@ mutation MyMutation($action: TransactionReviewAction!, $transaction_id: String!)
 **Arguments**
 
 | Key            | type                     | description                                                               |
-|----------------|--------------------------|---------------------------------------------------------------------------|
+| -------------- | ------------------------ | ------------------------------------------------------------------------- |
 | action         | TransactionReviewAction! | The action to take on the transaction. Options are: `ACCEPT` or `REJECT`. |
 | transaction_id | String!                  | The Pay Theory unique identifier for the transaction to accept or reject. |
 
 **Returns**
 
 The call will return a boolean `true` if the transaction was updated successfully or errors if it fails.
+
+---
+
+### AdditionalPurchaseDataInput Object
+
+The additional purchase data input object is used to provide Level 3 processing data for transactions. This data is typically required for commercial card transactions to qualify for lower interchange rates.
+
+```graphql
+input AdditionalPurchaseDataInput {
+  level3_data_line_item: [Level3DataLineItemInput]
+  level3_data_summary: Level3DataSummaryInput
+}
+```
+
+| Key                   | type                                                         | description                                    |
+| --------------------- | ------------------------------------------------------------ | ---------------------------------------------- |
+| level3_data_line_item | [[Level3DataLineItemInput]](#level3datalineiteminput-object) | Array of line item details for the transaction |
+| level3_data_summary   | [Level3DataSummaryInput](#level3datasummaryinput-object)     | Summary data for the entire transaction        |
+
+---
+
+### Level3DataLineItemInput Object
+
+The Level 3 line item data provides detailed information about individual items in a transaction.
+
+```graphql
+input Level3DataLineItemInput {
+  item_code: String
+  item_description: String
+  item_qty_exp: Int
+  prod_code: String
+  qty: Int
+  tax_amount: Int
+  tax_ind: TaxIndicatorType
+  tax_rate: Int
+  tax_rt_exp: Int
+  tax_type_id: TaxType
+  unit_cost: Int
+  unit_of_msure: String
+}
+```
+
+| Key              | type                                       | description                                                             |
+| ---------------- | ------------------------------------------ | ----------------------------------------------------------------------- |
+| item_code        | String                                     | The merchant's unique identifier for the item                           |
+| item_description | String                                     | A description of the item                                               |
+| item_qty_exp     | Int                                        | The exponent for the item quantity (e.g., 2 for hundredths)             |
+| prod_code        | String                                     | The product code for the item                                           |
+| qty              | Int                                        | The quantity of the item purchased                                      |
+| tax_amount       | Int                                        | The tax amount for this line item in cents                              |
+| tax_ind          | [TaxIndicatorType](#taxindicatortype-enum) | Indicates how tax is applied to this item                               |
+| tax_rate         | Int                                        | The tax rate applied to this item                                       |
+| tax_rt_exp       | Int                                        | The exponent for the tax rate (e.g., 4 for ten-thousandths)             |
+| tax_type_id      | [TaxType](#taxtype-enum)                   | The type of tax applied                                                 |
+| unit_cost        | Int                                        | The unit cost of the item in cents                                      |
+| unit_of_msure    | String                                     | The unit of measure for the item (e.g., "EA" for each, "LB" for pounds) |
+
+---
+
+### Level3DataSummaryInput Object
+
+The Level 3 summary data provides high-level information about the entire transaction.
+
+```graphql
+input Level3DataSummaryInput {
+  dest_postal_code: String
+  discnt_amt: Int
+  duty_amt: Int
+  frght_amt: Int
+  order_num: String
+  prod_desc: [String]
+  purch_idfr: String
+  tax_amt: Int
+  tax_ind: TaxIndicatorType
+}
+```
+
+| Key              | type                                       | description                                               |
+| ---------------- | ------------------------------------------ | --------------------------------------------------------- |
+| dest_postal_code | String                                     | The postal code of the destination for shipped goods      |
+| discnt_amt       | Int                                        | The total discount amount in cents                        |
+| duty_amt         | Int                                        | The total duty amount in cents                            |
+| frght_amt        | Int                                        | The total freight/shipping amount in cents                |
+| order_num        | String                                     | The merchant's order number                               |
+| prod_desc        | [String]                                   | Array of product descriptions included in the transaction |
+| purch_idfr       | String                                     | The purchase identifier                                   |
+| tax_amt          | Int                                        | The total tax amount for the transaction in cents         |
+| tax_ind          | [TaxIndicatorType](#taxindicatortype-enum) | Indicates how tax is applied to the transaction           |
+
+---
+
+### TaxIndicatorType Enum
+
+The tax indicator type specifies how tax information is provided for a transaction or line item.
+
+```graphql
+enum TaxIndicatorType {
+  NO_TAX_INFO_PROVIDED
+  NOT_TAXABLE
+  TAX_AMOUNT_PROVIDED
+}
+```
+
+| Value                | description                                    |
+| -------------------- | ---------------------------------------------- |
+| NO_TAX_INFO_PROVIDED | No tax information is being provided           |
+| NOT_TAXABLE          | The item or transaction is not subject to tax  |
+| TAX_AMOUNT_PROVIDED  | Tax amount is included in the transaction data |
+
+---
+
+### TaxType Enum
+
+The tax type identifies the specific type of tax being applied.
+
+```graphql
+enum TaxType {
+  CITY_SALES
+  ENERGY
+  GST
+  LOCAL_SALES
+  MUNICIPAL_SALES
+  NATIONAL_SALES
+  NOT_SUPPORTED
+  OTHER
+  PST
+  ROOM
+  OCCUPANCY
+  STATE_SALES
+  UNKNOWN
+  VAT
+}
+```
+
+| Value           | description                     |
+| --------------- | ------------------------------- |
+| CITY_SALES      | City sales tax                  |
+| ENERGY          | Energy tax                      |
+| GST             | Goods and Services Tax (Canada) |
+| LOCAL_SALES     | Local sales tax                 |
+| MUNICIPAL_SALES | Municipal sales tax             |
+| NATIONAL_SALES  | National sales tax              |
+| NOT_SUPPORTED   | Tax type not supported          |
+| OTHER           | Other tax type                  |
+| PST             | Provincial Sales Tax (Canada)   |
+| ROOM            | Room tax (hotels)               |
+| OCCUPANCY       | Occupancy tax                   |
+| STATE_SALES     | State sales tax                 |
+| UNKNOWN         | Unknown tax type                |
+| VAT             | Value Added Tax                 |

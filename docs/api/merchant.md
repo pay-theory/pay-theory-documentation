@@ -12,19 +12,19 @@ Merchants are the entities that are using Pay Theory to accept payments.
 ## The Merchant Object
 ```js
 {
-  ach_active: Boolean
-  api_key: String
-  card_active: Boolean
-  cash_active: Boolean
-  country_code: String
-  fee_matrix: FeeMatrix
-  is_system: Boolean
-  merchant_name: String
-  merchant_uid: String
-  metadata: AWSJSON
-  parent_merchant_uid: String
-  settings: MerchantSettings
-  submitted_onboarding: Boolean
+    ach_active: Boolean
+    api_key: String
+    card_active: Boolean
+    cash_active: Boolean
+    country_code: String
+    fee_matrix: FeeMatrix
+    is_system: Boolean
+    merchant_name: String
+    merchant_uid: String
+    metadata: AWSJSON
+    parent_merchant_uid: String
+    settings: MerchantSettings
+    submitted_onboarding: Boolean
 }
 ```
 
@@ -520,14 +520,14 @@ mutation {
 
 ```graphql
 input MerchantSettingsInput {
-  contact_email: AWSEmail
-  contact_phone: AWSPhone
-  facebook: AWSURL
-  instagram: AWSURL
-  linkedin: AWSURL
-  tiktok: AWSURL
-  twitter: AWSURL
-  website: AWSURL
+    contact_email: AWSEmail
+    contact_phone: AWSPhone
+    facebook: AWSURL
+    instagram: AWSURL
+    linkedin: AWSURL
+    tiktok: AWSURL
+    twitter: AWSURL
+    website: AWSURL
 }
 ```
 
@@ -541,9 +541,9 @@ The `AWSEmail`,  `AWSPhone`, and `AWSURL` types must be valid according to AWS A
 
 ```js
 {
-  "data": {
-    "updateMerchantSettings": true
-  }
+    "data": {
+        "updateMerchantSettings": true
+    }
 }
 ```
 
