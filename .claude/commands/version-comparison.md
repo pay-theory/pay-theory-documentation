@@ -5,9 +5,14 @@ This command performs a deep comparison between the production documentation (`d
 
 ## What it does
 1. Scans all markdown files (`.md`, `.mdx`) and `_category_.json` files in both directories
-2. Identifies files that exist only in production or only in lab
-3. Compares content of files that exist in both locations
-4. Provides detailed analysis of differences including:
+2. **Normalizes formatting** before comparison to eliminate false positives from spacing/formatting differences:
+   - Removes trailing whitespace
+   - Normalizes line endings
+   - Standardizes table formatting
+   - Reduces multiple blank lines
+3. Identifies files that exist only in production or only in lab
+4. Compares content of files that exist in both locations (after formatting normalization)
+5. Provides detailed analysis of differences including:
    - Line count differences
    - Size differences
    - First line where differences occur
@@ -23,6 +28,15 @@ node .claude/commands/tools/version-comparison-tool.js
 ## Understanding the output
 
 The tool provides a comprehensive report with:
+
+### Formatting Normalization
+- Files are automatically normalized before comparison
+- This eliminates false positives from:
+  - Trailing whitespace differences
+  - Line ending variations (CRLF vs LF)
+  - Table spacing inconsistencies
+  - Multiple blank line differences
+- Only actual content changes are reported
 
 ### Summary Statistics
 - Total files in each version

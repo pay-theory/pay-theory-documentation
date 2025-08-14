@@ -65,10 +65,53 @@ class VersionComparison {
     return arrayOfFiles;
   }
 
-  // Calculate file hash for quick comparison
-  getFileHash(filePath) {
+  // Normalize file content using simple formatting rules
+  normalizeContent(content, filePath) {
     try {
-      const content = fs.readFileSync(filePath, 'utf8');
+      // Skip normalization for JSON files
+      if (filePath.endsWith('.json')) {
+        return content;
+      }
+
+      // Simple normalization for markdown files:
+      // 1. Normalize line endings
+      let normalized = content.replace(/\r\n/g, '\n');
+
+      // 2. Remove trailing whitespace from each line
+      normalized = normalized
+        .split('\n')
+        .map(line => line.trimEnd())
+        .join('\n');
+
+      // 3. Ensure single newline at end of file
+      normalized = normalized.trimEnd() + '\n';
+
+      // 4. Normalize multiple blank lines to maximum of 2
+      normalized = normalized.replace(/\n{3,}/g, '\n\n');
+
+      // 5. Normalize table formatting (remove extra spaces in table cells)
+      normalized = normalized.replace(/\|\s+/g, '| ');
+      normalized = normalized.replace(/\s+\|/g, ' |');
+
+      // 6. Normalize code block formatting
+      normalized = normalized.replace(/```(\w+)\s+/g, '```$1\n');
+
+      return normalized;
+    } catch {
+      return content;
+    }
+  }
+
+  // Calculate file hash for quick comparison
+  getFileHash(filePath, normalize = true) {
+    try {
+      let content = fs.readFileSync(filePath, 'utf8');
+
+      // Normalize content with Prettier if requested
+      if (normalize) {
+        content = this.normalizeContent(content, filePath);
+      }
+
       return crypto.createHash('md5').update(content).digest('hex');
     } catch {
       return null;
@@ -76,10 +119,16 @@ class VersionComparison {
   }
 
   // Get detailed differences between two files
-  getFileDifferences(file1Path, file2Path) {
+  getFileDifferences(file1Path, file2Path, normalize = true) {
     try {
-      const content1 = fs.readFileSync(file1Path, 'utf8');
-      const content2 = fs.readFileSync(file2Path, 'utf8');
+      let content1 = fs.readFileSync(file1Path, 'utf8');
+      let content2 = fs.readFileSync(file2Path, 'utf8');
+
+      // Normalize content with Prettier if requested
+      if (normalize) {
+        content1 = this.normalizeContent(content1, file1Path);
+        content2 = this.normalizeContent(content2, file2Path);
+      }
 
       const lines1 = content1.split('\n');
       const lines2 = content2.split('\n');
@@ -157,7 +206,10 @@ class VersionComparison {
     console.log(`${colors.blue}Comparing:${colors.reset}`);
     console.log(`  📁 Production: ${colors.green}docs/${colors.reset}`);
     console.log(
-      `  📁 Lab/Preview: ${colors.yellow}versioned_docs/version-lab/${colors.reset}\n`,
+      `  📁 Lab/Preview: ${colors.yellow}versioned_docs/version-lab/${colors.reset}`,
+    );
+    console.log(
+      `  ${colors.gray}✨ Formatting normalized before comparison${colors.reset}\n`,
     );
 
     // Get all files from both directories

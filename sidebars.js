@@ -73,6 +73,10 @@ module.exports = {
     },
     {
       type: 'doc',
+      id: 'api/split',
+    },
+    {
+      type: 'doc',
       id: 'api/transaction',
     },
     {
@@ -132,12 +136,40 @@ module.exports = {
           id: 'main/online_payments/qr_code',
         },
         {
+          type: 'doc',
+          id: 'main/online_payments/split_transactions',
+        },
+        {
           type: 'category',
           label: 'Tokenizing Payments',
           items: [
             'main/online_payments/tokenizing/quickstart',
             'main/online_payments/tokenizing/recalling_payment_methods',
             'main/online_payments/tokenizing/making_a_payment_with_payment_tokens',
+          ],
+        },
+        {
+          type: 'category',
+          label: 'Wallet Transactions',
+          items: [
+            'main/online_payments/wallet_transactions/overview',
+            {
+              type: 'category',
+              label: 'Apple Pay™',
+              items: [
+                'main/online_payments/wallet_transactions/apple_pay/getting_started',
+                'main/online_payments/wallet_transactions/apple_pay/apple_pay_on_web',
+                'main/online_payments/wallet_transactions/apple_pay/apple_pay_on_ios',
+              ],
+            },
+            {
+              type: 'category',
+              label: 'Google Pay™',
+              items: [
+                'main/online_payments/wallet_transactions/google_pay/getting_started',
+                'main/online_payments/wallet_transactions/google_pay/google_pay_on_web',
+              ],
+            },
           ],
         },
       ],
@@ -471,11 +503,11 @@ module.exports = {
     },
     {
       type: 'doc',
-      id: 'sdk/javascript/hosted_fields',
+      id: 'sdk/javascript/functions',
     },
     {
       type: 'doc',
-      id: 'sdk/javascript/functions',
+      id: 'sdk/javascript/hosted_fields',
     },
     {
       type: 'doc',
@@ -496,6 +528,19 @@ module.exports = {
     {
       type: 'doc',
       id: 'sdk/javascript/deprecated',
+    },
+    {
+      type: 'category',
+      label: 'Messenger',
+      collapsed: true,
+      items: [
+        'sdk/javascript/messenger/pay_theory_messenger',
+        'sdk/javascript/messenger/initialize',
+        'sdk/javascript/messenger/getApplePaySession',
+        'sdk/javascript/messenger/processWalletTransaction',
+        'sdk/javascript/messenger/on',
+        'sdk/javascript/messenger/destroy',
+      ],
     },
   ],
 };
