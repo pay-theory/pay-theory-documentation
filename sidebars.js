@@ -170,6 +170,13 @@ module.exports = {
                 'main/online_payments/wallet_transactions/google_pay/google_pay_on_web',
               ],
             },
+            {
+              type: 'category',
+              label: 'Paze™',
+              items: [
+                'main/online_payments/wallet_transactions/paze/getting_started',
+              ],
+            },
           ],
         },
       ],
