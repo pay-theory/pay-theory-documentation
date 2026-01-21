@@ -37,3 +37,4 @@ yarn-error.log*
 pusher.sh
 
 .docusaurus
+.pai
