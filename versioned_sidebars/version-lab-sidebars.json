@@ -58,6 +58,10 @@
     },
     {
       "type": "doc",
+      "id": "api/sandbox"
+    },
+    {
+      "type": "doc",
       "id": "api/split"
     },
     {
