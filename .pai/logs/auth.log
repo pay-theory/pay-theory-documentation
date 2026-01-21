@@ -1,0 +1,4 @@
+{"timestamp":"2026-01-20T20:19:22Z","level":"DEBUG","event":"selecting credential store","details":{"configured_type":"file"}}
+{"timestamp":"2026-01-20T20:19:22Z","level":"DEBUG","event":"using encrypted file storage for credentials"}
+{"timestamp":"2026-01-20T20:19:22Z","level":"WARN","event":"failed to decrypt session, may be corrupted","details":{"error":"failed to decrypt data: cipher: message authentication failed"}}
+{"timestamp":"2026-01-20T20:19:22Z","level":"INFO","event":"starting login flow"}

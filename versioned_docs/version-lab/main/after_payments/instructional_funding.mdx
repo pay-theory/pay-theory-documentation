@@ -1,0 +1,90 @@
+---
+sidebar_position: 8
+sidebar_label: Instructional Funding
+title: "Instructional Funding"
+---
+
+# Instructional Funding
+
+Instructional funding lets partners control when funds move from available funds to a merchant. You submit a daily instruction during the instruction window, and the payout is scheduled for end-of-day processing.
+
+***
+
+## How Instructional Funding Works
+
+- Available funds are the sum of `instructional_hold_balance` and `reserve_balance`.
+- During the instruction window, you can submit one instruction per merchant per day.
+- Instruction amounts must be less than or equal to available funds.
+- Instructions are processed at the scheduled time and linked to a settlement batch.
+
+:::note Sandbox behavior
+In lab/sandbox environments the instruction window is always open. In production, the default window is 17:00-19:00 UTC unless configured otherwise.
+:::
+
+:::tip Access
+Instructional funding must be enabled for your account. If you do not see balances or instructions, contact Pay Theory support.
+:::
+
+***
+
+## Key Queries and Mutations
+
+- [Query Available Funds Balance](../../api/settlement#query-available-funds-balance) - Check hold/reserve balances and window status.
+- [Create Settlement Instruction](../../api/settlement#create-settlement-instruction) - Submit the amount to settle for the day.
+- [Query Settlement Instructions](../../api/settlement#query-settlement-instructions) - Confirm status and scheduled processing time.
+- [Query Funding Transfers](../../api/settlement#query-funding-transfers) - Review funding transfers for a settlement batch.
+
+***
+
+## Example Flow
+
+### 1. Check available funds for the merchant
+
+```graphql
+query AvailableFundsBalance($merchant_uid: ID!) {
+  availableFundsBalance(merchant_uid: $merchant_uid) {
+    instructional_hold_balance
+    reserve_balance
+    instruction_window_status
+  }
+}
+```
+
+### 2. Submit a settlement instruction (amounts are in cents as strings)
+
+```graphql
+mutation CreateSettlementInstruction($input: CreateSettlementInstructionInput!) {
+  createSettlementInstruction(input: $input) {
+    instruction_id
+    status
+    scheduled_processing_date
+  }
+}
+```
+
+### 3. Verify the instruction status for the date
+
+```graphql
+query Instruction($merchant_uid: ID!, $date: AWSDate!) {
+  instruction(merchant_uid: $merchant_uid, date: $date) {
+    id
+    status
+    settlement_batch
+  }
+}
+```
+
+### 4. After the settlement batch is created, fetch its funding transfers
+
+```graphql
+query FundingTransfers($merchant_uid: ID!, $settlement_batch: Int!) {
+  fundingTransfers(merchant_uid: $merchant_uid, settlement_batch: $settlement_batch) {
+    transfers {
+      id
+      amount
+      transfer_type
+      status
+    }
+  }
+}
+```
