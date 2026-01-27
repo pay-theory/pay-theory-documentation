@@ -184,6 +184,8 @@ You can expect webhooks for the following events:
 - [Merchant](#merchant)
 - [Payment Method](#payment-method)
 - [Payor](#payor)
+- [Available Funds Balance](#available-funds-balance)
+- [Funding Transfer](#funding-transfer)
 - [Settlement](#settlement)
 - [Transaction](#transaction)
 
@@ -191,8 +193,8 @@ The payload for each event will contain the following values:
 
 | Key     | Type   | Description                                                                                                                                                  |
 |---------|--------|--------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| event   | String | The type of event that was sent. Should be one of the following: `AUTHORIZATION`, `DISPUTE`, `MERCHANT`, `TRANSACTION`, `PAYMENT_METHOD`, `PAYOR`, `SETTLEMENT`. |
-| subtype | String | The subtype of the event. Should be either `CREATED` or `UPDATED`                                                                                            |
+| event   | String | The type of event that was sent. Should be one of the following: `AUTHORIZATION`, `DISPUTE`, `MERCHANT`, `PAYMENT_METHOD`, `PAYOR`, `AVAILABLE_FUNDS_BALANCE`, `FUNDING_TRANSFER`, `SETTLEMENT`, `TRANSACTION`. |
+| subtype | String | The subtype of the event. Should be `CREATED`, `UPDATED`, or `DELETED` (not all events emit `DELETED`).                                                     |
 | payload | Object | The payload of the event. Examples of the payload for each event are below.                                                                                  |
 
 ### Authorization
@@ -438,6 +440,47 @@ This is a subset of the [payor object](payor.md#the-payor-object)
     phone
     postal_code
     region
+}
+```
+
+### Available Funds Balance
+
+This is based on the [available funds balance object](settlement.md#the-available-funds-balance-object)
+
+```graphql
+{
+  instructional_hold_balance
+  reserve_balance
+  instruction_window_status
+  instructional_hold_balance_updated
+}
+```
+
+### Funding Transfer
+
+This is based on the [funding transfer object](settlement.md#the-funding-transfer-object)
+
+```graphql
+{
+  id
+  merchant_uid
+  amount
+  origin
+  destination
+  status
+  reason
+  transfer_date
+  funds_received_date
+  payment_method_id
+  processor_transfer_id
+  parent_id
+  settlement_batch
+  reserve_account_type
+  ach_return
+  processor_data
+  reserve_reason_object
+  created_at
+  updated_at
 }
 ```
 

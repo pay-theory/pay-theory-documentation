@@ -129,10 +129,10 @@ A 32-bit Int is between 2,147,483,647 and -2,147,483,648. Any value outside of t
     id: ID!
     merchant_uid: ID!
     amount: String!
-    destination_entity: DestinationEntity!
-    fund_movement_type: FundMovementType!
+    origin: FundingTransferEndpoint!
+    destination: FundingTransferEndpoint!
     status: TransferStatus!
-    transfer_type: TransferType!
+    reason: FundingTransferReason!
     transfer_date: AWSDateTime!
     funds_received_date: AWSDateTime
     payment_method_id: ID!
@@ -153,35 +153,31 @@ A 32-bit Int is between 2,147,483,647 and -2,147,483,648. Any value outside of t
 | id                  | ID                | The unique funding transfer identifier.                                     |
 | merchant_uid        | ID                | The Pay Theory unique identifier assigned to the merchant.                  |
 | amount              | String            | The transfer amount, in cents as a 64-bit string.                           |
-| destination_entity  | DestinationEntity | The destination for the funds.                                              |
-| fund_movement_type  | FundMovementType  | Whether the funds are moving as a credit or debit.                          |
+| origin              | FundingTransferEndpoint | The origin endpoint for the funds. Funds will be debited from this endpoint.                                    |
+| destination         | FundingTransferEndpoint | The destination endpoint for the funds. Funds will be credited to this endpoint.                               |
 | status              | TransferStatus    | The transfer status.                                                        |
-| transfer_type       | TransferType      | The type of transfer (net, gross, fees, reserve, etc.).                     |
+| reason              | FundingTransferReason | The reason for the transfer (net, gross, fees, reserve, etc.).          |
 | transfer_date       | String            | The transfer date/time in ISO 8601 format.                                  |
 | funds_received_date | String            | The date funds were received, if available.                                 |
 | payment_method_id   | ID                | The payment method used for the transfer.                                   |
 | processor_transfer_id | ID              | The processor transfer identifier, if applicable.                           |
 | parent_id           | ID                | The parent transfer identifier, if applicable.                              |
 | settlement_batch    | Int               | The settlement batch associated with the transfer.                          |
-| reserve_account_type| ReserveAccountType| The reserve account type, if applicable.                                    |
+| reserve_account_type| ReserveAccountType | The reserve account type, if applicable.                                   |
 | ach_return          | AWSJSON           | ACH return data related to the transfer, if any.                            |
 | processor_data      | AWSJSON           | Processor-specific data for the transfer.                                   |
 | reserve_reason_object | AWSJSON         | Reserve-related data for the transfer, if applicable.                       |
 | created_at          | String            | The created date/time in ISO 8601 format.                                   |
 | updated_at          | String            | The last updated date/time in ISO 8601 format.                              |
 
-### Destination Entity
+### Funding Transfer Endpoint
 
 - `MERCHANT` - Funds move to or from the merchant.
 - `PLATFORM` - Funds move to or from the platform.
 - `SETTLEMENT_BATCH` - Funds move as part of a settlement batch.
+- `RESERVE` - Funds move to or from reserve.
 
-### Fund Movement Type
-
-- `CREDIT` - Funds are credited.
-- `DEBIT` - Funds are debited.
-
-### Transfer Type
+### Funding Transfer Reason
 
 - `FEES` - Transfer for fees.
 - `EXCEPTION` - Transfer for exceptions or adjustments.
@@ -299,10 +295,10 @@ query FundingTransfers($merchant_uid: ID!, $settlement_batch: Int!) {
         transfers {
             id
             amount
-            destination_entity
-            fund_movement_type
+            origin
+            destination
             status
-            transfer_type
+            reason
             transfer_date
             payment_method_id
             settlement_batch
