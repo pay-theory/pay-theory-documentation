@@ -82,7 +82,9 @@ query FundingTransfers($merchant_uid: ID!, $settlement_batch: Int!) {
     transfers {
       id
       amount
-      transfer_type
+      origin
+      destination
+      reason
       status
     }
   }
