@@ -43,7 +43,7 @@ Settlements are a batch of payments, disputes, and refunds that are grouped toge
 | net_amount_64bit           | String | The total amount of the settlement after any fees in a string format to support 64-bit Int                   |
 | settlement_batch           | Int    | The unique settlement batch number.                                                                          |
 | settlement_date            | String | The date the settlement was created in an ISO 8601 String format.                                            |
-| status                     | String | The status of the settlement. Will be either `PENDING` or `SUCCEEDED`.                                       |
+| status                     | String | The status of the settlement. Will be one of `PENDING`, `SUCCEEDED`, or `HOLD`.                          |
 | transaction_debit_count    | Int    | The number of transactions of type DEBIT that were included in the settlement.                               |
 | transaction_dispute_count  | Int    | The number of transactions of type DISPUTE that were included in the settlement.                             |
 | transaction_reversal_count | Int    | The number of transactions of type REVERSAL that were included in the settlement.                            |

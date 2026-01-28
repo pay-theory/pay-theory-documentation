@@ -7,6 +7,29 @@ title: "Changelog"
 # Changelog
 Additions and updates to Pay Theory’s API
 
+## January 27, 2026
+#### Added to API
+* **Instructional Funding** - New instructional funding API surface area
+  * `availableFundsBalance` query with `AvailableFundsBalance` fields (hold/reserve balances, window status)
+  * `instruction` query and `Instruction` object for daily settlement instructions
+  * `fundingTransfers` query and `FundingTransfer` object for settlement batch transfers
+  * `createSettlementInstruction` mutation to submit daily instruction amounts
+
+* **Sandbox Mutations** - New sandbox-only mutations for testing in sandbox environments
+  * `createSandboxAchReturn` to generate ACH returns
+  * `createSandboxDispute` and `updateSandboxDisputeStatus` to create and move disputes
+  * `prepareSandboxSettlementBatch` and `createSandboxSettlement` to simulate settlements
+
+#### Added to Webhooks
+* New event types: `AVAILABLE_FUNDS_BALANCE` and `FUNDING_TRANSFER`
+* `DELETED` subtype documented (where supported) with payload examples
+
+#### Added to Docs
+* Instructional Funding guide with an example flow and related API links
+* Testing page updated with sandbox mutation links for lab environments
+
+---
+
 
 ## August 14, 2025
 #### Added to JS SDK
