@@ -1,0 +1,4231 @@
+"The accepted payment methods object."
+type AcceptedPaymentMethods @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "Whether ACH is accepted."
+  ach: Boolean
+  "Whether card is accepted."
+  card: Boolean
+  "Whether cash is accepted."
+  cash: Boolean
+}
+
+"The payment methods that are accepted for the checkout."
+enum AcceptedPaymentMethodsEnum {
+  "All payment methods are accepted."
+  ALL
+  "ACH is not accepted."
+  NOT_ACH
+  "Card is not accepted."
+  NOT_CARD
+  "Cash is not accepted."
+  NOT_CASH
+  "Only ACH is accepted."
+  ONLY_ACH
+  "Only Card is accepted."
+  ONLY_CARD
+  "Only Cash is accepted."
+  ONLY_CASH
+}
+
+"The accepted payment methods input object."
+input AcceptedPaymentMethodsInput {
+  "Whether ACH is accepted."
+  ach: Boolean
+  "Whether card is accepted."
+  card: Boolean
+  "Whether cash is accepted."
+  cash: Boolean
+}
+
+"ACH fee object."
+type AchFee @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "The merchant fee."
+  merchant_fee: AchMerchantFee
+  "The service fee."
+  service_fee: AchServiceFee
+}
+
+"Input for ACH fee."
+input AchFeeInput {
+  "The merchant fee."
+  merchant_fee: AchMerchantFeeInput!
+  "The service fee."
+  service_fee: AchServiceFeeInput!
+}
+
+"The ach input object. It contains the following fields:"
+input AchInput {
+  "The account number of the bank account."
+  account_number: String!
+  "The type of bank account."
+  account_type: BankAccountType!
+  "The first line of the billing address."
+  address_line1: String
+  "The second line of the billing address."
+  address_line2: String
+  "The city of the billing address."
+  city: String
+  "The country of the billing address."
+  country: String
+  "The name on the bank account."
+  name_on_account: String!
+  "The postal code of the billing address."
+  postal_code: String
+  "The region of the billing address."
+  region: String
+  "The routing number of the bank account."
+  routing_number: String!
+}
+
+"ACH merchant fee object."
+type AchMerchantFee @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "The basis points that will be used to calculate the fee off the total amount of the transaciton."
+  basis_points: Int!
+  "The fixed fee that will be charged to the merchant for each transaction."
+  fixed: Int!
+  "The maximum fee that will be charged to the merchant for each transaction."
+  max_fee: Int
+}
+
+"Input for ACH merchant fee."
+input AchMerchantFeeInput {
+  "The basis points that will be used to calculate the fee off the total amount of the transaciton."
+  basis_points: Int
+  "The fixed amount applied to each fee."
+  fixed: Int
+  "The max fee."
+  max_fee: Int
+}
+
+"Possible values for ACH return code."
+enum AchReturnCode {
+  R01
+  R02
+  R03
+  R04
+  R05
+  R06
+  R07
+  R08
+  R09
+  R10
+  R11
+  R12
+  R13
+  R14
+  R15
+  R16
+  R17
+  R18
+  R19
+  R20
+  R21
+  R22
+  R23
+  R24
+  R25
+  R26
+  R27
+  R28
+  R29
+  R30
+  R31
+  R32
+  R33
+  R34
+  R35
+  R36
+  R37
+  R38
+  R39
+  R40
+  R41
+  R42
+  R43
+  R44
+  R45
+  R46
+  R47
+  R50
+  R51
+  R52
+  R53
+  R61
+  R62
+  R67
+  R68
+  R69
+  R70
+  R71
+  R72
+  R73
+  R74
+  R75
+  R76
+  R77
+  R80
+  R81
+  R82
+  R83
+  R84
+  R85
+}
+
+"ACH return details details."
+type AchReturnDetails @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "The return code for the ACH return."
+  return_code: String
+  "The details of the ACH return."
+  return_details: String
+  "The type of transfer that the ACH return is for."
+  transfer_type: AchReturnTransferType
+}
+
+"Possible values for ACH return transfer type."
+enum AchReturnTransferType {
+  "The ACH return is going to credit the merchant funds."
+  CREDIT
+  "The ACH return is going to debit the merchant funds."
+  DEBIT
+}
+
+"ACH service fee object."
+type AchServiceFee @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "The basis points that will be used to calculate the fee off the total amount of the transaciton."
+  basis_points: Int
+  "The fixed fee that will be charged to the merchant for each transaction."
+  fixed: Int
+  "The maximum fee that will be charged to the merchant for each transaction."
+  max_fee: Int
+  "The minimum fee that will be charged to the merchant for each transaction."
+  min_fee: Int
+}
+
+"Input for ACH service fee."
+input AchServiceFeeInput {
+  "The basis points that will be used to calculate the fee off the total amount of the transaciton."
+  basis_points: Int!
+  "The fixed fee that will be charged to the merchant for each transaction."
+  fixed: Int!
+  "The maximum fee that will be charged to the merchant for each transaction."
+  max_fee: Int
+  "The minimum fee that will be charged to the merchant for each transaction."
+  min_fee: Int
+}
+
+"Additional purchase data object."
+type AdditionalPurchaseData @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "The level3 data line item."
+  level3_data_line_item: [Level3DataLineItem]
+  "The level3 data summary."
+  level3_data_summary: Level3DataSummary
+}
+
+"The additional purchase data input object is used to provide Level 3 processing data for transactions. This data is typically required for commercial card transactions to qualify for lower interchange rates."
+input AdditionalPurchaseDataInput {
+  "Array of line item details for the transaction"
+  level3_data_line_item: [Level3DataLineItemInput]
+  "Summary data for the entire transaction"
+  level3_data_summary: Level3DataSummaryInput
+}
+
+"Additional underwriting data object."
+type AdditionalUnderwritingData @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "The annual ACH volume."
+  annual_ach_volume: String
+  "The average ACH transfer amount."
+  average_ach_transfer_amount: Int
+  "The average card transfer amount."
+  average_card_transfer_amount: Int
+  "The business description."
+  business_description: String
+  "The card volume distribution."
+  card_volume_distribution: CardVolumeDistribution
+  "The credit check allowed."
+  credit_check_allowed: Boolean
+  "The credit check IP address."
+  credit_check_ip_address: AWSIPAddress
+  "The credit check timestamp."
+  credit_check_timestamp: AWSDateTime
+  "The credit check user agent."
+  credit_check_user_agent: String
+  "The merchant agreement accepted."
+  merchant_agreement_accepted: Boolean
+  "The merchant agreement IP address."
+  merchant_agreement_ip_address: AWSIPAddress
+  "The merchant agreement timestamp."
+  merchant_agreement_timestamp: AWSDateTime
+  "The merchant agreement user agent."
+  merchant_agreement_user_agent: String
+  "The statement descriptor."
+  statement_descriptor: String
+  "The refund policy."
+  refund_policy: RefundPolicy
+  "The volume distribution by business type."
+  volume_distribution_by_business_type: VolumeDistributionByBusinessType
+}
+
+"Input for additional underwriting data."
+input AdditionalUnderwritingDataInput {
+  "The annual ACH volume."
+  annual_ach_volume: String
+  "The average ACH transfer amount."
+  average_ach_transfer_amount: Int
+  "The average card transfer amount."
+  average_card_transfer_amount: Int
+  "The business description."
+  business_description: String
+  "The card volume distribution."
+  card_volume_distribution: CardVolumeDistributionInput
+  "The credit check allowed."
+  credit_check_allowed: Boolean
+  "The credit check IP address."
+  credit_check_ip_address: AWSIPAddress
+  "The credit check timestamp."
+  credit_check_timestamp: AWSDateTime
+  "The credit check user agent."
+  credit_check_user_agent: String
+  "The merchant agreement accepted."
+  merchant_agreement_accepted: Boolean
+  "The merchant agreement IP address."
+  merchant_agreement_ip_address: AWSIPAddress
+  "The merchant agreement timestamp."
+  merchant_agreement_timestamp: AWSDateTime
+  "The merchant agreement user agent."
+  merchant_agreement_user_agent: String
+  "The statement descriptor."
+  statement_descriptor: String
+  "The refund policy."
+  refund_policy: RefundPolicy
+  "The volume distribution by business type."
+  volume_distribution_by_business_type: VolumeDistributionByBusinessTypeInput
+}
+
+"The address object."
+type Address @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "The city of the address."
+  city: String
+  "The country of the address."
+  country: String
+  "The first line of the address."
+  line1: String
+  "The second line of the address."
+  line2: String
+  "The postal code of the address."
+  postal_code: String
+  "The region of the address."
+  region: String
+}
+
+"The address input object."
+input AddressInput {
+  "The city of the address."
+  city: String
+  "The country of the address."
+  country: String
+  "The first line of the address."
+  line1: String
+  "The second line of the address."
+  line2: String
+  "The postal code of the address."
+  postal_code: String
+  "The region of the address."
+  region: String
+}
+
+"Apple Pay checkout configuration."
+type AppleCheckoutDetails @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "Whether Apple Pay is enabled."
+  active: Boolean!
+}
+
+"This mutation will capture all PENDING transactions for a merchant in a batch and shortly after create a settlement for the merchant."
+type Authorization @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "Custom defined value passed in as the account code for the authorization."
+  account_code: String
+  "Additional purchase data for Level 3 processing requirements."
+  additional_purchase_data: AdditionalPurchaseData
+  "The amount of the authorization in cents."
+  amount: Int!
+  "The date and time the authorization was created."
+  authorization_date: AWSDateTime!
+  "The Pay Theory unique identifier assigned to the authorization."
+  authorization_id: String!
+  "The AVS status of the authorization."
+  avs_status: String
+  "The amount of the authorization that has been captured in cents."
+  captured_amount: Int
+  "The currency of the authorization. Currently only USD is supported."
+  currency: String!
+  device_id: String
+  "The date and time the authorization will expire."
+  expiration_date: AWSDateTime
+  "Array of failure reasons for the authorization. If the authorization is successful, this will be null."
+  failure_reasons: [String]
+  "The fee mode for the authorization. It can be one of the following: SERVICE_FEE, MERCHANT_FEE"
+  fee_mode: FeeMode!
+  "The amount of fees for the authorization in cents."
+  fees: Int!
+  "The invoice object for the invoice that the authorization belongs to. More information on the invoice object can be found here."
+  invoice: Invoice
+  "The Pay Theory unique identifier assigned to the merchant to batch for."
+  merchant_uid: String!
+  "Any additional data that was stored with the authorization."
+  metadata(query_list: [QueryPair]): AWSJSON
+  "The payment method token object for the payment method that the authorization belongs to. More information on the payment method token object can be found here."
+  payment_method(query_list: [QueryPair]): PaymentMethodToken!
+  processor: String
+  "Custom defined value passed in as the reference for the authorization."
+  reference: String
+  "The Pay Theory unique identifier assigned to the sale that the authorization belongs to. Sales can be used to tie together multiple auths and captures."
+  sale_id: String
+  "The status of the authorization. It can be one of the following: CANCELLED, FAILED, SUCCEEDED"
+  status: AuthorizationStatus!
+  "The timezone of the authorization."
+  timezone: String
+  "The Pay Theory unique identifier assigned to the transaction that the authorization belongs to."
+  transaction_id: String
+  "The date and time the authorization was last updated."
+  updated_row_at: AWSDateTime
+}
+
+"Paginated list of authorization."
+type Authorizations @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "List of Authorizations."
+  items: [Authorization]
+  "Total number of rows matching the query."
+  total_row_count: Int
+}
+
+"The status of the authorization."
+enum AuthorizationStatus {
+  "The authorization was canceled by the merchant."
+  CANCELED
+  "The authorization failed at the processor level."
+  FAILED
+  "The authorization was successful at the processor level."
+  SUCCEEDED
+}
+
+"Available funds balance object."
+type AvailableFundsBalance @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "Available funds held for instructional funding, in cents as a 64-bit string."
+  instructional_hold_balance: String!
+  "Reserve balance for the merchant, in cents as a 64-bit string."
+  reserve_balance: String!
+  "The current instruction window status."
+  instruction_window_status: WindowStatus!
+  "Whether the latest instructional hold balance update has been applied."
+  instructional_hold_balance_updated: Boolean!
+}
+
+"Possible values for bank account type."
+enum BankAccountType {
+  "Represents business checking."
+  BUSINESS_CHECKING
+  "Represents business savings."
+  BUSINESS_SAVINGS
+  "Represents personal checking."
+  PERSONAL_CHECKING
+  "Represents personal savings."
+  PERSONAL_SAVINGS
+}
+
+"Possible values for bank account use."
+enum BankAccountUse {
+  "Represents chargeback."
+  CHARGEBACK
+  "Represents credit."
+  CREDIT
+  "Represents debit."
+  DEBIT
+}
+
+"This can be used to call back a single barcode."
+type Barcode @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "Custom defined value passed in as the account code for the barcode."
+  account_code: String
+  "The amount of the payment."
+  amount: Int!
+  "The unique barcode identifier."
+  barcode_id: String!
+  "The URL to the barcode image."
+  barcode_url: String
+  "The email or phone number of the payor."
+  email_or_phone: String!
+  "The date the barcode expires."
+  expiration_date: AWSDate
+  "The fees associated with the payment."
+  fees: Int
+  "The full name tied to the barcode."
+  full_name: String!
+  "The invoice id associated with the payment."
+  invoice_id: String
+  "The Pay Theory unique identifier assigned to the merchant."
+  merchant_uid: String!
+  "The metadata to attach to the barcode. This is a JSON object that can contain any data that you want to attach to the barcode."
+  metadata: AWSJSON
+  "The payor object associated with the barcode."
+  payor: Payor
+  "Pay Theory unique identifier for the payor."
+  payor_id: String
+  "Custom defined value passed in as the reference for the barcode."
+  reference: String
+  "The Pay Theory unique identifier assigned to the sale that the authorization belongs to. Sales can be used to tie together multiple transactions."
+  sale_id: String
+}
+
+"This input object is used to create a barcode."
+input BarcodeInput {
+  "Custom defined value passed in as the account code for the barcode."
+  account_code: String
+  "The amount of the payment."
+  amount: Int!
+  "The number of days until the barcode expires."
+  days_until_expiration: Int
+  "The email or phone number of the payor."
+  email_or_phone: String!
+  "The date the barcode expires."
+  expiration_date: AWSDate
+  "The full name tied to the barcode."
+  full_name: String!
+  "The invoice id associated with the payment."
+  invoice_id: String
+  "The Pay Theory unique identifier assigned to the merchant that the barcode is being created for."
+  merchant_uid: String!
+  "The metadata to attach to the barcode. This is a JSON object that can contain any data that you want to attach to the barcode."
+  metadata: AWSJSON
+  "The payor object associated with the barcode."
+  payor: PayorInput
+  "The Pay Theory unique identifier assigned to the payor that the barcode is being created for."
+  payor_id: String
+  "Custom defined value passed in as the reference for the barcode."
+  reference: String
+  "A PayTheory created sale identifier that helps tie together multiple transactions."
+  sale_id: String
+}
+
+" The response from the sandbox barcode payment simulation."
+type BarcodePaymentResponse @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "The confirmation code for the payment."
+  confirmation_code: String!
+  "The status of the payment."
+  status: BarcodePaymentStatus!
+  "The status message for the payment."
+  status_message: String!
+}
+
+"The status of the barcode payment can be one of the following values:"
+enum BarcodePaymentStatus {
+  "The payment was successfully processed"
+  PAYMENT_ACCEPTED
+  "The payment was declined"
+  PAYMENT_DECLINED
+  "An error occurred while processing the payment"
+  SYSTEM_ERROR
+}
+
+"The billing address input object used for wallet authorizations."
+input BillingAddressInput {
+  "The first line of the billing address"
+  address_line1: String
+  "The second line of the billing address (optional)"
+  address_line2: String
+  "The city of the billing address"
+  city: String
+  "The country code of the billing address (e.g., \"US\")"
+  country: String
+  "The full name associated with the billing address"
+  full_name: String
+  "The postal or zip code of the billing address"
+  postal_code: String
+  "The state, province, or region of the billing address"
+  region: String
+}
+
+"Business object."
+type Business @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "The additional underwriting data."
+  additional_underwriting_data: AdditionalUnderwritingData
+  "The underwriting data."
+  underwriting_data: UnderwritingData
+}
+
+"Business bank object."
+type BusinessBank @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "The account number."
+  account_number: String
+  "The account type."
+  account_type: BankAccountType
+  "The account uses."
+  account_uses: [BankAccountUse]
+  "The bank code."
+  bank_code: String
+  "The bank name."
+  bank_name: String
+  "The institution number."
+  institution_number: String
+  "The name."
+  name: String
+  "The transit number."
+  transit_number: String
+}
+
+"Input for business bank."
+input BusinessBankInput {
+  "The account number."
+  account_number: String
+  "The account type."
+  account_type: BankAccountType
+  "The account uses."
+  account_uses: [BankAccountUse]
+  "The bank code."
+  bank_code: String
+  "The bank name."
+  bank_name: String
+  "The institution number."
+  institution_number: String
+  "The name."
+  name: String
+  "The transit number."
+  transit_number: String
+}
+
+"Input for business."
+input BusinessInput {
+  "The additional underwriting data."
+  additional_underwriting_data: AdditionalUnderwritingDataInput
+  "The underwriting data."
+  underwriting_data: UnderwritingDataInput
+}
+
+"Business owner object."
+type BusinessOwner @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "The address."
+  address: Address
+  "The dob."
+  dob: AWSDate
+  "Email address."
+  email: AWSEmail
+  "First name."
+  first_name: String
+  "Last name."
+  last_name: String
+  "Middle name."
+  middle_name: String
+  "The nationality."
+  nationality: CountryCodes_Alpha3
+  "The owner position."
+  owner_position: OwnerPosition
+  "The percentage ownership."
+  percentage_ownership: Int
+  "Phone number."
+  phone: AWSPhone
+  "The primary owner."
+  primary_owner: Boolean
+  "Unique identifier for the tax."
+  tax_id: String
+  "The title."
+  title: String
+  "The UID."
+  uid: ID!
+}
+
+"Input for business owner."
+input BusinessOwnerInput {
+  "The address."
+  address: AddressInput
+  "The dob."
+  dob: AWSDate
+  "Email address."
+  email: AWSEmail
+  "First name."
+  first_name: String
+  "Last name."
+  last_name: String
+  "Middle name."
+  middle_name: String
+  "The nationality."
+  nationality: CountryCodes_Alpha3
+  "The owner position."
+  owner_position: OwnerPosition
+  "The percentage ownership."
+  percentage_ownership: Int
+  "Phone number."
+  phone: AWSPhone
+  "The primary owner."
+  primary_owner: Boolean
+  "Unique identifier for the tax."
+  tax_id: String
+  "The title."
+  title: String
+  "The UID."
+  uid: ID!
+}
+
+"Possible values for business type."
+enum BusinessType {
+  "Represents corp."
+  CORP
+  "Represents gov."
+  GOV
+  "Represents international."
+  INTERNATIONAL
+  "Represents llc."
+  LLC
+  "Represents partnership."
+  PARTNERSHIP
+  "Represents sole proprietorship."
+  SOLE_PROPRIETORSHIP
+  "Represents tax exempt."
+  TAX_EXEMPT
+  "Represents trust."
+  TRUST
+}
+
+"The type of call to action for the checkout."
+enum CallToActionType {
+  "Button will say Book."
+  BOOK
+  "Button will say Donate."
+  DONATE
+  "Button will say Pay."
+  PAY
+}
+
+"The Canadian EFT input object. It contains the following fields:"
+input CanadianEftInput {
+  "The account number of the bank account."
+  account_number: String!
+  "The type of bank account."
+  account_type: BankAccountType!
+  "The institution number of the bank account. Should be 3 digits."
+  institution_number: String!
+  "The name on the bank account."
+  name_on_account: String!
+  "The transit number of the bank account. Should be 5 digits."
+  transit_number: String!
+}
+
+"Card brand fee object."
+type CardBrandFee @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "The merchant fee."
+  merchant_fee: CardMerchantFee
+}
+
+"Input for card brand fee."
+input CardBrandFeeInput {
+  "The merchant fee."
+  merchant_fee: CardMerchantFeeInput!
+}
+
+"The card expiration input object. It contains the following fields:"
+input CardExpirationInput {
+  "The month of the expiration date. Format: MM"
+  month: String!
+  "The year of the expiration date. Format: YY"
+  year: String!
+}
+
+"Card fee object."
+type CardFee @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "The merchant fee."
+  merchant_fee: CardMerchantFee
+  "The service fee."
+  service_fee: CardServiceFee
+}
+
+"Input for card fee."
+input CardFeeInput {
+  "The merchant fee."
+  merchant_fee: CardMerchantFeeInput!
+  "The service fee."
+  service_fee: CardServiceFeeInput!
+}
+
+"The card input object. It contains the following fields:"
+input CardInput {
+  "The first line of the billing address."
+  address_line1: String
+  "The second line of the billing address."
+  address_line2: String
+  "The card number."
+  card_number: String!
+  "The city of the billing address."
+  city: String
+  "The country of the billing address."
+  country: String
+  "The card expiration input object. Refer to the CardExpirationInput docs for more info."
+  exp_date: CardExpirationInput!
+  "The name on the card."
+  full_name: String
+  "The postal code of the billing address."
+  postal_code: String!
+  "The region of the billing address."
+  region: String
+  "The security code of the card."
+  security_code: String!
+}
+
+"Card merchant fee object."
+type CardMerchantFee @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "The basis points that will be used to calculate the fee off the total amount of the transaciton."
+  basis_points: Int
+  "The fixed fee that will be charged to the merchant for each transaction."
+  fixed: Int
+}
+
+"Input for card merchant fee."
+input CardMerchantFeeInput {
+  "The basis points that will be used to calculate the fee off the total amount of the transaciton."
+  basis_points: Int!
+  "The fixed amount applied to each fee."
+  fixed: Int!
+}
+
+"Card service fee object."
+type CardServiceFee @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "The basis points that will be used to calculate the fee off the total amount of the transaciton."
+  basis_points: Int
+  "The fixed fee that will be charged to the merchant for each transaction."
+  fixed: Int
+  "The minimum fee that will be charged to the merchant for each transaction."
+  min_fee: Int
+}
+
+"Input for card service fee."
+input CardServiceFeeInput {
+  "The basis points that will be used to calculate the fee off the total amount of the transaciton."
+  basis_points: Int!
+  "The fixed amount applied to each fee."
+  fixed: Int!
+  "The min fee that will be charged as a service fee for each transaction."
+  min_fee: Int
+}
+
+"The type of card. It can be one of the following:"
+enum CardType {
+  "Represents business credit."
+  BUSINESS_CREDIT
+  "Represents business debit."
+  BUSINESS_DEBIT
+  "Represents credit card."
+  CREDIT_CARD
+  "Represents debit card."
+  DEBIT_CARD
+  "Represents prepaid card."
+  PREPAID_CARD
+}
+
+"Card volume distribution object."
+type CardVolumeDistribution @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "The card present percentage."
+  card_present_percentage: Int
+  "The ecommerce percentage."
+  ecommerce_percentage: Int
+}
+
+"Input for card volume distribution."
+input CardVolumeDistributionInput {
+  "The card present percentage."
+  card_present_percentage: Int
+  "The ecommerce percentage."
+  ecommerce_percentage: Int
+}
+
+"These operators are case-sensitive. Conjunctive operators in the same array must match for a query to work. To mix operators use nested queries with query pairs containing a query_list. The following are the available conjunctive operators:"
+enum ConjunctiveOperator {
+  "The results of the query have to meet all the conditions in the query pair list."
+  AND_NEXT
+  "The final query pair in the list should use this operator since it has nothing to connect to."
+  NONE_NEXT
+  "The results of the query have to meet one of the conditions in the query pair list."
+  OR_NEXT
+}
+
+"The ISO 3166-1 alpha-3 country code."
+enum CountryCodes_Alpha3 {
+  AFG
+  ALA
+  ALB
+  DZA
+  ASM
+  AND
+  AGO
+  AIA
+  ATA
+  ATG
+  ARG
+  ARM
+  ABW
+  AUS
+  AUT
+  AZE
+  BHS
+  BHR
+  BGD
+  BRB
+  BLR
+  BEL
+  BLZ
+  BEN
+  BMU
+  BTN
+  BOL
+  BES
+  BIH
+  BWA
+  BVT
+  BRA
+  IOT
+  BRN
+  BGR
+  BFA
+  BDI
+  CPV
+  KHM
+  CMR
+  CAN
+  CYM
+  CAF
+  TCD
+  CHL
+  CHN
+  CXR
+  CCK
+  COL
+  COM
+  COG
+  COD
+  COK
+  CRI
+  CIV
+  HRV
+  CUB
+  CUW
+  CYP
+  CZE
+  DNK
+  DJI
+  DMA
+  DOM
+  ECU
+  EGY
+  SLV
+  GNQ
+  ERI
+  EST
+  SWZ
+  ETH
+  FLK
+  FRO
+  FJI
+  FIN
+  FRA
+  GUF
+  PYF
+  ATF
+  GAB
+  GMB
+  GEO
+  DEU
+  GHA
+  GIB
+  GRC
+  GRL
+  GRD
+  GLP
+  GUM
+  GTM
+  GGY
+  GIN
+  GNB
+  GUY
+  HTI
+  HMD
+  VAT
+  HND
+  HKG
+  HUN
+  ISL
+  IND
+  IDN
+  IRN
+  IRQ
+  IRL
+  IMN
+  ISR
+  ITA
+  JAM
+  JPN
+  JEY
+  JOR
+  KAZ
+  KEN
+  KIR
+  PRK
+  KOR
+  KWT
+  KGZ
+  LAO
+  LVA
+  LBN
+  LSO
+  LBR
+  LBY
+  LIE
+  LTU
+  LUX
+  MAC
+  MDG
+  MWI
+  MYS
+  MDV
+  MLI
+  MLT
+  MHL
+  MTQ
+  MRT
+  MUS
+  MYT
+  MEX
+  FSM
+  MDA
+  MCO
+  MNG
+  MNE
+  MSR
+  MAR
+  MOZ
+  MMR
+  NAM
+  NRU
+  NPL
+  NLD
+  NCL
+  NZL
+  NIC
+  NER
+  NGA
+  NIU
+  NFK
+  MKD
+  MNP
+  NOR
+  OMN
+  PAK
+  PLW
+  PSE
+  PAN
+  PNG
+  PRY
+  PER
+  PHL
+  PCN
+  POL
+  PRT
+  PRI
+  QAT
+  REU
+  ROU
+  RUS
+  RWA
+  BLM
+  SHN
+  KNA
+  LCA
+  MAF
+  SPM
+  VCT
+  WSM
+  SMR
+  STP
+  SAU
+  SEN
+  SRB
+  SYC
+  SLE
+  SGP
+  SXM
+  SVK
+  SVN
+  SLB
+  SOM
+  ZAF
+  SGS
+  SSD
+  ESP
+  LKA
+  SDN
+  SUR
+  SJM
+  SWE
+  CHE
+  SYR
+  TWN
+  TJK
+  TZA
+  THA
+  TLS
+  TGO
+  TKL
+  TON
+  TTO
+  TUN
+  TUR
+  TKM
+  TCA
+  TUV
+  UGA
+  UKR
+  ARE
+  GBR
+  USA
+  UMI
+  URY
+  UZB
+  VUT
+  VEN
+  VNM
+  VGB
+  VIR
+  WLF
+  ESH
+  YEM
+  ZMB
+  ZWE
+}
+
+"Input for create sandbox ACH return."
+input CreateSandboxAchReturnInput {
+  "Pay Theory unique identifier for the transaction."
+  transaction_id: String!
+  "The ACH return code used."
+  return_code: AchReturnCode!
+}
+
+"Input for create sandbox dispute."
+input CreateSandboxDisputeInput {
+  "The transaction ID that is now in dispute."
+  transaction_id: String!
+  "The reason."
+  reason: DisputeReason!
+}
+
+"Input for create sandbox settlement."
+input CreateSandboxSettlementInput {
+  "Pay Theory unique identifier for the merchant."
+  merchant_uid: ID!
+}
+
+"Input for create settlement instruction."
+input CreateSettlementInstructionInput {
+  "Pay Theory unique identifier for the merchant."
+  merchant_uid: ID!
+  "Amount in minor units (for example cents)."
+  amount: String!
+  "Optional metadata returned from the instruction."
+  metadata: AWSJSON
+}
+
+"Response for create settlement instruction."
+type CreateSettlementInstructionResponse @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "Unique identifier for the instruction."
+  instruction_id: ID!
+  "Status value."
+  status: InstructionStatus!
+  "Date for scheduled processing."
+  scheduled_processing_date: AWSDateTime!
+  "The settlement batch."
+  settlement_batch: Int
+  "The projected reserve balance."
+  projected_reserve_balance: String!
+  "Metadata associated with this object."
+  metadata: AWSJSON
+}
+
+"Possible values for CVV status."
+enum CvvStatus {
+  "Represents match."
+  MATCH
+  "Represents no match."
+  NO_MATCH
+  "Represents unknown."
+  UNKNOWN
+}
+
+"Device object."
+type Device @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "Unique identifier for the device."
+  device_id: String
+  "The device description."
+  device_description: String
+  "The device name."
+  device_name: String
+  "The device properties."
+  device_properties: AWSJSON
+  "Whether this is active."
+  is_active: Boolean
+  "Pay Theory unique identifier for the merchant."
+  merchant_uid: String
+  "The processor."
+  processor: String
+  "Unique identifier for the processor device."
+  processor_device_id: String
+}
+
+"Paginated list of device."
+type Devices @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "List of items."
+  items: [Device]
+  "Total number of rows matching the query."
+  total_row_count: Int
+}
+
+"Input for digital wallet."
+input DigitalWalletInput {
+  "Address line 1."
+  address_line1: String
+  "The dpan."
+  dpan: String!
+  "Date for exp."
+  exp_date: String!
+  "Postal code."
+  postal_code: String
+  "The wallet type."
+  wallet_type: WalletType!
+}
+
+"Dispute object."
+type Dispute @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "The amount of the transaction in dispute."
+  amount: Int
+  "The date the dispute was created."
+  dispute_date: AWSDateTime
+  "The Pay Theory unique dispute identifier."
+  dispute_id: String
+  "The last date evidence was sent to the processor. If no evidence was sent, this will be null."
+  evidence_last_send_date: AWSDateTime
+  "The final date to submit evidence to contest a dispute."
+  expiration_date: AWSDateTime
+  "The Pay Theory unique identifier assigned to the merchant that the dispute belongs to."
+  merchant_uid: ID
+  "The status of the dispute."
+  status: DisputeStatus
+  "The reason code for the dispute as passed by the card issuer."
+  reason: DisputeReason
+  "A more detailed reason provided by the card issuer for the dispute."
+  reason_message: String
+  "The settlement batch number where funds were deposited into the merchants account if a dispute is WON."
+  settlement_deposit_batch: String
+  "The settlement batch number where funds were withdrawn from the merchants account for the dispute."
+  settlement_withdrawal_batch: String
+  "The transaction object for the transaction that is in dispute. More information on the transaction object can be found here."
+  transaction: Transaction
+  "The date the dispute was last updated."
+  updated_date: AWSDateTime
+  "The date the dispute was last updated in the database."
+  updated_row_at: AWSDateTime
+}
+
+"Possible values for dispute reason."
+enum DisputeReason {
+  CLERICAL
+  FRAUD
+  INQUIRY
+  QUALITY
+  TECHNICAL
+}
+
+"Paginated list of dispute."
+type Disputes @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "List of Disputes."
+  items: [Dispute]
+  "Total number of rows matching the query."
+  total_row_count: Int
+}
+
+"Possible values for dispute status."
+enum DisputeStatus {
+  "The dispute is in the inquiry stage. The cardholder has requested more information about the charge."
+  INQUIRY
+  "The dispute has been lost. The cardholder has won the dispute and the funds have been withdrawn from the merchants account."
+  LOST
+  "The dispute is in the pending stage. The cardholder has requested a chargeback."
+  PENDING
+  "The dispute has been won. The merchant has won the dispute and the funds have been deposited into the merchants account."
+  WON
+}
+
+directive @docGroup(name: String!, order: Int, subsection: String, sidebarTitle: String) on FIELD_DEFINITION
+
+directive @docIgnore on FIELD_DEFINITION | ARGUMENT_DEFINITION | INPUT_FIELD_DEFINITION | ENUM_VALUE | OBJECT | INPUT_OBJECT | ENUM | INTERFACE | UNION | SCALAR
+
+directive @docPriority(level: Int!) on FIELD_DEFINITION
+
+directive @docTags(tags: [String!]!) on FIELD_DEFINITION
+
+"Document object."
+type Document @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "Unique identifier for the attachment."
+  attachment_id: ID!
+  "The doc type."
+  doc_type: SupportDocumentType!
+  "The name."
+  name: String!
+}
+
+"Input for document."
+input DocumentInput {
+  "The body."
+  body: String!
+  "The doc type."
+  doc_type: SupportDocumentType!
+  "The mime type."
+  mime_type: String!
+  "The name."
+  name: String!
+}
+
+"This object is used to calculate the fees that are charged to the payor. card, ach, and cash are the main fee objects that are used to calculate the fees for each transaction type."
+type FeeMatrix @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "The model that will be used to calculate all ACH transaction fees for the merchant."
+  ach: AchFee!
+  "The fee that will be charged to the merchant for an ACH return."
+  ach_return_fee: Int!
+  "The fee that will be charged to the merchant for an ACH return that falls into one of the following return codes."
+  ach_return_disputed_fee: Int!
+  "The model that will be used to calculate all business credit card transaction fees for the merchant."
+  business_credit: CardFee
+  "The model that will be used to calculate all business debit card transaction fees for the merchant."
+  business_debit: CardFee
+  "The model that will be used to calculate all American Express card transaction fees for the merchant."
+  amex: CardBrandFee
+  "The model that will be used to calculate all card transaction fees for the merchant."
+  card: CardFee!
+  "The fee that will be charged to the merchant for each card updated through card account updater"
+  card_account_updater: Int!
+  "The fee that will be charged to the merchant for each cash transaction."
+  cash: Int!
+  "The fee that will be charged to the merchant for each chargeback."
+  chargeback_fee: Int!
+  "The model that will be used to calculate all credit card transaction fees for the merchant."
+  credit_card: CardFee
+  "The model that will be used to calculate all debit card transaction fees for the merchant."
+  debit_card: CardFee
+  "The model that will be used to calculate all Discover card transaction fees for the merchant."
+  discover: CardBrandFee
+  "If the merchant is using interchange plus pricing."
+  interchange_plus: Boolean!
+  "The basis points that will be charged to the merchant for each international card transaction."
+  international_card_basis: Int!
+  "The model that will be used to calculate all Mastercard card transaction fees for the merchant when using the MERCHANT_FEE fee mode"
+  mastercard: CardBrandFee
+  "The merchant_uid of the merchant that the fee matrix is associated with."
+  merchant_uid: String!
+  "The model that will be used to calculate all prepaid card transaction fees for the merchant."
+  prepaid_card: CardFee
+  "If the merchant is using service fee pricing."
+  service_fee_enabled: Boolean!
+  "The model that will be used to calculate all Visa card transaction fees for the merchant."
+  visa: CardBrandFee
+}
+
+"Input for fee matrix."
+input FeeMatrixInput {
+  "The model that will be used to calculate all ACH transaction fees for the merchant."
+  ach: AchFeeInput
+  "The fee that will be charged to the merchant for an ACH return."
+  ach_return_fee: Int
+  "The fee that will be charged to the merchant for an ACH return that falls into one of the following return codes."
+  ach_return_disputed_fee: Int
+  "The model that will be used to calculate all business credit card transaction fees for the merchant."
+  business_credit: CardFeeInput
+  "The model that will be used to calculate all business debit card transaction fees for the merchant."
+  business_debit: CardFeeInput
+  "The model that will be used to calculate all American Express card transaction fees for the merchant."
+  amex: CardBrandFeeInput
+  "The model that will be used to calculate all card transaction fees for the merchant."
+  card: CardFeeInput
+  "The fee that will be charged to the merchant for each card updated through card account updater"
+  card_account_updater: Int
+  "The fee that will be charged to the merchant for each cash transaction."
+  cash: Int
+  "The fee that will be charged to the merchant for each chargeback."
+  chargeback_fee: Int
+  "The model that will be used to calculate all credit card transaction fees for the merchant."
+  credit_card: CardFeeInput
+  "The model that will be used to calculate all debit card transaction fees for the merchant."
+  debit_card: CardFeeInput
+  "The model that will be used to calculate all Discover card transaction fees for the merchant."
+  discover: CardBrandFeeInput
+  "If the merchant is using interchange plus pricing."
+  interchange_plus: Boolean
+  "The basis points that will be charged to the merchant for each international card transaction."
+  international_card_basis: Int
+  "The model that will be used to calculate all Mastercard card transaction fees for the merchant when using the MERCHANT_FEE fee mode"
+  mastercard: CardBrandFeeInput
+  "The merchant_uid of the merchant that the fee matrix is associated with."
+  merchant_uid: String!
+  "The model that will be used to calculate all prepaid card transaction fees for the merchant."
+  prepaid_card: CardFeeInput
+  "If the merchant is using service fee pricing."
+  service_fee_enabled: Boolean
+  "The model that will be used to calculate all Visa card transaction fees for the merchant."
+  visa: CardBrandFeeInput
+}
+
+"Possible values for fee mode."
+enum FeeMode {
+  "Custom fee that was set by the partner."
+  CUSTOM_FEE
+  INTERCHANGE @deprecated(reason: "Use SERVICE_FEE instead.")
+  "Fee was charged to the merchant and taken from the gross amount of the transaction."
+  MERCHANT_FEE
+  "Fee was charged to the payor and added to the gross amount of the transaction."
+  SERVICE_FEE
+}
+
+"Fee model object."
+type FeeModel @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "The interchange plus."
+  interchange_plus: Boolean
+  "The merchant fee."
+  merchant_fee: FeeModelDetail
+  "The service fee."
+  service_fee: FeeModelDetail
+  "The service fee min."
+  service_fee_min: FeeModelDetail
+}
+
+"Fee model detail object."
+type FeeModelDetail @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "The ACH basis."
+  ach_basis: Int
+  "The ACH fixed."
+  ach_fixed: Int
+  "The card basis."
+  card_basis: Int
+  "The card fixed."
+  card_fixed: Int
+}
+
+"Funding transfer object."
+type FundingTransfer @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "The unique funding transfer identifier."
+  id: ID!
+  "The Pay Theory unique identifier assigned to the merchant."
+  merchant_uid: ID!
+  "The transfer amount, in cents as a 64-bit string."
+  amount: String!
+  "The origin endpoint for the funds. Funds will be debited from this endpoint."
+  origin: FundingTransferEndpoint!
+  "The destination endpoint for the funds. Funds will be credited to this endpoint."
+  destination: FundingTransferEndpoint!
+  "The transfer status."
+  status: TransferStatus!
+  "The reason for the transfer (net, gross, fees, reserve, etc.)."
+  reason: FundingTransferReason!
+  "The transfer date/time in ISO 8601 format."
+  transfer_date: AWSDateTime!
+  "The date funds were received, if available."
+  funds_received_date: AWSDateTime
+  "The payment method used for the transfer."
+  payment_method_id: ID!
+  "The parent transfer identifier, if applicable."
+  parent_id: ID
+  "The settlement batch associated with the transfer."
+  settlement_batch: Int!
+  "The reserve account type, if applicable."
+  reserve_account_type: ReserveAccountType
+  "ACH return data related to the transfer, if any."
+  ach_return: AWSJSON
+  "Reserve-related data for the transfer, if applicable."
+  reserve_reason_object: AWSJSON
+  "The created date/time in ISO 8601 format."
+  created_at: AWSDateTime!
+  "The last updated date/time in ISO 8601 format."
+  updated_at: AWSDateTime!
+}
+
+"Possible values for funding transfer endpoint."
+enum FundingTransferEndpoint {
+  "Funds move to or from the merchant."
+  MERCHANT
+  "Funds move to or from the platform."
+  PLATFORM
+  "Funds move as part of a settlement batch."
+  SETTLEMENT_BATCH
+  "Funds move to or from reserve."
+  RESERVE
+}
+
+"Possible values for funding transfer reason."
+enum FundingTransferReason {
+  "Transfer for fees."
+  FEES
+  "Transfer for exceptions or adjustments."
+  EXCEPTION
+  "Transfer based on gross settlement amounts."
+  GROSS
+  "Transfer based on net settlement amounts."
+  NET
+  "Transfer related to reserve balances."
+  RESERVE
+}
+
+"Funding transfers object."
+type FundingTransfers @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "The transfers."
+  transfers: [FundingTransfer!]!
+}
+
+"Google Pay checkout configuration."
+type GoogleCheckoutDetails @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "Whether Google Pay is enabled."
+  active: Boolean!
+  "Google Pay merchant identifier."
+  merchantIdentifier: String
+}
+
+"The type of health expense."
+enum HealthExpenseType {
+  "Clinical expense."
+  CLINICAL
+  "Copay expense."
+  COPAY
+  "Dental expense."
+  DENTAL
+  "Healthcare expense."
+  HEALTHCARE
+  "RX expense."
+  RX
+  "Transit expense."
+  TRANSIT
+  "Vision expense."
+  VISION
+}
+
+"Instruction object."
+type Instruction @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "The unique instruction identifier."
+  id: ID!
+  "The Pay Theory unique identifier assigned to the merchant."
+  merchant_uid: ID!
+  "The instruction date in YYYY-MM-DD format (UTC)."
+  date: AWSDate!
+  "The instruction amount, in cents as a 64-bit string."
+  amount: String!
+  "The current status of the instruction."
+  status: InstructionStatus!
+  "The scheduled processing date/time for the instruction (UTC)."
+  scheduled_processing_date: AWSDateTime!
+  "The settlement batch number assigned after processing (if any)."
+  settlement_batch: Int
+  "Optional metadata attached to the instruction."
+  metadata: AWSJSON
+}
+
+"Possible values for instruction status."
+enum InstructionStatus {
+  "The instruction was canceled."
+  CANCELED
+  "The instruction failed to process."
+  FAILED
+  "The instruction is scheduled for processing."
+  PENDING
+  "The instruction was processed successfully."
+  PROCESSED
+}
+
+"Invoices are used to create a payment request that can be sent to a payor."
+type Invoice @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "A custom value that will be passed on to the transaction when a payment is made through Pay Theory's hosted checkout."
+  account_code: String
+  "The date the invoice was created."
+  created_date: AWSDateTime
+  "The currency of the payment that will be used to pay the invoice."
+  currency: String
+  "The date that the payor is expected to pay the invoice by."
+  due_by: AWSDate
+  "The fee mode that will be used on that transaction when a payment is made through Pay Theory's hosted checkout. It can be one of the following: MERCHANT_FEE, SERVICE_FEE."
+  fee_mode: FeeMode
+  "The total amount of the invoice."
+  invoice_amount: Int
+  "The initial date for the Invoice."
+  invoice_date: AWSDate
+  "A brief description of the invoice. This will show up on the hosted checkout page and any email communications about the Invoice."
+  invoice_description: String
+  "The Pay Theory unique identifier for the invoice."
+  invoice_id: String
+  "The name of the invoice. This will show up on the hosted checkout page and any email communications about the Invoice."
+  invoice_name: String
+  "A custom value that can be used to tie the Pay Theory Invoice to a merchant's internal invoice number."
+  merchant_invoice_number: String
+  "The Pay Theory unique identifier for the merchant that the invoice belongs to."
+  merchant_uid: String
+  "A JSON object that can be used to store custom data about the invoice."
+  metadata(query_list: [QueryPair]): AWSJSON
+  "A list of offline transactions that have been applied to the invoice. This is used to track payments that are made outside Pay Theory toward an Invoice."
+  offline_transactions: [OfflineTransaction]
+  "The payor object for the payor that the invoice belongs to. More information on the payor object can be found here."
+  payor(query_list: [QueryPair]): Payor
+  "A custom value that will be passed on to the transaction when a payment is made through Pay Theory's hosted checkout."
+  reference: String
+  "The settings object to configure settings for the Pay Theory hosted checkout page."
+  settings: InvoiceSettings
+  "The status of the invoice. It can be one of the following: NOT_PAID, PAID, PARTIALLY_PAID For the time being this will not be used as we do not yet support partial payments for Invoices."
+  status: InvoiceStatus
+  "The total amount that has been paid toward the invoice."
+  total_paid_amount: Int
+}
+
+"Input for invoice creation."
+input InvoiceInput {
+  "A custom value that will be passed on to the transaction when a payment is made through Pay Theory's hosted checkout."
+  account_code: String
+  "The currency of the payment that will be used to pay the invoice."
+  currency: String!
+  "The date that the payor is expected to pay the invoice by."
+  due_by: AWSDate
+  "The fee mode that will be used on that transaction when a payment is made through Pay Theory's hosted checkout. It can be one of the following: MERCHANT_FEE, SERVICE_FEE."
+  fee_mode: FeeMode
+  "The total amount of the invoice."
+  invoice_amount: Int!
+  "The initial date for the Invoice."
+  invoice_date: AWSDate
+  "A brief description of the invoice. This will show up on the hosted checkout page and any email communications about the Invoice."
+  invoice_description: String
+  "The name of the invoice. This will show up on the hosted checkout page and any email communications about the Invoice."
+  invoice_name: String!
+  "The Pay Theory unique identifier for the merchant that the invoice belongs to."
+  merchant_uid: String!
+  "A custom value that can be used to tie the Pay Theory Invoice to a merchant's internal invoice number."
+  merchant_invoice_number: String
+  "A JSON object that can be used to store custom data about the invoice."
+  metadata: AWSJSON
+  "The Pay Theory unique identifier for the payor that the invoice belongs to."
+  payor_id: String
+  "The payor input object for the payor that the invoice belongs to. More information on the payor input object can be found here."
+  payor: PayorInput
+  "A custom value that will be passed on to the transaction when a payment is made through Pay Theory's hosted checkout."
+  reference: String
+  "When set to true, an email will be sent to the payor with a link to the hosted checkout page."
+  send_email: Boolean
+  "The settings input object to configure settings for the Pay Theory hosted checkout page."
+  settings: InvoiceSettingsInput
+}
+
+"Paginated list of invoice."
+type Invoices @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "List of Invoices."
+  items: [Invoice]
+  "Total number of rows matching the query."
+  total_row_count: Int
+}
+
+"Invoice settings settings."
+type InvoiceSettings @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "The payment methods that will be accepted on the Pay Theory hosted checkout page. An object containing keys of ach, card, and cash with a boolean value indicating if they are accepted."
+  accepted_payment_methods: AcceptedPaymentMethods
+  "When set to true, the payor will be required to enter a security pin to pay the invoice."
+  is_secure: Boolean
+  "When set to true, the payor will be required to enter their address to pay the invoice."
+  require_payor_address: Boolean
+  "The security pin that the payor will be required to enter to pay the invoice. This is only used if is_secure is set to true."
+  security_pin: String
+}
+
+"Input for invoice settings."
+input InvoiceSettingsInput {
+  "The payment methods that will be accepted on the Pay Theory hosted checkout page. An object containing keys of ach, card, and cash with a boolean value indicating if they are accepted."
+  accepted_payment_methods: AcceptedPaymentMethodsInput
+  "When set to true, the payor will be required to enter a security pin to pay the invoice."
+  is_secure: Boolean
+  "When set to true, the payor will be required to enter their address to pay the invoice."
+  require_payor_address: Boolean
+}
+
+"Possible values for invoice status."
+enum InvoiceStatus {
+  "Represents not paid."
+  NOT_PAID
+  "Represents partially paid."
+  PARTIALLY_PAID
+  "Represents paid."
+  PAID
+}
+
+"Input for updating an invoice."
+input InvoiceUpdateInput {
+  "A custom value that will be passed on to the transaction when a payment is made through Pay Theory's hosted checkout."
+  account_code: String
+  "The currency of the payment that will be used to pay the invoice."
+  currency: String
+  "The date that the payor is expected to pay the invoice by."
+  due_by: AWSDate
+  "The fee mode that will be used on that transaction when a payment is made through Pay Theory's hosted checkout. It can be one of the following: MERCHANT_FEE, SERVICE_FEE."
+  fee_mode: FeeMode
+  "The total amount of the invoice."
+  invoice_amount: Int
+  "The initial date for the invoice."
+  invoice_date: AWSDate
+  "The name of the invoice. This will show up on the hosted checkout page and any email communications about the Invoice."
+  invoice_name: String
+  "A brief description of the invoice. This will show up on the hosted checkout page and any email communications about the Invoice."
+  invoice_description: String
+  "A custom value that can be used to tie the Pay Theory Invoice to a merchant's internal invoice number."
+  merchant_invoice_number: String
+  "A custom value that will be passed on to the transaction when a payment is made through Pay Theory's hosted checkout."
+  reference: String
+  "When set to true, an email will be sent to the payor with details about the updated invoice."
+  send_email: Boolean
+  "The settings input object to configure settings for the Pay Theory hosted checkout page."
+  settings: InvoiceSettingsInput
+}
+
+"A JWK is a JSON Web Key."
+type JWK @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "The curve used for the JWK."
+  crv: String
+  "The key type used for the JWK."
+  kty: String
+  "The x coordinate used for the JWK."
+  x: String
+  "The y coordinate used for the JWK."
+  y: String
+  "The use of the JWK."
+  use: String
+  "The algorithm used for the JWK."
+  alg: String
+  "The key id used for the JWK."
+  kid: String
+}
+
+"A JWKS is a JSON Web Key Set."
+type JWKS @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "The URI of the JWKS."
+  jwks_uri: String
+  "The issuer of the JWKS."
+  issuer: String
+  "The keys in the JWKS."
+  keys: [JWK]
+}
+
+"Level3 data line item object."
+type Level3DataLineItem @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "The item code."
+  item_code: String
+  "The item description."
+  item_description: String
+  "The item qty exp."
+  item_qty_exp: Int
+  "The prod code."
+  prod_code: String
+  "The qty."
+  qty: Int
+  "The tax amount."
+  tax_amount: Int
+  "The tax ind."
+  tax_ind: TaxIndicatorType
+  "The tax rate."
+  tax_rate: Int
+  "The tax rt exp."
+  tax_rt_exp: Int
+  "Unique identifier for the tax type."
+  tax_type_id: TaxType
+  "The unit cost."
+  unit_cost: Int
+  "The unit of msure."
+  unit_of_msure: String
+}
+
+"The Level 3 line item data provides detailed information about individual items in a transaction."
+input Level3DataLineItemInput {
+  "The merchant's unique identifier for the item"
+  item_code: String
+  "A description of the item"
+  item_description: String
+  "The exponent for the item quantity (e.g., 2 for hundredths)"
+  item_qty_exp: Int
+  "The product code for the item"
+  prod_code: String
+  "The quantity of the item purchased"
+  qty: Int
+  "The tax amount for this line item in cents"
+  tax_amount: Int
+  "Indicates how tax is applied to this item"
+  tax_ind: TaxIndicatorType
+  "The tax rate applied to this item"
+  tax_rate: Int
+  "The exponent for the tax rate (e.g., 4 for ten-thousandths)"
+  tax_rt_exp: Int
+  "The type of tax applied"
+  tax_type_id: TaxType
+  "The unit cost of the item in cents"
+  unit_cost: Int
+  "The unit of measure for the item (e.g., \"EA\" for each, \"LB\" for pounds)"
+  unit_of_msure: String
+}
+
+"Level3 data summary object."
+type Level3DataSummary @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "The dest postal code."
+  dest_postal_code: String
+  "The discnt amt."
+  discnt_amt: Int
+  "The duty amt."
+  duty_amt: Int
+  "The frght amt."
+  frght_amt: Int
+  "The order num."
+  order_num: String
+  "The prod desc."
+  prod_desc: [String]
+  "The purch idfr."
+  purch_idfr: String
+  "The tax amt."
+  tax_amt: Int
+  "The tax ind."
+  tax_ind: TaxIndicatorType
+}
+
+"The Level 3 summary data provides high-level information about the entire transaction."
+input Level3DataSummaryInput {
+  "The postal code of the destination for shipped goods"
+  dest_postal_code: String
+  "The total discount amount in cents"
+  discnt_amt: Int
+  "The total duty amount in cents"
+  duty_amt: Int
+  "The total freight/shipping amount in cents"
+  frght_amt: Int
+  "The merchant's order number"
+  order_num: String
+  "Array of product descriptions included in the transaction"
+  prod_desc: [String]
+  "The purchase identifier"
+  purch_idfr: String
+  "The total tax amount for the transaction in cents"
+  tax_amt: Int
+  "Indicates how tax is applied to the transaction"
+  tax_ind: TaxIndicatorType
+}
+
+"This is a limited merchant object that is returned when you want to query a list of merchants."
+type ListMerchant @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "If the merchant has successfully completed onboarding and has an ACH processor active."
+  ach_active: Boolean
+  "If the merchant has successfully completed onboarding and has a card processor active."
+  card_active: Boolean
+  "If the merchant has successfully completed onboarding and has a cash processor active."
+  cash_active: Boolean
+  "The country code of the country the merchant operates from."
+  country_code: String
+  "If the merchant is a system merchant. System merchants are merchants that also have sub merchants."
+  is_system: Boolean
+  "The name of the merchant."
+  merchant_name: String
+  "The Pay Theory unique identifier assigned to the merchant."
+  merchant_uid: String
+  "The metadata that has been set on the Merchant."
+  metadata(query_list: [QueryPair]): AWSJSON
+  "The merchant_uid of the parent merchant. This is only set if the merchant is a sub merchant of a system merchant."
+  parent_merchant_uid: String
+  "Whether the merchant has submitted their onboarding information."
+  submitted_onboarding: Boolean
+  "The date the merchant was last updated."
+  updated_row_at: AWSDateTime
+}
+
+"Merchants are the entities that are using Pay Theory to accept payments."
+type Merchant @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "If the merchant has successfully completed onboarding and has an ACH processor active."
+  ach_active: Boolean
+  "The API key of the merchant. This is used to authenticate use of the PayTheory Web and Native SDKs."
+  api_key: String
+  "If the merchant has successfully completed onboarding and has a card processor active."
+  card_active: Boolean
+  "If the merchant has successfully completed onboarding and has a cash processor active."
+  cash_active: Boolean
+  "The country code of the country the merchant operates from."
+  country_code: String
+  "The fee matrix that the merchant is using. This is used to calculate the fees that are charged to the payor."
+  fee_matrix: FeeMatrix
+  fee_model: FeeModel @deprecated(reason: "Use fee_matrix instead.")
+  "If the merchant is a system merchant. System merchants are merchants that also have sub merchants."
+  is_system: Boolean
+  "The name of the merchant."
+  merchant_name: String
+  "The Pay Theory unique identifier assigned to the merchant."
+  merchant_uid: String
+  "The metadata that has been set on the Merchant."
+  metadata: AWSJSON
+  "The merchant_uid of the parent merchant. This is only set if the merchant is a sub merchant of a system merchant."
+  parent_merchant_uid: String
+  "The settings that the merchant has set."
+  settings: MerchantSettings
+  "Whether the merchant has submitted their onboarding information."
+  submitted_onboarding: Boolean
+}
+
+"Merchant onboarding object."
+type MerchantOnboarding @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "The banks."
+  banks: [BusinessBank]
+  "The business."
+  business: Business
+  "The business owners."
+  business_owners: [BusinessOwner]
+  "The country code of operation."
+  country_code_of_operation: CountryCodes_Alpha3
+  "Whether locked."
+  is_locked: Boolean
+  "Pay Theory unique identifier for the merchant."
+  merchant_uid: ID!
+  "The needs docs."
+  needs_docs: Boolean
+  "Unique identifier for the ticket."
+  ticket_id: Int
+  "The user email."
+  user_email: String
+  "The user full name."
+  user_full_name: String
+}
+
+"Input for merchant onboarding."
+input MerchantOnboardingInput {
+  "The banks."
+  banks: [BusinessBankInput]
+  "The business."
+  business: BusinessInput
+  "The business owners."
+  business_owners: [BusinessOwnerInput]
+  "The country code of operation."
+  country_code_of_operation: CountryCodes_Alpha3
+  "Pay Theory unique identifier for the merchant."
+  merchant_uid: ID!
+  "The needs docs."
+  needs_docs: Boolean
+  "Unique identifier for the ticket."
+  ticket_id: Int
+  "The user email."
+  user_email: String
+  "The user full name."
+  user_full_name: String
+}
+
+"Paginated list of merchant."
+type Merchants @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "List of Merchants."
+  items: [ListMerchant]
+  "Total number of rows matching the query."
+  total_row_count: Int
+}
+
+"Merchant settings object."
+type MerchantSettings @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "The contact email for the merchant."
+  contact_email: AWSEmail
+  "The contact phone number for the merchant."
+  contact_phone: AWSPhone
+  "The Facebook URL for the merchant."
+  facebook: AWSURL
+  "The Instagram URL for the merchant."
+  instagram: AWSURL
+  "The LinkedIn URL for the merchant."
+  linkedin: AWSURL
+  "The TikTok URL for the merchant."
+  tiktok: AWSURL
+  "The Twitter URL for the merchant."
+  twitter: AWSURL
+  "The website URL for the merchant."
+  website: AWSURL
+}
+
+"Input for merchant settings."
+input MerchantSettingsInput {
+  "The contact email for the merchant."
+  contact_email: AWSEmail
+  "The contact phone number for the merchant."
+  contact_phone: AWSPhone
+  "The Facebook URL for the merchant."
+  facebook: AWSURL
+  "The Instagram URL for the merchant."
+  instagram: AWSURL
+  "The LinkedIn URL for the merchant."
+  linkedin: AWSURL
+  "The TikTok URL for the merchant."
+  tiktok: AWSURL
+  "The Twitter URL for the merchant."
+  twitter: AWSURL
+  "The website URL for the merchant."
+  website: AWSURL
+}
+
+"Input for merchant user."
+input MerchantUserInput {
+  "Email address."
+  email: AWSEmail!
+  "First name."
+  first_name: String!
+  "Last name."
+  last_name: String!
+  "Phone number."
+  phone: AWSPhone
+}
+
+"These are the types of items you can associate metadata with."
+enum MetadataAssociate {
+  "Metadata associated with an authorization."
+  AUTHORIZATION
+  "Metadata associated with an invoice."
+  INVOICE
+  "Metadata associated with a merchant."
+  MERCHANT
+  "Metadata associated with a payment intent."
+  PAYMENT_INTENT
+  "Metadata associated with a payment method token."
+  PAYMENT_METHOD_TOKEN
+  "Metadata associated with a payment session."
+  PAYMENT_SESSION
+  "Metadata associated with a payor."
+  PAYOR
+  "Metadata associated with a recurring."
+  RECURRING
+  "Metadata associated with a transaction."
+  TRANSACTION
+  "Metadata associated with a sale."
+  SALE
+  "Metadata associated with a split."
+  SPLIT
+}
+
+"Missed recurring payment data object."
+type MissedRecurringPaymentData @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "Fee amount in minor units (for example cents)."
+  fee: Int
+  "The number of payments missed."
+  number_of_payments_missed: Int
+  "The total amount owed."
+  total_amount_owed: Int
+}
+
+"The direction of the pagination."
+enum MoveDirection {
+  "Request is for the previous set of data."
+  BACKWARD
+  "Request is for the next set of data."
+  FORWARD
+}
+
+type Mutation @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "Once a recurring payment is cancelled, it cannot be reactivated."
+  cancelRecurringPayment(
+    "The recurring_id of the recurring payment to be cancelled."
+    recurring_id: String!
+  ): Boolean @docGroup(name: "Recurring Payment") @docPriority(level: 4)
+  "Cancels settlement instruction."
+  cancelSettlementInstruction(
+    "Pay Theory unique identifier for the merchant."
+    merchant_uid: ID!
+  ): Instruction @docGroup(name: "Settlements")
+  "This mutation will create a new authorization for a merchant."
+  createAuthorization(
+    "The Pay Theory unique identifier assigned to the merchant that the authorization belongs to."
+    merchant_uid: String!
+    "The Pay Theory unique identifier assigned to the sale that the authorization belongs to. Sales can be used to tie together multiple auths and captures."
+    sale_id: String
+    "The amount of the authorization in cents."
+    amount: Int!
+    "The Pay Theory unique identifier assigned to the payment method that will be used for the authorization."
+    payment_method_id: String
+    "The payment method input object for the payment method that will be used for the authorization. More information on the payment method input object can be found here."
+    payment_method: PaymentMethodInput
+    "The Pay Theory unique identifier assigned to the invoice that the authorization belongs to."
+    invoice_id: String
+    "The amount of the service fee in cents."
+    fee: Int
+    "The fee mode for the authorization. It can be one of the following: SERVICE_FEE, MERCHANT_FEE"
+    fee_mode: FeeMode
+    "Custom defined value passed in as the account code for the authorization."
+    account_code: String
+    "Custom defined value passed in as the reference for the authorization."
+    reference: String
+    "Any additional data that should be stored with the authorization."
+    metadata: AWSJSON
+    "The health expense type for the authorization. It can be one of the following: CLINICAL, COPAY, DENTAL, HEALTHCARE, RX, TRANSIT, VISION"
+    health_expense_type: HealthExpenseType
+    digital_wallet: DigitalWalletInput @deprecated(reason: "Use createWalletAuthorization.")
+    "Additional purchase data for Level 3 processing requirements."
+    additional_purchase_data: AdditionalPurchaseDataInput
+    "If the payment method token should be used for a single transaction. Defaults to false. If set to true the is_active flag on the payment method will be set to false after the authorization."
+    one_time_use_token: Boolean
+  ): Authorization! @docGroup(name: "Authorization") @docPriority(level: 2)
+  "This mutation will create a barcode for a payor to use to make a cash payment."
+  createBarcode(
+    "This object contains all the information needed to create a barcode."
+    input: BarcodeInput!
+  ): Barcode! @docGroup(name: "Barcode") @docPriority(level: 2)
+  "Sandbox Only This mutation will only work in sandbox environments. It is used to simulate barcode payments for testing purposes."
+  createBarcodePaymentSandbox(
+    "The unique identifier of the barcode to process payment for."
+    barcode_id: String!
+    "The amount to process for the payment in cents."
+    amount_to_pay: Int!
+  ): BarcodePaymentResponse! @docGroup(name: "Barcode") @docPriority(level: 3)
+  "This mutation will capture all PENDING transactions for a merchant in a batch and shortly after create a settlement for the merchant."
+  createBatchCapture(
+    "The Pay Theory unique identifier assigned to the merchant to batch for."
+    merchant_uid: String!
+  ): Boolean @docGroup(name: "Settlement") @docPriority(level: 2)
+  " This mutation will capture an authorization for a merchant."
+  createCapture(
+    "The Pay Theory unique identifier assigned to the merchant that the authorization belongs to."
+    merchant_uid: String!
+    "The Pay Theory unique identifier assigned to the authorization that you are looking to capture."
+    authorization_id: String!
+    "The amount of the capture in cents. If auth has a feemode of SERVICEFEE this amount would be the amount without the fee included."
+    amount: Int!
+    "The amount of the service fee in cents. Required if you are capturing an auth that has a feemode of SERVICEFEE."
+    fee: Int
+    "Can be set to true to send a receipt to the payor."
+    send_receipt: Boolean
+    "A custom description that will be displayed on the receipt."
+    receipt_description: String
+    "Whether to allow the capture to be reauthorized in the case that it is expired. If this is set to true Pay Theory will reauthorize the capture if it is expired. If this is set to false or left blank, the capture will fail if it is expired."
+    allow_reauth: Boolean
+    "Whether to allow the capture to exceed the amount of the authorization. If this is set to true Pay Theory will release the hold on the current auth and create a new auth for the amount of the capture. If this is set to false or left blank, the capture will fail if the amount is greater than the amount of the authorization."
+    allow_exceeded_amount: Boolean
+    "An array of split objects to distribute the transaction amount to different accounts. The sum of all split amounts must equal the transaction amount."
+    split: [SplitInput]
+  ): Transaction! @docGroup(name: "Authorization") @docPriority(level: 4)
+  "Creates an invoice."
+  createInvoice(
+    "The input object that contains all the information needed to create an invoice."
+    input: InvoiceInput!
+  ): Invoice @docGroup(name: "Invoice") @docPriority(level: 2)
+  "This call is used to resend Invoice emails for a specific invoice."
+  createInvoiceEmail(
+    "The Pay Theory unique identifier for the invoice to send an email for."
+    invoice_id: String!
+  ): Boolean @docGroup(name: "Invoice") @docPriority(level: 5)
+  "Creates merchant."
+  createMerchant(
+    "The name of the merchant to create."
+    merchant_name: String!
+    "The merchant_uid of the parent merchant. This is only set if the merchant belongs to another merchant account."
+    parent_merchant_uid: String
+    "The user that will be created for the merchant. This user will be given access to the onboarding form on Merchant creation."
+    user: MerchantUserInput
+    "The metadata that will be set on the Merchant."
+    metadata: AWSJSON
+  ): ListMerchant @docGroup(name: "Merchant") @docPriority(level: 3)
+  "Creates merchant onboarding."
+  createMerchantOnboarding(
+    "The merchant onboarding."
+    merchant_onboarding: MerchantOnboardingInput!
+    "The support note."
+    support_note: SupportNoteInput
+    "Whether form completed."
+    is_form_completed: Boolean!
+    "Full name."
+    full_name: String
+    "Email address."
+    email: String
+  ): Boolean @docIgnore
+  "This call is used to create an offline transaction for an invoice. Offline transactions are used to track payments that are made outside Pay Theory toward an Invoice."
+  createOfflineTransaction(
+    "The input object that contains all of the information needed to create an offline transaction."
+    input: OfflineTransactionInput!
+  ): OfflineTransaction @docGroup(name: "Invoice") @docPriority(level: 6)
+  "This call was deprecated in favor of the createTransaction mutation. The createTransaction mutation returns a more detailed response than this call."
+  createOneTimePayment(
+    "The Pay Theory unique identifier for the merchant the transaction is for."
+    merchant_uid: String!
+    "The amount of the transaction. If the FeeMode is SERVICE_FEE, this is the amount of the transaction before fees."
+    amount: Int!
+    "The Pay Theory unique identifier for the payment method the transaction will be charged to."
+    payment_method_id: String
+    "The payment method to be used for the transaction. This is required if you are not passing in a payment_method_id."
+    payment_method: PaymentMethodInput
+    "The Pay Theory unique identifier for the recurring payment the transaction is for."
+    recurring_id: String
+    "The Pay Theory unique identifier for the invoice the transaction is for."
+    invoice_id: String
+    "The amount of the fee that will be charged to the payor for the transaction if the FeeMode is SERVICE_FEE."
+    fee: Int
+    "The fee mode on the transaction. SERVICE_FEE charges the fees to the payor. MERCHANT_FEE charges the fees to the merchant. Options are:"
+    fee_mode: FeeMode
+    payment_parameters_name: String @deprecated(reason: "Payment parameters are no longer supported.")
+    "Customer defined account code for the transaction."
+    account_code: String
+    "Customer defined reference for the transaction."
+    reference: String
+    "If the receipt should be sent to the payor. Defaults to false. It is sent to the email address on file with the payment method."
+    send_receipt: Boolean
+    "The description of the transaction that will be displayed on the receipt."
+    receipt_description: String
+    "Custom defined JSON object to be stored with the transaction."
+    metadata: AWSJSON
+    "The health expense type."
+    health_expense_type: HealthExpenseType
+    "The additional purchase data."
+    additional_purchase_data: AdditionalPurchaseDataInput
+  ): OneTimePayment @deprecated(reason: "Use createTransaction instead.") @docGroup(name: "Deprecated") @docPriority(level: 1)
+  "Creates payment link."
+  createPaymentLink(
+    "This object contains all the details needed to create a payment link."
+    input: PaymentLinkInput!
+  ): PaymentLink @docGroup(name: "Payment Links") @docPriority(level: 2)
+  "This mutation will create a payment method token for a payor. The payment method token can be used to create a payment method for a merchant."
+  createPaymentMethod(
+    "The payment method input object. Refer to the PaymentMethodInput docs for more info."
+    payment_method: PaymentMethodInput!
+    "The Pay Theory unique identifier assigned to the merchant that the payment_method_token belongs to."
+    merchant_uid: String!
+    "A boolean flag indicating whether to skip the validation of the payment method. Defaults to false if not passed in."
+    skip_validation: Boolean
+  ): PaymentMethodToken @docGroup(name: "Payment Method Token") @docPriority(level: 2)
+  "Creates payor."
+  createPayor(
+    "The input object that contains the payor information to create a new payor. Detailed information about the input object can be found here."
+    input: PayorInput!
+  ): Payor @docGroup(name: "Payor") @docPriority(level: 2)
+  "This call will send a receipt for a transaction to the email address on file with the payor or an email passed in."
+  createReceiptEmail(
+    "The Pay Theory unique identifier for the transaction to send the receipt for."
+    transaction_id: String!
+    "The description of the transaction that will be displayed on the receipt. If not provided it will just say \"Payment to merchant_name\"."
+    receipt_description: String
+    "The email address to send the receipt to. If not provided the email address on file with the payor will be used."
+    email: AWSEmail
+  ): Boolean @docGroup(name: "Transaction") @docPriority(level: 6)
+  "Creates recurring payment."
+  createRecurringPayment(
+    "The input object that contains the details to create a new recurring payment."
+    input: RecurringPaymentInput!
+  ): RecurringPayment @docGroup(name: "Recurring Payment") @docPriority(level: 2)
+  "This call will create a refund for a transaction."
+  createRefund(
+    "The Pay Theory unique identifier for the transaction to refund."
+    transaction_id: String!
+    "The amount of the refund. This must be less than or equal to the amount of the transaction."
+    amount: Int!
+    "The reason for the refund. This is required for all refunds and is made up of the following."
+    refund_reason: RefundReasonInput!
+    "The email address to send the refund receipt to. If not provided an email will not be sent out."
+    refund_email: String
+  ): Boolean @deprecated(reason: "Use createReversal instead.") @docGroup(name: "Deprecated") @docPriority(level: 2)
+  "This call will allow you to retry a payment for a recurring payment that is in a Failed state. This should be used when the state is INSTRUMENT_FAILURE and the issue with the payment method has been addressed. EX: Payment failed for insufficient funds on the card, but the customer has since made a payment on the balance to resolve the issue."
+  createRetryForFailedRecurringPayment(
+    "The recurring_id of the recurring payment to be retried."
+    recurring_id: String!
+  ): Boolean @docGroup(name: "Recurring Payment") @docPriority(level: 6)
+  "This call will create a refund or a void for a transaction."
+  createReversal(
+    "The Pay Theory unique identifier for the transaction to refund."
+    transaction_id: String!
+    "The amount of the refund. This must be less than or equal to the amount of the transaction."
+    amount: Int!
+    "The reason for the refund. This is required for all refunds and is made up of the following."
+    refund_reason: RefundReasonInput!
+    "The email address to send the refund receipt to. If not provided an email will not be sent out."
+    refund_email: String
+  ): ReversalResponse! @docGroup(name: "Transaction") @docPriority(level: 4)
+  "Use this mutation to create an ACH return for a completed ACH transaction."
+  createSandboxAchReturn(
+    "The ACH return request details."
+    input: CreateSandboxAchReturnInput!
+  ): SandboxAchReturnResult! @docGroup(name: "Sandbox")
+  "Use this mutation to create a dispute for a card transaction."
+  createSandboxDispute(
+    "The dispute creation details."
+    input: CreateSandboxDisputeInput!
+  ): SandboxDisputeResult! @docGroup(name: "Sandbox")
+  "Create a settlement from a prepared sandbox batch."
+  createSandboxSettlement(
+    "The settlement creation details."
+    input: CreateSandboxSettlementInput!
+  ): SandboxSettlementResult! @docGroup(name: "Sandbox")
+  "This mutation creates an instructional funding request for a merchant."
+  createSettlementInstruction(
+    "The instruction details to create."
+    input: CreateSettlementInstructionInput!
+  ): CreateSettlementInstructionResponse @docGroup(name: "Settlements")
+  "Creates transaction."
+  createTransaction(
+    "The Pay Theory unique identifier for the merchant the transaction is for."
+    merchant_uid: String!
+    "The amount of the transaction. If the FeeMode is SERVICE_FEE, this is the amount of the transaction before fees."
+    amount: Int!
+    "The Pay Theory unique identifier for the payment method the transaction will be charged to."
+    payment_method_id: String
+    "The payment method to be used for the transaction. This is required if you are not passing in a payment_method_id."
+    payment_method: PaymentMethodInput
+    "The Pay Theory unique identifier for the recurring payment the transaction is for."
+    recurring_id: String
+    "The Pay Theory unique identifier for the invoice the transaction is for."
+    invoice_id: String
+    "The amount of the fee that will be charged to the payor for the transaction if the FeeMode is SERVICE_FEE."
+    fee: Int
+    "The fee mode on the transaction. SERVICE_FEE charges the fees to the payor. MERCHANT_FEE charges the fees to the merchant. Options are:"
+    fee_mode: FeeMode
+    "Customer defined account code for the transaction."
+    account_code: String
+    "Customer defined reference for the transaction."
+    reference: String
+    "If the receipt should be sent to the payor. Defaults to false. It is sent to the email address on file with the payment method."
+    send_receipt: Boolean
+    "The description of the transaction that will be displayed on the receipt."
+    receipt_description: String
+    "Custom defined JSON object to be stored with the transaction."
+    metadata: AWSJSON
+    "The health expense type."
+    health_expense_type: HealthExpenseType
+    "The digital wallet."
+    digital_wallet: DigitalWalletInput @deprecated(reason: "Use createWalletTransaction.")
+    "The additional purchase data."
+    additional_purchase_data: AdditionalPurchaseDataInput
+    "If the payment method token should be used for a single transaction. Defaults to false. If set to true the is_active flag on the payment method will be set to false after the transaction"
+    one_time_use_token: Boolean
+    "An array of split objects to distribute the transaction amount to different accounts. The sum of all split amounts must equal less than or equal to the amount of the transaction."
+    split: [SplitInput]
+  ): Transaction! @docGroup(name: "Transaction") @docPriority(level: 2)
+  "Creates user."
+  createUser(
+    "Input payload."
+    input: UserInput!
+  ): User @docGroup(name: "Users") @docPriority(level: 2)
+  "Creates user password reset."
+  createUserPasswordReset(
+    "The username."
+    username: String!
+    "The user pool."
+    user_pool: UserPool!
+  ): Boolean @docIgnore
+  "Creates user v2."
+  createUserV2(
+    "Input payload."
+    input: UserInputV2!
+  ): Boolean @docIgnore
+  "This will void an authorization that has not been captured. If the authorization has been captured, this call will fail. The Authorization will have a status of CANCELED."
+  createVoidForAuthorization(
+    "The Pay Theory unique identifier assigned to the authorization that you are looking to void."
+    authorization_id: String!
+    void_amount: Int @deprecated(reason: "Only full voids are supported.")
+  ): Boolean @docGroup(name: "Authorization") @docPriority(level: 5)
+  "Creates void for refund."
+  createVoidForRefund(
+    "Pay Theory unique identifier for the transaction."
+    transaction_id: String!
+  ): Boolean @docIgnore
+  "This call is used to create an authorization for a wallet payment via Apple Pay or Google Pay. It works in conjunction with our SDKs to allow you to create an authorization via our API."
+  createWalletAuthorization(
+    "The Pay Theory unique identifier for the application."
+    app_id: String
+    "The Pay Theory unique identifier assigned to the merchant that the authorization belongs to."
+    merchant_uid: String!
+    "The Pay Theory unique identifier assigned to the sale that the authorization belongs to. Sales can be used to tie together multiple auths and captures."
+    sale_id: String
+    "The type of digital wallet being used. Can be one of: APPLE_PAY, GOOGLE_PAY, CLICK_TO_PAY, SAMSUNG_PAY, VISA_STAGED"
+    wallet_type: WalletType
+    "The encrypted payload from the PayTheory SDK containing payment information."
+    digital_wallet_payload: String!
+    "The amount of the authorization in cents."
+    amount: Int
+    "The amount of the service fee in cents. Required if fee_mode is SERVICE_FEE."
+    fee: Int
+    "The billing address information for the authorization."
+    billing_address: BillingAddressInput
+    "The Pay Theory unique identifier for the payor making the payment."
+    payor_id: String
+    "The payor information if a new payor needs to be created."
+    payor: PayorInput
+    "The Pay Theory unique identifier assigned to the invoice that the authorization belongs to."
+    invoice_id: String
+    "Custom defined value passed in as the account code for the authorization."
+    account_code: String
+    "Custom defined value passed in as the reference for the authorization."
+    reference: String
+    "Any additional data that should be stored with the authorization."
+    metadata: AWSJSON
+    "The health expense type for the authorization. Can be one of: CLINICAL, COPAY, DENTAL, HEALTHCARE, RX, TRANSIT, VISION"
+    health_expense_type: HealthExpenseType
+    "Additional purchase data for Level 3 processing requirements."
+    additional_purchase_data: AdditionalPurchaseDataInput
+  ): Authorization! @docGroup(name: "Authorization") @docPriority(level: 3)
+  "This call is used to create a transaction for a wallet payment via Apple Pay or Google Pay. It works in conjunction with our SDKs to allow you to create a transaction via our API."
+  createWalletTransaction(
+    "The Pay Theory unique identifier for the application."
+    app_id: String
+    "The Pay Theory unique identifier for the merchant the transaction is for."
+    merchant_uid: String!
+    "The type of digital wallet being used. Can be one of: APPLE_PAY, GOOGLE_PAY, CLICK_TO_PAY, SAMSUNG_PAY, VISA_STAGED"
+    wallet_type: WalletType
+    "The encrypted payload from the PayTheory SDK containing payment information."
+    digital_wallet_payload: String!
+    "The amount of the transaction in cents."
+    amount: Int
+    "The amount of the service fee in cents. Required if fee_mode is SERVICE_FEE."
+    fee: Int
+    "The billing address information for the transaction."
+    billing_address: BillingAddressInput
+    "The Pay Theory unique identifier for the payor making the payment."
+    payor_id: String
+    "The payor information if a new payor needs to be created."
+    payor: PayorInput
+    "The Pay Theory unique identifier for the recurring payment the transaction is for."
+    recurring_id: String
+    "The Pay Theory unique identifier for the invoice the transaction is for."
+    invoice_id: String
+    "Customer defined account code for the transaction."
+    account_code: String
+    "Customer defined reference for the transaction."
+    reference: String
+    "If the receipt should be sent to the payor. Defaults to false. It is sent to the email address on file with the payment method."
+    send_receipt: Boolean
+    "The description of the transaction that will be displayed on the receipt."
+    receipt_description: String
+    "Custom defined JSON object to be stored with the transaction."
+    metadata: AWSJSON
+    "The type of health expense for the transaction. Can be one of: CLINICAL, COPAY, DENTAL, HEALTHCARE, RX, TRANSIT, VISION"
+    health_expense_type: HealthExpenseType
+    "Additional purchase data for Level 3 processing requirements."
+    additional_purchase_data: AdditionalPurchaseDataInput
+    "An array of split objects to distribute the transaction amount to different accounts. The sum of all split amounts must equal the transaction amount."
+    split: [SplitInput]
+  ): Transaction! @docGroup(name: "Transaction") @docPriority(level: 3)
+  "To create a webhook, you need to provide the endpoint and a name for the webhook using the following mutation:"
+  createWebhook(
+    "The URL the event will be sent to."
+    endpoint: String!
+    "The name you want to give the webhook for reference."
+    name: String!
+  ): Boolean! @docGroup(name: "Webhooks") @docPriority(level: 1)
+  "Deletes an invoice."
+  deleteInvoice(
+    "The Pay Theory unique identifier for the invoice to delete."
+    invoice_id: String!
+  ): Boolean @docGroup(name: "Invoice") @docPriority(level: 4)
+  "Deletes metadata for an item."
+  deleteMetadata(
+    "The id of the item you want to delete metadata for."
+    id: String!
+    "The type of item you want to delete metadata for. Options are: AUTHORIZATION, INVOICE, PAYMENT_METHOD_TOKEN, PAYMENT_SESSION, PAYOR, RECURRING, TRANSACTION, SALE"
+    metadata_associate: MetadataAssociate!
+    "The Pay Theory merchant_uid of the item you want to delete metadata for."
+    merchant_uid: String!
+    "The keys of the metadata you want to delete."
+    metadata_keys: [String]!
+  ): Boolean @docGroup(name: "Metadata") @docPriority(level: 2)
+  "Deletes user."
+  deleteUser(
+    "The cognito username id of the user to delete."
+    username: String!
+    "The user pool to delete the user from. One of the following: MERCHANT, SYSTEM, PARTNER."
+    user_pool: UserPool!
+  ): Boolean @docGroup(name: "Users") @docPriority(level: 3)
+  "Deletes user v2."
+  deleteUserV2(
+    "Unique identifier for the user."
+    user_id: String!
+    "The user pool."
+    user_pool: UserPool!
+    "Pay Theory unique identifier for the merchant."
+    merchant_uid: String
+  ): Boolean @docIgnore
+  "To delete a webhook, you can use the following mutation:"
+  deleteWebhook(
+    "The URL of the webhook you want to delete."
+    endpoint: String!
+  ): Boolean! @docGroup(name: "Webhooks") @docPriority(level: 4)
+  "Prepare a settlement batch to lock in line items and calculate totals for a merchant."
+  prepareSandboxSettlementBatch(
+    "The batch prep details."
+    input: PrepareSandboxSettlementBatchInput!
+  ): SandboxSettlementBatchPrepResult! @docGroup(name: "Sandbox")
+  "Updates device."
+  updateDevice(
+    "Pay Theory unique identifier for the merchant."
+    merchant_uid: String!
+    "Unique identifier for the device."
+    device_id: String!
+    "The device description."
+    device_description: String!
+  ): Boolean @docIgnore
+  ":::note Limited Access This mutation is only available to users with Partner level access. Please contact Pay Theory support if you need to update a merchant's fee matrix and do not have Partner level access. :::"
+  updateFeeMatrix(
+    "The new fee matrix that will be used to calculate the fees for the merchant."
+    fee_matrix: FeeMatrixInput!
+  ): FeeMatrix @docGroup(name: "Merchant") @docPriority(level: 4)
+  "Updates an invoice."
+  updateInvoice(
+    "The Pay Theory unique identifier for the invoice to update."
+    invoice_id: String!
+    "The input object that contains all of the information needed to update an invoice."
+    invoice_update_input: InvoiceUpdateInput!
+  ): Boolean @docGroup(name: "Invoice") @docPriority(level: 3)
+  "Updates merchant settings."
+  updateMerchantSettings(
+    "The unique identifier of the merchant whose settings are being updated."
+    merchant_uid: ID!
+    "The new settings for the merchant."
+    settings: MerchantSettingsInput!
+  ): Boolean @docGroup(name: "Merchant") @docPriority(level: 5)
+  "Updates metadata for an item."
+  updateMetadata(
+    "The id of the item you want to update metadata for."
+    id: String!
+    "The type of item you want to update metadata for. Options are: AUTHORIZATION, INVOICE, PAYMENT_METHOD_TOKEN, PAYMENT_SESSION, PAYOR, RECURRING, TRANSACTION, SALE"
+    metadata_associate: MetadataAssociate!
+    "The Pay Theory merchant_uid of the item you want to update metadata for."
+    merchant_uid: String!
+    "The metadata you want to update the item with. Any keys passed in will overwrite the existing metadata."
+    metadata: AWSJSON!
+  ): Boolean @docGroup(name: "Metadata") @docPriority(level: 1)
+  "Updates payment link."
+  updatePaymentLink(
+    "This object contains all the details needed to update a payment link."
+    input: UpdatePaymentLinkInput!
+  ): PaymentLink @docGroup(name: "Payment Links") @docPriority(level: 3)
+  "This mutation can be used to disable a payment method token. This will prevent the payment method token from being used to create a payment. Once a payment method token is disabled, it cannot be re-enabled."
+  updatePaymentMethodToDisabled(
+    "The Pay Theory unique identifier assigned to the merchant that the payment_method_token belongs to."
+    merchant_uid: ID!
+    "The unique payment method id."
+    payment_method_id: String!
+  ): Boolean! @docGroup(name: "Payment Method Token") @docPriority(level: 3)
+  "Updates payor."
+  updatePayor(
+    "Pay Theory unique identifier for the payor."
+    payor_id: String!
+    "The payor data."
+    payor_data: PayorData!
+  ): Boolean @docGroup(name: "Payor")
+  "Updates recurring payment."
+  updateRecurringPayment(
+    "The input object that contains the details to update the recurring payment."
+    input: UpdateRecurringPaymentInput!
+  ): RecurringPayment @docGroup(name: "Recurring Payment") @docPriority(level: 3)
+  "Use this mutation to move a dispute through its lifecycle."
+  updateSandboxDisputeStatus(
+    "The dispute status update details."
+    input: UpdateSandboxDisputeStatusInput!
+  ): SandboxDisputeUpdateResult! @docGroup(name: "Sandbox")
+  "This call can be used by a partner to approve or decline a transcation that is in review for reason POTEENTIAL_DUPLICATE."
+  updateTransactionInReview(
+    "The Pay Theory unique identifier for the transaction to accept or reject."
+    transaction_id: String!
+    "The action to take on the transaction. Options are: ACCEPT or REJECT."
+    action: TransactionReviewAction!
+  ): Boolean @docGroup(name: "Transaction") @docPriority(level: 7)
+  "Updates user v2."
+  updateUserV2(
+    "Unique identifier for the user."
+    user_id: String!
+    "The user pool."
+    user_pool: UserPool!
+    "The permissions."
+    permissions: AWSJSON!
+  ): Boolean @docIgnore
+  "To update a webhook, you can use a mutation like the following:"
+  updateWebhook(
+    "The URL of the webhook you want to update. This cannot be changed"
+    endpoint: String!
+    "The new name you want to give the webhook"
+    name: String
+    "Whether the webhook should be active or not"
+    is_active: Boolean
+  ): Boolean! @docGroup(name: "Webhooks") @docPriority(level: 3)
+}
+
+"Offline transaction object."
+type OfflineTransaction @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "The amount of the offline transaction."
+  amount: Int
+  "The Pay Theory unique identifier for the offline transaction."
+  instance_id: String
+  "The Pay Theory unique identifier for the invoice that the offline transaction is being applied to."
+  invoice_id: String
+  "A note that can be added to the offline transaction. This is a custom value that can be used to store information about the offline transaction."
+  note: String
+  "The date that the offline transaction was made."
+  transaction_date: AWSDate
+  "The type of offline transaction. It can be one of the following: ACH, CARD, CASH, OTHER."
+  type: OfflineTransactionType
+}
+
+"Input for creating an offline transaction."
+input OfflineTransactionInput {
+  "The amount of the offline transaction."
+  amount: Int!
+  "The Pay Theory unique identifier for the invoice that the offline transaction is being applied to."
+  invoice_id: String!
+  "A note that can be added to the offline transaction. This is a custom value that can be used to store information about the offline transaction."
+  note: String
+  "The date that the offline transaction was made."
+  transaction_date: AWSDate!
+  "The type of offline transaction. It can be one of the following: ACH, CARD, CASH, OTHER."
+  type: OfflineTransactionType!
+}
+
+"Possible values for offline transaction type."
+enum OfflineTransactionType {
+  "Represents ACH."
+  ACH
+  "Represents card."
+  CARD
+  "Represents cash."
+  CASH
+  "Represents other."
+  OTHER
+}
+
+"One time payment object."
+type OneTimePayment @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "Amount in minor units (for example cents)."
+  amount: Int
+  "The card brand."
+  card_brand: String
+  "The date and time this was created."
+  created_at: AWSDateTime
+  "Currency code."
+  currency: String
+  "The failure reason."
+  failure_reason: String
+  "The last four."
+  last_four: String
+  "The service fee."
+  service_fee: Int
+  "Status value."
+  status: TransactionStatus
+  "Pay Theory unique identifier for the transaction."
+  transaction_id: String
+}
+
+"These operators are case-sensitive. The following are the available operators:"
+enum Operator {
+  "The data is equal to the value."
+  EQUAL
+  "The data is false."
+  EQUAL_FALSE
+  "The data is true."
+  EQUAL_TRUE
+  "The data is greater than or equal to the value."
+  GREATER_EQUAL
+  "The data is greater than the value."
+  GREATER_THAN
+  "The data is in the list of values."
+  IN_LIST
+  "The data is not null."
+  IS_NOT_NULL
+  "The data is null."
+  IS_NULL
+  "The data is less than or equal to the value."
+  LESS_EQUAL
+  "The data is less than the value."
+  LESS_THAN
+  "The data is like the value. The value can contain wildcard characters."
+  LIKE
+  "The data is not equal to the value."
+  NOT_EQUAL
+  "The data is not in the list of values."
+  NOT_IN_LIST
+  "The data is not like the value. The value can contain wildcard characters."
+  NOT_LIKE
+}
+
+"Possible values for owner position."
+enum OwnerPosition {
+  "Represents ceo."
+  CEO
+  "Represents cfo."
+  CFO
+  "Represents coo."
+  COO
+  "Represents director."
+  DIRECTOR
+  "Represents member llc."
+  MEMBER_LLC
+  "Represents other."
+  OTHER
+  "Represents owner."
+  OWNER
+  "Represents partner."
+  PARTNER
+  "Represents president."
+  PRESIDENT
+  "Represents secretary."
+  SECRETARY
+  "Represents sole proprietor."
+  SOLE_PROPRIETOR
+  "Represents treasurer."
+  TREASURER
+  "Represents vice president."
+  VICE_PRESIDENT
+}
+
+"Possible values for ownership type."
+enum OwnershipType {
+  "Represents private."
+  PRIVATE
+  "Represents public."
+  PUBLIC
+}
+
+"A payload validation is used to validate a payload."
+type PayloadValidation @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "Whether the payload is valid."
+  is_valid: Boolean
+}
+
+"Payment link object."
+type PaymentLink @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "The payment methods that will be available to a payor when making a payment."
+  accepted_payment_methods: AcceptedPaymentMethodsEnum
+  "Account Code that will be passed in to every transaction made with this payment link."
+  account_code: String
+  "The amount of the payment that the payor will be asked to pay or if amount_is_variable is set to the amount that will be the default amount."
+  amount: Int
+  "If set to true the payor will be able to enter the amount they want to pay."
+  amount_is_variable: Boolean
+  "The call to action that will be displayed on the button at the time of checkout."
+  call_to_action: CallToActionType
+  "The date and time the payment link was created."
+  created_date: AWSDateTime
+  "The type of currency for the payment."
+  currency: String
+  "The message that will be displayed to the payor after a successful payment."
+  custom_success_message: String
+  "The fee mode of the payments that will be made with the payment link."
+  fee_mode: FeeMode
+  "If set to true the payment link will be active and available to payors. If set to false the payment link will not be available to payors."
+  is_active: Boolean
+  "The unique id of the payment link."
+  link_id: String
+  "The name you give to the payment link for internal tracking purposes."
+  link_name: String
+  "The url of the payment link."
+  link_url: String
+  "The maximum amount the payor can pay if amount_is_variable is set to true."
+  max_amount: Int
+  "The Pay Theory unique identifier assigned to the merchant that the transaction belongs to."
+  merchant_uid: String
+  "The minimum amount the payor can pay if amount_is_variable is set to true."
+  min_amount: Int
+  "The name of the payment that will be displayed to the customer. This will be passed in as the reference at the time of the transaction."
+  payment_name: String
+  "The description of the payment that will be displayed to the customer."
+  payment_description: String
+  "The url that the payor will be redirected to after a successful payment."
+  redirect_url: String
+  "If set to true the payor will be required to enter their phone number before making the payment."
+  require_phone: Boolean
+}
+
+"Input for payment link."
+input PaymentLinkInput {
+  "The payment methods that will be available to a payor when making a payment."
+  accepted_payment_methods: AcceptedPaymentMethodsEnum
+  "Account Code that will be passed in to every transaction made with this payment link."
+  account_code: String
+  "The amount of the payment that the payor will be asked to pay or if amount_is_variable is set to the amount that will be the default amount."
+  amount: Int
+  "If set to true the payor will be able to enter the amount they want to pay."
+  amount_is_variable: Boolean
+  "The call to action that will be displayed on the button at the time of checkout."
+  call_to_action: CallToActionType
+  "The type of currency for the payment."
+  currency: String
+  "The message that will be displayed to the payor after a successful payment."
+  custom_success_message: String
+  "The fee mode of the payments that will be made with the payment link."
+  fee_mode: FeeMode
+  "The name you give to the payment link for internal tracking purposes."
+  link_name: String!
+  "The maximum amount the payor can pay if amount_is_variable is set to true."
+  max_amount: Int
+  "The Pay Theory unique identifier assigned to the merchant that the transaction belongs to."
+  merchant_uid: String!
+  "The minimum amount the payor can pay if amount_is_variable is set to true."
+  min_amount: Int
+  "The description of the payment that will be displayed to the customer."
+  payment_description: String
+  "The name of the payment that will be displayed to the customer. This will be passed in as the reference at the time of the transaction."
+  payment_name: String!
+  "The url that the payor will be redirected to after a successful payment."
+  redirect_url: String
+  "If set to true the payor will be required to enter their phone number before making the payment."
+  require_phone: Boolean
+}
+
+"Paginated list of payment link."
+type PaymentLinks @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "List of Payment Links."
+  items: [PaymentLink]
+  "Total number of rows matching the query."
+  total_row_count: Int
+}
+
+"This is the input object used when passing in payment method into any mutation that requires it."
+input PaymentMethodInput {
+  "The ach input object used for creating Bank Accounts in the USA"
+  ach: AchInput
+  "The canadian eft input object used for creating Bank Accounts in Canada."
+  canadian_eft: CanadianEftInput
+  "The card input object."
+  card: CardInput
+  "Any additional data that you want to store with the payment method token. This data will be returned with the payment method token when queried."
+  metadata: AWSJSON
+  "The payor input object. Refer to the PayorInput docs for more info."
+  payor: PayorInput
+  "The unique payor id for the payor this payment method token belongs to."
+  payor_id: String
+}
+
+"This mutation can be used to disable a payment method token. This will prevent the payment method token from being used to create a payment. Once a payment method token is disabled, it cannot be re-enabled."
+type PaymentMethodToken @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "The first line of the billing address."
+  address_line1: String
+  "The second line of the billing address."
+  address_line2: String
+  "The type of bank account."
+  bank_account_type: BankAccountType
+  "The bank code of the bank account if payment_type is ACH."
+  bank_code: String
+  "The barcode id of the payment method token if payment_type is CASH."
+  barcode_id: String
+  "The brand of the card if payment_type is CARD."
+  card_brand: String
+  "The type of card if payment_type is CARD."
+  card_type: CardType
+  "The city of the billing address."
+  city: String
+  "The country of the billing address."
+  country: String
+  "The CVV status."
+  cvv_status: CvvStatus
+  "The expiration date of the card if payment_type is CARD. Format: MMYY"
+  exp_date: String
+  "The name on card or bank account."
+  full_name: String
+  "Indicator for if payment method is active. If false the payment method cannot be used to process new transactions."
+  is_active: Boolean
+  "The issuing country code of the country that issued the card or that the bank account was opened in."
+  issuing_country_code: String
+  "The last four digits of the card or bank account number."
+  last_four: String
+  "The Pay Theory unique identifier assigned to the merchant that the payment_method_token belongs to."
+  merchant_uid: String
+  "Any additional data that was stored with the payment method token."
+  metadata(query_list: [QueryPair]): AWSJSON
+  "The unique payment method id."
+  payment_method_id: String
+  "The type of payment method. It can be one of the following: CARD, ACH"
+  payment_type: PaymentType
+  "The payor object. Refer to the Payor docs for more info."
+  payor(query_list: [QueryPair]): Payor
+  "The postal code of the billing address."
+  postal_code: String
+  "The region of the billing address."
+  region: String
+  "The type of wallet that the payment method token is stored in."
+  wallet_type: WalletType
+}
+
+"Paginated list of payment method token."
+type PaymentMethodTokens @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "List of Payment Method Tokens."
+  items: [PaymentMethodToken]
+  "Total number of rows matching the query."
+  total_row_count: Int
+}
+
+"The type of payment method. It can be one of the following:"
+enum PaymentType {
+  "Represents ACH."
+  ACH
+  "Represents card."
+  CARD
+  "Represents cash."
+  CASH
+}
+
+"Payors are used to track payor info that can be tied to other data objects in Pay Theory."
+type Payor @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "The first line of the address of the payor."
+  address_line1: String
+  "The second line of the address of the payor."
+  address_line2: String
+  "The city of the payor."
+  city: String
+  "The country of the payor."
+  country: String
+  "The email address of the payor."
+  email: String
+  "The full name of the payor."
+  full_name: String
+  "The Pay Theory unique identifier assigned to the merchant that the payor belongs to."
+  merchant_uid: String
+  "The metadata to attach to the payor. This is a JSON object that can contain any data that you want to attach to the payor."
+  metadata(query_list: [QueryPair]): AWSJSON
+  "The unique payor id."
+  payor_id: String
+  "The phone number of the payor."
+  phone: String
+  "The postal code of the payor."
+  postal_code: String
+  "The region of the payor."
+  region: String
+}
+
+"Payor data object."
+input PayorData {
+  "Address line 1."
+  address_line1: String
+  "Address line 2."
+  address_line2: String
+  "City."
+  city: String
+  "Country."
+  country: String
+  "Email address."
+  email: String
+  "Full name."
+  full_name: String
+  "Phone number."
+  phone: String
+  "Postal code."
+  postal_code: String
+  "Region."
+  region: String
+}
+
+"Input for payor."
+input PayorInput {
+  "The first line of the address of the payor."
+  address_line1: String
+  "The second line of the address of the payor."
+  address_line2: String
+  "The city of the payor."
+  city: String
+  "The country of the payor."
+  country: String
+  "The email address of the payor."
+  email: String
+  "The full name of the payor."
+  full_name: String
+  "The Pay Theory unique identifier assigned to the merchant that the payor belongs to."
+  merchant_uid: String
+  "The metadata to attach to the payor. This is a JSON object that can contain any data that you want to attach to the payor."
+  metadata: AWSJSON
+  "The phone number of the payor."
+  phone: String
+  "The postal code of the payor."
+  postal_code: String
+  "The region of the payor."
+  region: String
+}
+
+"Paginated list of payor."
+type Payors @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "List of Payors."
+  items: [Payor]
+  "Total number of rows matching the query."
+  total_row_count: Int
+}
+
+"Input for prepare sandbox settlement batch."
+input PrepareSandboxSettlementBatchInput {
+  "The Pay Theory unique identifier for the merchant."
+  merchant_uid: ID!
+}
+
+type Query @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "This query will return a list of authorizations for a merchant."
+  authorizations(
+    "The query to filter the authorizations with based on Pay Theory defined data. Detailed information about the query object can be found here."
+    query: SqlQuery
+    "The number of authorizations to return."
+    limit: Int
+    "The value of the offset item for which the list is being sorted. If the direction is FORWARD, the offset item is the last item in the previous list. If the direction is BACKWARD, the offset is the first item in the previous list."
+    offset: String
+    "The direction of the pagination. Makes sure the results are returned in the correct order."
+    direction: MoveDirection
+    "The authorization_id of the offset item. If the direction is FORWARD, the offset item is the last item in the list. If the direction is BACKWARD, the offset is the first item in the list."
+    offset_id: String
+  ): Authorizations @docGroup(name: "Authorization") @docPriority(level: 1)
+  "This query returns the instructional hold and reserve balances for a merchant, along with the instruction window status."
+  availableFundsBalance(
+    "The Pay Theory unique identifier assigned to the merchant."
+    merchant_uid: ID!
+  ): [AvailableFundsBalance] @docGroup(name: "Settlement")
+  "This can be used to call back a single barcode."
+  barcode(
+    "The Pay Theory unique identifier assigned to the merchant."
+    merchant_uid: ID!
+    "The unique barcode identifier."
+    barcode_id: String!
+  ): Barcode @docGroup(name: "Barcode") @docPriority(level: 1)
+  "Returns devices."
+  devices(
+    "Query filter."
+    query: SqlQuery
+    "Maximum number of items to return."
+    limit: Int
+    "Pagination offset value."
+    offset: String
+    "Pagination direction."
+    direction: MoveDirection
+    "ID of the offset item."
+    offset_id: String
+  ): Devices @docIgnore
+  "Returns disputes."
+  disputes(
+    "The query to filter the disputes with based on Pay Theory defined data."
+    query: SqlQuery
+    "The number of disputes to return."
+    limit: Int
+    "The value of the offset item for which the list is being sorted."
+    offset: String
+    "The direction of the pagination. Makes sure the results are returned in the correct order."
+    direction: MoveDirection
+    "The dispute_id of the offset item."
+    offset_id: String
+  ): Disputes @docGroup(name: "Disputes") @docPriority(level: 1)
+  "Returns error text."
+  errorText(
+    "The language code."
+    language_code: String!
+    "The error codes."
+    error_codes: [String]!
+  ): [String]! @docIgnore
+  "Returns funding transfers."
+  fundingTransfers(
+    "The Pay Theory unique identifier assigned to the merchant."
+    merchant_uid: ID!
+    "The settlement batch number to fetch funding transfers for."
+    settlement_batch: Int!
+  ): FundingTransfers @docGroup(name: "Settlement")
+  "Returns instruction."
+  instruction(
+    "The Pay Theory unique identifier assigned to the merchant."
+    merchant_uid: ID!
+    "The instruction date in YYYY-MM-DD format (UTC)."
+    date: AWSDate!
+  ): [Instruction] @docGroup(name: "Settlement")
+  "Returns invoices."
+  invoices(
+    "The query to filter the invoices with based on Pay Theory defined data."
+    query: SqlQuery
+    "The number of invoices to return."
+    limit: Int
+    "The value of the offset item for which the list is being sorted."
+    offset: String
+    "The direction of the pagination. Makes sure the results are returned in the correct order."
+    direction: MoveDirection
+    "The invoice_id of the offset item."
+    offset_id: String
+  ): Invoices @docGroup(name: "Invoice") @docPriority(level: 1)
+  "Returns jwks."
+  jwks: JWKS @docIgnore
+  "Returns merchant."
+  merchant(
+    "The merchant_uid of the merchant to query."
+    merchant_uid: String
+    "The name of the merchant to query."
+    merchant_name: String
+  ): Merchant @docGroup(name: "Merchant") @docPriority(level: 1)
+  "Returns merchant onboarding."
+  merchantOnboarding(
+    "Pay Theory unique identifier for the merchant."
+    merchant_uid: ID!
+  ): MerchantOnboarding @docIgnore
+  "Returns merchants."
+  merchants(
+    "The query to filter the merchants with based on Pay Theory defined data."
+    query: SqlQuery
+    "The number of merchants to return."
+    limit: Int
+    "The value of the offset item for which the list is being sorted."
+    offset: String
+    "The direction of the pagination. Makes sure the results are returned in the correct order."
+    direction: MoveDirection
+    "The merchant_uid of the offset item."
+    offset_id: String
+  ): Merchants @docGroup(name: "Merchant") @docPriority(level: 2)
+  "This call will return details you need to display the proper amount to the customer to catch up on missed payments for a recurring payment."
+  missedRecurringPaymentData(
+    "The recurring_id of the recurring payment to get missed payment data for."
+    recurring_id: String!
+  ): MissedRecurringPaymentData @docGroup(name: "Recurring Payment") @docPriority(level: 5)
+  "Returns payment links."
+  paymentLinks(
+    "The query to filter the payment links with based on Pay Theory defined data. Detailed information about the query object can be found here"
+    query: SqlQuery
+    "The number of payment links to return."
+    limit: Int
+    "The value of the offset item for which the list is being sorted."
+    offset: String
+    "The direction of the pagination. Makes sure the results are returned in the correct order."
+    direction: MoveDirection
+    "The link_id of the offset item."
+    offset_id: String
+  ): PaymentLinks @docGroup(name: "Payment Links") @docPriority(level: 1)
+  "Returns payment method tokens."
+  paymentMethodTokens(
+    "The query to filter the payment_method_tokens with based on Pay Theory defined data. Detailed information about the query object can be found here."
+    query: SqlQuery
+    "The number of payment_method_tokens to return."
+    limit: Int
+    "The value of the offset item for which the list is being sorted."
+    offset: String
+    "The direction of the pagination. Makes sure the results are returned in the correct order."
+    direction: MoveDirection
+    "The payment_method_id of the offset item."
+    offset_id: String
+  ): PaymentMethodTokens @docGroup(name: "Payment Method Token") @docPriority(level: 1)
+  "Returns payors."
+  payors(
+    "The query to filter the payors with based on Pay Theory defined data. Detailed information about the query object can be found here."
+    query: SqlQuery
+    "The number of payors to return."
+    limit: Int
+    "The value of the offset item for which the list is being sorted."
+    offset: String
+    "The direction of the pagination. Makes sure the results are returned in the correct order."
+    direction: MoveDirection
+    "The payor_id of the offset item."
+    offset_id: String
+  ): Payors @docGroup(name: "Payor") @docPriority(level: 1)
+  "Returns recurring payments."
+  recurringPayments(
+    "The query to filter the recurring payments with based on Pay Theory defined data. Detailed information about the query object can be found here."
+    query: SqlQuery
+    "The number of recurring payments to return."
+    limit: Int
+    "The value of the offset item for which the list is being sorted."
+    offset: String
+    "The direction of the pagination. Makes sure the results are returned in the correct order."
+    direction: MoveDirection
+    "The recurring_id of the offset item."
+    offset_id: String
+  ): RecurringPayments @docGroup(name: "Recurring Payment") @docPriority(level: 1)
+  "This call will allow you to calculate what the fee amount should be if using SERVICE_FEE for a transaction."
+  serviceFee(
+    "The Pay Theory unique identifier for the merchant the transaction is for."
+    merchant_uid: String!
+    "The amount of the transaction."
+    amount: Int!
+    "The first 6 to 8 digits of a card number. An error will be thrown if it is any other length."
+    bank_id: String
+    payment_type: String @deprecated(reason: "Either pass in bank_id or payment_method_id")
+    "If the transaction is an ACH transaction."
+    is_ach: Boolean
+    "The Pay Theory unique identifier for a tokenized payment method to calculate fees for."
+    payment_method_id: String
+  ): ServiceFeeCalculation! @docGroup(name: "Transaction") @docPriority(level: 5)
+  "This call was deprecated in favor of the serviceFee query. The serviceFee query returns a single fee object that contains the fee, total, and adjusted total for the transaction based on the amount and payment method details passed in."
+  serviceFeeAmount(
+    "The Pay Theory unique identifier for the merchant the transaction is for."
+    merchant_uid: String!
+    "The amount of the transaction."
+    amount: Int!
+  ): ServiceFeeAmount @deprecated(reason: "Use serviceFee instead.") @docGroup(name: "Deprecated") @docPriority(level: 3)
+  "Returns settlements."
+  settlements(
+    "The query to filter the settlements with based on Pay Theory defined data."
+    query: SqlQuery
+    "The number of settlements to return."
+    limit: Int
+    "The value of the offset item for which the list is being sorted."
+    offset: String
+    "The direction of the pagination. Makes sure the results are returned in the correct order."
+    direction: MoveDirection
+    "The settlement_batch of the offset item."
+    offset_id: String
+  ): Settlements @docGroup(name: "Settlement") @docPriority(level: 1)
+  "Returns splits."
+  splits(
+    "The query to filter the splits with based on Pay Theory defined data. Detailed information about the query object can be found here."
+    query: SqlQuery
+    "The number of splits to return."
+    limit: Int
+    "The value of the offset item for which the list is being sorted."
+    offset: String
+    "The direction of the pagination. Makes sure the results are returned in the correct order."
+    direction: MoveDirection
+    "The id of the offset item."
+    offset_id: String
+  ): Splits @docGroup(name: "Split") @docPriority(level: 1)
+  "Returns transactions."
+  transactions(
+    "The query to filter the transactions with based on Pay Theory defined data. Detailed information about the query object can be found here."
+    query: SqlQuery
+    "The number of transactions to return."
+    limit: Int
+    "The value of the offset item for which the list is being sorted."
+    offset: String
+    "The direction of the pagination. Makes sure the results are returned in the correct order."
+    direction: MoveDirection
+    "The transaction_id of the offset item."
+    offset_id: String
+  ): Transactions @docGroup(name: "Transaction") @docPriority(level: 1)
+  "Returns users."
+  users(
+    "The user pool to query. One of the following: MERCHANT, SYSTEM, PARTNER."
+    user_pool: UserPool!
+    "The merchant uid to query users for. Only used when querying users in the Merchant and System Portal."
+    merchant_uid: String
+  ): [User] @docGroup(name: "Users") @docPriority(level: 1)
+  "Returns users v2."
+  usersV2(
+    "The user pool."
+    user_pool: UserPool!
+    "Pay Theory unique identifier for the merchant."
+    merchant_uid: String
+  ): [UserV2] @docIgnore
+  "Validates payload."
+  validatePayload(
+    "The payload."
+    payload: AWSJSON!
+    "The signature."
+    signature: String!
+  ): PayloadValidation @docIgnore
+  "This mutation validates whether a provided card or bank account number matches a specific payment method."
+  validatePaymentMethodOwnership(
+    "The unique payment method id that identifies the payment method to validate against."
+    payment_method_id: String!
+    "The card number or account number to validate. For card payment methods, this is the full card number. For ACH payment methods, this is the full account number."
+    number: String!
+  ): Boolean! @docGroup(name: "Payment Method Token") @docPriority(level: 4)
+  "Returns webhook events."
+  webhookEvents(
+    "Unique identifier."
+    id: ID
+    "The endpoint."
+    endpoint: String
+    "The result."
+    result: WebhookNotificationResult
+    "The last evaluated key."
+    last_evaluated_key: String
+    "Maximum number of items to return."
+    limit: Int
+  ): WebhookEvents! @docGroup(name: "Webhooks")
+  "Returns webhooks."
+  webhooks(
+    "The URL the event will be sent to. If not passed in all webhooks will be returned"
+    endpoint: String
+  ): [Webhook]! @docGroup(name: "Webhooks") @docPriority(level: 2)
+}
+
+"A query pair is the object to build out a query. There are some required fields and some optional fields."
+input QueryPair {
+  "The conjunctive operator to use to connect the query pair with the next query pair. More detail below."
+  conjunctive_operator: ConjunctiveOperator
+  "A list of values to compare the data to. This should be used instead of value if using the operators IN or NOT_IN."
+  in_values: [String]
+  "The key to the value you want to query against."
+  key: String
+  "The operator to use to compare the value to the data you are calling. More detail below."
+  operator: Operator
+  "A list of query pairs to use to build out a nested query. A more detailed example is below under the examples section."
+  query_group: [QueryPair]
+  "The value to compare the data to. If using the LIKE or NOT_LIKE operator, this value can contain wildcard characters."
+  value: String
+}
+
+"The interval of the recurring payment. The following intervals are available:"
+enum RecurringInterval {
+  "Recurring payment made annually."
+  ANNUAL
+  "Recurring payment made bi-annually."
+  BI_ANNUAL
+  "Recurring payment made bi-weekly."
+  BI_WEEKLY
+  "Recurring payment made monthly."
+  MONTHLY
+  "Recurring payment made quarterly."
+  QUARTERLY
+  "Recurring payment made weekly."
+  WEEKLY
+}
+
+"A recurring payment represents a payment that will trigger on an interval."
+type RecurringPayment @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "Custom account code for the recurring payment that will be tied to each payment."
+  account_code: String
+  "The amount of the recurring payment."
+  amount_per_payment: Int
+  "The date the recurring payment was created."
+  created_date: AWSDateTime
+  "The type of currency for the recurring payment."
+  currency: String
+  "The fee mode for the recurring payment."
+  fee_mode: FeeMode
+  "The fee for the recurring payment."
+  fee_per_payment: Int
+  "Whether the recurring payment is active or been disabled."
+  is_active: Boolean
+  "Whether the recurring payment is currently processing."
+  is_processing: Boolean
+  "The Pay Theory unique identifier assigned to the recurring payment."
+  recurring_id: String
+  "The Pay Theory unique identifier assigned to the merchant that the recurring payment belongs to."
+  merchant_uid: String
+  "Custom metadata for the recurring payment that will be tied to each payment."
+  metadata(query_list: [QueryPair]): AWSJSON
+  "Manage whether the payor will receive emails for the recurring payment from Pay Theory."
+  mute_all_emails: Boolean
+  "The date of the next payment to be made for the recurring payment."
+  next_payment_date: AWSDate
+  "The interval of the recurring payment."
+  payment_interval: RecurringInterval
+  "The payment method used to make the recurring payment."
+  payment_method(query_list: [QueryPair]): PaymentMethodToken
+  "The payor that the recurring payment belongs to."
+  payor(query_list: [QueryPair]): Payor
+  "The date of the last payment made for the recurring payment."
+  prev_payment_date: AWSDate
+  "Custom description for the recurring payment."
+  recurring_description: String
+  "Custom name for the recurring payment."
+  recurring_name: String
+  "Custom reference for the recurring payment that will be tied to each payment."
+  reference: String
+  "The number of payments remaining for the recurring payment."
+  remaining_payments: Int
+  "The status of the recurring payment."
+  status: RecurringStatus
+  "The amount the payor will be charged for the recurring payment."
+  total_amount_per_payment: Int
+}
+
+"Input for recurring payment."
+input RecurringPaymentInput {
+  "Customer-defined account code."
+  account_code: String
+  "Amount in minor units (for example cents)."
+  amount: Int!
+  "Fee mode that determines if the payor or the merchant will pay the fees."
+  fee_mode: FeeMode
+  "Date for first payment."
+  first_payment_date: AWSDate
+  "Pay Theory unique identifier for the merchant."
+  merchant_uid: String!
+  "Metadata associated with this object."
+  metadata: AWSJSON
+  "Manage whether the payor will receive emails for the recurring payment from Pay Theory."
+  mute_all_emails: Boolean
+  "The number of payments that will be made for the recurring payment. If not provided, the recurring payment will be made indefinitely."
+  payment_count: Int
+  "The payment interval."
+  payment_interval: RecurringInterval!
+  "Pay Theory unique identifier for the payment method."
+  payment_method_id: String!
+  "The payor that the recurring payment belongs to."
+  payor: PayorInput
+  "Pay Theory unique identifier for the payor."
+  payor_id: String
+  "The description of the recurring payment."
+  recurring_description: String
+  "The name of the recurring payment."
+  recurring_name: String!
+  "Customer-defined reference."
+  reference: String
+}
+
+"Paginated list of recurring payment."
+type RecurringPayments @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "List of Recurring Payments."
+  items: [RecurringPayment]
+  "Total number of rows matching the query."
+  total_row_count: Int
+}
+
+"The status of the recurring payment. The following statuses are available:"
+enum RecurringStatus {
+  "Recurring payment failed due to instrument failure."
+  INSTRUMENT_FAILURE
+  "Recurring payment successful."
+  SUCCESS
+  "Recurring payment failed due to system failure."
+  SYSTEM_FAILURE
+}
+
+"Possible values for refund policy."
+enum RefundPolicy {
+  "Represents exchange."
+  EXCHANGE
+  "Represents none."
+  NONE
+  "Represents other."
+  OTHER
+  "Represents thirty."
+  THIRTY
+}
+
+"Refund reason object."
+type RefundReason @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "The reason code for the refund."
+  reason_code: RefundReasonCode
+  "The details of the refund reason."
+  reason_details: String
+}
+
+"Possible values for refund reason code."
+enum RefundReasonCode {
+  "Represents duplicate."
+  DUPLICATE
+  "Represents fraudulent."
+  FRAUDULENT
+  "Represents other."
+  OTHER
+  "Represents requested by customer."
+  REQUESTED_BY_CUSTOMER
+}
+
+"Input for refund reason."
+input RefundReasonInput {
+  "The reason code for the refund."
+  reason_code: RefundReasonCode!
+  "The details of the refund reason."
+  reason_details: String
+}
+
+"Possible values for reserve account type."
+enum ReserveAccountType {
+  "Reserve balance for ACH."
+  ACH
+  "Reserve balance for card."
+  CARD
+  "Combined reserve balance."
+  COMBINED
+}
+
+"Response for reversal."
+type ReversalResponse @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "Whether void."
+  is_void: Boolean!
+  "Pay Theory unique identifier for the transaction."
+  transaction_id: String
+}
+
+"Result for sandbox ACH return."
+type SandboxAchReturnResult @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "If the action succeeded ."
+  success: Boolean!
+  "Unique identifier for the ACH return transaction."
+  ach_return_transaction_id: String!
+  "The return code."
+  return_code: String!
+}
+
+"Result for sandbox dispute."
+type SandboxDisputeResult @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "If the action succeeded ."
+  success: Boolean!
+  "Unique identifier for the dispute."
+  dispute_id: String!
+  "Pay Theory unique identifier for the transaction."
+  transaction_id: String!
+}
+
+"Result for sandbox dispute update."
+type SandboxDisputeUpdateResult @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "If the action succeeded ."
+  success: Boolean!
+}
+
+"Result for sandbox settlement batch prep."
+type SandboxSettlementBatchPrepResult @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "If the action succeeded ."
+  success: Boolean!
+  "Unique identifier for the prep."
+  prep_id: ID!
+  "Pay Theory unique identifier for the merchant."
+  merchant_uid: ID!
+  "The debit ids."
+  debit_ids: [String!]!
+  "The reversal ids."
+  reversal_ids: [String!]!
+  "The ACH return ids."
+  ach_return_ids: [String!]!
+  "The dispute withdrawal ids."
+  dispute_withdrawal_ids: [String!]!
+  "The dispute deposit ids."
+  dispute_deposit_ids: [String!]!
+  "The split ids."
+  split_ids: [String!]!
+  "The calculated gross amount."
+  calculated_gross_amount: Int!
+  "The calculated net amount."
+  calculated_net_amount: Int!
+  "The instructional hold balance."
+  instructional_hold_balance: Int
+  "The reserve balance."
+  reserve_balance: Int
+}
+
+"Result for sandbox settlement."
+type SandboxSettlementResult @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "If the action succeeded ."
+  success: Boolean!
+}
+
+"Service fee amount object."
+type ServiceFeeAmount @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "The ACH."
+  ach: ServiceFeeCalculation
+  "The card."
+  card: ServiceFeeCalculation
+}
+
+"Service fee calculation object."
+type ServiceFeeCalculation @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "The fee limit reached."
+  fee_limit_reached: Boolean
+  "The amount that the service fee should be based on the amount passed in."
+  fee: Int
+  "The total amount of the transaction before the service fee. This is what you would want to pass in the amount argument for the createOneTimePayment call."
+  total: Int
+  "The total amount of the transaction after the service fee. This is what you would want to show the payor the total amount of the transaction will be."
+  adjusted_total: Int
+}
+
+"Settlement object."
+type Settlement @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "The currency of the settlement."
+  currency: String
+  "The gross amount."
+  gross_amount: Int @deprecated(reason: "Use gross_amount_64bit instead")
+  "The total amount of the settlement before any fees in a string format to support 64-bit Int"
+  gross_amount_64bit: String
+  "The Pay Theory unique identifier assigned to the merchant that the settlement belongs to."
+  merchant_uid: String
+  "The net amount."
+  net_amount: Int @deprecated(reason: "Use net_amount_64bit instead")
+  "The total amount of the settlement after any fees in a string format to support 64-bit Int"
+  net_amount_64bit: String
+  "The unique settlement batch number."
+  settlement_batch: Int
+  "The date the settlement was created in an ISO 8601 String format."
+  settlement_date: AWSDateTime
+  "The status of the settlement. Will be one of PENDING, SUCCEEDED, or HOLD."
+  status: String
+  "The number of transactions of type DEBIT that were included in the settlement."
+  transaction_debit_count: Int
+  "The number of transactions of type DISPUTE that were included in the settlement."
+  transaction_dispute_count: Int
+  "The number of transactions of type REVERSAL that were included in the settlement."
+  transaction_reversal_count: Int
+  "The date the settlement was transferred to the merchant in an ISO 8601 String format."
+  transfer_date: AWSDateTime
+  "The total adjustments."
+  total_adjustments: Int @deprecated(reason: "Use total_adjustments_64bit instead")
+  "The total amount of adjustments that were applied to the settlement in a string format to support 64-bit Int"
+  total_adjustments_64bit: String
+  "The total fees."
+  total_fees: Int @deprecated(reason: "Use total_fees_64bit instead")
+  "The total amount of fees that were applied to the settlement in a string format to support 64-bit Int"
+  total_fees_64bit: String
+  "The date the settlement was last updated in an ISO 8601 String format."
+  updated_row_at: AWSDateTime
+}
+
+"Paginated list of settlement."
+type Settlements @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "List of items."
+  items: [Settlement]
+  "Total number of rows matching the query."
+  total_row_count: Int
+}
+
+"The direction to sort the data. These are case-sensitive."
+enum SortDirection {
+  "Begins with the least or smallest and ends with the greatest or largest"
+  ASC
+  "Begins with the greatest or largest and ends with the least or smallest"
+  DESC
+}
+
+"A sort pair is the object used to tell a query how the data should be sorted."
+input SortPair {
+  "The direction to sort the data. These are case-sensitive."
+  direction: SortDirection
+  "The key to sort the data by."
+  key: String
+}
+
+"Splits are a way to distribute funds from a transaction to different accounts. When a transaction is created or captured, you can specify splits to allocate portions of the transaction amount to different accounts."
+type Split @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "Customer defined account code for the split."
+  account_code: String
+  "The amount of the split in cents."
+  amount: Int!
+  "The currency of the split."
+  currency: String!
+  "The date and time the split was created."
+  created_at: AWSDateTime!
+  "The Pay Theory unique identifier for the split."
+  id: String!
+  "The merchant object containing information about the merchant."
+  merchant: ListMerchant!
+  "Custom defined JSON object to be stored with the split."
+  metadata(query_list: [QueryPair]): AWSJSON
+  "The payment method used for the transaction associated with this split."
+  payment_method: PaymentMethodToken!
+  "Customer defined reference for the split."
+  reference: String
+  "The unique settlement batch number the split belongs to if settled."
+  settlement_batch: Int
+  "The Pay Theory unique identifier for the transaction the split belongs to."
+  transaction_id: String!
+  "The date and time the split was last updated."
+  updated_row_at: AWSDateTime!
+}
+
+"When creating a transaction or capturing an authorization, you can include splits using the following input format:"
+input SplitInput {
+  "Customer defined account code for the split."
+  account_code: String
+  "The amount of the split in cents. Required."
+  amount: Int!
+  "Custom defined JSON object to be stored with the split."
+  metadata: AWSJSON
+  "The Pay Theory unique identifier for the merchant the split belongs to. Required."
+  merchant_uid: ID!
+  "Customer defined reference for the split."
+  reference: String
+}
+
+"Paginated list of split."
+type Splits @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "List of Splits."
+  items: [Split]
+  "Total number of rows matching the query."
+  total_row_count: Int
+}
+
+"Here we will detail how you can build your own queries to pass into the Pay Theory API."
+input SqlQuery {
+  "A list of query pairs used to build out a query."
+  query_list: [QueryPair]
+  "A list of sort pairs to define how the data should be sorted."
+  sort_list: [SortPair]
+}
+
+"Support conversation object."
+type SupportConversation @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "The support notes."
+  support_notes: [SupportNote]
+  "Unique identifier for the ticket."
+  ticket_id: ID!
+}
+
+"Possible values for support document type."
+enum SupportDocumentType {
+  "Represents bank statement."
+  BANK_STATEMENT
+  "Represents business address verification."
+  BUSINESS_ADDRESS_VERIFICATION
+  "Represents business registration."
+  BUSINESS_REGISTRATION
+  "Represents drivers license back."
+  DRIVERS_LICENSE_BACK
+  "Represents drivers license front."
+  DRIVERS_LICENSE_FRONT
+  "Represents identification card back."
+  IDENTIFICATION_CARD_BACK
+  "Represents identification card front."
+  IDENTIFICATION_CARD_FRONT
+  "Represents passport."
+  PASSPORT
+  "Represents pci document."
+  PCI_DOCUMENT
+  "Represents other."
+  OTHER
+  "Represents tax document."
+  TAX_DOCUMENT
+}
+
+"Support note object."
+type SupportNote @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "The body."
+  body: String
+  "The support docs."
+  support_docs: [Document]
+}
+
+"Input for support note."
+input SupportNoteInput {
+  "The body."
+  body: String
+  "The support docs."
+  support_docs: [DocumentInput]
+}
+
+"Possible values for tax indicator type."
+enum TaxIndicatorType {
+  "Represents no tax info provided."
+  NO_TAX_INFO_PROVIDED
+  "Represents not taxable."
+  NOT_TAXABLE
+  "Represents tax amount provided."
+  TAX_AMOUNT_PROVIDED
+}
+
+"Possible values for tax type."
+enum TaxType {
+  "Represents city sales."
+  CITY_SALES
+  "Represents energy."
+  ENERGY
+  "Represents gst."
+  GST
+  "Represents local sales."
+  LOCAL_SALES
+  "Represents municipal sales."
+  MUNICIPAL_SALES
+  "Represents national sales."
+  NATIONAL_SALES
+  "Represents not supported."
+  NOT_SUPPORTED
+  "Represents other."
+  OTHER
+  "Represents pst."
+  PST
+  "Represents room."
+  ROOM
+  "Represents occupancy."
+  OCCUPANCY
+  "Represents state sales."
+  STATE_SALES
+  "Represents unknown."
+  UNKNOWN
+  "Represents vat."
+  VAT
+}
+
+"Transactions are a data object that can represent a payment, failed or successful, or a refund."
+type Transaction @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "Customer defined account code for the transaction."
+  account_code: String
+  "The details of the ACH return if any."
+  ach_return_details: AchReturnDetails
+  "The additional purchase data."
+  additional_purchase_data: AdditionalPurchaseData
+  "The authorization id for the transaction."
+  authorization_id: String
+  "The AVS status for the transaction."
+  avs_status: String
+  "The type of currency for the transaction."
+  currency: String
+  device_id: String
+  "The status of the dispute if any."
+  dispute_status: DisputeStatus
+  "List of strings, if any, detailing the reason a transaction failed. See Failure Codes for a complete list of failure codes and descriptions."
+  failure_reasons: [String]
+  "The fee mode on the transaction."
+  fee_mode: FeeMode
+  "The amount of the fees charged for the transaction."
+  fees: Int
+  "A status indiciator for any transactions that are in review. When a transaction is in review the funds will not settle to the merchant until resolved."
+  flag_for_review: TransactionReviewStatus
+  "The total amount of the transaction."
+  gross_amount: Int
+  "The invoice object for the transaction if any."
+  invoice: Invoice
+  "Whether the transaction has been settled."
+  is_settled: Boolean
+  "The merchant object of the merchant the transaction belongs to."
+  merchant: ListMerchant
+  "The Pay Theory unique identifier for the merchant the transaction is for."
+  merchant_uid: String
+  "Custom defined JSON object to be stored with the transaction."
+  metadata(query_list: [QueryPair]): AWSJSON
+  "The total amount of the transaction after fees."
+  net_amount: Int
+  "The Pay Theory unique identifier for the parent transaction if any."
+  parent_id: String
+  "The payment method used to make the transaction."
+  payment_method(query_list: [QueryPair]): PaymentMethodToken
+  processor: String
+  "The recurring payment that the transaction belongs to if any."
+  recurring: RecurringPayment
+  "Customer defined reference for the transaction."
+  reference: String
+  "The reason for the refund if any."
+  refund_reason: RefundReason
+  "Whether the refund can be voided."
+  refund_voidable: Boolean
+  "The amount of the transaction that has been refunded if any."
+  refunded_amount: Int
+  "The sale id for the transaction if any."
+  sale_id: String
+  "The unique settlement batch number the transaction belongs to if settled."
+  settlement_batch: Int
+  "An array of split objects associated with this transaction, if any."
+  splits: [Split]
+  "The status of the transaction."
+  status: TransactionStatus
+  "The timezone the transaction was made in."
+  timezone: String
+  "The date the transaction was made."
+  transaction_date: AWSDateTime
+  "The Pay Theory unique identifier for the transaction."
+  transaction_id: String
+  "The type of transfer that was made."
+  transaction_type: TransactionType
+  "The date and time the transaction was last updated."
+  updated_row_at: AWSDateTime
+}
+
+"Possible values for transaction review action."
+enum TransactionReviewAction {
+  "Represents accept."
+  ACCEPT
+  "Represents reject."
+  REJECT
+}
+
+"Possible values for transaction review status."
+enum TransactionReviewStatus {
+  "Transaction was flagged for greatly exceeding the auth amount."
+  EXCEEDS_AUTH
+  "Represents exceeds fee limit."
+  EXCEEDS_FEE_LIMIT
+  "Transaction was flagged for exceeding the threshold set on the merchant account by Pay Theory."
+  EXCEEDS_THRESHOLD
+  "Transaction was flagged for being a potential duplicate based on settings configured in the partner environment."
+  POTENTIAL_DUPLICATE
+}
+
+"Paginated list of transaction."
+type Transactions @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "List of Transactions."
+  items: [Transaction]
+  "Total number of rows matching the query."
+  total_row_count: Int
+}
+
+"Possible values for transaction status."
+enum TransactionStatus {
+  "The transaction was canceled."
+  CANCELED
+  "The transaction failed to pass initial checks and authorization was not successful."
+  FAILED
+  "The transaction has been refunded for a portion of the amount."
+  PARTIALLY_REFUNDED
+  "The transaction is succesfull pending capture. This is what will be returned for all transactions that did not fail."
+  PENDING
+  "The transaction has been fully refunded."
+  REFUNDED
+  "The transaction is an ACH transaction that has had an ACH_RETURN created for it."
+  RETURNED
+  "The transaction has been added to a settlement batch and will settle to the merchant."
+  SETTLED
+  "The transaction has been captured."
+  SUCCEEDED
+  "The transaction has been voided which means it was never captured and will not be settled."
+  VOIDED
+}
+
+"Possible values for transaction type."
+enum TransactionType {
+  "The transaction is an ACH return for an ACH Debit or Reversal. Check parent_id to find origin."
+  ACH_RETURN
+  "The transaction is a debit to a payors payment method."
+  DEBIT
+  "The transaction is a failed debit to a payors payment method."
+  FAILURE
+  "The transaction is a reversal on a debit to a payors payment method. Check parent_id to find origin."
+  REVERSAL
+}
+
+"Possible values for transfer status."
+enum TransferStatus {
+  "The transfer was returned."
+  RETURNED
+  "The transfer completed successfully."
+  SUCCEEDED
+}
+
+"Underwriting data object."
+type UnderwritingData @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "The annual card volume."
+  annual_card_volume: String
+  "The business address."
+  business_address: Address
+  "Whether accepted credit cards previously."
+  has_accepted_credit_cards_previously: Boolean
+  "The business name."
+  business_name: String
+  "The business type."
+  business_type: BusinessType
+  "The delivery 0 days percent."
+  delivery_0_days_percent: Int
+  "The delivery 1 to 7 days percent."
+  delivery_1_to_7_days_percent: Int
+  "The delivery 8 to 14 days percent."
+  delivery_8_to_14_days_percent: Int
+  "The delivery 15 to 30 days percent."
+  delivery_15_to_30_days_percent: Int
+  "The delivery over 30 days percent."
+  delivery_over_30_days_percent: Int
+  "The doing business as."
+  doing_business_as: String
+  "Date for incorporation."
+  incorporation_date: AWSDate
+  "The incorporation state."
+  incorporation_state: UsStates
+  "The max transaction amount."
+  max_transaction_amount: Int
+  "The MCC."
+  mcc: String
+  "Phone number."
+  phone: AWSPhone
+  "The prod serv sold."
+  prod_serv_sold: String
+  "The ownership type."
+  ownership_type: OwnershipType
+  "Unique identifier for the tax."
+  tax_id: String
+  "The URL."
+  url: AWSURL
+}
+
+"Input for underwriting data."
+input UnderwritingDataInput {
+  "The annual card volume."
+  annual_card_volume: String
+  "The business address."
+  business_address: AddressInput
+  "Whether accepted credit cards previously."
+  has_accepted_credit_cards_previously: Boolean
+  "The business name."
+  business_name: String
+  "The business type."
+  business_type: BusinessType
+  "The delivery 0 days percent."
+  delivery_0_days_percent: Int
+  "The delivery 1 to 7 days percent."
+  delivery_1_to_7_days_percent: Int
+  "The delivery 8 to 14 days percent."
+  delivery_8_to_14_days_percent: Int
+  "The delivery 15 to 30 days percent."
+  delivery_15_to_30_days_percent: Int
+  "The delivery over 30 days percent."
+  delivery_over_30_days_percent: Int
+  "The doing business as."
+  doing_business_as: String
+  "Date for incorporation."
+  incorporation_date: AWSDate
+  "The incorporation state."
+  incorporation_state: UsStates
+  "The max transaction amount."
+  max_transaction_amount: Int
+  "The MCC."
+  mcc: String
+  "Phone number."
+  phone: AWSPhone
+  "The prod serv sold."
+  prod_serv_sold: String
+  "The ownership type."
+  ownership_type: OwnershipType
+  "Unique identifier for the tax."
+  tax_id: String
+  "The URL."
+  url: AWSURL
+}
+
+"Input for update payment link."
+input UpdatePaymentLinkInput {
+  "The payment methods that will be available to a payor when making a payment."
+  accepted_payment_methods: AcceptedPaymentMethodsEnum
+  "Account Code that will be passed in to every transaction made with this payment link."
+  account_code: String
+  "The amount of the payment that the payor will be asked to pay or if amount_is_variable is set to the amount that will be the default amount."
+  amount: Int
+  "If set to true the payor will be able to enter the amount they want to pay."
+  amount_is_variable: Boolean
+  "The call to action that will be displayed on the button at the time of checkout."
+  call_to_action: CallToActionType
+  "The type of currency for the payment."
+  currency: String
+  "The message that will be displayed to the payor after a successful payment."
+  custom_success_message: String
+  "The fee mode of the payments that will be made with the payment link."
+  fee_mode: FeeMode
+  "Whether this is active."
+  is_active: Boolean
+  "The unique identifier for the payment link."
+  link_id: String!
+  "The name you give to the payment link for internal tracking purposes."
+  link_name: String
+  "The maximum amount the payor can pay if amount_is_variable is set to true."
+  max_amount: Int
+  "The Pay Theory unique identifier assigned to the merchant that the transaction belongs to."
+  merchant_uid: String!
+  "The minimum amount the payor can pay if amount_is_variable is set to true."
+  min_amount: Int
+  "The description of the payment that will be displayed to the customer."
+  payment_description: String
+  "The name of the payment that will be displayed to the customer. This will be passed in as the reference at the time of the transaction."
+  payment_name: String
+  "The url that the payor will be redirected to after a successful payment."
+  redirect_url: String
+  "If set to true the payor will be required to enter their phone number before making the payment."
+  require_phone: Boolean
+}
+
+"Input for update recurring payment."
+input UpdateRecurringPaymentInput {
+  "Manage whether the payor will receive emails for the recurring payment from Pay Theory."
+  mute_all_emails: Boolean
+  "Manage whether the payor will be charged for all missed payments after the update."
+  pay_all_missed_payments: Boolean
+  "Pay Theory unique identifier for the payment method."
+  payment_method_id: String
+  "The Pay Theory unique identifier assigned to the recurring payment."
+  recurring_id: String!
+}
+
+"Input for update sandbox dispute status."
+input UpdateSandboxDisputeStatusInput {
+  "Unique identifier for the dispute."
+  dispute_id: String!
+  "Status value."
+  status: DisputeStatus!
+}
+
+"User object."
+type User @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "The email address of the user."
+  email: String
+  "The full name of the user."
+  full_name: String
+  "The phone number of the user."
+  phone: String
+  "The status of the user. Likely to be one of the following: CONFIRMED, FORCE_CHANGE_PASSWORD"
+  user_status: String
+  "The cognito username id of the user."
+  username: String
+}
+
+"Input for user."
+input UserInput {
+  "The bypass merchant validation."
+  bypass_merchant_validation: Boolean
+  "Email address."
+  email: AWSEmail!
+  "First name."
+  first_name: String!
+  "Last name."
+  last_name: String!
+  "The merchant uid to query users for. Only used when querying users in the Merchant and System Portal."
+  merchant_uid: String
+  "Phone number."
+  phone: AWSPhone
+  "The user pool to query. One of the following: MERCHANT, SYSTEM, PARTNER."
+  user_pool: UserPool!
+}
+
+"User input v2 object."
+input UserInputV2 {
+  "The bypass merchant validation."
+  bypass_merchant_validation: Boolean
+  "Email address."
+  email: AWSEmail!
+  "First name."
+  first_name: String
+  "Last name."
+  last_name: String
+  "Pay Theory unique identifier for the merchant."
+  merchant_uid: String
+  "The user pool."
+  user_pool: UserPool!
+  "The permissions."
+  permissions: AWSJSON
+}
+
+"Possible values for user pool."
+enum UserPool {
+  "The user is a merchant."
+  MERCHANT
+  "The user is a partner."
+  PARTNER
+  "The user is a system."
+  SYSTEM
+}
+
+"User v2 object."
+type UserV2 @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "Unique identifier for the user."
+  user_id: String
+  "Email address."
+  email: AWSEmail
+  "Full name."
+  full_name: String
+  "Unique identifier for the user pool."
+  user_pool_id: UserPool
+  "Pay Theory unique identifier for the merchant."
+  merchant_uid: String
+  "The permissions."
+  permissions: AWSJSON
+}
+
+"The US state codes."
+enum UsStates {
+  AL
+  AK
+  AZ
+  AR
+  CA
+  CO
+  CT
+  DE
+  FL
+  GA
+  HI
+  ID
+  IL
+  IN
+  IA
+  KS
+  KY
+  LA
+  ME
+  MD
+  MA
+  MI
+  MN
+  MS
+  MO
+  MT
+  NE
+  NV
+  NH
+  NJ
+  NM
+  NY
+  NC
+  ND
+  OH
+  OK
+  OR
+  PA
+  RI
+  SC
+  SD
+  TN
+  TX
+  UT
+  VT
+  VA
+  WA
+  WV
+  WI
+  WY
+}
+
+"Volume distribution by business type object."
+type VolumeDistributionByBusinessType @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "The business to business volume percentage."
+  business_to_business_volume_percentage: Int
+  "The business to consumer volume percentage."
+  business_to_consumer_volume_percentage: Int
+  "The other volume percentage."
+  other_volume_percentage: Int
+}
+
+"Input for volume distribution by business type."
+input VolumeDistributionByBusinessTypeInput {
+  "The business to business volume percentage."
+  business_to_business_volume_percentage: Int
+  "The business to consumer volume percentage."
+  business_to_consumer_volume_percentage: Int
+  "The other volume percentage."
+  other_volume_percentage: Int
+}
+
+"The type of wallet that the payment method token is stored in. It can be one of the following:"
+enum WalletType {
+  "Represents apple pay."
+  APPLE_PAY
+  "Represents click to pay."
+  CLICK_TO_PAY
+  "Represents google pay."
+  GOOGLE_PAY
+  "Represents Paze."
+  PAZE
+  "Represents samsung pay."
+  SAMSUNG_PAY
+  "Represents visa staged."
+  VISA_STAGED
+}
+
+"To delete a webhook, you can use the following mutation:"
+type Webhook @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "The URL of the webhook you want to delete."
+  endpoint: String!
+  "Whether the webhook is active and receiving notifications."
+  is_active: Boolean!
+  "A user-friendly name for the webhook."
+  name: String!
+}
+
+"A webhook event object represents a webhook trigger, meaning it may have sent a notification to your endpoint if it was active at the time."
+type WebhookEvent @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "The endpoint of the webhook associated with the event."
+  endpoint: String!
+  "An error message present only if the event failed."
+  error: String
+  "The type of event that was sent."
+  event: String!
+  "The time the response was received or the last attempt to contact the endpoint was made."
+  finished_at: String!
+  "A unique ID for the event."
+  id: ID!
+  "A JSON string of the request that was sent to the endpoint."
+  request: AWSJSON!
+  "A JSON string of the response received from the endpoint. Not present if no response was received."
+  response: AWSJSON
+  "The final outcome of the event."
+  result: WebhookNotificationResult!
+  "The time the first request was made."
+  started_at: String!
+  "The HTTP status code of the last response. Not present if no response was received."
+  status_code: Int
+}
+
+"Webhook events object."
+type WebhookEvents @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "List of Webhook Events."
+  events: [WebhookEvent]!
+  "The last evaluated key."
+  last_evaluated_key: String
+}
+
+"Can be one of the following:"
+enum WebhookNotificationResult {
+  "The notification was not successfully received (4xx or 5xx response, or no response at all) by your endpoint."
+  FAILURE
+  "The notification was not sent because the webhook was not active."
+  IGNORED
+  "The notification was successfully received (2xx response) by your endpoint."
+  SUCCESS
+}
+
+"Possible values for window status."
+enum WindowStatus {
+  "The instruction window is open."
+  OPEN
+  "The instruction window is closed."
+  CLOSED
+}
+
+schema {
+  query: Query
+  mutation: Mutation
+}

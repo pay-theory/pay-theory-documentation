@@ -1,0 +1,20 @@
+---
+id: create-receipt-email
+title: createReceiptEmail
+sidebar_label: createReceiptEmail
+hide_title: true
+api: true
+---
+
+import { OperationView } from '@graphql-docs/generator/components';
+import operationsByType from '../_data/operations.json';
+import typesByName from '../_data/types.json';
+
+export const examplesByOperation = {
+  "createReceiptEmail": (operationsByType["mutation"]["createReceiptEmail"]?.examples ?? []),
+};
+
+export const operation = operationsByType["mutation"]["createReceiptEmail"];
+
+<OperationView operation={ operation } typesByName={typesByName} headingLevel={ 1 } defaultExpandedLevels={ 0 } maxDepth={ 5 } typeLinkBase="../types" llmDocsBasePath="/llm-docs">
+</OperationView>

@@ -7,6 +7,8 @@
 /* You can override the default Infima variables here. */
 
 @import url('https://use.typekit.net/azk4wlx.css');
+@import '@graphql-docs/generator/components/styles.css';
+@import '@graphql-docs/generator/components/docusaurus.css';
 
 :root {
   --ifm-color-primary: #600075;
@@ -1626,4 +1628,3 @@ code{
   stroke: var(--ifm-color-primary-light) !important;
   fill: var(--ifm-color-primary-light) !important;
 }
-

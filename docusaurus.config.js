@@ -84,6 +84,7 @@ const config = {
   },
 
   plugins: [
+    require.resolve('./src/plugins/accept-markdown-middleware.js'),
     [
       '@docusaurus/plugin-client-redirects',
       {

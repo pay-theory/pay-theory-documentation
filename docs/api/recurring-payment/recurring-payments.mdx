@@ -1,0 +1,20 @@
+---
+id: recurring-payments
+title: recurringPayments
+sidebar_label: recurringPayments
+hide_title: true
+api: true
+---
+
+import { OperationView } from '@graphql-docs/generator/components';
+import operationsByType from '../_data/operations.json';
+import typesByName from '../_data/types.json';
+
+export const examplesByOperation = {
+  "recurringPayments": (operationsByType["query"]["recurringPayments"]?.examples ?? []),
+};
+
+export const operation = operationsByType["query"]["recurringPayments"];
+
+<OperationView operation={ operation } typesByName={typesByName} headingLevel={ 1 } defaultExpandedLevels={ 0 } maxDepth={ 5 } typeLinkBase="../types" llmDocsBasePath="/llm-docs">
+</OperationView>

@@ -1,0 +1,285 @@
+[
+  {
+    "operation": "merchant",
+    "operationType": "query",
+    "examples": [
+      {
+        "name": "Example merchant",
+        "description": "Returns merchant.",
+        "query": "query Merchant($merchant_uid: String, $merchant_name: String) {\n  merchant(merchant_uid: $merchant_uid, merchant_name: $merchant_name) {\n  merchant_uid\n  ach_active\n  api_key\n  card_active\n  cash_active\n  }\n}",
+        "variables": {
+          "merchant_uid": "example",
+          "merchant_name": "example"
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "merchant": {
+                "merchant_uid": "example",
+                "ach_active": true,
+                "api_key": "example",
+                "card_active": true,
+                "cash_active": true
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "operation": "merchants",
+    "operationType": "query",
+    "examples": [
+      {
+        "name": "Example merchants",
+        "description": "Returns merchants.",
+        "query": "query Merchants($query: SqlQuery, $limit: Int, $offset: String, $direction: MoveDirection, $offset_id: String) {\n  merchants(query: $query, limit: $limit, offset: $offset, direction: $direction, offset_id: $offset_id) {\n  items {\n    merchant_uid\n    updated_row_at\n    ach_active\n    card_active\n    cash_active\n  }\n  total_row_count\n  }\n}",
+        "variables": {
+          "query": {
+            "query_list": [
+              {
+                "conjunctive_operator": "AND_NEXT"
+              }
+            ],
+            "sort_list": [
+              {
+                "direction": "ASC"
+              }
+            ]
+          },
+          "limit": 123,
+          "offset": "example",
+          "direction": "BACKWARD",
+          "offset_id": "example"
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "merchants": {
+                "items": [
+                  {
+                    "merchant_uid": "example",
+                    "updated_row_at": "2025-01-01T00:00:00Z",
+                    "ach_active": true,
+                    "card_active": true,
+                    "cash_active": true
+                  }
+                ],
+                "total_row_count": 123
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "operation": "createMerchant",
+    "operationType": "mutation",
+    "examples": [
+      {
+        "name": "Example createMerchant",
+        "description": "Creates merchant.",
+        "query": "mutation CreateMerchant($merchant_name: String!, $parent_merchant_uid: String, $user: MerchantUserInput, $metadata: AWSJSON) {\n  createMerchant(merchant_name: $merchant_name, parent_merchant_uid: $parent_merchant_uid, user: $user, metadata: $metadata) {\n  merchant_uid\n  updated_row_at\n  ach_active\n  card_active\n  cash_active\n  }\n}",
+        "variables": {
+          "merchant_name": "example",
+          "parent_merchant_uid": "example",
+          "user": {
+            "email": "user@example.com",
+            "first_name": "example",
+            "last_name": "example",
+            "phone": "+15555555555"
+          },
+          "metadata": {
+            "key": "value"
+          }
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "createMerchant": {
+                "merchant_uid": "example",
+                "updated_row_at": "2025-01-01T00:00:00Z",
+                "ach_active": true,
+                "card_active": true,
+                "cash_active": true
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "operation": "updateFeeMatrix",
+    "operationType": "mutation",
+    "examples": [
+      {
+        "name": "Example updateFeeMatrix",
+        "description": ":::note Limited Access This mutation is only available to users with Partner level access. Please contact Pay Theory support if you need to update a merchant's fee matrix and do not have Partner level access. :::",
+        "query": "mutation UpdateFeeMatrix($fee_matrix: FeeMatrixInput!) {\n  updateFeeMatrix(fee_matrix: $fee_matrix) {\n  merchant_uid\n  card_account_updater\n  ach_return_disputed_fee\n  ach_return_fee\n  cash\n  }\n}",
+        "variables": {
+          "fee_matrix": {
+            "ach": {
+              "merchant_fee": {
+                "basis_points": 123
+              },
+              "service_fee": {
+                "basis_points": 123,
+                "fixed": 123
+              }
+            },
+            "ach_return_fee": 123,
+            "ach_return_disputed_fee": 123,
+            "business_credit": {
+              "merchant_fee": {
+                "basis_points": 123,
+                "fixed": 123
+              },
+              "service_fee": {
+                "basis_points": 123,
+                "fixed": 123
+              }
+            },
+            "business_debit": {
+              "merchant_fee": {
+                "basis_points": 123,
+                "fixed": 123
+              },
+              "service_fee": {
+                "basis_points": 123,
+                "fixed": 123
+              }
+            },
+            "amex": {
+              "merchant_fee": {
+                "basis_points": 123,
+                "fixed": 123
+              }
+            },
+            "card": {
+              "merchant_fee": {
+                "basis_points": 123,
+                "fixed": 123
+              },
+              "service_fee": {
+                "basis_points": 123,
+                "fixed": 123
+              }
+            },
+            "card_account_updater": 123,
+            "cash": 123,
+            "chargeback_fee": 123,
+            "credit_card": {
+              "merchant_fee": {
+                "basis_points": 123,
+                "fixed": 123
+              },
+              "service_fee": {
+                "basis_points": 123,
+                "fixed": 123
+              }
+            },
+            "debit_card": {
+              "merchant_fee": {
+                "basis_points": 123,
+                "fixed": 123
+              },
+              "service_fee": {
+                "basis_points": 123,
+                "fixed": 123
+              }
+            },
+            "discover": {
+              "merchant_fee": {
+                "basis_points": 123,
+                "fixed": 123
+              }
+            },
+            "interchange_plus": true,
+            "international_card_basis": 123,
+            "mastercard": {
+              "merchant_fee": {
+                "basis_points": 123,
+                "fixed": 123
+              }
+            },
+            "merchant_uid": "example",
+            "prepaid_card": {
+              "merchant_fee": {
+                "basis_points": 123,
+                "fixed": 123
+              },
+              "service_fee": {
+                "basis_points": 123,
+                "fixed": 123
+              }
+            },
+            "service_fee_enabled": true,
+            "visa": {
+              "merchant_fee": {
+                "basis_points": 123,
+                "fixed": 123
+              }
+            }
+          }
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "updateFeeMatrix": {
+                "merchant_uid": "example",
+                "card_account_updater": 123,
+                "ach_return_disputed_fee": 123,
+                "ach_return_fee": 123,
+                "cash": 123
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "operation": "updateMerchantSettings",
+    "operationType": "mutation",
+    "examples": [
+      {
+        "name": "Example updateMerchantSettings",
+        "description": "Updates merchant settings.",
+        "query": "mutation UpdateMerchantSettings($merchant_uid: ID!, $settings: MerchantSettingsInput!) {\n  updateMerchantSettings(merchant_uid: $merchant_uid, settings: $settings)\n}",
+        "variables": {
+          "merchant_uid": "id_123",
+          "settings": {
+            "contact_email": "user@example.com",
+            "contact_phone": "+15555555555",
+            "facebook": "https://example.com",
+            "instagram": "https://example.com",
+            "linkedin": "https://example.com",
+            "tiktok": "https://example.com",
+            "twitter": "https://example.com",
+            "website": "https://example.com"
+          }
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "updateMerchantSettings": true
+            }
+          }
+        }
+      }
+    ]
+  }
+]

@@ -1,0 +1,25 @@
+# GraphQL API
+
+This is the LLM-optimized documentation for the GraphQL API GraphQL API.
+
+## Docs
+
+- [API Overview](./llm-docs/index.md): Quick reference with all operation signatures - authorizations, createAuthorization, createWalletAuthorization, createCapture, createVoidForAuthorization, barcode, createBarcode, createBarcodePaymentSandbox, …
+- [Authorization](./llm-docs/authorization.md) - authorizations, createAuthorization, createWalletAuthorization, createCapture, createVoidForAuthorization
+- [Barcode](./llm-docs/barcode.md) - barcode, createBarcode, createBarcodePaymentSandbox
+- [Deprecated](./llm-docs/deprecated.md) - createOneTimePayment, createRefund, serviceFeeAmount
+- [Disputes](./llm-docs/disputes.md) - disputes
+- [Invoice](./llm-docs/invoice.md) - invoices, createInvoice, updateInvoice, deleteInvoice, createInvoiceEmail, createOfflineTransaction
+- [Merchant](./llm-docs/merchant.md) - merchant, merchants, createMerchant, updateFeeMatrix, updateMerchantSettings
+- [Metadata](./llm-docs/metadata.md) - updateMetadata, deleteMetadata
+- [Payment Links](./llm-docs/payment-links.md) - paymentLinks, createPaymentLink, updatePaymentLink
+- [Payment Method Token](./llm-docs/payment-method-token.md) - paymentMethodTokens, createPaymentMethod, updatePaymentMethodToDisabled, validatePaymentMethodOwnership
+- [Payor](./llm-docs/payor.md) - payors, createPayor, updatePayor
+- [Recurring Payment](./llm-docs/recurring-payment.md) - recurringPayments, createRecurringPayment, updateRecurringPayment, cancelRecurringPayment, missedRecurringPaymentData, createRetryForFailedRecurringPayment
+- [Sandbox](./llm-docs/sandbox.md) - createSandboxAchReturn, createSandboxDispute, createSandboxSettlement, prepareSandboxSettlementBatch, updateSandboxDisputeStatus
+- [Settlement](./llm-docs/settlement.md) - settlements, createBatchCapture, availableFundsBalance, fundingTransfers, instruction
+- [Settlements](./llm-docs/settlements.md) - cancelSettlementInstruction, createSettlementInstruction
+- [Split](./llm-docs/split.md) - splits
+- [Transaction](./llm-docs/transaction.md) - transactions, createTransaction, createWalletTransaction, createReversal, serviceFee, createReceiptEmail, updateTransactionInReview
+- [Users](./llm-docs/users.md) - users, createUser, deleteUser
+- [Webhooks](./llm-docs/webhooks.md) - createWebhook, webhooks, updateWebhook, deleteWebhook, webhookEvents

@@ -1,0 +1,284 @@
+[
+  {
+    "operation": "authorizations",
+    "operationType": "query",
+    "examples": [
+      {
+        "name": "Example authorizations",
+        "description": "This query will return a list of authorizations for a merchant.",
+        "query": "query Authorizations($query: SqlQuery, $limit: Int, $offset: String, $direction: MoveDirection, $offset_id: String) {\n  authorizations(query: $query, limit: $limit, offset: $offset, direction: $direction, offset_id: $offset_id) {\n  items {\n    authorization_id\n    authorization_date\n    account_code\n    amount\n    avs_status\n  }\n  total_row_count\n  }\n}",
+        "variables": {
+          "query": {
+            "query_list": [
+              {
+                "conjunctive_operator": "AND_NEXT"
+              }
+            ],
+            "sort_list": [
+              {
+                "direction": "ASC"
+              }
+            ]
+          },
+          "limit": 123,
+          "offset": "example",
+          "direction": "BACKWARD",
+          "offset_id": "example"
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "authorizations": {
+                "items": [
+                  {
+                    "authorization_id": "example",
+                    "authorization_date": "2025-01-01T00:00:00Z",
+                    "account_code": "example",
+                    "amount": 123,
+                    "avs_status": "example"
+                  }
+                ],
+                "total_row_count": 123
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "operation": "createAuthorization",
+    "operationType": "mutation",
+    "examples": [
+      {
+        "name": "Example createAuthorization",
+        "description": "This mutation will create a new authorization for a merchant.",
+        "query": "mutation CreateAuthorization($merchant_uid: String!, $sale_id: String, $amount: Int!, $payment_method_id: String, $payment_method: PaymentMethodInput, $invoice_id: String, $fee: Int, $fee_mode: FeeMode, $account_code: String, $reference: String, $metadata: AWSJSON, $health_expense_type: HealthExpenseType, $digital_wallet: DigitalWalletInput, $additional_purchase_data: AdditionalPurchaseDataInput, $one_time_use_token: Boolean) {\n  createAuthorization(merchant_uid: $merchant_uid, sale_id: $sale_id, amount: $amount, payment_method_id: $payment_method_id, payment_method: $payment_method, invoice_id: $invoice_id, fee: $fee, fee_mode: $fee_mode, account_code: $account_code, reference: $reference, metadata: $metadata, health_expense_type: $health_expense_type, digital_wallet: $digital_wallet, additional_purchase_data: $additional_purchase_data, one_time_use_token: $one_time_use_token) {\n  authorization_id\n  authorization_date\n  account_code\n  amount\n  avs_status\n  }\n}",
+        "variables": {
+          "merchant_uid": "example",
+          "sale_id": "example",
+          "amount": 123,
+          "payment_method_id": "example",
+          "payment_method": {
+            "ach": {
+              "account_number": "example",
+              "account_type": "BUSINESS_CHECKING",
+              "name_on_account": "example",
+              "routing_number": "example"
+            },
+            "canadian_eft": {
+              "account_number": "example",
+              "account_type": "BUSINESS_CHECKING",
+              "institution_number": "example",
+              "name_on_account": "example",
+              "transit_number": "example"
+            },
+            "card": {
+              "card_number": "example",
+              "exp_date": {
+                "month": "example",
+                "year": "example"
+              },
+              "postal_code": "example",
+              "security_code": "example"
+            },
+            "metadata": {
+              "key": "value"
+            },
+            "payor": {
+              "address_line1": "example"
+            },
+            "payor_id": "example"
+          },
+          "invoice_id": "example",
+          "fee": 123,
+          "fee_mode": "CUSTOM_FEE",
+          "account_code": "example",
+          "reference": "example",
+          "metadata": {
+            "key": "value"
+          },
+          "health_expense_type": "CLINICAL",
+          "digital_wallet": {
+            "address_line1": "example",
+            "dpan": "example",
+            "exp_date": "example",
+            "postal_code": "example",
+            "wallet_type": "APPLE_PAY"
+          },
+          "additional_purchase_data": {
+            "level3_data_line_item": [
+              {
+                "item_code": "example"
+              }
+            ],
+            "level3_data_summary": {
+              "dest_postal_code": "example"
+            }
+          },
+          "one_time_use_token": true
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "createAuthorization": {
+                "authorization_id": "example",
+                "authorization_date": "2025-01-01T00:00:00Z",
+                "account_code": "example",
+                "amount": 123,
+                "avs_status": "example"
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "operation": "createWalletAuthorization",
+    "operationType": "mutation",
+    "examples": [
+      {
+        "name": "Example createWalletAuthorization",
+        "description": "This call is used to create an authorization for a wallet payment via Apple Pay or Google Pay. It works in conjunction with our SDKs to allow you to create an authorization via our API.",
+        "query": "mutation CreateWalletAuthorization($app_id: String, $merchant_uid: String!, $sale_id: String, $wallet_type: WalletType, $digital_wallet_payload: String!, $amount: Int, $fee: Int, $billing_address: BillingAddressInput, $payor_id: String, $payor: PayorInput, $invoice_id: String, $account_code: String, $reference: String, $metadata: AWSJSON, $health_expense_type: HealthExpenseType, $additional_purchase_data: AdditionalPurchaseDataInput) {\n  createWalletAuthorization(app_id: $app_id, merchant_uid: $merchant_uid, sale_id: $sale_id, wallet_type: $wallet_type, digital_wallet_payload: $digital_wallet_payload, amount: $amount, fee: $fee, billing_address: $billing_address, payor_id: $payor_id, payor: $payor, invoice_id: $invoice_id, account_code: $account_code, reference: $reference, metadata: $metadata, health_expense_type: $health_expense_type, additional_purchase_data: $additional_purchase_data) {\n  authorization_id\n  authorization_date\n  account_code\n  amount\n  avs_status\n  }\n}",
+        "variables": {
+          "app_id": "example",
+          "merchant_uid": "example",
+          "sale_id": "example",
+          "wallet_type": "APPLE_PAY",
+          "digital_wallet_payload": "example",
+          "amount": 123,
+          "fee": 123,
+          "billing_address": {
+            "address_line1": "example",
+            "address_line2": "example",
+            "city": "example",
+            "country": "example",
+            "full_name": "example",
+            "postal_code": "example",
+            "region": "example"
+          },
+          "payor_id": "example",
+          "payor": {
+            "address_line1": "example",
+            "address_line2": "example",
+            "city": "example",
+            "country": "example",
+            "email": "example",
+            "full_name": "example",
+            "merchant_uid": "example",
+            "metadata": {
+              "key": "value"
+            },
+            "phone": "example",
+            "postal_code": "example",
+            "region": "example"
+          },
+          "invoice_id": "example",
+          "account_code": "example",
+          "reference": "example",
+          "metadata": {
+            "key": "value"
+          },
+          "health_expense_type": "CLINICAL",
+          "additional_purchase_data": {
+            "level3_data_line_item": [
+              {
+                "item_code": "example"
+              }
+            ],
+            "level3_data_summary": {
+              "dest_postal_code": "example"
+            }
+          }
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "createWalletAuthorization": {
+                "authorization_id": "example",
+                "authorization_date": "2025-01-01T00:00:00Z",
+                "account_code": "example",
+                "amount": 123,
+                "avs_status": "example"
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "operation": "createCapture",
+    "operationType": "mutation",
+    "examples": [
+      {
+        "name": "Example createCapture",
+        "description": "This mutation will capture an authorization for a merchant.",
+        "query": "mutation CreateCapture($merchant_uid: String!, $authorization_id: String!, $amount: Int!, $fee: Int, $send_receipt: Boolean, $receipt_description: String, $allow_reauth: Boolean, $allow_exceeded_amount: Boolean, $split: [SplitInput]) {\n  createCapture(merchant_uid: $merchant_uid, authorization_id: $authorization_id, amount: $amount, fee: $fee, send_receipt: $send_receipt, receipt_description: $receipt_description, allow_reauth: $allow_reauth, allow_exceeded_amount: $allow_exceeded_amount, split: $split) {\n  transaction_id\n  transaction_date\n  account_code\n  authorization_id\n  avs_status\n  }\n}",
+        "variables": {
+          "merchant_uid": "example",
+          "authorization_id": "example",
+          "amount": 123,
+          "fee": 123,
+          "send_receipt": true,
+          "receipt_description": "example",
+          "allow_reauth": true,
+          "allow_exceeded_amount": true,
+          "split": [
+            {
+              "amount": 123,
+              "merchant_uid": "id_123"
+            }
+          ]
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "createCapture": {
+                "transaction_id": "example",
+                "transaction_date": "2025-01-01T00:00:00Z",
+                "account_code": "example",
+                "authorization_id": "example",
+                "avs_status": "example"
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "operation": "createVoidForAuthorization",
+    "operationType": "mutation",
+    "examples": [
+      {
+        "name": "Example createVoidForAuthorization",
+        "description": "This will void an authorization that has not been captured. If the authorization has been captured, this call will fail. The Authorization will have a status of CANCELED.",
+        "query": "mutation CreateVoidForAuthorization($authorization_id: String!, $void_amount: Int) {\n  createVoidForAuthorization(authorization_id: $authorization_id, void_amount: $void_amount)\n}",
+        "variables": {
+          "authorization_id": "example",
+          "void_amount": 123
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "createVoidForAuthorization": true
+            }
+          }
+        }
+      }
+    ]
+  }
+]
