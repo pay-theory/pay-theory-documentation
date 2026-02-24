@@ -52,18 +52,15 @@ await messenger.processWalletTransaction(payload);
 
 ```javascript
 {
-  first_name: String;
-  last_name: String;
+  full_name: String;
   email: String;
   phone: String;
-  personal_address: {
-    line1: String;
-    line2: String;
-    city: String;
-    region: String;
-    postal_code: String;
-    country: String;
-  }
+  address_line1: String;
+  address_line2: String;
+  city: String;
+  region: String;
+  postal_code: String;
+  country: String;
 }
 ```
 
@@ -95,9 +92,15 @@ const payload = {
   digitalWalletPayload: paymentData, // From Apple Pay, Google Pay, etc.
   walletType: PayTheoryMessenger.applePay, // or 'APPLE_PAY'
   payor: {
-    first_name: 'John',
-    last_name: 'Doe',
-    email: 'john@example.com',
+    full_name: 'Jane Doe',
+    email: 'jane@example.com',
+    phone: '+15551234567',
+    address_line1: '123 Main St',
+    address_line2: 'Apt 4',
+    city: 'Austin',
+    region: 'TX',
+    postal_code: '78701',
+    country: 'USA',
   },
 };
 
