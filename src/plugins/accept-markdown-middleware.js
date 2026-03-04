@@ -1,12 +1,14 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 const fs = require('node:fs');
 const path = require('node:path');
 const evalSourceMapModule = require('@docusaurus/core/lib/commands/utils/legacy/evalSourceMapMiddleware');
-const evalSourceMapMiddleware = evalSourceMapModule.default || evalSourceMapModule;
+const evalSourceMapMiddleware =
+  evalSourceMapModule.default || evalSourceMapModule;
 
 const MARKDOWN_ACCEPT_TYPES = ['text/markdown', 'text/x-markdown'];
 
 const acceptsMarkdown = (acceptHeader = '') =>
-  MARKDOWN_ACCEPT_TYPES.some((contentType) => acceptHeader.includes(contentType));
+  MARKDOWN_ACCEPT_TYPES.some(contentType => acceptHeader.includes(contentType));
 
 const resolveGroupSlug = (requestPath = '') => {
   const pathname = requestPath.split('?')[0].split('#')[0];
@@ -24,7 +26,7 @@ const resolveGroupSlug = (requestPath = '') => {
   return segments[apiIndex + 1] ?? 'index';
 };
 
-const sanitizeSlug = (value) => value.toLowerCase().replace(/[^a-z0-9-]/g, '');
+const sanitizeSlug = value => value.toLowerCase().replace(/[^a-z0-9-]/g, '');
 
 module.exports = function acceptMarkdownMiddlewarePlugin() {
   return {
@@ -44,7 +46,8 @@ module.exports = function acceptMarkdownMiddlewarePlugin() {
                   return;
                 }
 
-                const acceptHeader = `${req.headers?.accept || ''}`.toLowerCase();
+                const acceptHeader =
+                  `${req.headers?.accept || ''}`.toLowerCase();
                 if (!acceptsMarkdown(acceptHeader)) {
                   next();
                   return;
@@ -56,14 +59,20 @@ module.exports = function acceptMarkdownMiddlewarePlugin() {
                   return;
                 }
 
-                const llmDocsDir = path.join(process.cwd(), 'static', 'llm-docs');
+                const llmDocsDir = path.join(
+                  process.cwd(),
+                  'static',
+                  'llm-docs',
+                );
                 const normalizedSlug = sanitizeSlug(groupSlug);
                 const groupPath =
                   normalizedSlug.length > 0
                     ? path.join(llmDocsDir, `${normalizedSlug}.md`)
                     : path.join(llmDocsDir, 'index.md');
                 const fallbackPath = path.join(llmDocsDir, 'index.md');
-                const targetPath = fs.existsSync(groupPath) ? groupPath : fallbackPath;
+                const targetPath = fs.existsSync(groupPath)
+                  ? groupPath
+                  : fallbackPath;
 
                 if (!fs.existsSync(targetPath)) {
                   next();

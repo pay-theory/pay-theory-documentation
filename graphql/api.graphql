@@ -351,7 +351,7 @@ type Authorization @aws_lambda @aws_iam @aws_cognito_user_pools {
   "The Pay Theory unique identifier assigned to the authorization."
   authorization_id: String!
   "The AVS status of the authorization."
-  avs_status: String
+  avs_status: AvsStatus
   "The amount of the authorization that has been captured in cents."
   captured_amount: Int
   "The currency of the authorization. Currently only USD is supported."
@@ -416,6 +416,20 @@ type AvailableFundsBalance @aws_lambda @aws_iam @aws_cognito_user_pools {
   instruction_window_status: WindowStatus!
   "Whether the latest instructional hold balance update has been applied."
   instructional_hold_balance_updated: Boolean!
+}
+
+"Possible values for AVS status."
+enum AvsStatus {
+  "Address and postal code do not match."
+  NO_MATCH
+  "Both address and postal code match."
+  POSTAL_CODE_AND_STREET_MATCH
+  "Postal code matches, address does not."
+  POSTAL_CODE_MATCH
+  "Address matches, postal code does not."
+  STREET_MATCH
+  "Status is unknown or unavailable."
+  UNKNOWN
 }
 
 "Possible values for bank account type."
@@ -2023,12 +2037,12 @@ type Mutation @aws_lambda @aws_iam @aws_cognito_user_pools {
   cancelRecurringPayment(
     "The recurring_id of the recurring payment to be cancelled."
     recurring_id: String!
-  ): Boolean @docGroup(name: "Recurring Payment") @docPriority(level: 4)
+  ): Boolean @docGroup(name: "Recurring Payment", sidebarTitle: "Cancel Recurring Payment") @docPriority(level: 4)
   "Cancels settlement instruction."
   cancelSettlementInstruction(
     "Pay Theory unique identifier for the merchant."
     merchant_uid: ID!
-  ): Instruction @docGroup(name: "Settlements")
+  ): Instruction @docGroup(name: "Settlement", sidebarTitle: "Cancel Settlement Instruction")
   "This mutation will create a new authorization for a merchant."
   createAuthorization(
     "The Pay Theory unique identifier assigned to the merchant that the authorization belongs to."
@@ -2060,24 +2074,24 @@ type Mutation @aws_lambda @aws_iam @aws_cognito_user_pools {
     additional_purchase_data: AdditionalPurchaseDataInput
     "If the payment method token should be used for a single transaction. Defaults to false. If set to true the is_active flag on the payment method will be set to false after the authorization."
     one_time_use_token: Boolean
-  ): Authorization! @docGroup(name: "Authorization") @docPriority(level: 2)
+  ): Authorization! @docGroup(name: "Authorization", sidebarTitle: "Create Authorization") @docPriority(level: 2)
   "This mutation will create a barcode for a payor to use to make a cash payment."
   createBarcode(
     "This object contains all the information needed to create a barcode."
     input: BarcodeInput!
-  ): Barcode! @docGroup(name: "Barcode") @docPriority(level: 2)
+  ): Barcode! @docGroup(name: "Barcode", sidebarTitle: "Create Barcode") @docPriority(level: 2)
   "Sandbox Only This mutation will only work in sandbox environments. It is used to simulate barcode payments for testing purposes."
   createBarcodePaymentSandbox(
     "The unique identifier of the barcode to process payment for."
     barcode_id: String!
     "The amount to process for the payment in cents."
     amount_to_pay: Int!
-  ): BarcodePaymentResponse! @docGroup(name: "Barcode") @docPriority(level: 3)
+  ): BarcodePaymentResponse! @docGroup(name: "Sandbox", sidebarTitle: "Create Sandbox Barcode Payment") @docPriority(level: 3)
   "This mutation will capture all PENDING transactions for a merchant in a batch and shortly after create a settlement for the merchant."
   createBatchCapture(
     "The Pay Theory unique identifier assigned to the merchant to batch for."
     merchant_uid: String!
-  ): Boolean @docGroup(name: "Settlement") @docPriority(level: 2)
+  ): Boolean @docGroup(name: "Sandbox", sidebarTitle: "Create Batch Capture") @docPriority(level: 99)
   " This mutation will capture an authorization for a merchant."
   createCapture(
     "The Pay Theory unique identifier assigned to the merchant that the authorization belongs to."
@@ -2098,17 +2112,17 @@ type Mutation @aws_lambda @aws_iam @aws_cognito_user_pools {
     allow_exceeded_amount: Boolean
     "An array of split objects to distribute the transaction amount to different accounts. The sum of all split amounts must equal the transaction amount."
     split: [SplitInput]
-  ): Transaction! @docGroup(name: "Authorization") @docPriority(level: 4)
+  ): Transaction! @docGroup(name: "Authorization", sidebarTitle: "Create Capture") @docPriority(level: 4)
   "Creates an invoice."
   createInvoice(
     "The input object that contains all the information needed to create an invoice."
     input: InvoiceInput!
-  ): Invoice @docGroup(name: "Invoice") @docPriority(level: 2)
+  ): Invoice @docGroup(name: "Invoice", sidebarTitle: "Create Invoice") @docPriority(level: 2)
   "This call is used to resend Invoice emails for a specific invoice."
   createInvoiceEmail(
     "The Pay Theory unique identifier for the invoice to send an email for."
     invoice_id: String!
-  ): Boolean @docGroup(name: "Invoice") @docPriority(level: 5)
+  ): Boolean @docGroup(name: "Invoice", sidebarTitle: "Create Invoice Email") @docPriority(level: 5)
   "Creates merchant."
   createMerchant(
     "The name of the merchant to create."
@@ -2119,7 +2133,7 @@ type Mutation @aws_lambda @aws_iam @aws_cognito_user_pools {
     user: MerchantUserInput
     "The metadata that will be set on the Merchant."
     metadata: AWSJSON
-  ): ListMerchant @docGroup(name: "Merchant") @docPriority(level: 3)
+  ): ListMerchant @docGroup(name: "Merchant", sidebarTitle: "Create Merchant") @docPriority(level: 3)
   "Creates merchant onboarding."
   createMerchantOnboarding(
     "The merchant onboarding."
@@ -2137,7 +2151,7 @@ type Mutation @aws_lambda @aws_iam @aws_cognito_user_pools {
   createOfflineTransaction(
     "The input object that contains all of the information needed to create an offline transaction."
     input: OfflineTransactionInput!
-  ): OfflineTransaction @docGroup(name: "Invoice") @docPriority(level: 6)
+  ): OfflineTransaction @docGroup(name: "Invoice", sidebarTitle: "Create Offline Transaction") @docPriority(level: 6)
   "This call was deprecated in favor of the createTransaction mutation. The createTransaction mutation returns a more detailed response than this call."
   createOneTimePayment(
     "The Pay Theory unique identifier for the merchant the transaction is for."
@@ -2171,12 +2185,12 @@ type Mutation @aws_lambda @aws_iam @aws_cognito_user_pools {
     health_expense_type: HealthExpenseType
     "The additional purchase data."
     additional_purchase_data: AdditionalPurchaseDataInput
-  ): OneTimePayment @deprecated(reason: "Use createTransaction instead.") @docGroup(name: "Deprecated") @docPriority(level: 1)
+  ): OneTimePayment @deprecated(reason: "Use createTransaction instead.") @docGroup(name: "Deprecated", sidebarTitle: "Create One Time Payment") @docPriority(level: 1)
   "Creates payment link."
   createPaymentLink(
     "This object contains all the details needed to create a payment link."
     input: PaymentLinkInput!
-  ): PaymentLink @docGroup(name: "Payment Links") @docPriority(level: 2)
+  ): PaymentLink @docGroup(name: "Payment Links", sidebarTitle: "Create Payment Link") @docPriority(level: 2)
   "This mutation will create a payment method token for a payor. The payment method token can be used to create a payment method for a merchant."
   createPaymentMethod(
     "The payment method input object. Refer to the PaymentMethodInput docs for more info."
@@ -2185,12 +2199,12 @@ type Mutation @aws_lambda @aws_iam @aws_cognito_user_pools {
     merchant_uid: String!
     "A boolean flag indicating whether to skip the validation of the payment method. Defaults to false if not passed in."
     skip_validation: Boolean
-  ): PaymentMethodToken @docGroup(name: "Payment Method Token") @docPriority(level: 2)
+  ): PaymentMethodToken @docGroup(name: "Payment Method Token", sidebarTitle: "Create Payment Method") @docPriority(level: 2)
   "Creates payor."
   createPayor(
     "The input object that contains the payor information to create a new payor. Detailed information about the input object can be found here."
     input: PayorInput!
-  ): Payor @docGroup(name: "Payor") @docPriority(level: 2)
+  ): Payor @docGroup(name: "Payor", sidebarTitle: "Create Payor") @docPriority(level: 2)
   "This call will send a receipt for a transaction to the email address on file with the payor or an email passed in."
   createReceiptEmail(
     "The Pay Theory unique identifier for the transaction to send the receipt for."
@@ -2199,12 +2213,12 @@ type Mutation @aws_lambda @aws_iam @aws_cognito_user_pools {
     receipt_description: String
     "The email address to send the receipt to. If not provided the email address on file with the payor will be used."
     email: AWSEmail
-  ): Boolean @docGroup(name: "Transaction") @docPriority(level: 6)
+  ): Boolean @docGroup(name: "Transaction", sidebarTitle: "Create Receipt Email") @docPriority(level: 6)
   "Creates recurring payment."
   createRecurringPayment(
     "The input object that contains the details to create a new recurring payment."
     input: RecurringPaymentInput!
-  ): RecurringPayment @docGroup(name: "Recurring Payment") @docPriority(level: 2)
+  ): RecurringPayment @docGroup(name: "Recurring Payment", sidebarTitle: "Create Recurring Payment") @docPriority(level: 2)
   "This call will create a refund for a transaction."
   createRefund(
     "The Pay Theory unique identifier for the transaction to refund."
@@ -2215,12 +2229,12 @@ type Mutation @aws_lambda @aws_iam @aws_cognito_user_pools {
     refund_reason: RefundReasonInput!
     "The email address to send the refund receipt to. If not provided an email will not be sent out."
     refund_email: String
-  ): Boolean @deprecated(reason: "Use createReversal instead.") @docGroup(name: "Deprecated") @docPriority(level: 2)
+  ): Boolean @deprecated(reason: "Use createReversal instead.") @docGroup(name: "Deprecated", sidebarTitle: "Create Refund") @docPriority(level: 2)
   "This call will allow you to retry a payment for a recurring payment that is in a Failed state. This should be used when the state is INSTRUMENT_FAILURE and the issue with the payment method has been addressed. EX: Payment failed for insufficient funds on the card, but the customer has since made a payment on the balance to resolve the issue."
   createRetryForFailedRecurringPayment(
     "The recurring_id of the recurring payment to be retried."
     recurring_id: String!
-  ): Boolean @docGroup(name: "Recurring Payment") @docPriority(level: 6)
+  ): Boolean @docGroup(name: "Recurring Payment", sidebarTitle: "Create Retry For Failed Recurring Payment") @docPriority(level: 6)
   "This call will create a refund or a void for a transaction."
   createReversal(
     "The Pay Theory unique identifier for the transaction to refund."
@@ -2231,27 +2245,27 @@ type Mutation @aws_lambda @aws_iam @aws_cognito_user_pools {
     refund_reason: RefundReasonInput!
     "The email address to send the refund receipt to. If not provided an email will not be sent out."
     refund_email: String
-  ): ReversalResponse! @docGroup(name: "Transaction") @docPriority(level: 4)
+  ): ReversalResponse! @docGroup(name: "Transaction", sidebarTitle: "Create Reversal") @docPriority(level: 4)
   "Use this mutation to create an ACH return for a completed ACH transaction."
   createSandboxAchReturn(
     "The ACH return request details."
     input: CreateSandboxAchReturnInput!
-  ): SandboxAchReturnResult! @docGroup(name: "Sandbox")
+  ): SandboxAchReturnResult! @docGroup(name: "Sandbox", sidebarTitle: "Create Sandbox Ach Return")
   "Use this mutation to create a dispute for a card transaction."
   createSandboxDispute(
     "The dispute creation details."
     input: CreateSandboxDisputeInput!
-  ): SandboxDisputeResult! @docGroup(name: "Sandbox")
+  ): SandboxDisputeResult! @docGroup(name: "Sandbox", sidebarTitle: "Create Sandbox Dispute")
   "Create a settlement from a prepared sandbox batch."
   createSandboxSettlement(
     "The settlement creation details."
     input: CreateSandboxSettlementInput!
-  ): SandboxSettlementResult! @docGroup(name: "Sandbox")
+  ): SandboxSettlementResult! @docGroup(name: "Sandbox", sidebarTitle: "Create Sandbox Settlement")
   "This mutation creates an instructional funding request for a merchant."
   createSettlementInstruction(
     "The instruction details to create."
     input: CreateSettlementInstructionInput!
-  ): CreateSettlementInstructionResponse @docGroup(name: "Settlements")
+  ): CreateSettlementInstructionResponse @docGroup(name: "Settlement", sidebarTitle: "Create Settlement Instruction")
   "Creates transaction."
   createTransaction(
     "The Pay Theory unique identifier for the merchant the transaction is for."
@@ -2290,12 +2304,12 @@ type Mutation @aws_lambda @aws_iam @aws_cognito_user_pools {
     one_time_use_token: Boolean
     "An array of split objects to distribute the transaction amount to different accounts. The sum of all split amounts must equal less than or equal to the amount of the transaction."
     split: [SplitInput]
-  ): Transaction! @docGroup(name: "Transaction") @docPriority(level: 2)
+  ): Transaction! @docGroup(name: "Transaction", sidebarTitle: "Create Transaction") @docPriority(level: 2)
   "Creates user."
   createUser(
     "Input payload."
     input: UserInput!
-  ): User @docGroup(name: "Users") @docPriority(level: 2)
+  ): User @docGroup(name: "Users", sidebarTitle: "Create User") @docPriority(level: 2)
   "Creates user password reset."
   createUserPasswordReset(
     "The username."
@@ -2313,7 +2327,7 @@ type Mutation @aws_lambda @aws_iam @aws_cognito_user_pools {
     "The Pay Theory unique identifier assigned to the authorization that you are looking to void."
     authorization_id: String!
     void_amount: Int @deprecated(reason: "Only full voids are supported.")
-  ): Boolean @docGroup(name: "Authorization") @docPriority(level: 5)
+  ): Boolean @docGroup(name: "Authorization", sidebarTitle: "Create Void For Authorization") @docPriority(level: 5)
   "Creates void for refund."
   createVoidForRefund(
     "Pay Theory unique identifier for the transaction."
@@ -2353,7 +2367,7 @@ type Mutation @aws_lambda @aws_iam @aws_cognito_user_pools {
     health_expense_type: HealthExpenseType
     "Additional purchase data for Level 3 processing requirements."
     additional_purchase_data: AdditionalPurchaseDataInput
-  ): Authorization! @docGroup(name: "Authorization") @docPriority(level: 3)
+  ): Authorization! @docGroup(name: "Authorization", sidebarTitle: "Create Wallet Authorization") @docPriority(level: 3)
   "This call is used to create a transaction for a wallet payment via Apple Pay or Google Pay. It works in conjunction with our SDKs to allow you to create a transaction via our API."
   createWalletTransaction(
     "The Pay Theory unique identifier for the application."
@@ -2394,19 +2408,19 @@ type Mutation @aws_lambda @aws_iam @aws_cognito_user_pools {
     additional_purchase_data: AdditionalPurchaseDataInput
     "An array of split objects to distribute the transaction amount to different accounts. The sum of all split amounts must equal the transaction amount."
     split: [SplitInput]
-  ): Transaction! @docGroup(name: "Transaction") @docPriority(level: 3)
+  ): Transaction! @docGroup(name: "Transaction", sidebarTitle: "Create Wallet Transaction") @docPriority(level: 3)
   "To create a webhook, you need to provide the endpoint and a name for the webhook using the following mutation:"
   createWebhook(
     "The URL the event will be sent to."
     endpoint: String!
     "The name you want to give the webhook for reference."
     name: String!
-  ): Boolean! @docGroup(name: "Webhooks") @docPriority(level: 1)
+  ): Boolean! @docGroup(name: "Webhooks", sidebarTitle: "Create Webhook") @docPriority(level: 1)
   "Deletes an invoice."
   deleteInvoice(
     "The Pay Theory unique identifier for the invoice to delete."
     invoice_id: String!
-  ): Boolean @docGroup(name: "Invoice") @docPriority(level: 4)
+  ): Boolean @docGroup(name: "Invoice", sidebarTitle: "Delete Invoice") @docPriority(level: 4)
   "Deletes metadata for an item."
   deleteMetadata(
     "The id of the item you want to delete metadata for."
@@ -2417,14 +2431,14 @@ type Mutation @aws_lambda @aws_iam @aws_cognito_user_pools {
     merchant_uid: String!
     "The keys of the metadata you want to delete."
     metadata_keys: [String]!
-  ): Boolean @docGroup(name: "Metadata") @docPriority(level: 2)
+  ): Boolean @docGroup(name: "Metadata", sidebarTitle: "Delete Metadata") @docPriority(level: 2)
   "Deletes user."
   deleteUser(
     "The cognito username id of the user to delete."
     username: String!
     "The user pool to delete the user from. One of the following: MERCHANT, SYSTEM, PARTNER."
     user_pool: UserPool!
-  ): Boolean @docGroup(name: "Users") @docPriority(level: 3)
+  ): Boolean @docGroup(name: "Users", sidebarTitle: "Delete User") @docPriority(level: 3)
   "Deletes user v2."
   deleteUserV2(
     "Unique identifier for the user."
@@ -2438,12 +2452,12 @@ type Mutation @aws_lambda @aws_iam @aws_cognito_user_pools {
   deleteWebhook(
     "The URL of the webhook you want to delete."
     endpoint: String!
-  ): Boolean! @docGroup(name: "Webhooks") @docPriority(level: 4)
+  ): Boolean! @docGroup(name: "Webhooks", sidebarTitle: "Delete Webhook") @docPriority(level: 4)
   "Prepare a settlement batch to lock in line items and calculate totals for a merchant."
   prepareSandboxSettlementBatch(
     "The batch prep details."
     input: PrepareSandboxSettlementBatchInput!
-  ): SandboxSettlementBatchPrepResult! @docGroup(name: "Sandbox")
+  ): SandboxSettlementBatchPrepResult! @docGroup(name: "Sandbox", sidebarTitle: "Prepare Sandbox Settlement Batch")
   "Updates device."
   updateDevice(
     "Pay Theory unique identifier for the merchant."
@@ -2457,21 +2471,21 @@ type Mutation @aws_lambda @aws_iam @aws_cognito_user_pools {
   updateFeeMatrix(
     "The new fee matrix that will be used to calculate the fees for the merchant."
     fee_matrix: FeeMatrixInput!
-  ): FeeMatrix @docGroup(name: "Merchant") @docPriority(level: 4)
+  ): FeeMatrix @docGroup(name: "Merchant", sidebarTitle: "Update Fee Matrix") @docPriority(level: 4)
   "Updates an invoice."
   updateInvoice(
     "The Pay Theory unique identifier for the invoice to update."
     invoice_id: String!
     "The input object that contains all of the information needed to update an invoice."
     invoice_update_input: InvoiceUpdateInput!
-  ): Boolean @docGroup(name: "Invoice") @docPriority(level: 3)
+  ): Boolean @docGroup(name: "Invoice", sidebarTitle: "Update Invoice") @docPriority(level: 3)
   "Updates merchant settings."
   updateMerchantSettings(
     "The unique identifier of the merchant whose settings are being updated."
     merchant_uid: ID!
     "The new settings for the merchant."
     settings: MerchantSettingsInput!
-  ): Boolean @docGroup(name: "Merchant") @docPriority(level: 5)
+  ): Boolean @docGroup(name: "Merchant", sidebarTitle: "Update Merchant Settings") @docPriority(level: 5)
   "Updates metadata for an item."
   updateMetadata(
     "The id of the item you want to update metadata for."
@@ -2482,43 +2496,43 @@ type Mutation @aws_lambda @aws_iam @aws_cognito_user_pools {
     merchant_uid: String!
     "The metadata you want to update the item with. Any keys passed in will overwrite the existing metadata."
     metadata: AWSJSON!
-  ): Boolean @docGroup(name: "Metadata") @docPriority(level: 1)
+  ): Boolean @docGroup(name: "Metadata", sidebarTitle: "Update Metadata") @docPriority(level: 1)
   "Updates payment link."
   updatePaymentLink(
     "This object contains all the details needed to update a payment link."
     input: UpdatePaymentLinkInput!
-  ): PaymentLink @docGroup(name: "Payment Links") @docPriority(level: 3)
+  ): PaymentLink @docGroup(name: "Payment Links", sidebarTitle: "Update Payment Link") @docPriority(level: 3)
   "This mutation can be used to disable a payment method token. This will prevent the payment method token from being used to create a payment. Once a payment method token is disabled, it cannot be re-enabled."
   updatePaymentMethodToDisabled(
     "The Pay Theory unique identifier assigned to the merchant that the payment_method_token belongs to."
     merchant_uid: ID!
     "The unique payment method id."
     payment_method_id: String!
-  ): Boolean! @docGroup(name: "Payment Method Token") @docPriority(level: 3)
+  ): Boolean! @docGroup(name: "Payment Method Token", sidebarTitle: "Update Payment Method To Disabled") @docPriority(level: 3)
   "Updates payor."
   updatePayor(
     "Pay Theory unique identifier for the payor."
     payor_id: String!
     "The payor data."
     payor_data: PayorData!
-  ): Boolean @docGroup(name: "Payor")
+  ): Boolean @docGroup(name: "Payor", sidebarTitle: "Update Payor")
   "Updates recurring payment."
   updateRecurringPayment(
     "The input object that contains the details to update the recurring payment."
     input: UpdateRecurringPaymentInput!
-  ): RecurringPayment @docGroup(name: "Recurring Payment") @docPriority(level: 3)
+  ): RecurringPayment @docGroup(name: "Recurring Payment", sidebarTitle: "Update Recurring Payment") @docPriority(level: 3)
   "Use this mutation to move a dispute through its lifecycle."
   updateSandboxDisputeStatus(
     "The dispute status update details."
     input: UpdateSandboxDisputeStatusInput!
-  ): SandboxDisputeUpdateResult! @docGroup(name: "Sandbox")
+  ): SandboxDisputeUpdateResult! @docGroup(name: "Sandbox", sidebarTitle: "Update Sandbox Dispute Status")
   "This call can be used by a partner to approve or decline a transcation that is in review for reason POTEENTIAL_DUPLICATE."
   updateTransactionInReview(
     "The Pay Theory unique identifier for the transaction to accept or reject."
     transaction_id: String!
     "The action to take on the transaction. Options are: ACCEPT or REJECT."
     action: TransactionReviewAction!
-  ): Boolean @docGroup(name: "Transaction") @docPriority(level: 7)
+  ): Boolean @docGroup(name: "Transaction", sidebarTitle: "Update Transaction In Review") @docPriority(level: 7)
   "Updates user v2."
   updateUserV2(
     "Unique identifier for the user."
@@ -2536,7 +2550,7 @@ type Mutation @aws_lambda @aws_iam @aws_cognito_user_pools {
     name: String
     "Whether the webhook should be active or not"
     is_active: Boolean
-  ): Boolean! @docGroup(name: "Webhooks") @docPriority(level: 3)
+  ): Boolean! @docGroup(name: "Webhooks", sidebarTitle: "Update Webhook") @docPriority(level: 3)
 }
 
 "Offline transaction object."
@@ -2954,19 +2968,19 @@ type Query @aws_lambda @aws_iam @aws_cognito_user_pools {
     direction: MoveDirection
     "The authorization_id of the offset item. If the direction is FORWARD, the offset item is the last item in the list. If the direction is BACKWARD, the offset is the first item in the list."
     offset_id: String
-  ): Authorizations @docGroup(name: "Authorization") @docPriority(level: 1)
+  ): Authorizations @docGroup(name: "Authorization", sidebarTitle: "List Authorizations") @docPriority(level: 1)
   "This query returns the instructional hold and reserve balances for a merchant, along with the instruction window status."
   availableFundsBalance(
     "The Pay Theory unique identifier assigned to the merchant."
     merchant_uid: ID!
-  ): [AvailableFundsBalance] @docGroup(name: "Settlement")
+  ): [AvailableFundsBalance] @docGroup(name: "Settlement", sidebarTitle: "List Available Funds Balances")
   "This can be used to call back a single barcode."
   barcode(
     "The Pay Theory unique identifier assigned to the merchant."
     merchant_uid: ID!
     "The unique barcode identifier."
     barcode_id: String!
-  ): Barcode @docGroup(name: "Barcode") @docPriority(level: 1)
+  ): Barcode @docGroup(name: "Barcode", sidebarTitle: "Get Barcode") @docPriority(level: 1)
   "Returns devices."
   devices(
     "Query filter."
@@ -2992,7 +3006,7 @@ type Query @aws_lambda @aws_iam @aws_cognito_user_pools {
     direction: MoveDirection
     "The dispute_id of the offset item."
     offset_id: String
-  ): Disputes @docGroup(name: "Disputes") @docPriority(level: 1)
+  ): Disputes @docGroup(name: "Disputes", sidebarTitle: "List Disputes") @docPriority(level: 1)
   "Returns error text."
   errorText(
     "The language code."
@@ -3006,14 +3020,14 @@ type Query @aws_lambda @aws_iam @aws_cognito_user_pools {
     merchant_uid: ID!
     "The settlement batch number to fetch funding transfers for."
     settlement_batch: Int!
-  ): FundingTransfers @docGroup(name: "Settlement")
+  ): FundingTransfers @docGroup(name: "Settlement", sidebarTitle: "List Funding Transfers")
   "Returns instruction."
   instruction(
     "The Pay Theory unique identifier assigned to the merchant."
     merchant_uid: ID!
     "The instruction date in YYYY-MM-DD format (UTC)."
     date: AWSDate!
-  ): [Instruction] @docGroup(name: "Settlement")
+  ): [Instruction] @docGroup(name: "Settlement", sidebarTitle: "List Instructions")
   "Returns invoices."
   invoices(
     "The query to filter the invoices with based on Pay Theory defined data."
@@ -3026,7 +3040,7 @@ type Query @aws_lambda @aws_iam @aws_cognito_user_pools {
     direction: MoveDirection
     "The invoice_id of the offset item."
     offset_id: String
-  ): Invoices @docGroup(name: "Invoice") @docPriority(level: 1)
+  ): Invoices @docGroup(name: "Invoice", sidebarTitle: "List Invoices") @docPriority(level: 1)
   "Returns jwks."
   jwks: JWKS @docIgnore
   "Returns merchant."
@@ -3035,7 +3049,7 @@ type Query @aws_lambda @aws_iam @aws_cognito_user_pools {
     merchant_uid: String
     "The name of the merchant to query."
     merchant_name: String
-  ): Merchant @docGroup(name: "Merchant") @docPriority(level: 1)
+  ): Merchant @docGroup(name: "Merchant", sidebarTitle: "Get Merchant") @docPriority(level: 1)
   "Returns merchant onboarding."
   merchantOnboarding(
     "Pay Theory unique identifier for the merchant."
@@ -3053,12 +3067,12 @@ type Query @aws_lambda @aws_iam @aws_cognito_user_pools {
     direction: MoveDirection
     "The merchant_uid of the offset item."
     offset_id: String
-  ): Merchants @docGroup(name: "Merchant") @docPriority(level: 2)
+  ): Merchants @docGroup(name: "Merchant", sidebarTitle: "List Merchants") @docPriority(level: 2)
   "This call will return details you need to display the proper amount to the customer to catch up on missed payments for a recurring payment."
   missedRecurringPaymentData(
     "The recurring_id of the recurring payment to get missed payment data for."
     recurring_id: String!
-  ): MissedRecurringPaymentData @docGroup(name: "Recurring Payment") @docPriority(level: 5)
+  ): MissedRecurringPaymentData @docGroup(name: "Recurring Payment", sidebarTitle: "Get Missed Recurring Payment Data") @docPriority(level: 5)
   "Returns payment links."
   paymentLinks(
     "The query to filter the payment links with based on Pay Theory defined data. Detailed information about the query object can be found here"
@@ -3071,7 +3085,7 @@ type Query @aws_lambda @aws_iam @aws_cognito_user_pools {
     direction: MoveDirection
     "The link_id of the offset item."
     offset_id: String
-  ): PaymentLinks @docGroup(name: "Payment Links") @docPriority(level: 1)
+  ): PaymentLinks @docGroup(name: "Payment Links", sidebarTitle: "List Payment Links") @docPriority(level: 1)
   "Returns payment method tokens."
   paymentMethodTokens(
     "The query to filter the payment_method_tokens with based on Pay Theory defined data. Detailed information about the query object can be found here."
@@ -3084,7 +3098,7 @@ type Query @aws_lambda @aws_iam @aws_cognito_user_pools {
     direction: MoveDirection
     "The payment_method_id of the offset item."
     offset_id: String
-  ): PaymentMethodTokens @docGroup(name: "Payment Method Token") @docPriority(level: 1)
+  ): PaymentMethodTokens @docGroup(name: "Payment Method Token", sidebarTitle: "List Payment Method Tokens") @docPriority(level: 1)
   "Returns payors."
   payors(
     "The query to filter the payors with based on Pay Theory defined data. Detailed information about the query object can be found here."
@@ -3097,7 +3111,7 @@ type Query @aws_lambda @aws_iam @aws_cognito_user_pools {
     direction: MoveDirection
     "The payor_id of the offset item."
     offset_id: String
-  ): Payors @docGroup(name: "Payor") @docPriority(level: 1)
+  ): Payors @docGroup(name: "Payor", sidebarTitle: "List Payors") @docPriority(level: 1)
   "Returns recurring payments."
   recurringPayments(
     "The query to filter the recurring payments with based on Pay Theory defined data. Detailed information about the query object can be found here."
@@ -3110,7 +3124,7 @@ type Query @aws_lambda @aws_iam @aws_cognito_user_pools {
     direction: MoveDirection
     "The recurring_id of the offset item."
     offset_id: String
-  ): RecurringPayments @docGroup(name: "Recurring Payment") @docPriority(level: 1)
+  ): RecurringPayments @docGroup(name: "Recurring Payment", sidebarTitle: "List Recurring Payments") @docPriority(level: 1)
   "This call will allow you to calculate what the fee amount should be if using SERVICE_FEE for a transaction."
   serviceFee(
     "The Pay Theory unique identifier for the merchant the transaction is for."
@@ -3124,14 +3138,14 @@ type Query @aws_lambda @aws_iam @aws_cognito_user_pools {
     is_ach: Boolean
     "The Pay Theory unique identifier for a tokenized payment method to calculate fees for."
     payment_method_id: String
-  ): ServiceFeeCalculation! @docGroup(name: "Transaction") @docPriority(level: 5)
+  ): ServiceFeeCalculation! @docGroup(name: "Transaction", sidebarTitle: "Calculate Service Fee") @docPriority(level: 5)
   "This call was deprecated in favor of the serviceFee query. The serviceFee query returns a single fee object that contains the fee, total, and adjusted total for the transaction based on the amount and payment method details passed in."
   serviceFeeAmount(
     "The Pay Theory unique identifier for the merchant the transaction is for."
     merchant_uid: String!
     "The amount of the transaction."
     amount: Int!
-  ): ServiceFeeAmount @deprecated(reason: "Use serviceFee instead.") @docGroup(name: "Deprecated") @docPriority(level: 3)
+  ): ServiceFeeAmount @deprecated(reason: "Use serviceFee instead.") @docGroup(name: "Deprecated", sidebarTitle: "Calculate Service Fee Amount") @docPriority(level: 3)
   "Returns settlements."
   settlements(
     "The query to filter the settlements with based on Pay Theory defined data."
@@ -3144,7 +3158,7 @@ type Query @aws_lambda @aws_iam @aws_cognito_user_pools {
     direction: MoveDirection
     "The settlement_batch of the offset item."
     offset_id: String
-  ): Settlements @docGroup(name: "Settlement") @docPriority(level: 1)
+  ): Settlements @docGroup(name: "Settlement", sidebarTitle: "List Settlements") @docPriority(level: 1)
   "Returns splits."
   splits(
     "The query to filter the splits with based on Pay Theory defined data. Detailed information about the query object can be found here."
@@ -3157,7 +3171,7 @@ type Query @aws_lambda @aws_iam @aws_cognito_user_pools {
     direction: MoveDirection
     "The id of the offset item."
     offset_id: String
-  ): Splits @docGroup(name: "Split") @docPriority(level: 1)
+  ): Splits @docGroup(name: "Split", sidebarTitle: "List Splits") @docPriority(level: 1)
   "Returns transactions."
   transactions(
     "The query to filter the transactions with based on Pay Theory defined data. Detailed information about the query object can be found here."
@@ -3170,14 +3184,14 @@ type Query @aws_lambda @aws_iam @aws_cognito_user_pools {
     direction: MoveDirection
     "The transaction_id of the offset item."
     offset_id: String
-  ): Transactions @docGroup(name: "Transaction") @docPriority(level: 1)
+  ): Transactions @docGroup(name: "Transaction", sidebarTitle: "List Transactions") @docPriority(level: 1)
   "Returns users."
   users(
     "The user pool to query. One of the following: MERCHANT, SYSTEM, PARTNER."
     user_pool: UserPool!
     "The merchant uid to query users for. Only used when querying users in the Merchant and System Portal."
     merchant_uid: String
-  ): [User] @docGroup(name: "Users") @docPriority(level: 1)
+  ): [User] @docGroup(name: "Users", sidebarTitle: "List Users") @docPriority(level: 1)
   "Returns users v2."
   usersV2(
     "The user pool."
@@ -3198,7 +3212,7 @@ type Query @aws_lambda @aws_iam @aws_cognito_user_pools {
     payment_method_id: String!
     "The card number or account number to validate. For card payment methods, this is the full card number. For ACH payment methods, this is the full account number."
     number: String!
-  ): Boolean! @docGroup(name: "Payment Method Token") @docPriority(level: 4)
+  ): Boolean! @docGroup(name: "Payment Method Token", sidebarTitle: "Validate Payment Method Ownership") @docPriority(level: 4)
   "Returns webhook events."
   webhookEvents(
     "Unique identifier."
@@ -3211,12 +3225,12 @@ type Query @aws_lambda @aws_iam @aws_cognito_user_pools {
     last_evaluated_key: String
     "Maximum number of items to return."
     limit: Int
-  ): WebhookEvents! @docGroup(name: "Webhooks")
+  ): WebhookEvents! @docGroup(name: "Webhooks", sidebarTitle: "List Webhook Events")
   "Returns webhooks."
   webhooks(
     "The URL the event will be sent to. If not passed in all webhooks will be returned"
     endpoint: String
-  ): [Webhook]! @docGroup(name: "Webhooks") @docPriority(level: 2)
+  ): [Webhook]! @docGroup(name: "Webhooks", sidebarTitle: "List Webhooks") @docPriority(level: 2)
 }
 
 "A query pair is the object to build out a query. There are some required fields and some optional fields."
@@ -3718,7 +3732,7 @@ type Transaction @aws_lambda @aws_iam @aws_cognito_user_pools {
   "The authorization id for the transaction."
   authorization_id: String
   "The AVS status for the transaction."
-  avs_status: String
+  avs_status: AvsStatus
   "The type of currency for the transaction."
   currency: String
   device_id: String

@@ -84,7 +84,25 @@ const config = {
   },
 
   plugins: [
-    require.resolve('./src/plugins/accept-markdown-middleware.js'),
+    [
+      require.resolve('@lewl/graphql-doc/docusaurus-plugin'),
+      {
+        configPath: './graphql-docs.config.js',
+        allTargets: true,
+        markdownRedirect: {
+          enabled: true,
+          docsBasePath: '/docs/api',
+          llmDocsPath: '/llm-docs',
+          docsSourceFallback: {
+            enabled: true,
+            docsBasePaths: ['/docs'],
+            metadataBaseDir: '.docusaurus/docusaurus-plugin-content-docs',
+            docsPluginIds: ['default'],
+            cacheTtlMs: 2000,
+          },
+        },
+      },
+    ],
     [
       '@docusaurus/plugin-client-redirects',
       {

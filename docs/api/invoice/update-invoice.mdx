@@ -1,12 +1,12 @@
 ---
 id: update-invoice
 title: updateInvoice
-sidebar_label: updateInvoice
+sidebar_label: Update Invoice
 hide_title: true
 api: true
 ---
 
-import { OperationView } from '@graphql-docs/generator/components';
+import { OperationView } from '@lewl/graphql-doc/components';
 import operationsByType from '../_data/operations.json';
 import typesByName from '../_data/types.json';
 
@@ -16,5 +16,5 @@ export const examplesByOperation = {
 
 export const operation = operationsByType["mutation"]["updateInvoice"];
 
-<OperationView operation={ operation } typesByName={typesByName} headingLevel={ 1 } defaultExpandedLevels={ 0 } maxDepth={ 5 } typeLinkBase="../types" llmDocsBasePath="/llm-docs">
+<OperationView operation={ operation } typesByName={typesByName} headingLevel={ 1 } defaultExpandedLevels={ 0 } maxDepth={ 5 } typeLinkBase="../types" llmDocsBasePath="/llm-docs" siteBasePath="/docs/api">
 </OperationView>

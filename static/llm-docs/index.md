@@ -1,7 +1,9 @@
-# GraphQL API - GraphQL API Reference
+# PayTheory - GraphQL API Reference
+
+> LLM-optimized documentation. Human-readable docs: https://docs.paytheory.com
 
 **Operations:** 69 (23 queries, 46 mutations)  
-**Groups:** Authorization, Barcode, Deprecated, Disputes, Invoice, Merchant, Metadata, Payment Links, Payment Method Token, Payor, Recurring Payment, Sandbox, Settlement, Settlements, Split, Transaction, Users, Webhooks
+**Groups:** Authorization, Barcode, Disputes, Invoice, Merchant, Metadata, Payment Links, Payment Method Token, Payor, Recurring Payment, Settlement, Split, Transaction, Users, Webhooks, Sandbox, Deprecated
 
 ---
 
@@ -40,11 +42,11 @@
 | Operation | Group | Description |
 | --- | --- | --- |
 | `cancelRecurringPayment(recurring_id: String!): Boolean` | Recurring Payment | Once a recurring payment is cancelled, it cannot be reactivated. |
-| `cancelSettlementInstruction(merchant_uid: ID!): Instruction` | Settlements | Cancels settlement instruction. |
+| `cancelSettlementInstruction(merchant_uid: ID!): Instruction` | Settlement | Cancels settlement instruction. |
 | `createAuthorization(merchant_uid: String!, sale_id: String, amount: Int!, payment_method_id: String, payment_method: PaymentMethodInput, invoice_id: String, fee: Int, fee_mode: FeeMode, account_code: String, reference: String, metadata: AWSJSON, health_expense_type: HealthExpenseType, digital_wallet: DigitalWalletInput, additional_purchase_data: AdditionalPurchaseDataInput, one_time_use_token: Boolean): Authorization!` | Authorization | This mutation will create a new authorization for a merchant. |
 | `createBarcode(input: BarcodeInput!): Barcode!` | Barcode | This mutation will create a barcode for a payor to use to make a cash payment. |
-| `createBarcodePaymentSandbox(barcode_id: String!, amount_to_pay: Int!): BarcodePaymentResponse!` | Barcode | Sandbox Only This mutation will only work in sandbox environments. |
-| `createBatchCapture(merchant_uid: String!): Boolean` | Settlement | This mutation will capture all PENDING transactions for a merchant in a batch and shortly after create a settlement for the merchant. |
+| `createBarcodePaymentSandbox(barcode_id: String!, amount_to_pay: Int!): BarcodePaymentResponse!` | Sandbox | Sandbox Only This mutation will only work in sandbox environments. |
+| `createBatchCapture(merchant_uid: String!): Boolean` | Sandbox | This mutation will capture all PENDING transactions for a merchant in a batch and shortly after create a settlement for the merchant. |
 | `createCapture(merchant_uid: String!, authorization_id: String!, amount: Int!, fee: Int, send_receipt: Boolean, receipt_description: String, allow_reauth: Boolean, allow_exceeded_amount: Boolean, split: [SplitInput]): Transaction!` | Authorization | This mutation will capture an authorization for a merchant. |
 | `createInvoice(input: InvoiceInput!): Invoice` | Invoice | Creates an invoice. |
 | `createInvoiceEmail(invoice_id: String!): Boolean` | Invoice | This call is used to resend Invoice emails for a specific invoice. |
@@ -62,7 +64,7 @@
 | `createSandboxAchReturn(input: CreateSandboxAchReturnInput!): SandboxAchReturnResult!` | Sandbox | Use this mutation to create an ACH return for a completed ACH transaction. |
 | `createSandboxDispute(input: CreateSandboxDisputeInput!): SandboxDisputeResult!` | Sandbox | Use this mutation to create a dispute for a card transaction. |
 | `createSandboxSettlement(input: CreateSandboxSettlementInput!): SandboxSettlementResult!` | Sandbox | Create a settlement from a prepared sandbox batch. |
-| `createSettlementInstruction(input: CreateSettlementInstructionInput!): CreateSettlementInstructionResponse` | Settlements | This mutation creates an instructional funding request for a merchant. |
+| `createSettlementInstruction(input: CreateSettlementInstructionInput!): CreateSettlementInstructionResponse` | Settlement | This mutation creates an instructional funding request for a merchant. |
 | `createTransaction(merchant_uid: String!, amount: Int!, payment_method_id: String, payment_method: PaymentMethodInput, recurring_id: String, invoice_id: String, fee: Int, fee_mode: FeeMode, account_code: String, reference: String, send_receipt: Boolean, receipt_description: String, metadata: AWSJSON, health_expense_type: HealthExpenseType, digital_wallet: DigitalWalletInput, additional_purchase_data: AdditionalPurchaseDataInput, one_time_use_token: Boolean, split: [SplitInput]): Transaction!` | Transaction | Creates transaction. |
 | `createUser(input: UserInput!): User` | Users | Creates user. |
 | `createVoidForAuthorization(authorization_id: String!, void_amount: Int): Boolean` | Authorization | This will void an authorization that has not been captured. |
@@ -90,23 +92,124 @@
 
 ## Documentation Files
 
-For full documentation including type definitions and examples, see:
+For per-operation documentation files, see:
 
-- [Authorization](./authorization.md)
-- [Barcode](./barcode.md)
-- [Deprecated](./deprecated.md)
-- [Disputes](./disputes.md)
-- [Invoice](./invoice.md)
-- [Merchant](./merchant.md)
-- [Metadata](./metadata.md)
-- [Payment Links](./payment-links.md)
-- [Payment Method Token](./payment-method-token.md)
-- [Payor](./payor.md)
-- [Recurring Payment](./recurring-payment.md)
-- [Sandbox](./sandbox.md)
-- [Settlement](./settlement.md)
-- [Settlements](./settlements.md)
-- [Split](./split.md)
-- [Transaction](./transaction.md)
-- [Users](./users.md)
-- [Webhooks](./webhooks.md)
+### Authorization
+
+- [authorizations](./authorization/authorizations.md)
+- [createAuthorization](./authorization/create-authorization.md)
+- [createWalletAuthorization](./authorization/create-wallet-authorization.md)
+- [createCapture](./authorization/create-capture.md)
+- [createVoidForAuthorization](./authorization/create-void-for-authorization.md)
+
+### Barcode
+
+- [barcode](./barcode/barcode.md)
+- [createBarcode](./barcode/create-barcode.md)
+
+### Disputes
+
+- [disputes](./disputes/disputes.md)
+
+### Invoice
+
+- [invoices](./invoice/invoices.md)
+- [createInvoice](./invoice/create-invoice.md)
+- [updateInvoice](./invoice/update-invoice.md)
+- [deleteInvoice](./invoice/delete-invoice.md)
+- [createInvoiceEmail](./invoice/create-invoice-email.md)
+- [createOfflineTransaction](./invoice/create-offline-transaction.md)
+
+### Merchant
+
+- [merchant](./merchant/merchant.md)
+- [merchants](./merchant/merchants.md)
+- [createMerchant](./merchant/create-merchant.md)
+- [updateFeeMatrix](./merchant/update-fee-matrix.md)
+- [updateMerchantSettings](./merchant/update-merchant-settings.md)
+
+### Metadata
+
+- [updateMetadata](./metadata/update-metadata.md)
+- [deleteMetadata](./metadata/delete-metadata.md)
+
+### Payment Links
+
+- [paymentLinks](./payment-links/payment-links.md)
+- [createPaymentLink](./payment-links/create-payment-link.md)
+- [updatePaymentLink](./payment-links/update-payment-link.md)
+
+### Payment Method Token
+
+- [paymentMethodTokens](./payment-method-token/payment-method-tokens.md)
+- [createPaymentMethod](./payment-method-token/create-payment-method.md)
+- [updatePaymentMethodToDisabled](./payment-method-token/update-payment-method-to-disabled.md)
+- [validatePaymentMethodOwnership](./payment-method-token/validate-payment-method-ownership.md)
+
+### Payor
+
+- [payors](./payor/payors.md)
+- [createPayor](./payor/create-payor.md)
+- [updatePayor](./payor/update-payor.md)
+
+### Recurring Payment
+
+- [recurringPayments](./recurring-payment/recurring-payments.md)
+- [createRecurringPayment](./recurring-payment/create-recurring-payment.md)
+- [updateRecurringPayment](./recurring-payment/update-recurring-payment.md)
+- [cancelRecurringPayment](./recurring-payment/cancel-recurring-payment.md)
+- [missedRecurringPaymentData](./recurring-payment/missed-recurring-payment-data.md)
+- [createRetryForFailedRecurringPayment](./recurring-payment/create-retry-for-failed-recurring-payment.md)
+
+### Settlement
+
+- [settlements](./settlement/settlements.md)
+- [availableFundsBalance](./settlement/available-funds-balance.md)
+- [fundingTransfers](./settlement/funding-transfers.md)
+- [instruction](./settlement/instruction.md)
+- [cancelSettlementInstruction](./settlement/cancel-settlement-instruction.md)
+- [createSettlementInstruction](./settlement/create-settlement-instruction.md)
+
+### Split
+
+- [splits](./split/splits.md)
+
+### Transaction
+
+- [transactions](./transaction/transactions.md)
+- [createTransaction](./transaction/create-transaction.md)
+- [createWalletTransaction](./transaction/create-wallet-transaction.md)
+- [createReversal](./transaction/create-reversal.md)
+- [serviceFee](./transaction/service-fee.md)
+- [createReceiptEmail](./transaction/create-receipt-email.md)
+- [updateTransactionInReview](./transaction/update-transaction-in-review.md)
+
+### Users
+
+- [users](./users/users.md)
+- [createUser](./users/create-user.md)
+- [deleteUser](./users/delete-user.md)
+
+### Webhooks
+
+- [createWebhook](./webhooks/create-webhook.md)
+- [webhooks](./webhooks/webhooks.md)
+- [updateWebhook](./webhooks/update-webhook.md)
+- [deleteWebhook](./webhooks/delete-webhook.md)
+- [webhookEvents](./webhooks/webhook-events.md)
+
+### Sandbox
+
+- [createBarcodePaymentSandbox](./sandbox/create-barcode-payment-sandbox.md)
+- [createBatchCapture](./sandbox/create-batch-capture.md)
+- [createSandboxAchReturn](./sandbox/create-sandbox-ach-return.md)
+- [createSandboxDispute](./sandbox/create-sandbox-dispute.md)
+- [createSandboxSettlement](./sandbox/create-sandbox-settlement.md)
+- [prepareSandboxSettlementBatch](./sandbox/prepare-sandbox-settlement-batch.md)
+- [updateSandboxDisputeStatus](./sandbox/update-sandbox-dispute-status.md)
+
+### Deprecated
+
+- [createOneTimePayment](./deprecated/create-one-time-payment.md)
+- [createRefund](./deprecated/create-refund.md)
+- [serviceFeeAmount](./deprecated/service-fee-amount.md)

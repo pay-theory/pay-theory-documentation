@@ -552,1498 +552,1516 @@ module.exports = {
   ],
 };
 
-// <graphql-docs-sidebar>
+// <graphql-doc-sidebar>
 const __gqlDocsItems = [
   {
-    "type": "html",
-    "value": "<div class=\"gql-sidebar-section-title\">Operations</div>",
-    "defaultStyle": true
+    type: 'doc',
+    id: 'api/intro/main',
+    label: 'Pay Theory GraphQL API',
   },
   {
-    "type": "category",
-    "label": "Authorization",
-    "items": [
+    type: 'doc',
+    id: 'api/intro/query',
+    label: 'Querying the API',
+  },
+  {
+    type: 'doc',
+    id: 'api/intro/ai-agent-skill',
+    label: 'AI Agent Skill',
+  },
+  {
+    type: 'html',
+    value: '<hr class="gql-sidebar-divider" />',
+    defaultStyle: true,
+  },
+  {
+    type: 'html',
+    value: '<div class="gql-sidebar-section-title">Operations</div>',
+    defaultStyle: true,
+  },
+  {
+    type: 'category',
+    label: 'Authorization',
+    items: [
       {
-        "type": "doc",
-        "id": "api/authorization/authorizations",
-        "label": "authorizations"
+        type: 'doc',
+        id: 'api/authorization/authorizations',
+        label: 'List Authorizations',
       },
       {
-        "type": "doc",
-        "id": "api/authorization/create-authorization",
-        "label": "createAuthorization"
+        type: 'doc',
+        id: 'api/authorization/create-authorization',
+        label: 'Create Authorization',
       },
       {
-        "type": "doc",
-        "id": "api/authorization/create-wallet-authorization",
-        "label": "createWalletAuthorization"
+        type: 'doc',
+        id: 'api/authorization/create-wallet-authorization',
+        label: 'Create Wallet Authorization',
       },
       {
-        "type": "doc",
-        "id": "api/authorization/create-capture",
-        "label": "createCapture"
+        type: 'doc',
+        id: 'api/authorization/create-capture',
+        label: 'Create Capture',
       },
       {
-        "type": "doc",
-        "id": "api/authorization/create-void-for-authorization",
-        "label": "createVoidForAuthorization"
-      }
+        type: 'doc',
+        id: 'api/authorization/create-void-for-authorization',
+        label: 'Create Void For Authorization',
+      },
     ],
-    "collapsible": true,
-    "collapsed": true
+    collapsible: true,
+    collapsed: true,
   },
   {
-    "type": "category",
-    "label": "Barcode",
-    "items": [
+    type: 'category',
+    label: 'Barcode',
+    items: [
       {
-        "type": "doc",
-        "id": "api/barcode/barcode",
-        "label": "barcode"
+        type: 'doc',
+        id: 'api/barcode/barcode',
+        label: 'Get Barcode',
       },
       {
-        "type": "doc",
-        "id": "api/barcode/create-barcode",
-        "label": "createBarcode"
+        type: 'doc',
+        id: 'api/barcode/create-barcode',
+        label: 'Create Barcode',
       },
-      {
-        "type": "doc",
-        "id": "api/barcode/create-barcode-payment-sandbox",
-        "label": "createBarcodePaymentSandbox"
-      }
     ],
-    "collapsible": true,
-    "collapsed": true
+    collapsible: true,
+    collapsed: true,
   },
   {
-    "type": "category",
-    "label": "Deprecated",
-    "items": [
+    type: 'category',
+    label: 'Disputes',
+    items: [
       {
-        "type": "doc",
-        "id": "api/deprecated/create-one-time-payment",
-        "label": "createOneTimePayment"
+        type: 'doc',
+        id: 'api/disputes/disputes',
+        label: 'List Disputes',
       },
-      {
-        "type": "doc",
-        "id": "api/deprecated/create-refund",
-        "label": "createRefund"
-      },
-      {
-        "type": "doc",
-        "id": "api/deprecated/service-fee-amount",
-        "label": "serviceFeeAmount"
-      }
     ],
-    "collapsible": true,
-    "collapsed": true
+    collapsible: true,
+    collapsed: true,
   },
   {
-    "type": "category",
-    "label": "Disputes",
-    "items": [
+    type: 'category',
+    label: 'Invoice',
+    items: [
       {
-        "type": "doc",
-        "id": "api/disputes/disputes",
-        "label": "disputes"
-      }
+        type: 'doc',
+        id: 'api/invoice/invoices',
+        label: 'List Invoices',
+      },
+      {
+        type: 'doc',
+        id: 'api/invoice/create-invoice',
+        label: 'Create Invoice',
+      },
+      {
+        type: 'doc',
+        id: 'api/invoice/update-invoice',
+        label: 'Update Invoice',
+      },
+      {
+        type: 'doc',
+        id: 'api/invoice/delete-invoice',
+        label: 'Delete Invoice',
+      },
+      {
+        type: 'doc',
+        id: 'api/invoice/create-invoice-email',
+        label: 'Create Invoice Email',
+      },
+      {
+        type: 'doc',
+        id: 'api/invoice/create-offline-transaction',
+        label: 'Create Offline Transaction',
+      },
     ],
-    "collapsible": true,
-    "collapsed": true
+    collapsible: true,
+    collapsed: true,
   },
   {
-    "type": "category",
-    "label": "Invoice",
-    "items": [
+    type: 'category',
+    label: 'Merchant',
+    items: [
       {
-        "type": "doc",
-        "id": "api/invoice/invoices",
-        "label": "invoices"
+        type: 'doc',
+        id: 'api/merchant/merchant',
+        label: 'Get Merchant',
       },
       {
-        "type": "doc",
-        "id": "api/invoice/create-invoice",
-        "label": "createInvoice"
+        type: 'doc',
+        id: 'api/merchant/merchants',
+        label: 'List Merchants',
       },
       {
-        "type": "doc",
-        "id": "api/invoice/update-invoice",
-        "label": "updateInvoice"
+        type: 'doc',
+        id: 'api/merchant/create-merchant',
+        label: 'Create Merchant',
       },
       {
-        "type": "doc",
-        "id": "api/invoice/delete-invoice",
-        "label": "deleteInvoice"
+        type: 'doc',
+        id: 'api/merchant/update-fee-matrix',
+        label: 'Update Fee Matrix',
       },
       {
-        "type": "doc",
-        "id": "api/invoice/create-invoice-email",
-        "label": "createInvoiceEmail"
+        type: 'doc',
+        id: 'api/merchant/update-merchant-settings',
+        label: 'Update Merchant Settings',
       },
-      {
-        "type": "doc",
-        "id": "api/invoice/create-offline-transaction",
-        "label": "createOfflineTransaction"
-      }
     ],
-    "collapsible": true,
-    "collapsed": true
+    collapsible: true,
+    collapsed: true,
   },
   {
-    "type": "category",
-    "label": "Merchant",
-    "items": [
+    type: 'category',
+    label: 'Metadata',
+    items: [
       {
-        "type": "doc",
-        "id": "api/merchant/merchant",
-        "label": "merchant"
+        type: 'doc',
+        id: 'api/metadata/update-metadata',
+        label: 'Update Metadata',
       },
       {
-        "type": "doc",
-        "id": "api/merchant/merchants",
-        "label": "merchants"
+        type: 'doc',
+        id: 'api/metadata/delete-metadata',
+        label: 'Delete Metadata',
       },
-      {
-        "type": "doc",
-        "id": "api/merchant/create-merchant",
-        "label": "createMerchant"
-      },
-      {
-        "type": "doc",
-        "id": "api/merchant/update-fee-matrix",
-        "label": "updateFeeMatrix"
-      },
-      {
-        "type": "doc",
-        "id": "api/merchant/update-merchant-settings",
-        "label": "updateMerchantSettings"
-      }
     ],
-    "collapsible": true,
-    "collapsed": true
+    collapsible: true,
+    collapsed: true,
   },
   {
-    "type": "category",
-    "label": "Metadata",
-    "items": [
+    type: 'category',
+    label: 'Payment Links',
+    items: [
       {
-        "type": "doc",
-        "id": "api/metadata/update-metadata",
-        "label": "updateMetadata"
+        type: 'doc',
+        id: 'api/payment-links/payment-links',
+        label: 'List Payment Links',
       },
       {
-        "type": "doc",
-        "id": "api/metadata/delete-metadata",
-        "label": "deleteMetadata"
-      }
+        type: 'doc',
+        id: 'api/payment-links/create-payment-link',
+        label: 'Create Payment Link',
+      },
+      {
+        type: 'doc',
+        id: 'api/payment-links/update-payment-link',
+        label: 'Update Payment Link',
+      },
     ],
-    "collapsible": true,
-    "collapsed": true
+    collapsible: true,
+    collapsed: true,
   },
   {
-    "type": "category",
-    "label": "Payment Links",
-    "items": [
+    type: 'category',
+    label: 'Payment Method Token',
+    items: [
       {
-        "type": "doc",
-        "id": "api/payment-links/payment-links",
-        "label": "paymentLinks"
+        type: 'doc',
+        id: 'api/payment-method-token/payment-method-tokens',
+        label: 'List Payment Method Tokens',
       },
       {
-        "type": "doc",
-        "id": "api/payment-links/create-payment-link",
-        "label": "createPaymentLink"
+        type: 'doc',
+        id: 'api/payment-method-token/create-payment-method',
+        label: 'Create Payment Method',
       },
       {
-        "type": "doc",
-        "id": "api/payment-links/update-payment-link",
-        "label": "updatePaymentLink"
-      }
+        type: 'doc',
+        id: 'api/payment-method-token/update-payment-method-to-disabled',
+        label: 'Update Payment Method To Disabled',
+      },
+      {
+        type: 'doc',
+        id: 'api/payment-method-token/validate-payment-method-ownership',
+        label: 'Validate Payment Method Ownership',
+      },
     ],
-    "collapsible": true,
-    "collapsed": true
+    collapsible: true,
+    collapsed: true,
   },
   {
-    "type": "category",
-    "label": "Payment Method Token",
-    "items": [
+    type: 'category',
+    label: 'Payor',
+    items: [
       {
-        "type": "doc",
-        "id": "api/payment-method-token/payment-method-tokens",
-        "label": "paymentMethodTokens"
+        type: 'doc',
+        id: 'api/payor/payors',
+        label: 'List Payors',
       },
       {
-        "type": "doc",
-        "id": "api/payment-method-token/create-payment-method",
-        "label": "createPaymentMethod"
+        type: 'doc',
+        id: 'api/payor/create-payor',
+        label: 'Create Payor',
       },
       {
-        "type": "doc",
-        "id": "api/payment-method-token/update-payment-method-to-disabled",
-        "label": "updatePaymentMethodToDisabled"
+        type: 'doc',
+        id: 'api/payor/update-payor',
+        label: 'Update Payor',
       },
-      {
-        "type": "doc",
-        "id": "api/payment-method-token/validate-payment-method-ownership",
-        "label": "validatePaymentMethodOwnership"
-      }
     ],
-    "collapsible": true,
-    "collapsed": true
+    collapsible: true,
+    collapsed: true,
   },
   {
-    "type": "category",
-    "label": "Payor",
-    "items": [
+    type: 'category',
+    label: 'Recurring Payment',
+    items: [
       {
-        "type": "doc",
-        "id": "api/payor/payors",
-        "label": "payors"
+        type: 'doc',
+        id: 'api/recurring-payment/recurring-payments',
+        label: 'List Recurring Payments',
       },
       {
-        "type": "doc",
-        "id": "api/payor/create-payor",
-        "label": "createPayor"
+        type: 'doc',
+        id: 'api/recurring-payment/create-recurring-payment',
+        label: 'Create Recurring Payment',
       },
       {
-        "type": "doc",
-        "id": "api/payor/update-payor",
-        "label": "updatePayor"
-      }
+        type: 'doc',
+        id: 'api/recurring-payment/update-recurring-payment',
+        label: 'Update Recurring Payment',
+      },
+      {
+        type: 'doc',
+        id: 'api/recurring-payment/cancel-recurring-payment',
+        label: 'Cancel Recurring Payment',
+      },
+      {
+        type: 'doc',
+        id: 'api/recurring-payment/missed-recurring-payment-data',
+        label: 'Get Missed Recurring Payment Data',
+      },
+      {
+        type: 'doc',
+        id: 'api/recurring-payment/create-retry-for-failed-recurring-payment',
+        label: 'Create Retry For Failed Recurring Payment',
+      },
     ],
-    "collapsible": true,
-    "collapsed": true
+    collapsible: true,
+    collapsed: true,
   },
   {
-    "type": "category",
-    "label": "Recurring Payment",
-    "items": [
+    type: 'category',
+    label: 'Settlement',
+    items: [
       {
-        "type": "doc",
-        "id": "api/recurring-payment/recurring-payments",
-        "label": "recurringPayments"
+        type: 'doc',
+        id: 'api/settlement/settlements',
+        label: 'List Settlements',
       },
       {
-        "type": "doc",
-        "id": "api/recurring-payment/create-recurring-payment",
-        "label": "createRecurringPayment"
+        type: 'doc',
+        id: 'api/settlement/available-funds-balance',
+        label: 'List Available Funds Balances',
       },
       {
-        "type": "doc",
-        "id": "api/recurring-payment/update-recurring-payment",
-        "label": "updateRecurringPayment"
+        type: 'doc',
+        id: 'api/settlement/funding-transfers',
+        label: 'List Funding Transfers',
       },
       {
-        "type": "doc",
-        "id": "api/recurring-payment/cancel-recurring-payment",
-        "label": "cancelRecurringPayment"
+        type: 'doc',
+        id: 'api/settlement/instruction',
+        label: 'List Instructions',
       },
       {
-        "type": "doc",
-        "id": "api/recurring-payment/missed-recurring-payment-data",
-        "label": "missedRecurringPaymentData"
+        type: 'doc',
+        id: 'api/settlement/cancel-settlement-instruction',
+        label: 'Cancel Settlement Instruction',
       },
       {
-        "type": "doc",
-        "id": "api/recurring-payment/create-retry-for-failed-recurring-payment",
-        "label": "createRetryForFailedRecurringPayment"
-      }
+        type: 'doc',
+        id: 'api/settlement/create-settlement-instruction',
+        label: 'Create Settlement Instruction',
+      },
     ],
-    "collapsible": true,
-    "collapsed": true
+    collapsible: true,
+    collapsed: true,
   },
   {
-    "type": "category",
-    "label": "Sandbox",
-    "items": [
+    type: 'category',
+    label: 'Split',
+    items: [
       {
-        "type": "doc",
-        "id": "api/sandbox/create-sandbox-ach-return",
-        "label": "createSandboxAchReturn"
+        type: 'doc',
+        id: 'api/split/splits',
+        label: 'List Splits',
       },
-      {
-        "type": "doc",
-        "id": "api/sandbox/create-sandbox-dispute",
-        "label": "createSandboxDispute"
-      },
-      {
-        "type": "doc",
-        "id": "api/sandbox/create-sandbox-settlement",
-        "label": "createSandboxSettlement"
-      },
-      {
-        "type": "doc",
-        "id": "api/sandbox/prepare-sandbox-settlement-batch",
-        "label": "prepareSandboxSettlementBatch"
-      },
-      {
-        "type": "doc",
-        "id": "api/sandbox/update-sandbox-dispute-status",
-        "label": "updateSandboxDisputeStatus"
-      }
     ],
-    "collapsible": true,
-    "collapsed": true
+    collapsible: true,
+    collapsed: true,
   },
   {
-    "type": "category",
-    "label": "Settlement",
-    "items": [
+    type: 'category',
+    label: 'Transaction',
+    items: [
       {
-        "type": "doc",
-        "id": "api/settlement/settlements",
-        "label": "settlements"
+        type: 'doc',
+        id: 'api/transaction/transactions',
+        label: 'List Transactions',
       },
       {
-        "type": "doc",
-        "id": "api/settlement/create-batch-capture",
-        "label": "createBatchCapture"
+        type: 'doc',
+        id: 'api/transaction/create-transaction',
+        label: 'Create Transaction',
       },
       {
-        "type": "doc",
-        "id": "api/settlement/available-funds-balance",
-        "label": "availableFundsBalance"
+        type: 'doc',
+        id: 'api/transaction/create-wallet-transaction',
+        label: 'Create Wallet Transaction',
       },
       {
-        "type": "doc",
-        "id": "api/settlement/funding-transfers",
-        "label": "fundingTransfers"
+        type: 'doc',
+        id: 'api/transaction/create-reversal',
+        label: 'Create Reversal',
       },
       {
-        "type": "doc",
-        "id": "api/settlement/instruction",
-        "label": "instruction"
-      }
+        type: 'doc',
+        id: 'api/transaction/service-fee',
+        label: 'Calculate Service Fee',
+      },
+      {
+        type: 'doc',
+        id: 'api/transaction/create-receipt-email',
+        label: 'Create Receipt Email',
+      },
+      {
+        type: 'doc',
+        id: 'api/transaction/update-transaction-in-review',
+        label: 'Update Transaction In Review',
+      },
     ],
-    "collapsible": true,
-    "collapsed": true
+    collapsible: true,
+    collapsed: true,
   },
   {
-    "type": "category",
-    "label": "Settlements",
-    "items": [
+    type: 'category',
+    label: 'Users',
+    items: [
       {
-        "type": "doc",
-        "id": "api/settlements/cancel-settlement-instruction",
-        "label": "cancelSettlementInstruction"
+        type: 'doc',
+        id: 'api/users/users',
+        label: 'List Users',
       },
       {
-        "type": "doc",
-        "id": "api/settlements/create-settlement-instruction",
-        "label": "createSettlementInstruction"
-      }
+        type: 'doc',
+        id: 'api/users/create-user',
+        label: 'Create User',
+      },
+      {
+        type: 'doc',
+        id: 'api/users/delete-user',
+        label: 'Delete User',
+      },
     ],
-    "collapsible": true,
-    "collapsed": true
+    collapsible: true,
+    collapsed: true,
   },
   {
-    "type": "category",
-    "label": "Split",
-    "items": [
+    type: 'category',
+    label: 'Webhooks',
+    items: [
       {
-        "type": "doc",
-        "id": "api/split/splits",
-        "label": "splits"
-      }
+        type: 'doc',
+        id: 'api/webhooks/create-webhook',
+        label: 'Create Webhook',
+      },
+      {
+        type: 'doc',
+        id: 'api/webhooks/webhooks',
+        label: 'List Webhooks',
+      },
+      {
+        type: 'doc',
+        id: 'api/webhooks/update-webhook',
+        label: 'Update Webhook',
+      },
+      {
+        type: 'doc',
+        id: 'api/webhooks/delete-webhook',
+        label: 'Delete Webhook',
+      },
+      {
+        type: 'doc',
+        id: 'api/webhooks/webhook-events',
+        label: 'List Webhook Events',
+      },
     ],
-    "collapsible": true,
-    "collapsed": true
+    collapsible: true,
+    collapsed: true,
   },
   {
-    "type": "category",
-    "label": "Transaction",
-    "items": [
+    type: 'category',
+    label: 'Sandbox',
+    items: [
       {
-        "type": "doc",
-        "id": "api/transaction/transactions",
-        "label": "transactions"
+        type: 'doc',
+        id: 'api/sandbox/create-barcode-payment-sandbox',
+        label: 'Create Sandbox Barcode Payment',
       },
       {
-        "type": "doc",
-        "id": "api/transaction/create-transaction",
-        "label": "createTransaction"
+        type: 'doc',
+        id: 'api/sandbox/create-batch-capture',
+        label: 'Create Batch Capture',
       },
       {
-        "type": "doc",
-        "id": "api/transaction/create-wallet-transaction",
-        "label": "createWalletTransaction"
+        type: 'doc',
+        id: 'api/sandbox/create-sandbox-ach-return',
+        label: 'Create Sandbox Ach Return',
       },
       {
-        "type": "doc",
-        "id": "api/transaction/create-reversal",
-        "label": "createReversal"
+        type: 'doc',
+        id: 'api/sandbox/create-sandbox-dispute',
+        label: 'Create Sandbox Dispute',
       },
       {
-        "type": "doc",
-        "id": "api/transaction/service-fee",
-        "label": "serviceFee"
+        type: 'doc',
+        id: 'api/sandbox/create-sandbox-settlement',
+        label: 'Create Sandbox Settlement',
       },
       {
-        "type": "doc",
-        "id": "api/transaction/create-receipt-email",
-        "label": "createReceiptEmail"
+        type: 'doc',
+        id: 'api/sandbox/prepare-sandbox-settlement-batch',
+        label: 'Prepare Sandbox Settlement Batch',
       },
       {
-        "type": "doc",
-        "id": "api/transaction/update-transaction-in-review",
-        "label": "updateTransactionInReview"
-      }
+        type: 'doc',
+        id: 'api/sandbox/update-sandbox-dispute-status',
+        label: 'Update Sandbox Dispute Status',
+      },
     ],
-    "collapsible": true,
-    "collapsed": true
+    collapsible: true,
+    collapsed: true,
   },
   {
-    "type": "category",
-    "label": "Users",
-    "items": [
+    type: 'category',
+    label: 'Deprecated',
+    items: [
       {
-        "type": "doc",
-        "id": "api/users/users",
-        "label": "users"
+        type: 'doc',
+        id: 'api/deprecated/create-one-time-payment',
+        label: 'Create One Time Payment',
       },
       {
-        "type": "doc",
-        "id": "api/users/create-user",
-        "label": "createUser"
+        type: 'doc',
+        id: 'api/deprecated/create-refund',
+        label: 'Create Refund',
       },
       {
-        "type": "doc",
-        "id": "api/users/delete-user",
-        "label": "deleteUser"
-      }
+        type: 'doc',
+        id: 'api/deprecated/service-fee-amount',
+        label: 'Calculate Service Fee Amount',
+      },
     ],
-    "collapsible": true,
-    "collapsed": true
+    collapsible: true,
+    collapsed: true,
   },
   {
-    "type": "category",
-    "label": "Webhooks",
-    "items": [
+    type: 'html',
+    value: '<hr class="gql-sidebar-divider" />',
+    defaultStyle: true,
+  },
+  {
+    type: 'html',
+    value: '<div class="gql-sidebar-section-title">Types</div>',
+    defaultStyle: true,
+  },
+  {
+    type: 'category',
+    label: 'Enums',
+    items: [
       {
-        "type": "doc",
-        "id": "api/webhooks/create-webhook",
-        "label": "createWebhook"
+        type: 'doc',
+        id: 'api/types/enums/accepted-payment-methods-enum',
+        label: 'AcceptedPaymentMethodsEnum',
       },
       {
-        "type": "doc",
-        "id": "api/webhooks/webhooks",
-        "label": "webhooks"
+        type: 'doc',
+        id: 'api/types/enums/ach-return-code',
+        label: 'AchReturnCode',
       },
       {
-        "type": "doc",
-        "id": "api/webhooks/update-webhook",
-        "label": "updateWebhook"
+        type: 'doc',
+        id: 'api/types/enums/ach-return-transfer-type',
+        label: 'AchReturnTransferType',
       },
       {
-        "type": "doc",
-        "id": "api/webhooks/delete-webhook",
-        "label": "deleteWebhook"
+        type: 'doc',
+        id: 'api/types/enums/authorization-status',
+        label: 'AuthorizationStatus',
       },
       {
-        "type": "doc",
-        "id": "api/webhooks/webhook-events",
-        "label": "webhookEvents"
-      }
+        type: 'doc',
+        id: 'api/types/enums/avs-status',
+        label: 'AvsStatus',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/enums/bank-account-type',
+        label: 'BankAccountType',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/enums/bank-account-use',
+        label: 'BankAccountUse',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/enums/barcode-payment-status',
+        label: 'BarcodePaymentStatus',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/enums/business-type',
+        label: 'BusinessType',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/enums/call-to-action-type',
+        label: 'CallToActionType',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/enums/card-type',
+        label: 'CardType',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/enums/conjunctive-operator',
+        label: 'ConjunctiveOperator',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/enums/country-codes-alpha3',
+        label: 'CountryCodes_Alpha3',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/enums/cvv-status',
+        label: 'CvvStatus',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/enums/dispute-reason',
+        label: 'DisputeReason',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/enums/dispute-status',
+        label: 'DisputeStatus',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/enums/fee-mode',
+        label: 'FeeMode',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/enums/funding-transfer-endpoint',
+        label: 'FundingTransferEndpoint',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/enums/funding-transfer-reason',
+        label: 'FundingTransferReason',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/enums/health-expense-type',
+        label: 'HealthExpenseType',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/enums/instruction-status',
+        label: 'InstructionStatus',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/enums/invoice-status',
+        label: 'InvoiceStatus',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/enums/metadata-associate',
+        label: 'MetadataAssociate',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/enums/move-direction',
+        label: 'MoveDirection',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/enums/offline-transaction-type',
+        label: 'OfflineTransactionType',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/enums/operator',
+        label: 'Operator',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/enums/owner-position',
+        label: 'OwnerPosition',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/enums/ownership-type',
+        label: 'OwnershipType',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/enums/payment-type',
+        label: 'PaymentType',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/enums/recurring-interval',
+        label: 'RecurringInterval',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/enums/recurring-status',
+        label: 'RecurringStatus',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/enums/refund-policy',
+        label: 'RefundPolicy',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/enums/refund-reason-code',
+        label: 'RefundReasonCode',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/enums/reserve-account-type',
+        label: 'ReserveAccountType',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/enums/sort-direction',
+        label: 'SortDirection',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/enums/support-document-type',
+        label: 'SupportDocumentType',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/enums/tax-indicator-type',
+        label: 'TaxIndicatorType',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/enums/tax-type',
+        label: 'TaxType',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/enums/transaction-review-action',
+        label: 'TransactionReviewAction',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/enums/transaction-review-status',
+        label: 'TransactionReviewStatus',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/enums/transaction-status',
+        label: 'TransactionStatus',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/enums/transaction-type',
+        label: 'TransactionType',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/enums/transfer-status',
+        label: 'TransferStatus',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/enums/user-pool',
+        label: 'UserPool',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/enums/us-states',
+        label: 'UsStates',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/enums/wallet-type',
+        label: 'WalletType',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/enums/webhook-notification-result',
+        label: 'WebhookNotificationResult',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/enums/window-status',
+        label: 'WindowStatus',
+      },
     ],
-    "collapsible": true,
-    "collapsed": true
+    collapsible: true,
+    collapsed: true,
   },
   {
-    "type": "html",
-    "value": "<hr class=\"gql-sidebar-divider\" />",
-    "defaultStyle": true
-  },
-  {
-    "type": "html",
-    "value": "<div class=\"gql-sidebar-section-title\">Types</div>",
-    "defaultStyle": true
-  },
-  {
-    "type": "category",
-    "label": "Enums",
-    "items": [
+    type: 'category',
+    label: 'Inputs',
+    items: [
       {
-        "type": "doc",
-        "id": "api/types/enums/accepted-payment-methods-enum",
-        "label": "AcceptedPaymentMethodsEnum"
+        type: 'doc',
+        id: 'api/types/inputs/accepted-payment-methods-input',
+        label: 'AcceptedPaymentMethodsInput',
       },
       {
-        "type": "doc",
-        "id": "api/types/enums/ach-return-code",
-        "label": "AchReturnCode"
+        type: 'doc',
+        id: 'api/types/inputs/ach-fee-input',
+        label: 'AchFeeInput',
       },
       {
-        "type": "doc",
-        "id": "api/types/enums/ach-return-transfer-type",
-        "label": "AchReturnTransferType"
+        type: 'doc',
+        id: 'api/types/inputs/ach-input',
+        label: 'AchInput',
       },
       {
-        "type": "doc",
-        "id": "api/types/enums/authorization-status",
-        "label": "AuthorizationStatus"
+        type: 'doc',
+        id: 'api/types/inputs/ach-merchant-fee-input',
+        label: 'AchMerchantFeeInput',
       },
       {
-        "type": "doc",
-        "id": "api/types/enums/bank-account-type",
-        "label": "BankAccountType"
+        type: 'doc',
+        id: 'api/types/inputs/ach-service-fee-input',
+        label: 'AchServiceFeeInput',
       },
       {
-        "type": "doc",
-        "id": "api/types/enums/bank-account-use",
-        "label": "BankAccountUse"
+        type: 'doc',
+        id: 'api/types/inputs/additional-purchase-data-input',
+        label: 'AdditionalPurchaseDataInput',
       },
       {
-        "type": "doc",
-        "id": "api/types/enums/barcode-payment-status",
-        "label": "BarcodePaymentStatus"
+        type: 'doc',
+        id: 'api/types/inputs/additional-underwriting-data-input',
+        label: 'AdditionalUnderwritingDataInput',
       },
       {
-        "type": "doc",
-        "id": "api/types/enums/business-type",
-        "label": "BusinessType"
+        type: 'doc',
+        id: 'api/types/inputs/address-input',
+        label: 'AddressInput',
       },
       {
-        "type": "doc",
-        "id": "api/types/enums/call-to-action-type",
-        "label": "CallToActionType"
+        type: 'doc',
+        id: 'api/types/inputs/barcode-input',
+        label: 'BarcodeInput',
       },
       {
-        "type": "doc",
-        "id": "api/types/enums/card-type",
-        "label": "CardType"
+        type: 'doc',
+        id: 'api/types/inputs/billing-address-input',
+        label: 'BillingAddressInput',
       },
       {
-        "type": "doc",
-        "id": "api/types/enums/conjunctive-operator",
-        "label": "ConjunctiveOperator"
+        type: 'doc',
+        id: 'api/types/inputs/business-bank-input',
+        label: 'BusinessBankInput',
       },
       {
-        "type": "doc",
-        "id": "api/types/enums/country-codes-alpha3",
-        "label": "CountryCodes_Alpha3"
+        type: 'doc',
+        id: 'api/types/inputs/business-input',
+        label: 'BusinessInput',
       },
       {
-        "type": "doc",
-        "id": "api/types/enums/cvv-status",
-        "label": "CvvStatus"
+        type: 'doc',
+        id: 'api/types/inputs/business-owner-input',
+        label: 'BusinessOwnerInput',
       },
       {
-        "type": "doc",
-        "id": "api/types/enums/dispute-reason",
-        "label": "DisputeReason"
+        type: 'doc',
+        id: 'api/types/inputs/canadian-eft-input',
+        label: 'CanadianEftInput',
       },
       {
-        "type": "doc",
-        "id": "api/types/enums/dispute-status",
-        "label": "DisputeStatus"
+        type: 'doc',
+        id: 'api/types/inputs/card-brand-fee-input',
+        label: 'CardBrandFeeInput',
       },
       {
-        "type": "doc",
-        "id": "api/types/enums/fee-mode",
-        "label": "FeeMode"
+        type: 'doc',
+        id: 'api/types/inputs/card-expiration-input',
+        label: 'CardExpirationInput',
       },
       {
-        "type": "doc",
-        "id": "api/types/enums/funding-transfer-endpoint",
-        "label": "FundingTransferEndpoint"
+        type: 'doc',
+        id: 'api/types/inputs/card-fee-input',
+        label: 'CardFeeInput',
       },
       {
-        "type": "doc",
-        "id": "api/types/enums/funding-transfer-reason",
-        "label": "FundingTransferReason"
+        type: 'doc',
+        id: 'api/types/inputs/card-input',
+        label: 'CardInput',
       },
       {
-        "type": "doc",
-        "id": "api/types/enums/health-expense-type",
-        "label": "HealthExpenseType"
+        type: 'doc',
+        id: 'api/types/inputs/card-merchant-fee-input',
+        label: 'CardMerchantFeeInput',
       },
       {
-        "type": "doc",
-        "id": "api/types/enums/instruction-status",
-        "label": "InstructionStatus"
+        type: 'doc',
+        id: 'api/types/inputs/card-service-fee-input',
+        label: 'CardServiceFeeInput',
       },
       {
-        "type": "doc",
-        "id": "api/types/enums/invoice-status",
-        "label": "InvoiceStatus"
+        type: 'doc',
+        id: 'api/types/inputs/card-volume-distribution-input',
+        label: 'CardVolumeDistributionInput',
       },
       {
-        "type": "doc",
-        "id": "api/types/enums/metadata-associate",
-        "label": "MetadataAssociate"
+        type: 'doc',
+        id: 'api/types/inputs/create-sandbox-ach-return-input',
+        label: 'CreateSandboxAchReturnInput',
       },
       {
-        "type": "doc",
-        "id": "api/types/enums/move-direction",
-        "label": "MoveDirection"
+        type: 'doc',
+        id: 'api/types/inputs/create-sandbox-dispute-input',
+        label: 'CreateSandboxDisputeInput',
       },
       {
-        "type": "doc",
-        "id": "api/types/enums/offline-transaction-type",
-        "label": "OfflineTransactionType"
+        type: 'doc',
+        id: 'api/types/inputs/create-sandbox-settlement-input',
+        label: 'CreateSandboxSettlementInput',
       },
       {
-        "type": "doc",
-        "id": "api/types/enums/operator",
-        "label": "Operator"
+        type: 'doc',
+        id: 'api/types/inputs/create-settlement-instruction-input',
+        label: 'CreateSettlementInstructionInput',
       },
       {
-        "type": "doc",
-        "id": "api/types/enums/owner-position",
-        "label": "OwnerPosition"
+        type: 'doc',
+        id: 'api/types/inputs/digital-wallet-input',
+        label: 'DigitalWalletInput',
       },
       {
-        "type": "doc",
-        "id": "api/types/enums/ownership-type",
-        "label": "OwnershipType"
+        type: 'doc',
+        id: 'api/types/inputs/document-input',
+        label: 'DocumentInput',
       },
       {
-        "type": "doc",
-        "id": "api/types/enums/payment-type",
-        "label": "PaymentType"
+        type: 'doc',
+        id: 'api/types/inputs/fee-matrix-input',
+        label: 'FeeMatrixInput',
       },
       {
-        "type": "doc",
-        "id": "api/types/enums/recurring-interval",
-        "label": "RecurringInterval"
+        type: 'doc',
+        id: 'api/types/inputs/invoice-input',
+        label: 'InvoiceInput',
       },
       {
-        "type": "doc",
-        "id": "api/types/enums/recurring-status",
-        "label": "RecurringStatus"
+        type: 'doc',
+        id: 'api/types/inputs/invoice-settings-input',
+        label: 'InvoiceSettingsInput',
       },
       {
-        "type": "doc",
-        "id": "api/types/enums/refund-policy",
-        "label": "RefundPolicy"
+        type: 'doc',
+        id: 'api/types/inputs/invoice-update-input',
+        label: 'InvoiceUpdateInput',
       },
       {
-        "type": "doc",
-        "id": "api/types/enums/refund-reason-code",
-        "label": "RefundReasonCode"
+        type: 'doc',
+        id: 'api/types/inputs/level3data-line-item-input',
+        label: 'Level3DataLineItemInput',
       },
       {
-        "type": "doc",
-        "id": "api/types/enums/reserve-account-type",
-        "label": "ReserveAccountType"
+        type: 'doc',
+        id: 'api/types/inputs/level3data-summary-input',
+        label: 'Level3DataSummaryInput',
       },
       {
-        "type": "doc",
-        "id": "api/types/enums/sort-direction",
-        "label": "SortDirection"
+        type: 'doc',
+        id: 'api/types/inputs/merchant-onboarding-input',
+        label: 'MerchantOnboardingInput',
       },
       {
-        "type": "doc",
-        "id": "api/types/enums/support-document-type",
-        "label": "SupportDocumentType"
+        type: 'doc',
+        id: 'api/types/inputs/merchant-settings-input',
+        label: 'MerchantSettingsInput',
       },
       {
-        "type": "doc",
-        "id": "api/types/enums/tax-indicator-type",
-        "label": "TaxIndicatorType"
+        type: 'doc',
+        id: 'api/types/inputs/merchant-user-input',
+        label: 'MerchantUserInput',
       },
       {
-        "type": "doc",
-        "id": "api/types/enums/tax-type",
-        "label": "TaxType"
+        type: 'doc',
+        id: 'api/types/inputs/offline-transaction-input',
+        label: 'OfflineTransactionInput',
       },
       {
-        "type": "doc",
-        "id": "api/types/enums/transaction-review-action",
-        "label": "TransactionReviewAction"
+        type: 'doc',
+        id: 'api/types/inputs/payment-link-input',
+        label: 'PaymentLinkInput',
       },
       {
-        "type": "doc",
-        "id": "api/types/enums/transaction-review-status",
-        "label": "TransactionReviewStatus"
+        type: 'doc',
+        id: 'api/types/inputs/payment-method-input',
+        label: 'PaymentMethodInput',
       },
       {
-        "type": "doc",
-        "id": "api/types/enums/transaction-status",
-        "label": "TransactionStatus"
+        type: 'doc',
+        id: 'api/types/inputs/payor-data',
+        label: 'PayorData',
       },
       {
-        "type": "doc",
-        "id": "api/types/enums/transaction-type",
-        "label": "TransactionType"
+        type: 'doc',
+        id: 'api/types/inputs/payor-input',
+        label: 'PayorInput',
       },
       {
-        "type": "doc",
-        "id": "api/types/enums/transfer-status",
-        "label": "TransferStatus"
+        type: 'doc',
+        id: 'api/types/inputs/prepare-sandbox-settlement-batch-input',
+        label: 'PrepareSandboxSettlementBatchInput',
       },
       {
-        "type": "doc",
-        "id": "api/types/enums/user-pool",
-        "label": "UserPool"
+        type: 'doc',
+        id: 'api/types/inputs/query-pair',
+        label: 'QueryPair',
       },
       {
-        "type": "doc",
-        "id": "api/types/enums/us-states",
-        "label": "UsStates"
+        type: 'doc',
+        id: 'api/types/inputs/recurring-payment-input',
+        label: 'RecurringPaymentInput',
       },
       {
-        "type": "doc",
-        "id": "api/types/enums/wallet-type",
-        "label": "WalletType"
+        type: 'doc',
+        id: 'api/types/inputs/refund-reason-input',
+        label: 'RefundReasonInput',
       },
       {
-        "type": "doc",
-        "id": "api/types/enums/webhook-notification-result",
-        "label": "WebhookNotificationResult"
+        type: 'doc',
+        id: 'api/types/inputs/sort-pair',
+        label: 'SortPair',
       },
       {
-        "type": "doc",
-        "id": "api/types/enums/window-status",
-        "label": "WindowStatus"
-      }
+        type: 'doc',
+        id: 'api/types/inputs/split-input',
+        label: 'SplitInput',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/inputs/sql-query',
+        label: 'SqlQuery',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/inputs/support-note-input',
+        label: 'SupportNoteInput',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/inputs/underwriting-data-input',
+        label: 'UnderwritingDataInput',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/inputs/update-payment-link-input',
+        label: 'UpdatePaymentLinkInput',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/inputs/update-recurring-payment-input',
+        label: 'UpdateRecurringPaymentInput',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/inputs/update-sandbox-dispute-status-input',
+        label: 'UpdateSandboxDisputeStatusInput',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/inputs/user-input',
+        label: 'UserInput',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/inputs/user-input-v2',
+        label: 'UserInputV2',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/inputs/volume-distribution-by-business-type-input',
+        label: 'VolumeDistributionByBusinessTypeInput',
+      },
     ],
-    "collapsible": true,
-    "collapsed": true
+    collapsible: true,
+    collapsed: true,
   },
   {
-    "type": "category",
-    "label": "Inputs",
-    "items": [
+    type: 'category',
+    label: 'Types',
+    items: [
       {
-        "type": "doc",
-        "id": "api/types/inputs/accepted-payment-methods-input",
-        "label": "AcceptedPaymentMethodsInput"
+        type: 'doc',
+        id: 'api/types/types/accepted-payment-methods',
+        label: 'AcceptedPaymentMethods',
       },
       {
-        "type": "doc",
-        "id": "api/types/inputs/ach-fee-input",
-        "label": "AchFeeInput"
+        type: 'doc',
+        id: 'api/types/types/ach-fee',
+        label: 'AchFee',
       },
       {
-        "type": "doc",
-        "id": "api/types/inputs/ach-input",
-        "label": "AchInput"
+        type: 'doc',
+        id: 'api/types/types/ach-merchant-fee',
+        label: 'AchMerchantFee',
       },
       {
-        "type": "doc",
-        "id": "api/types/inputs/ach-merchant-fee-input",
-        "label": "AchMerchantFeeInput"
+        type: 'doc',
+        id: 'api/types/types/ach-return-details',
+        label: 'AchReturnDetails',
       },
       {
-        "type": "doc",
-        "id": "api/types/inputs/ach-service-fee-input",
-        "label": "AchServiceFeeInput"
+        type: 'doc',
+        id: 'api/types/types/ach-service-fee',
+        label: 'AchServiceFee',
       },
       {
-        "type": "doc",
-        "id": "api/types/inputs/additional-purchase-data-input",
-        "label": "AdditionalPurchaseDataInput"
+        type: 'doc',
+        id: 'api/types/types/additional-purchase-data',
+        label: 'AdditionalPurchaseData',
       },
       {
-        "type": "doc",
-        "id": "api/types/inputs/additional-underwriting-data-input",
-        "label": "AdditionalUnderwritingDataInput"
+        type: 'doc',
+        id: 'api/types/types/additional-underwriting-data',
+        label: 'AdditionalUnderwritingData',
       },
       {
-        "type": "doc",
-        "id": "api/types/inputs/address-input",
-        "label": "AddressInput"
+        type: 'doc',
+        id: 'api/types/types/address',
+        label: 'Address',
       },
       {
-        "type": "doc",
-        "id": "api/types/inputs/barcode-input",
-        "label": "BarcodeInput"
+        type: 'doc',
+        id: 'api/types/types/authorization',
+        label: 'Authorization',
       },
       {
-        "type": "doc",
-        "id": "api/types/inputs/billing-address-input",
-        "label": "BillingAddressInput"
+        type: 'doc',
+        id: 'api/types/types/authorizations',
+        label: 'Authorizations',
       },
       {
-        "type": "doc",
-        "id": "api/types/inputs/business-bank-input",
-        "label": "BusinessBankInput"
+        type: 'doc',
+        id: 'api/types/types/available-funds-balance',
+        label: 'AvailableFundsBalance',
       },
       {
-        "type": "doc",
-        "id": "api/types/inputs/business-input",
-        "label": "BusinessInput"
+        type: 'doc',
+        id: 'api/types/types/awsdate',
+        label: 'AWSDate',
       },
       {
-        "type": "doc",
-        "id": "api/types/inputs/business-owner-input",
-        "label": "BusinessOwnerInput"
+        type: 'doc',
+        id: 'api/types/types/awsdate-time',
+        label: 'AWSDateTime',
       },
       {
-        "type": "doc",
-        "id": "api/types/inputs/canadian-eft-input",
-        "label": "CanadianEftInput"
+        type: 'doc',
+        id: 'api/types/types/awsemail',
+        label: 'AWSEmail',
       },
       {
-        "type": "doc",
-        "id": "api/types/inputs/card-brand-fee-input",
-        "label": "CardBrandFeeInput"
+        type: 'doc',
+        id: 'api/types/types/awsipaddress',
+        label: 'AWSIPAddress',
       },
       {
-        "type": "doc",
-        "id": "api/types/inputs/card-expiration-input",
-        "label": "CardExpirationInput"
+        type: 'doc',
+        id: 'api/types/types/awsjson',
+        label: 'AWSJSON',
       },
       {
-        "type": "doc",
-        "id": "api/types/inputs/card-fee-input",
-        "label": "CardFeeInput"
+        type: 'doc',
+        id: 'api/types/types/awsphone',
+        label: 'AWSPhone',
       },
       {
-        "type": "doc",
-        "id": "api/types/inputs/card-input",
-        "label": "CardInput"
+        type: 'doc',
+        id: 'api/types/types/awsurl',
+        label: 'AWSURL',
       },
       {
-        "type": "doc",
-        "id": "api/types/inputs/card-merchant-fee-input",
-        "label": "CardMerchantFeeInput"
+        type: 'doc',
+        id: 'api/types/types/barcode',
+        label: 'Barcode',
       },
       {
-        "type": "doc",
-        "id": "api/types/inputs/card-service-fee-input",
-        "label": "CardServiceFeeInput"
+        type: 'doc',
+        id: 'api/types/types/barcode-payment-response',
+        label: 'BarcodePaymentResponse',
       },
       {
-        "type": "doc",
-        "id": "api/types/inputs/card-volume-distribution-input",
-        "label": "CardVolumeDistributionInput"
+        type: 'doc',
+        id: 'api/types/types/boolean',
+        label: 'Boolean',
       },
       {
-        "type": "doc",
-        "id": "api/types/inputs/create-sandbox-ach-return-input",
-        "label": "CreateSandboxAchReturnInput"
+        type: 'doc',
+        id: 'api/types/types/business',
+        label: 'Business',
       },
       {
-        "type": "doc",
-        "id": "api/types/inputs/create-sandbox-dispute-input",
-        "label": "CreateSandboxDisputeInput"
+        type: 'doc',
+        id: 'api/types/types/business-bank',
+        label: 'BusinessBank',
       },
       {
-        "type": "doc",
-        "id": "api/types/inputs/create-sandbox-settlement-input",
-        "label": "CreateSandboxSettlementInput"
+        type: 'doc',
+        id: 'api/types/types/business-owner',
+        label: 'BusinessOwner',
       },
       {
-        "type": "doc",
-        "id": "api/types/inputs/create-settlement-instruction-input",
-        "label": "CreateSettlementInstructionInput"
+        type: 'doc',
+        id: 'api/types/types/card-brand-fee',
+        label: 'CardBrandFee',
       },
       {
-        "type": "doc",
-        "id": "api/types/inputs/digital-wallet-input",
-        "label": "DigitalWalletInput"
+        type: 'doc',
+        id: 'api/types/types/card-fee',
+        label: 'CardFee',
       },
       {
-        "type": "doc",
-        "id": "api/types/inputs/document-input",
-        "label": "DocumentInput"
+        type: 'doc',
+        id: 'api/types/types/card-merchant-fee',
+        label: 'CardMerchantFee',
       },
       {
-        "type": "doc",
-        "id": "api/types/inputs/fee-matrix-input",
-        "label": "FeeMatrixInput"
+        type: 'doc',
+        id: 'api/types/types/card-service-fee',
+        label: 'CardServiceFee',
       },
       {
-        "type": "doc",
-        "id": "api/types/inputs/invoice-input",
-        "label": "InvoiceInput"
+        type: 'doc',
+        id: 'api/types/types/card-volume-distribution',
+        label: 'CardVolumeDistribution',
       },
       {
-        "type": "doc",
-        "id": "api/types/inputs/invoice-settings-input",
-        "label": "InvoiceSettingsInput"
+        type: 'doc',
+        id: 'api/types/types/create-settlement-instruction-response',
+        label: 'CreateSettlementInstructionResponse',
       },
       {
-        "type": "doc",
-        "id": "api/types/inputs/invoice-update-input",
-        "label": "InvoiceUpdateInput"
+        type: 'doc',
+        id: 'api/types/types/device',
+        label: 'Device',
       },
       {
-        "type": "doc",
-        "id": "api/types/inputs/level3data-line-item-input",
-        "label": "Level3DataLineItemInput"
+        type: 'doc',
+        id: 'api/types/types/devices',
+        label: 'Devices',
       },
       {
-        "type": "doc",
-        "id": "api/types/inputs/level3data-summary-input",
-        "label": "Level3DataSummaryInput"
+        type: 'doc',
+        id: 'api/types/types/dispute',
+        label: 'Dispute',
       },
       {
-        "type": "doc",
-        "id": "api/types/inputs/merchant-onboarding-input",
-        "label": "MerchantOnboardingInput"
+        type: 'doc',
+        id: 'api/types/types/disputes',
+        label: 'Disputes',
       },
       {
-        "type": "doc",
-        "id": "api/types/inputs/merchant-settings-input",
-        "label": "MerchantSettingsInput"
+        type: 'doc',
+        id: 'api/types/types/fee-matrix',
+        label: 'FeeMatrix',
       },
       {
-        "type": "doc",
-        "id": "api/types/inputs/merchant-user-input",
-        "label": "MerchantUserInput"
+        type: 'doc',
+        id: 'api/types/types/fee-model',
+        label: 'FeeModel',
       },
       {
-        "type": "doc",
-        "id": "api/types/inputs/offline-transaction-input",
-        "label": "OfflineTransactionInput"
+        type: 'doc',
+        id: 'api/types/types/fee-model-detail',
+        label: 'FeeModelDetail',
       },
       {
-        "type": "doc",
-        "id": "api/types/inputs/payment-link-input",
-        "label": "PaymentLinkInput"
+        type: 'doc',
+        id: 'api/types/types/funding-transfer',
+        label: 'FundingTransfer',
       },
       {
-        "type": "doc",
-        "id": "api/types/inputs/payment-method-input",
-        "label": "PaymentMethodInput"
+        type: 'doc',
+        id: 'api/types/types/funding-transfers',
+        label: 'FundingTransfers',
       },
       {
-        "type": "doc",
-        "id": "api/types/inputs/payor-data",
-        "label": "PayorData"
+        type: 'doc',
+        id: 'api/types/types/id',
+        label: 'ID',
       },
       {
-        "type": "doc",
-        "id": "api/types/inputs/payor-input",
-        "label": "PayorInput"
+        type: 'doc',
+        id: 'api/types/types/instruction',
+        label: 'Instruction',
       },
       {
-        "type": "doc",
-        "id": "api/types/inputs/prepare-sandbox-settlement-batch-input",
-        "label": "PrepareSandboxSettlementBatchInput"
+        type: 'doc',
+        id: 'api/types/types/int',
+        label: 'Int',
       },
       {
-        "type": "doc",
-        "id": "api/types/inputs/query-pair",
-        "label": "QueryPair"
+        type: 'doc',
+        id: 'api/types/types/invoice',
+        label: 'Invoice',
       },
       {
-        "type": "doc",
-        "id": "api/types/inputs/recurring-payment-input",
-        "label": "RecurringPaymentInput"
+        type: 'doc',
+        id: 'api/types/types/invoices',
+        label: 'Invoices',
       },
       {
-        "type": "doc",
-        "id": "api/types/inputs/refund-reason-input",
-        "label": "RefundReasonInput"
+        type: 'doc',
+        id: 'api/types/types/invoice-settings',
+        label: 'InvoiceSettings',
       },
       {
-        "type": "doc",
-        "id": "api/types/inputs/sort-pair",
-        "label": "SortPair"
+        type: 'doc',
+        id: 'api/types/types/jwk',
+        label: 'JWK',
       },
       {
-        "type": "doc",
-        "id": "api/types/inputs/split-input",
-        "label": "SplitInput"
+        type: 'doc',
+        id: 'api/types/types/jwks',
+        label: 'JWKS',
       },
       {
-        "type": "doc",
-        "id": "api/types/inputs/sql-query",
-        "label": "SqlQuery"
+        type: 'doc',
+        id: 'api/types/types/level3data-line-item',
+        label: 'Level3DataLineItem',
       },
       {
-        "type": "doc",
-        "id": "api/types/inputs/support-note-input",
-        "label": "SupportNoteInput"
+        type: 'doc',
+        id: 'api/types/types/level3data-summary',
+        label: 'Level3DataSummary',
       },
       {
-        "type": "doc",
-        "id": "api/types/inputs/underwriting-data-input",
-        "label": "UnderwritingDataInput"
+        type: 'doc',
+        id: 'api/types/types/list-merchant',
+        label: 'ListMerchant',
       },
       {
-        "type": "doc",
-        "id": "api/types/inputs/update-payment-link-input",
-        "label": "UpdatePaymentLinkInput"
+        type: 'doc',
+        id: 'api/types/types/merchant',
+        label: 'Merchant',
       },
       {
-        "type": "doc",
-        "id": "api/types/inputs/update-recurring-payment-input",
-        "label": "UpdateRecurringPaymentInput"
+        type: 'doc',
+        id: 'api/types/types/merchant-onboarding',
+        label: 'MerchantOnboarding',
       },
       {
-        "type": "doc",
-        "id": "api/types/inputs/update-sandbox-dispute-status-input",
-        "label": "UpdateSandboxDisputeStatusInput"
+        type: 'doc',
+        id: 'api/types/types/merchants',
+        label: 'Merchants',
       },
       {
-        "type": "doc",
-        "id": "api/types/inputs/user-input",
-        "label": "UserInput"
+        type: 'doc',
+        id: 'api/types/types/merchant-settings',
+        label: 'MerchantSettings',
       },
       {
-        "type": "doc",
-        "id": "api/types/inputs/user-input-v2",
-        "label": "UserInputV2"
+        type: 'doc',
+        id: 'api/types/types/missed-recurring-payment-data',
+        label: 'MissedRecurringPaymentData',
       },
       {
-        "type": "doc",
-        "id": "api/types/inputs/volume-distribution-by-business-type-input",
-        "label": "VolumeDistributionByBusinessTypeInput"
-      }
+        type: 'doc',
+        id: 'api/types/types/offline-transaction',
+        label: 'OfflineTransaction',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/types/one-time-payment',
+        label: 'OneTimePayment',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/types/payload-validation',
+        label: 'PayloadValidation',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/types/payment-link',
+        label: 'PaymentLink',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/types/payment-links',
+        label: 'PaymentLinks',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/types/payment-method-token',
+        label: 'PaymentMethodToken',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/types/payment-method-tokens',
+        label: 'PaymentMethodTokens',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/types/payor',
+        label: 'Payor',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/types/payors',
+        label: 'Payors',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/types/recurring-payment',
+        label: 'RecurringPayment',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/types/recurring-payments',
+        label: 'RecurringPayments',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/types/refund-reason',
+        label: 'RefundReason',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/types/reversal-response',
+        label: 'ReversalResponse',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/types/sandbox-ach-return-result',
+        label: 'SandboxAchReturnResult',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/types/sandbox-dispute-result',
+        label: 'SandboxDisputeResult',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/types/sandbox-dispute-update-result',
+        label: 'SandboxDisputeUpdateResult',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/types/sandbox-settlement-batch-prep-result',
+        label: 'SandboxSettlementBatchPrepResult',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/types/sandbox-settlement-result',
+        label: 'SandboxSettlementResult',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/types/service-fee-amount',
+        label: 'ServiceFeeAmount',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/types/service-fee-calculation',
+        label: 'ServiceFeeCalculation',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/types/settlement',
+        label: 'Settlement',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/types/settlements',
+        label: 'Settlements',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/types/split',
+        label: 'Split',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/types/splits',
+        label: 'Splits',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/types/string',
+        label: 'String',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/types/transaction',
+        label: 'Transaction',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/types/transactions',
+        label: 'Transactions',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/types/underwriting-data',
+        label: 'UnderwritingData',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/types/user',
+        label: 'User',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/types/user-v2',
+        label: 'UserV2',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/types/volume-distribution-by-business-type',
+        label: 'VolumeDistributionByBusinessType',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/types/webhook',
+        label: 'Webhook',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/types/webhook-event',
+        label: 'WebhookEvent',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/types/webhook-events',
+        label: 'WebhookEvents',
+      },
     ],
-    "collapsible": true,
-    "collapsed": true
+    collapsible: true,
+    collapsed: true,
   },
-  {
-    "type": "category",
-    "label": "Types",
-    "items": [
-      {
-        "type": "doc",
-        "id": "api/types/types/accepted-payment-methods",
-        "label": "AcceptedPaymentMethods"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/ach-fee",
-        "label": "AchFee"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/ach-merchant-fee",
-        "label": "AchMerchantFee"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/ach-return-details",
-        "label": "AchReturnDetails"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/ach-service-fee",
-        "label": "AchServiceFee"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/additional-purchase-data",
-        "label": "AdditionalPurchaseData"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/additional-underwriting-data",
-        "label": "AdditionalUnderwritingData"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/address",
-        "label": "Address"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/authorization",
-        "label": "Authorization"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/authorizations",
-        "label": "Authorizations"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/available-funds-balance",
-        "label": "AvailableFundsBalance"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/awsdate",
-        "label": "AWSDate"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/awsdate-time",
-        "label": "AWSDateTime"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/awsemail",
-        "label": "AWSEmail"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/awsipaddress",
-        "label": "AWSIPAddress"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/awsjson",
-        "label": "AWSJSON"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/awsphone",
-        "label": "AWSPhone"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/awsurl",
-        "label": "AWSURL"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/barcode",
-        "label": "Barcode"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/barcode-payment-response",
-        "label": "BarcodePaymentResponse"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/boolean",
-        "label": "Boolean"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/business",
-        "label": "Business"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/business-bank",
-        "label": "BusinessBank"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/business-owner",
-        "label": "BusinessOwner"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/card-brand-fee",
-        "label": "CardBrandFee"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/card-fee",
-        "label": "CardFee"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/card-merchant-fee",
-        "label": "CardMerchantFee"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/card-service-fee",
-        "label": "CardServiceFee"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/card-volume-distribution",
-        "label": "CardVolumeDistribution"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/create-settlement-instruction-response",
-        "label": "CreateSettlementInstructionResponse"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/device",
-        "label": "Device"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/devices",
-        "label": "Devices"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/dispute",
-        "label": "Dispute"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/disputes",
-        "label": "Disputes"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/fee-matrix",
-        "label": "FeeMatrix"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/fee-model",
-        "label": "FeeModel"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/fee-model-detail",
-        "label": "FeeModelDetail"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/funding-transfer",
-        "label": "FundingTransfer"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/funding-transfers",
-        "label": "FundingTransfers"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/id",
-        "label": "ID"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/instruction",
-        "label": "Instruction"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/int",
-        "label": "Int"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/invoice",
-        "label": "Invoice"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/invoices",
-        "label": "Invoices"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/invoice-settings",
-        "label": "InvoiceSettings"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/jwk",
-        "label": "JWK"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/jwks",
-        "label": "JWKS"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/level3data-line-item",
-        "label": "Level3DataLineItem"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/level3data-summary",
-        "label": "Level3DataSummary"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/list-merchant",
-        "label": "ListMerchant"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/merchant",
-        "label": "Merchant"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/merchant-onboarding",
-        "label": "MerchantOnboarding"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/merchants",
-        "label": "Merchants"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/merchant-settings",
-        "label": "MerchantSettings"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/missed-recurring-payment-data",
-        "label": "MissedRecurringPaymentData"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/offline-transaction",
-        "label": "OfflineTransaction"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/one-time-payment",
-        "label": "OneTimePayment"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/payload-validation",
-        "label": "PayloadValidation"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/payment-link",
-        "label": "PaymentLink"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/payment-links",
-        "label": "PaymentLinks"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/payment-method-token",
-        "label": "PaymentMethodToken"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/payment-method-tokens",
-        "label": "PaymentMethodTokens"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/payor",
-        "label": "Payor"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/payors",
-        "label": "Payors"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/recurring-payment",
-        "label": "RecurringPayment"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/recurring-payments",
-        "label": "RecurringPayments"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/refund-reason",
-        "label": "RefundReason"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/reversal-response",
-        "label": "ReversalResponse"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/sandbox-ach-return-result",
-        "label": "SandboxAchReturnResult"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/sandbox-dispute-result",
-        "label": "SandboxDisputeResult"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/sandbox-dispute-update-result",
-        "label": "SandboxDisputeUpdateResult"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/sandbox-settlement-batch-prep-result",
-        "label": "SandboxSettlementBatchPrepResult"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/sandbox-settlement-result",
-        "label": "SandboxSettlementResult"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/service-fee-amount",
-        "label": "ServiceFeeAmount"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/service-fee-calculation",
-        "label": "ServiceFeeCalculation"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/settlement",
-        "label": "Settlement"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/settlements",
-        "label": "Settlements"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/split",
-        "label": "Split"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/splits",
-        "label": "Splits"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/string",
-        "label": "String"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/transaction",
-        "label": "Transaction"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/transactions",
-        "label": "Transactions"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/underwriting-data",
-        "label": "UnderwritingData"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/user",
-        "label": "User"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/user-v2",
-        "label": "UserV2"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/volume-distribution-by-business-type",
-        "label": "VolumeDistributionByBusinessType"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/webhook",
-        "label": "Webhook"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/webhook-event",
-        "label": "WebhookEvent"
-      },
-      {
-        "type": "doc",
-        "id": "api/types/types/webhook-events",
-        "label": "WebhookEvents"
-      }
-    ],
-    "collapsible": true,
-    "collapsed": true
-  }
 ];
-const __gqlDocsTargetKey = "apiSidebar";
+const __gqlDocsTargetKey = 'apiSidebar';
+/** @type {(items: any, insert: any, opts?: {mode?: string, reference?: string}) => any} */
 const __gqlDocsMerge = (items, insert, opts) => {
   const list = Array.isArray(items) ? items.slice() : [];
   const mode = opts?.mode ?? 'replace';
@@ -2052,10 +2070,15 @@ const __gqlDocsMerge = (items, insert, opts) => {
   if (mode === 'prepend') return [...insert, ...list];
   const reference = opts?.reference;
   if (!reference) return [...list, ...insert];
-  const findIndex = (item) => {
+  /** @param {any} item */
+  const findIndex = item => {
     if (typeof item === 'string') return item === reference;
     if (item && typeof item === 'object') {
-      return item.label === reference || item.id === reference || item.value === reference;
+      return (
+        item.label === reference ||
+        item.id === reference ||
+        item.value === reference
+      );
     }
     return false;
   };
@@ -2064,5 +2087,9 @@ const __gqlDocsMerge = (items, insert, opts) => {
   const insertIndex = mode === 'before' ? index : index + 1;
   return [...list.slice(0, insertIndex), ...insert, ...list.slice(insertIndex)];
 };
-module.exports[__gqlDocsTargetKey] = __gqlDocsMerge(module.exports[__gqlDocsTargetKey], __gqlDocsItems, {"mode":"replace","reference":""});
-// </graphql-docs-sidebar>
+module.exports[__gqlDocsTargetKey] = __gqlDocsMerge(
+  module.exports[__gqlDocsTargetKey],
+  __gqlDocsItems,
+  { mode: 'replace', reference: '' },
+);
+// </graphql-doc-sidebar>
