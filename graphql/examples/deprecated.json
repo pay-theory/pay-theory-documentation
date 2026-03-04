@@ -1,0 +1,153 @@
+[
+  {
+    "operation": "createOneTimePayment",
+    "operationType": "mutation",
+    "examples": [
+      {
+        "name": "Example createOneTimePayment",
+        "description": "This call was deprecated in favor of the createTransaction mutation. The createTransaction mutation returns a more detailed response than this call.",
+        "query": "mutation CreateOneTimePayment($merchant_uid: String!, $amount: Int!, $payment_method_id: String, $payment_method: PaymentMethodInput, $recurring_id: String, $invoice_id: String, $fee: Int, $fee_mode: FeeMode, $payment_parameters_name: String, $account_code: String, $reference: String, $send_receipt: Boolean, $receipt_description: String, $metadata: AWSJSON, $health_expense_type: HealthExpenseType, $additional_purchase_data: AdditionalPurchaseDataInput) {\n  createOneTimePayment(merchant_uid: $merchant_uid, amount: $amount, payment_method_id: $payment_method_id, payment_method: $payment_method, recurring_id: $recurring_id, invoice_id: $invoice_id, fee: $fee, fee_mode: $fee_mode, payment_parameters_name: $payment_parameters_name, account_code: $account_code, reference: $reference, send_receipt: $send_receipt, receipt_description: $receipt_description, metadata: $metadata, health_expense_type: $health_expense_type, additional_purchase_data: $additional_purchase_data) {\n  transaction_id\n  created_at\n  amount\n  card_brand\n  currency\n  }\n}",
+        "variables": {
+          "merchant_uid": "example",
+          "amount": 123,
+          "payment_method_id": "example",
+          "payment_method": {
+            "ach": {
+              "account_number": "example",
+              "account_type": "BUSINESS_CHECKING",
+              "name_on_account": "example",
+              "routing_number": "example"
+            },
+            "canadian_eft": {
+              "account_number": "example",
+              "account_type": "BUSINESS_CHECKING",
+              "institution_number": "example",
+              "name_on_account": "example",
+              "transit_number": "example"
+            },
+            "card": {
+              "card_number": "example",
+              "exp_date": {
+                "month": "example",
+                "year": "example"
+              },
+              "postal_code": "example",
+              "security_code": "example"
+            },
+            "metadata": {
+              "key": "value"
+            },
+            "payor": {
+              "address_line1": "example"
+            },
+            "payor_id": "example"
+          },
+          "recurring_id": "example",
+          "invoice_id": "example",
+          "fee": 123,
+          "fee_mode": "CUSTOM_FEE",
+          "payment_parameters_name": "example",
+          "account_code": "example",
+          "reference": "example",
+          "send_receipt": true,
+          "receipt_description": "example",
+          "metadata": {
+            "key": "value"
+          },
+          "health_expense_type": "CLINICAL",
+          "additional_purchase_data": {
+            "level3_data_line_item": [
+              {
+                "item_code": "example"
+              }
+            ],
+            "level3_data_summary": {
+              "dest_postal_code": "example"
+            }
+          }
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "createOneTimePayment": {
+                "transaction_id": "example",
+                "created_at": "2025-01-01T00:00:00Z",
+                "amount": 123,
+                "card_brand": "example",
+                "currency": "example"
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "operation": "createRefund",
+    "operationType": "mutation",
+    "examples": [
+      {
+        "name": "Example createRefund",
+        "description": "This call will create a refund for a transaction.",
+        "query": "mutation CreateRefund($transaction_id: String!, $amount: Int!, $refund_reason: RefundReasonInput!, $refund_email: String) {\n  createRefund(transaction_id: $transaction_id, amount: $amount, refund_reason: $refund_reason, refund_email: $refund_email)\n}",
+        "variables": {
+          "transaction_id": "example",
+          "amount": 123,
+          "refund_reason": {
+            "reason_code": "DUPLICATE",
+            "reason_details": "example"
+          },
+          "refund_email": "example"
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "createRefund": true
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "operation": "serviceFeeAmount",
+    "operationType": "query",
+    "examples": [
+      {
+        "name": "Example serviceFeeAmount",
+        "description": "This call was deprecated in favor of the serviceFee query. The serviceFee query returns a single fee object that contains the fee, total, and adjusted total for the transaction based on the amount and payment method details passed in.",
+        "query": "query ServiceFeeAmount($merchant_uid: String!, $amount: Int!) {\n  serviceFeeAmount(merchant_uid: $merchant_uid, amount: $amount) {\n  ach {\n    adjusted_total\n    fee\n    fee_limit_reached\n    total\n  }\n  card {\n    adjusted_total\n    fee\n    fee_limit_reached\n    total\n  }\n  }\n}",
+        "variables": {
+          "merchant_uid": "example",
+          "amount": 123
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "serviceFeeAmount": {
+                "ach": {
+                  "adjusted_total": 123,
+                  "fee": 123,
+                  "fee_limit_reached": true,
+                  "total": 123
+                },
+                "card": {
+                  "adjusted_total": 123,
+                  "fee": 123,
+                  "fee_limit_reached": true,
+                  "total": 123
+                }
+              }
+            }
+          }
+        }
+      }
+    ]
+  }
+]

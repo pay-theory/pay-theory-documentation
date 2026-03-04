@@ -11,7 +11,7 @@ The `failure_text` will be a sentence explaining the Failure and is the better o
 
 The `failure_code` is a string that you can use if you would rather display your own error message.
 
-If you are calling the [createTransaction](/docs/api/transaction.md#create-transaction) endpoint you will receive a response and the `failure_code` will be the `failure_reason` in the response.
+If you are calling the [createTransaction](/docs/api/transaction/create-transaction) endpoint you will receive a response and the `failure_code` will be the `failure_reason` in the response.
 
 The failure codes are listed below.
 

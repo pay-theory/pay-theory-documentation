@@ -1,0 +1,25 @@
+# PayTheory Lab
+
+This is the LLM-optimized documentation for the PayTheory Lab GraphQL API.
+For human-readable documentation, visit: https://docs.paytheory.com
+
+## Docs
+
+- [API Overview](https://docs.paytheory.com/llm-docs/lab/index.md): Quick reference with all operation signatures - authorizations, createAuthorization, createWalletAuthorization, createCapture, createVoidForAuthorization, barcode, createBarcode, disputes, …
+- [Authorization](https://docs.paytheory.com/llm-docs/lab/authorization.md) - authorizations, createAuthorization, createWalletAuthorization, createCapture, createVoidForAuthorization
+- [Barcode](https://docs.paytheory.com/llm-docs/lab/barcode.md) - barcode, createBarcode
+- [Disputes](https://docs.paytheory.com/llm-docs/lab/disputes.md) - disputes
+- [Invoice](https://docs.paytheory.com/llm-docs/lab/invoice.md) - invoices, createInvoice, updateInvoice, deleteInvoice, createInvoiceEmail, createOfflineTransaction
+- [Merchant](https://docs.paytheory.com/llm-docs/lab/merchant.md) - merchant, merchants, createMerchant, updateFeeMatrix, updateMerchantSettings
+- [Metadata](https://docs.paytheory.com/llm-docs/lab/metadata.md) - updateMetadata, deleteMetadata
+- [Payment Links](https://docs.paytheory.com/llm-docs/lab/payment-links.md) - paymentLinks, createPaymentLink, updatePaymentLink
+- [Payment Method Token](https://docs.paytheory.com/llm-docs/lab/payment-method-token.md) - paymentMethodTokens, createPaymentMethod, updatePaymentMethodToDisabled, validatePaymentMethodOwnership
+- [Payor](https://docs.paytheory.com/llm-docs/lab/payor.md) - payors, createPayor, updatePayor
+- [Recurring Payment](https://docs.paytheory.com/llm-docs/lab/recurring-payment.md) - recurringPayments, createRecurringPayment, updateRecurringPayment, cancelRecurringPayment, missedRecurringPaymentData, createRetryForFailedRecurringPayment
+- [Settlement](https://docs.paytheory.com/llm-docs/lab/settlement.md) - settlements, availableFundsBalance, fundingTransfers, instruction, cancelSettlementInstruction, createSettlementInstruction
+- [Split](https://docs.paytheory.com/llm-docs/lab/split.md) - splits
+- [Transaction](https://docs.paytheory.com/llm-docs/lab/transaction.md) - transactions, createTransaction, createWalletTransaction, createReversal, serviceFee, createReceiptEmail, updateTransactionInReview
+- [Users](https://docs.paytheory.com/llm-docs/lab/users.md) - users, createUser, deleteUser
+- [Webhooks](https://docs.paytheory.com/llm-docs/lab/webhooks.md) - createWebhook, webhooks, updateWebhook, deleteWebhook, webhookEvents
+- [Sandbox](https://docs.paytheory.com/llm-docs/lab/sandbox.md) - createBarcodePaymentSandbox, createBatchCapture, createSandboxAchReturn, createSandboxDispute, createSandboxSettlement, prepareSandboxSettlementBatch, updateSandboxDisputeStatus
+- [Deprecated](https://docs.paytheory.com/llm-docs/lab/deprecated.md) - createOneTimePayment, createRefund, serviceFeeAmount

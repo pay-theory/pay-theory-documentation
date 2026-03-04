@@ -84,13 +84,13 @@ If you want to trigger a dispute in sandbox, run a transaction for `888888`. You
 
 These GraphQL requests are specifically for testing in sandbox environments and only work when using sandbox credentials (API keys accessing paytheorylab or paytheorystudy).
 
-- [Create Barcode Payment](../api/barcode#create-barcode-payment) - Simulate processing a barcode payment
-- [Create Batch Capture](../api/settlement#create-batch-capture) - Trigger a settlement batch creation to test settlement flows
+- [Create Barcode Payment](../api/sandbox/create-barcode-payment-sandbox) - Simulate processing a barcode payment
+- [Create Batch Capture](../api/sandbox/create-batch-capture) - Trigger a settlement batch creation to test settlement flows
 
 You can also trigger sandbox events using the Sandbox API mutations:
 
-- [Create Sandbox ACH Return](../api/sandbox#create-sandbox-ach-return) - Generate an ACH return for a completed ACH transaction
-- [Create Sandbox Dispute](../api/sandbox#create-sandbox-dispute) - Create a dispute for a card transaction
-- [Update Sandbox Dispute Status](../api/sandbox#update-sandbox-dispute-status) - Move a dispute to a new status
-- [Prepare Sandbox Settlement Batch](../api/sandbox#prepare-sandbox-settlement-batch) - Lock in line items and calculate settlement totals
-- [Create Sandbox Settlement](../api/sandbox#create-sandbox-settlement) - Create a settlement from a prepared batch
+- [Create Sandbox ACH Return](../api/sandbox/create-sandbox-ach-return) - Generate an ACH return for a completed ACH transaction
+- [Create Sandbox Dispute](../api/sandbox/create-sandbox-dispute) - Create a dispute for a card transaction
+- [Update Sandbox Dispute Status](../api/sandbox/update-sandbox-dispute-status) - Move a dispute to a new status
+- [Prepare Sandbox Settlement Batch](../api/sandbox/prepare-sandbox-settlement-batch) - Lock in line items and calculate settlement totals
+- [Create Sandbox Settlement](../api/sandbox/create-sandbox-settlement) - Create a settlement from a prepared batch
