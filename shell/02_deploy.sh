@@ -1,10 +1,30 @@
 #!/usr/bin/env bash
 
+set -euo pipefail
+
+if [[ $# -ne 5 ]]; then
+  echo "Usage: $0 <partner> <stage> <service-type> <service-name> <target-mode>"
+  exit 1
+fi
+
 PARTNER=$1
 STAGE=$2
 SERVICE_TYPE=$3
 SERVICE_NAME=$4
 TARGET_MODE=$5
+
+require_env() {
+  local var_name=$1
+  if [[ -z "${!var_name:-}" ]]; then
+    echo "Missing required environment variable: ${var_name}"
+    exit 1
+  fi
+}
+
+# These environment values are injected by buildspec/CodeBuild and required
+# to compute artifact buckets and target deployment region safely.
+require_env TARGET_ACCOUNT_ID
+require_env TARGET_REGION
 
 RAW_VERSION_TOKEN=${CODEBUILD_RESOLVED_SOURCE_VERSION:-}
 if [[ -z "${RAW_VERSION_TOKEN}" ]]; then

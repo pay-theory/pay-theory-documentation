@@ -90,7 +90,7 @@ Resources:
     Properties:
       FunctionName: !Sub '${Repository}-${Partner}-${Stage}-markdown-redirect'
       Description: !Sub '${Repository}-${Partner}-${Stage} markdown redirect Lambda@Edge'
-      Runtime: nodejs18.x
+      Runtime: nodejs20.x
       Handler: index.handler
       Role: !GetAtt MarkdownRedirectLambdaRole.Arn
       MemorySize: 128

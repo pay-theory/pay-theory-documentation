@@ -30,5 +30,7 @@ requests to static markdown artifacts when a matching route is present in
 
 - The function is intentionally static-host friendly: no runtime source file access and no package
   dependency on `@lewl/graphql-doc`.
+- The manifest is memoized in-memory per warm Lambda runtime; publishing a new function version is
+  required to guarantee fresh manifest/code rollout across edge locations.
 - Deploy logic is responsible for packaging manifest + handler files together and publishing a
   versioned Lambda in `us-east-1`.
