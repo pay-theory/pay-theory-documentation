@@ -134,6 +134,13 @@ else
   exit 1
 fi
 
+if [[ "${RUN_MARKDOWN_SMOKE_TESTS:-true}" == "true" ]]; then
+  echo "Running markdown redirect smoke checks"
+  bash shell/verify_markdown_redirects.sh "${STAGE}"
+else
+  echo "Skipping markdown redirect smoke checks (RUN_MARKDOWN_SMOKE_TESTS=${RUN_MARKDOWN_SMOKE_TESTS:-false})"
+fi
+
 echo "Retrieving cloudwatch kms key" ;
 KMS_KEY_ID=$(aws --region="${TARGET_REGION}" ssm get-parameters --name pt-keys-"${PARTNER}"-cloudwatch-sym-key --output text --query "Parameters[0].Value")
 if [[ ${KMS_KEY_ID} != *"arn"* ]]
