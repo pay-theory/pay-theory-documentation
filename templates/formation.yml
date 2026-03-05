@@ -195,7 +195,7 @@ Resources:
           OriginRequestPolicyId: '{{resolve:ssm:pt-global-books-origin}}'
           ViewerProtocolPolicy: redirect-to-https
           LambdaFunctionAssociations:
-            - EventType: origin-request
+            - EventType: viewer-request
               IncludeBody: false
               LambdaFunctionARN: !Ref MarkdownRedirectLambdaVersionArn
         HttpVersion: http2

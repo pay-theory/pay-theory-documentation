@@ -1,6 +1,6 @@
 # Markdown Redirect Lambda@Edge
 
-This Lambda@Edge handler runs on CloudFront `origin-request` and rewrites markdown-aware docs
+This Lambda@Edge handler runs on CloudFront `viewer-request` and rewrites markdown-aware docs
 requests to static markdown artifacts when a matching route is present in
 `markdown-routes-manifest.json`.
 
@@ -22,7 +22,8 @@ requests to static markdown artifacts when a matching route is present in
 - Looks up exact route matches in manifest:
   - GraphQL routes under `/docs/api/**` and `/docs/lab/api/**`
   - Non-API routes exported to `/llm-docs/non-api/**`
-- If no match exists, request is passed through unchanged (normal HTML rendering path).
+- If no match exists, returns a strict markdown `404` response to avoid serving SPA HTML for
+  markdown-negotiated requests.
 
 ## Notes
 
