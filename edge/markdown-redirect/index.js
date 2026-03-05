@@ -43,6 +43,10 @@ function shouldBypass(uri) {
   return false;
 }
 
+function isDocsRoute(uri) {
+  return uri === '/docs' || uri.startsWith('/docs/');
+}
+
 function buildMarkdownNotFoundResponse(uri, method) {
   const response = {
     status: '404',
@@ -92,6 +96,9 @@ exports.handler = async event => {
 
   const uri = normalizeRoute(request.uri || '/');
   if (shouldBypass(uri)) {
+    return request;
+  }
+  if (!isDocsRoute(uri)) {
     return request;
   }
 

@@ -18,6 +18,7 @@ requests to static markdown artifacts when a matching route is present in
 - Detects markdown requests via:
   - `Accept: text/markdown` or `text/x-markdown`
   - `x-accept-markdown`, `x-doc-format`, `x-format`, `x-response-format`, `x-return-format`
+- Applies markdown rewrite behavior only for docs routes under `/docs/**`.
 - Bypasses `/llm-docs/**`, `/llms.txt`, and static asset-like paths.
 - Looks up exact route matches in manifest:
   - GraphQL routes under `/docs/api/**` and `/docs/lab/api/**`
