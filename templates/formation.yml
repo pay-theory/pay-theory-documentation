@@ -25,6 +25,9 @@ Parameters:
   CertificateArn:
     Type: String
     Description: v2 certificate arn
+  MarkdownRedirectLambdaVersionArn:
+    Type: String
+    Description: Lambda@Edge version ARN for markdown redirects
 Conditions:
     isStandard: !Equals [ !Ref TargetMode, standard]
 Resources:
@@ -191,6 +194,10 @@ Resources:
           CachePolicyId: '{{resolve:ssm:pt-global-books-cache}}'
           OriginRequestPolicyId: '{{resolve:ssm:pt-global-books-origin}}'
           ViewerProtocolPolicy: redirect-to-https
+          LambdaFunctionAssociations:
+            - EventType: origin-request
+              IncludeBody: false
+              LambdaFunctionARN: !Ref MarkdownRedirectLambdaVersionArn
         HttpVersion: http2
         DefaultRootObject: index.html
         IPV6Enabled: true

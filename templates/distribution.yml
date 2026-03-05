@@ -19,27 +19,27 @@ Parameters:
       - standard
       - '-new'
       - '-old'
+  MarkdownRedirectLambdaS3Bucket:
+    Type: String
+    Description: Bucket containing the packaged Lambda@Edge artifact.
+  MarkdownRedirectLambdaS3Key:
+    Type: String
+    Description: Object key for the packaged Lambda@Edge artifact.
 Conditions:
-  isStandard: !Equals [ !Ref TargetMode, standard]
+  isStandard: !Equals [!Ref TargetMode, standard]
 Resources:
   V2HostedZone:
     Type: AWS::Route53::HostedZone
     Properties:
-      Name: !If [
-        isStandard,
-        !Sub "docs.${Stage}.com",
-        !Sub "docs.${Stage}.com" ]
+      Name: !If [isStandard, !Sub "docs.${Stage}.com", !Sub "docs.${Stage}.com"]
 
   V2Route53NSRecordUpdater:
     Type: Custom::NSRecordUpdater
     Properties:
       ServiceToken: !Sub '{{resolve:ssm:route53-recordset-updater-lambda-arn}}'
       DomainName: !Sub '${Stage}.com'
-      SubdomainName: !If [
-        isStandard,
-        !Sub "docs.${Stage}.com",
-        !Sub "docs.${Stage}.com" ]
-      NameServersList: !GetAtt "V2HostedZone.NameServers"
+      SubdomainName: !If [isStandard, !Sub "docs.${Stage}.com", !Sub "docs.${Stage}.com"]
+      NameServersList: !GetAtt V2HostedZone.NameServers
 
   V2Certificate:
     Type: Custom::Certificate
@@ -47,10 +47,7 @@ Resources:
       - V2Route53NSRecordUpdater
     Properties:
       ServiceToken: !Sub '{{resolve:ssm:certificate-validator-lambda-arn}}'
-      DomainName: !If [
-        isStandard,
-        !Sub "docs.${Stage}.com",
-        !Sub "docs.${Stage}.com" ]
+      DomainName: !If [isStandard, !Sub "docs.${Stage}.com", !Sub "docs.${Stage}.com"]
 
   V2CertificateValidator:
     Type: Custom::CertificateValidator
@@ -59,6 +56,51 @@ Resources:
     Properties:
       ServiceToken: !Sub '{{resolve:ssm:certificate-validator-lambda-arn}}'
       CertificateArn: !GetAtt V2Certificate.CertificateArn
+
+  MarkdownRedirectLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+                - edgelambda.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Policies:
+        - PolicyName: markdown-redirect-lambda-logs
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: '*'
+
+  MarkdownRedirectLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub '${Repository}-${Partner}-${Stage}-markdown-redirect'
+      Description: !Sub '${Repository}-${Partner}-${Stage} markdown redirect Lambda@Edge'
+      Runtime: nodejs18.x
+      Handler: index.handler
+      Role: !GetAtt MarkdownRedirectLambdaRole.Arn
+      MemorySize: 128
+      Timeout: 5
+      Code:
+        S3Bucket: !Ref MarkdownRedirectLambdaS3Bucket
+        S3Key: !Ref MarkdownRedirectLambdaS3Key
+
+  MarkdownRedirectLambdaVersion:
+    Type: AWS::Lambda::Version
+    Properties:
+      FunctionName: !Ref MarkdownRedirectLambda
+      Description: !Sub '${Repository}-${Partner}-${Stage} markdown redirect edge version'
 
   HostedZoneParameter:
     Type: AWS::SSM::Parameter
@@ -75,6 +117,14 @@ Resources:
       Type: String
       Value: !GetAtt V2Certificate.CertificateArn
       Description: !Sub 'Certificate arn for ${Repository}-${Partner}-${Stage}'
+
+  MarkdownRedirectLambdaVersionArnParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Sub '${Repository}-${Partner}-${Stage}-markdown-redirect-lambda-version-arn'
+      Type: String
+      Value: !Ref MarkdownRedirectLambdaVersion
+      Description: !Sub 'Markdown redirect Lambda@Edge version ARN for ${Repository}-${Partner}-${Stage}'
 
 Outputs:
   Renew:

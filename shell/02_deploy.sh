@@ -40,7 +40,9 @@ aws cloudformation deploy --template-file ./templates/distribution.yml \
 --parameter-overrides \
 Partner="${PARTNER}" \
 Stage="${STAGE}" \
-TargetMode="${TARGET_MODE}"
+TargetMode="${TARGET_MODE}" \
+MarkdownRedirectLambdaS3Bucket="${S3_ARTIFACTS_BUCKET}" \
+MarkdownRedirectLambdaS3Key="${MARKDOWN_REDIRECT_LAMBDA_ARTIFACT_KEY}"
 
 # Check the status of cloudformation stack set
 STATUS=$(aws cloudformation describe-stacks --region "us-east-1" --stack-name "${SERVICE_NAME}"-distribution-"${PARTNER}"-"${STAGE}" --output text --query "Stacks[0].StackStatus")
@@ -59,6 +61,15 @@ echo "Retrieving hosted zone" ;
 HOSTED_ZONE=$(aws --region="us-east-1" ssm get-parameters --name "${SERVICE_NAME}-${PARTNER}-${STAGE}-hosted-zone" --output text --query "Parameters[0].Value")
 echo "Retrieving certificate" ;
 CERTIFICATE_ARN=$(aws --region="us-east-1" ssm get-parameters --name "${SERVICE_NAME}-${PARTNER}-${STAGE}-certificate-arn" --output text --query "Parameters[0].Value")
+echo "Retrieving markdown redirect Lambda@Edge version arn" ;
+MARKDOWN_REDIRECT_LAMBDA_VERSION_ARN=$(aws --region="us-east-1" ssm get-parameters --name "${SERVICE_NAME}-${PARTNER}-${STAGE}-markdown-redirect-lambda-version-arn" --output text --query "Parameters[0].Value")
+if [[ ${MARKDOWN_REDIRECT_LAMBDA_VERSION_ARN} != arn:aws:lambda:us-east-1:*:function:*:* ]]
+then
+    echo "Failed to retrieve markdown redirect Lambda@Edge version arn!"
+    exit 1
+else
+    echo "Markdown redirect Lambda@Edge version arn retrieved..."
+fi
 
 aws cloudformation deploy --template-file ./templates/formation.yml \
 --stack-name "${SERVICE_NAME}"-"${PARTNER}"-"${STAGE}" \
@@ -70,7 +81,8 @@ Partner="${PARTNER}" \
 Stage="${STAGE}" \
 TargetMode="${TARGET_MODE}" \
 HostedZone="${HOSTED_ZONE}" \
-CertificateArn="${CERTIFICATE_ARN}"
+CertificateArn="${CERTIFICATE_ARN}" \
+MarkdownRedirectLambdaVersionArn="${MARKDOWN_REDIRECT_LAMBDA_VERSION_ARN}"
 
 # Check the status of cloudformation stack set
 STATUS=$(aws cloudformation describe-stacks --stack-name "${SERVICE_NAME}"-"${PARTNER}"-"${STAGE}" --output text --query "Stacks[0].StackStatus")
