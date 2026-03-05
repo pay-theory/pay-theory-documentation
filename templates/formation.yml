@@ -158,6 +158,42 @@ Resources:
             Resource:
               - !Sub 'arn:aws:s3:::partner-services-${Partner}-${AWS::AccountId}-${AWS::Region}-backups'
 
+  CloudFrontCachePolicy:
+    Type: AWS::CloudFront::CachePolicy
+    Properties:
+      CachePolicyConfig:
+        Comment: !Sub 'Cache policy for ${Repository}-${Partner}-${Stage}'
+        Name: !Sub '${Repository}-${Partner}-${Stage}-cache-policy'
+        DefaultTTL: 86400
+        MaxTTL: 31536000
+        MinTTL: 1
+        ParametersInCacheKeyAndForwardedToOrigin:
+          EnableAcceptEncodingGzip: true
+          EnableAcceptEncodingBrotli: false
+          CookiesConfig:
+            CookieBehavior: none
+          HeadersConfig:
+            HeaderBehavior: none
+          QueryStringsConfig:
+            QueryStringBehavior: all
+
+  CloudFrontOriginRequestPolicy:
+    Type: AWS::CloudFront::OriginRequestPolicy
+    Properties:
+      OriginRequestPolicyConfig:
+        Comment: !Sub 'Origin request policy for ${Repository}-${Partner}-${Stage}'
+        Name: !Sub '${Repository}-${Partner}-${Stage}-origin-policy'
+        CookiesConfig:
+          CookieBehavior: none
+        HeadersConfig:
+          HeaderBehavior: whitelist
+          Headers:
+            - Origin
+            - Access-Control-Request-Method
+            - Access-Control-Request-Headers
+        QueryStringsConfig:
+          QueryStringBehavior: all
+
   CloudFront:
     DependsOn:
       - CloudFrontOAC
@@ -191,8 +227,8 @@ Resources:
             - HEAD
             - OPTIONS
           TargetOriginId: !Sub '${Repository}-${Partner}-${Stage}'
-          CachePolicyId: '{{resolve:ssm:pt-global-books-cache}}'
-          OriginRequestPolicyId: '{{resolve:ssm:pt-global-books-origin}}'
+          CachePolicyId: !Ref CloudFrontCachePolicy
+          OriginRequestPolicyId: !Ref CloudFrontOriginRequestPolicy
           ViewerProtocolPolicy: redirect-to-https
           LambdaFunctionAssociations:
             - EventType: viewer-request
