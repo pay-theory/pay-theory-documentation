@@ -13,6 +13,7 @@
     "start:open": "docusaurus start",
     "prebuild": "npm run graphql:generate",
     "build": "docusaurus build",
+    "postbuild": "node ./scripts/build-markdown-redirect-artifacts.cjs",
     "swizzle": "docusaurus swizzle",
     "deploy": "docusaurus deploy",
     "clear": "docusaurus clear",
