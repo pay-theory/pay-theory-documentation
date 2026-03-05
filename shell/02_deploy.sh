@@ -8,6 +8,7 @@ TARGET_MODE=$5
 
 S3_ARTIFACTS_BUCKET="partner-services-deployment-${PARTNER}-${TARGET_ACCOUNT_ID}-${TARGET_REGION}"
 S3_ARTIFACTS_PATH="code/${SERVICE_NAME}-${PARTNER}-${STAGE}"
+MARKDOWN_REDIRECT_LAMBDA_ARTIFACT_KEY="${S3_ARTIFACTS_PATH}/markdown-redirect-edge-lambda.zip"
 
 echo "Printing Local scope variables";
 echo "PARTNER :: $PARTNER"
@@ -17,12 +18,17 @@ echo "SERVICE_TYPE :: $SERVICE_TYPE"
 echo "TARGET_MODE :: $TARGET_MODE"
 echo "S3_ARTIFACTS_BUCKET :: $S3_ARTIFACTS_BUCKET"
 echo "S3_ARTIFACTS_PATH :: $S3_ARTIFACTS_PATH"
+echo "MARKDOWN_REDIRECT_LAMBDA_ARTIFACT_KEY :: $MARKDOWN_REDIRECT_LAMBDA_ARTIFACT_KEY"
 
 echo "Validating the cfn templates $(date) in $(pwd)" ;
 aws cloudformation validate-template --template-body file://templates/formation.yml
 
 aws s3 cp build s3://"${SERVICE_NAME}"-"${TARGET_ACCOUNT_ID}"-"${PARTNER}"-"${STAGE}"/"${STAGE}"/"${PARTNER}" --recursive --cache-control max-age=3
 
+echo "Packaging markdown redirect Lambda artifact"
+bash shell/package_markdown_edge_lambda.sh \
+  "${S3_ARTIFACTS_BUCKET}" \
+  "${MARKDOWN_REDIRECT_LAMBDA_ARTIFACT_KEY}"
 
 
 echo "Deploying certificates and hosted zone resources"
@@ -125,4 +131,3 @@ fi
 # fi
 
 # ##########################################################################
-
