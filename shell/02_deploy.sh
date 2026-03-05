@@ -6,9 +6,24 @@ SERVICE_TYPE=$3
 SERVICE_NAME=$4
 TARGET_MODE=$5
 
+RAW_VERSION_TOKEN=${CODEBUILD_RESOLVED_SOURCE_VERSION:-}
+if [[ -z "${RAW_VERSION_TOKEN}" ]]; then
+  RAW_VERSION_TOKEN=$(git rev-parse --short=12 HEAD 2>/dev/null || true)
+fi
+if [[ -z "${RAW_VERSION_TOKEN}" ]]; then
+  RAW_VERSION_TOKEN=$(date '+%Y%m%d%H%M%S')
+fi
+
+# Keep the token CloudFormation-safe and compact for stack parameter usage.
+MARKDOWN_REDIRECT_LAMBDA_VERSION_TOKEN=$(echo "${RAW_VERSION_TOKEN}" | tr -cd '[:alnum:]_-')
+MARKDOWN_REDIRECT_LAMBDA_VERSION_TOKEN=${MARKDOWN_REDIRECT_LAMBDA_VERSION_TOKEN:0:40}
+if [[ -z "${MARKDOWN_REDIRECT_LAMBDA_VERSION_TOKEN}" ]]; then
+  MARKDOWN_REDIRECT_LAMBDA_VERSION_TOKEN=$(date '+%Y%m%d%H%M%S')
+fi
+
 S3_ARTIFACTS_BUCKET="partner-services-deployment-${PARTNER}-${TARGET_ACCOUNT_ID}-${TARGET_REGION}"
 S3_ARTIFACTS_PATH="code/${SERVICE_NAME}-${PARTNER}-${STAGE}"
-MARKDOWN_REDIRECT_LAMBDA_ARTIFACT_KEY="${S3_ARTIFACTS_PATH}/markdown-redirect-edge-lambda.zip"
+MARKDOWN_REDIRECT_LAMBDA_ARTIFACT_KEY="${S3_ARTIFACTS_PATH}/markdown-redirect-edge-lambda-${MARKDOWN_REDIRECT_LAMBDA_VERSION_TOKEN}.zip"
 
 echo "Printing Local scope variables";
 echo "PARTNER :: $PARTNER"
@@ -18,6 +33,7 @@ echo "SERVICE_TYPE :: $SERVICE_TYPE"
 echo "TARGET_MODE :: $TARGET_MODE"
 echo "S3_ARTIFACTS_BUCKET :: $S3_ARTIFACTS_BUCKET"
 echo "S3_ARTIFACTS_PATH :: $S3_ARTIFACTS_PATH"
+echo "MARKDOWN_REDIRECT_LAMBDA_VERSION_TOKEN :: $MARKDOWN_REDIRECT_LAMBDA_VERSION_TOKEN"
 echo "MARKDOWN_REDIRECT_LAMBDA_ARTIFACT_KEY :: $MARKDOWN_REDIRECT_LAMBDA_ARTIFACT_KEY"
 
 echo "Validating the cfn templates $(date) in $(pwd)" ;
@@ -42,7 +58,8 @@ Partner="${PARTNER}" \
 Stage="${STAGE}" \
 TargetMode="${TARGET_MODE}" \
 MarkdownRedirectLambdaS3Bucket="${S3_ARTIFACTS_BUCKET}" \
-MarkdownRedirectLambdaS3Key="${MARKDOWN_REDIRECT_LAMBDA_ARTIFACT_KEY}"
+MarkdownRedirectLambdaS3Key="${MARKDOWN_REDIRECT_LAMBDA_ARTIFACT_KEY}" \
+MarkdownRedirectLambdaVersionToken="${MARKDOWN_REDIRECT_LAMBDA_VERSION_TOKEN}"
 
 # Check the status of cloudformation stack set
 STATUS=$(aws cloudformation describe-stacks --region "us-east-1" --stack-name "${SERVICE_NAME}"-distribution-"${PARTNER}"-"${STAGE}" --output text --query "Stacks[0].StackStatus")

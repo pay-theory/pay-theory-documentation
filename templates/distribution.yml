@@ -25,6 +25,9 @@ Parameters:
   MarkdownRedirectLambdaS3Key:
     Type: String
     Description: Object key for the packaged Lambda@Edge artifact.
+  MarkdownRedirectLambdaVersionToken:
+    Type: String
+    Description: Deploy token used to force Lambda version replacement.
 Conditions:
   isStandard: !Equals [!Ref TargetMode, standard]
 Resources:
@@ -100,7 +103,7 @@ Resources:
     Type: AWS::Lambda::Version
     Properties:
       FunctionName: !Ref MarkdownRedirectLambda
-      Description: !Sub '${Repository}-${Partner}-${Stage} markdown redirect edge version'
+      Description: !Sub '${Repository}-${Partner}-${Stage} markdown redirect edge version ${MarkdownRedirectLambdaVersionToken}'
 
   HostedZoneParameter:
     Type: AWS::SSM::Parameter
