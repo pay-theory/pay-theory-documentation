@@ -3,12 +3,19 @@
 /* eslint-disable no-console */
 const fs = require('node:fs');
 const path = require('node:path');
+const {
+  DOCS_API_BASE,
+  DOCS_LAB_API_BASE,
+  LLM_DOCS_ROOT,
+  LAB_LLM_DOCS_ROOT,
+  NON_API_LLM_ROOT,
+} = require('../edge/markdown-redirect/path-config.cjs');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
 const BUILD_DIR = path.join(REPO_ROOT, 'build');
-const BUILD_LLM_DIR = path.join(BUILD_DIR, 'llm-docs');
-const BUILD_LLM_LAB_DIR = path.join(BUILD_LLM_DIR, 'lab');
-const NON_API_OUTPUT_ROOT = path.join(BUILD_LLM_DIR, 'non-api');
+const BUILD_LLM_DIR = path.join(BUILD_DIR, LLM_DOCS_ROOT.replace(/^\/+/, ''));
+const BUILD_LLM_LAB_DIR = path.join(BUILD_DIR, LAB_LLM_DOCS_ROOT.replace(/^\/+/, ''));
+const NON_API_OUTPUT_ROOT = path.join(BUILD_DIR, NON_API_LLM_ROOT.replace(/^\/+/, ''));
 const MANIFEST_PATH = path.join(BUILD_LLM_DIR, 'markdown-routes-manifest.json');
 const METADATA_DIR = path.join(
   REPO_ROOT,
@@ -93,10 +100,10 @@ function collectGraphqlRouteMap() {
   const routeMap = new Map();
 
   if (isFile(path.join(BUILD_LLM_DIR, 'index.md'))) {
-    routeMap.set('/docs/api', '/llm-docs/index.md');
+    routeMap.set(DOCS_API_BASE, `${LLM_DOCS_ROOT}/index.md`);
   }
   if (isFile(path.join(BUILD_LLM_LAB_DIR, 'index.md'))) {
-    routeMap.set('/docs/lab/api', '/llm-docs/lab/index.md');
+    routeMap.set(DOCS_LAB_API_BASE, `${LAB_LLM_DOCS_ROOT}/index.md`);
   }
 
   const addRoutesFromTree = (rootDir, docsPrefix, llmPrefix) => {
@@ -147,8 +154,8 @@ function collectGraphqlRouteMap() {
     walk(rootDir);
   };
 
-  addRoutesFromTree(BUILD_LLM_DIR, '/docs/api', '/llm-docs');
-  addRoutesFromTree(BUILD_LLM_LAB_DIR, '/docs/lab/api', '/llm-docs/lab');
+  addRoutesFromTree(BUILD_LLM_DIR, DOCS_API_BASE, LLM_DOCS_ROOT);
+  addRoutesFromTree(BUILD_LLM_LAB_DIR, DOCS_LAB_API_BASE, LAB_LLM_DOCS_ROOT);
 
   return routeMap;
 }
@@ -185,7 +192,10 @@ function collectAndCopyNonApiRoutes() {
 
     const normalizedRoute = normalizeRoute(permalink);
     const routeWithoutSlash = normalizedRoute.slice(1);
-    const targetRelative = path.posix.join('llm-docs', 'non-api', `${routeWithoutSlash}${extension}`);
+    const targetRelative = path.posix.join(
+      NON_API_LLM_ROOT.replace(/^\/+/, ''),
+      `${routeWithoutSlash}${extension}`,
+    );
     const targetAbsolute = path.join(BUILD_DIR, targetRelative);
 
     ensureDir(path.dirname(targetAbsolute));

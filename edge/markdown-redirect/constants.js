@@ -1,5 +1,7 @@
 'use strict';
 
+const { LLM_DOCS_ROOT } = require('./path-config.cjs');
+
 /**
  * Header names recognized as markdown format toggles.
  * These mirror the existing graphql-doc dev middleware semantics.
@@ -31,7 +33,7 @@ const MARKDOWN_ACCEPT_TYPES = ['text/markdown', 'text/x-markdown'];
 /**
  * Paths that should never be rewritten by markdown negotiation.
  */
-const BYPASS_PATH_PREFIXES = ['/llm-docs', '/assets', '/img'];
+const BYPASS_PATH_PREFIXES = [LLM_DOCS_ROOT, '/assets', '/img'];
 
 module.exports = {
   MARKDOWN_ACCEPT_TYPES,

@@ -8,6 +8,7 @@ requests to static markdown artifacts when a matching route is present in
 
 - `index.js`
 - `constants.js`
+- `path-config.cjs`
 - `manifest.js`
 - `markdown-routes-manifest.json` (copied from `build/llm-docs/`)
 
