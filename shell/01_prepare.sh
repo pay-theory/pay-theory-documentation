@@ -52,5 +52,14 @@ export REACT_APP_STAGE=$STAGE
 export REACT_APP_ENVIRONMENT=${PARTNER}${MODE}-${STAGE}
 export REACT_APP_MODE=$MODE
 
+# Docusaurus static builds in CI can exceed Node's default V8 heap limit
+# (~1.5GB). Allow callers to override via NODE_MAX_OLD_SPACE_SIZE / NODE_OPTIONS.
+if [[ -z "${NODE_OPTIONS}" ]]; then
+    export NODE_OPTIONS="--max-old-space-size=${NODE_MAX_OLD_SPACE_SIZE:-2048}"
+    echo "NODE_OPTIONS not set; defaulting to ${NODE_OPTIONS}"
+else
+    echo "Using existing NODE_OPTIONS=${NODE_OPTIONS}"
+fi
+
 npm install
 npm run build

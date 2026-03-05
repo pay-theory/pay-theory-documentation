@@ -35,7 +35,7 @@
     "@docusaurus/preset-classic": "^3.8.1",
     "@docusaurus/theme-mermaid": "^3.8.1",
     "@docusaurus/theme-search-algolia": "^3.8.1",
-    "@lewl/graphql-doc": "0.1.8",
+    "@lewl/graphql-doc": "0.1.9",
     "@mdx-js/react": "^3.1.0",
     "algoliasearch": "^5.10.2",
     "babel-plugin-inline-dotenv": "^1.7.0",
