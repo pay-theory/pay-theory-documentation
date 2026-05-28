@@ -140,6 +140,10 @@ module.exports = {
           id: 'main/online_payments/split_transactions',
         },
         {
+          type: 'doc',
+          id: 'main/online_payments/custom_fees_quickstart',
+        },
+        {
           type: 'category',
           label: 'Tokenizing Payments',
           items: [
