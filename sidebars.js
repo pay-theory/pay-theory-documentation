@@ -141,7 +141,7 @@ module.exports = {
         },
         {
           type: 'doc',
-          id: 'main/online_payments/custom_fees_quickstart',
+          id: 'main/online_payments/custom_fees',
         },
         {
           type: 'category',
@@ -2065,7 +2065,11 @@ const __gqlDocsItems = [
   },
 ];
 const __gqlDocsTargetKey = 'apiSidebar';
-/** @type {(items: any, insert: any, opts?: {mode?: string, reference?: string}) => any} */
+/**
+ * @param {any} items
+ * @param {any} insert
+ * @param {any} [opts]
+ */
 const __gqlDocsMerge = (items, insert, opts) => {
   const list = Array.isArray(items) ? items.slice() : [];
   const mode = opts?.mode ?? 'replace';
