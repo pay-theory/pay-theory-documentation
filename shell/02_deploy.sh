@@ -23,6 +23,19 @@ aws cloudformation validate-template --template-body file://templates/formation.
 
 aws s3 cp build s3://"${SERVICE_NAME}"-"${TARGET_ACCOUNT_ID}"-"${PARTNER}"-"${STAGE}"/"${STAGE}"/"${PARTNER}" --recursive --cache-control max-age=3
 
+echo "Packaging Markdown Lambda@Edge artifact"
+MARKDOWN_EDGE_LAMBDA_ZIP=$(bash shell/package_markdown_edge_lambda.sh "${SERVICE_NAME}")
+SOURCE_VERSION=${CODEBUILD_RESOLVED_SOURCE_VERSION:-}
+if [[ -z "${SOURCE_VERSION}" ]] && git rev-parse --short HEAD >/dev/null 2>&1
+then
+    SOURCE_VERSION=$(git rev-parse --short HEAD)
+fi
+SOURCE_VERSION=${SOURCE_VERSION:-local}
+SOURCE_VERSION=$(echo "${SOURCE_VERSION}" | tr -c 'A-Za-z0-9._-' '-')
+MARKDOWN_EDGE_LAMBDA_S3_KEY="${S3_ARTIFACTS_PATH}/markdown-edge-lambda-${SOURCE_VERSION}.zip"
+echo "Uploading Markdown Lambda@Edge artifact to s3://${S3_ARTIFACTS_BUCKET}/${MARKDOWN_EDGE_LAMBDA_S3_KEY}"
+aws s3 cp "${MARKDOWN_EDGE_LAMBDA_ZIP}" "s3://${S3_ARTIFACTS_BUCKET}/${MARKDOWN_EDGE_LAMBDA_S3_KEY}"
+echo "Markdown Lambda@Edge artifact uploaded"
 
 
 echo "Deploying certificates and hosted zone resources"
@@ -125,4 +138,3 @@ fi
 # fi
 
 # ##########################################################################
-
