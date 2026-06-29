@@ -24,11 +24,23 @@ Only `GET` and `HEAD` requests are eligible.
 Packaging replaces `manifest.js` with the route map generated at
 `build/llm-docs/markdown-routes-manifest.json`.
 
-- API operation routes rewrite to generated `/llm-docs/**` Markdown.
+- API operation routes rewrite to generated `/llm-docs/**` Markdown from
+  `static/llm-docs` and `static/llm-docs/lab`.
 - Non-API docs rewrite to exported source files under `/llm-docs/source/**`.
 - Unknown routes, static assets, `/llms.txt`, and `/llm-docs/**` pass through.
 
 The handler rewrites `request.uri`; it does not redirect the browser.
+
+## Runtime Contract
+
+- `npm run build` writes `build/llm-docs/markdown-routes-manifest.json` and
+  source fallback files under `build/llm-docs/source/**`.
+- `shell/package_markdown_edge_lambda.sh` embeds that manifest into
+  `manifest.js` inside the Lambda zip.
+- `templates/distribution.yml` publishes a numbered Lambda version in
+  `us-east-1`; CloudFront cannot use `$LATEST` for Lambda@Edge.
+- `templates/formation.yml` associates that published version on
+  `viewer-request`, before CloudFront cache lookup.
 
 ## Local Smoke Test
 

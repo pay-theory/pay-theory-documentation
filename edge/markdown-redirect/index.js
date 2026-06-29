@@ -4,6 +4,7 @@ const manifest = require('./manifest');
 const {
   DIRECT_MARKDOWN_PATHS,
   DIRECT_MARKDOWN_PREFIXES,
+  LLM_DOCS_PUBLIC_PREFIX,
   MARKDOWN_ACCEPT_TYPES,
   MARKDOWN_HEADER_NAMES,
   MARKDOWN_HEADER_VALUES,
@@ -68,7 +69,10 @@ const getRoutes = routesManifest => {
 
 const getManifestTarget = (routesManifest, uri) => {
   const target = getRoutes(routesManifest)[normalizeRoute(uri)];
-  if (typeof target !== 'string' || !target.startsWith('/')) {
+  if (
+    typeof target !== 'string' ||
+    !target.startsWith(LLM_DOCS_PUBLIC_PREFIX)
+  ) {
     return undefined;
   }
   return target;

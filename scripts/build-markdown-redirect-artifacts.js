@@ -2,18 +2,29 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const { execFileSync } = require('node:child_process');
+const {
+  LLM_DOCS_DIRNAME,
+  LLM_DOCS_PUBLIC_PREFIX,
+  LLMS_TXT_PATH,
+  MARKDOWN_ROUTES_MANIFEST_FILENAME,
+  SOURCE_DOCS_DIRNAME,
+  SOURCE_DOCS_PUBLIC_PREFIX,
+} = require('../edge/markdown-redirect/constants');
 
 const SITE_DIR = process.cwd();
 const BUILD_DIR = path.join(SITE_DIR, 'build');
-const LLM_DOCS_DIR = path.join(BUILD_DIR, 'llm-docs');
-const SOURCE_DOCS_DIR = path.join(LLM_DOCS_DIR, 'source');
+const LLM_DOCS_DIR = path.join(BUILD_DIR, LLM_DOCS_DIRNAME);
+const SOURCE_DOCS_DIR = path.join(LLM_DOCS_DIR, SOURCE_DOCS_DIRNAME);
 const METADATA_DIR = path.join(
   SITE_DIR,
   '.docusaurus',
   'docusaurus-plugin-content-docs',
   'default',
 );
-const MANIFEST_PATH = path.join(LLM_DOCS_DIR, 'markdown-routes-manifest.json');
+const MANIFEST_PATH = path.join(
+  LLM_DOCS_DIR,
+  MARKDOWN_ROUTES_MANIFEST_FILENAME,
+);
 const SIDEBARS_PATH = path.join(SITE_DIR, 'sidebars.js');
 const MARKDOWN_SOURCE_EXTENSIONS = new Set(['.md', '.mdx']);
 
@@ -77,26 +88,31 @@ const buildApiRoutes = () => {
 
   for (const filePath of markdownFiles) {
     const relativePath = toPosixPath(path.relative(LLM_DOCS_DIR, filePath));
-    if (relativePath === 'llms.txt' || relativePath.startsWith('source/')) {
+    if (
+      relativePath === LLMS_TXT_PATH.slice(1) ||
+      relativePath.startsWith(`${SOURCE_DOCS_DIRNAME}/`)
+    ) {
       continue;
     }
 
     const withoutExtension = relativePath.replace(/\.md$/, '');
     if (withoutExtension === 'index') {
-      routes['/docs/api'] = '/llm-docs/index.md';
+      routes['/docs/api'] = `${LLM_DOCS_PUBLIC_PREFIX}index.md`;
       continue;
     }
     if (withoutExtension === 'lab/index') {
-      routes['/docs/lab/api'] = '/llm-docs/lab/index.md';
+      routes['/docs/lab/api'] = `${LLM_DOCS_PUBLIC_PREFIX}lab/index.md`;
       continue;
     }
     if (withoutExtension.startsWith('lab/')) {
       const routePath = withoutExtension.slice('lab/'.length);
-      routes[`/docs/lab/api/${routePath}`] = `/llm-docs/${relativePath}`;
+      routes[`/docs/lab/api/${routePath}`] =
+        `${LLM_DOCS_PUBLIC_PREFIX}${relativePath}`;
       continue;
     }
 
-    routes[`/docs/api/${withoutExtension}`] = `/llm-docs/${relativePath}`;
+    routes[`/docs/api/${withoutExtension}`] =
+      `${LLM_DOCS_PUBLIC_PREFIX}${relativePath}`;
   }
 
   return routes;
@@ -144,7 +160,9 @@ const buildSourceDocRoutes = () => {
     const outputPath = path.join(SOURCE_DOCS_DIR, outputRelativePath);
     fs.mkdirSync(path.dirname(outputPath), { recursive: true });
     fs.copyFileSync(sourcePath, outputPath);
-    routes[route] = `/llm-docs/source/${toPosixPath(outputRelativePath)}`;
+    routes[route] = `${SOURCE_DOCS_PUBLIC_PREFIX}${toPosixPath(
+      outputRelativePath,
+    )}`;
   }
 
   return routes;
