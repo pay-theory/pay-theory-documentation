@@ -2069,6 +2069,7 @@ const __gqlDocsTargetKey = 'apiSidebar';
  * @param {any} items
  * @param {any} insert
  * @param {any} [opts]
+ * @returns {any}
  */
 const __gqlDocsMerge = (items, insert, opts) => {
   const list = Array.isArray(items) ? items.slice() : [];
