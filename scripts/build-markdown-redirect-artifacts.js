@@ -77,6 +77,96 @@ const isApiRoute = route =>
   route === '/docs/lab/api' ||
   route.startsWith('/docs/lab/api/');
 
+const isFenceBoundary = line => /^\s*(```|~~~)/.test(line);
+const isTopLevelImport = line => /^\s*import(?:\s|['"]).*/.test(line);
+const isTopLevelExport = line => /^\s*export\s+/.test(line);
+
+const extractAttributeValue = (attrs, name) => {
+  const pattern = new RegExp(`${name}=(["'])(.*?)\\1`);
+  const match = attrs.match(pattern);
+  return match ? match[2] : null;
+};
+
+// Conservative MDX normalizer: removes frontmatter and MDX imports/exports
+// outside code fences, and converts Tabs/TabItem JSX boundaries to Markdown
+// headings. Falls back to raw content on any uncaught error and emits a warning
+// instead of failing the build.
+const normalizeMdxSource = (content, sourcePath) => {
+  try {
+    let text = content;
+
+    // Strip YAML frontmatter block at file start
+    text = text.replace(/^---\n[\s\S]*?\n---\n?/, '');
+
+    const output = [];
+    let inFence = false;
+    let skippingTabsOpenTag = false;
+
+    for (const line of text.split('\n')) {
+      if (isFenceBoundary(line)) {
+        inFence = !inFence;
+        output.push(line);
+        continue;
+      }
+
+      if (inFence) {
+        output.push(line);
+        continue;
+      }
+
+      if (skippingTabsOpenTag) {
+        if (line.includes('>')) {
+          skippingTabsOpenTag = false;
+        }
+        continue;
+      }
+
+      if (isTopLevelImport(line) || isTopLevelExport(line)) {
+        continue;
+      }
+
+      if (/<Tabs\b/.test(line)) {
+        if (!line.includes('>')) {
+          skippingTabsOpenTag = true;
+        }
+        continue;
+      }
+
+      if (/<\/Tabs>/.test(line) || /<\/TabItem>/.test(line)) {
+        continue;
+      }
+
+      const tabItemMatch = line.match(/<TabItem\b([^>]*)>/);
+      if (tabItemMatch) {
+        const attrs = tabItemMatch[1];
+        const heading =
+          extractAttributeValue(attrs, 'label') ||
+          extractAttributeValue(attrs, 'value') ||
+          'Tab';
+        output.push(`### ${heading}`);
+        continue;
+      }
+
+      output.push(line);
+    }
+
+    text = output.join('\n');
+
+    // Collapse runs of 3+ blank lines to 2
+    text = text.replace(/\n{3,}/g, '\n\n');
+
+    return `${text.trim()}\n`;
+  } catch (err) {
+    console.warn(
+      `[markdown-artifacts] WARNING: normalization failed for ${path.relative(
+        process.cwd(),
+        sourcePath,
+      )}: ${err.message} — using raw source`,
+    );
+    return content;
+  }
+};
+
 const buildApiRoutes = () => {
   const routes = {};
   const markdownFiles = listFiles(
@@ -159,7 +249,9 @@ const buildSourceDocRoutes = () => {
     const outputRelativePath = `${route.replace(/^\/+/, '')}${extension}`;
     const outputPath = path.join(SOURCE_DOCS_DIR, outputRelativePath);
     fs.mkdirSync(path.dirname(outputPath), { recursive: true });
-    fs.copyFileSync(sourcePath, outputPath);
+    const rawContent = fs.readFileSync(sourcePath, 'utf8');
+    const normalizedContent = normalizeMdxSource(rawContent, sourcePath);
+    fs.writeFileSync(outputPath, normalizedContent);
     routes[route] = `${SOURCE_DOCS_PUBLIC_PREFIX}${toPosixPath(
       outputRelativePath,
     )}`;
