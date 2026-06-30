@@ -141,15 +141,18 @@ module.exports = {
     live: {
       name: 'pay-theory-api-skill',
       label: 'Pay Theory API Skill (Live)',
-      zipPath: 'docs/api/_data/pay-theory-api-skill.zip',
-      zipUrl: `${SITE_URL}/docs/api/_data/pay-theory-api-skill.zip`,
-      docsRoute: '/docs/api/agent-skills/pay-theory-api-skill',
+      zipSourcePath:
+        'docs/api/agent-skills/pay-theory-api-skill/pay-theory-api-skill.zip',
+      zipPath: '/llm-docs/agent-skills/pay-theory-api-skill.zip',
+      docsRoute: '/docs/api/agent-skills/pay-theory-api-skill/SKILL',
     },
     lab: {
       name: 'pay-theory-api-skill-lab',
       label: 'Pay Theory API Skill (Lab)',
-      zipUrl: `${SITE_URL}/docs/lab/api/agent-skills/pay-theory-api-skill-lab/pay-theory-api-skill-lab.zip`,
-      docsRoute: '/docs/lab/api/agent-skills/pay-theory-api-skill-lab',
+      zipSourcePath:
+        'versioned_docs/version-lab/api/agent-skills/pay-theory-api-skill-lab/pay-theory-api-skill-lab.zip',
+      zipPath: '/llm-docs/agent-skills/pay-theory-api-skill-lab.zip',
+      docsRoute: '/docs/lab/api/agent-skills/pay-theory-api-skill-lab/SKILL',
     },
   },
 

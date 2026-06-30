@@ -33,6 +33,69 @@ const pass = msg => {
 };
 
 const buildPath = (...segments) => path.join(BUILD_DIR, ...segments);
+const siteOrigin = new URL(config.siteUrl).origin;
+
+const toPublicPathSegments = publicPath =>
+  decodeURIComponent(publicPath).replace(/^\/+/, '').split('/').filter(Boolean);
+
+const publicPathExistsInBuild = publicPath => {
+  const segments = toPublicPathSegments(publicPath);
+  const directPath = buildPath(...segments);
+  if (fs.existsSync(directPath)) {
+    return true;
+  }
+
+  if (path.extname(publicPath)) {
+    return false;
+  }
+
+  return fs.existsSync(buildPath(...segments, 'index.html'));
+};
+
+const readManifestRoutes = () => {
+  const manifestPath = buildPath('llm-docs', 'markdown-routes-manifest.json');
+  if (!fs.existsSync(manifestPath)) {
+    return new Set();
+  }
+
+  try {
+    const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+    return new Set(Object.keys(manifest.routes || {}));
+  } catch {
+    return new Set();
+  }
+};
+
+const sameSiteUrlResolves = (urlValue, manifestRoutes) => {
+  let parsed;
+  try {
+    parsed = new URL(urlValue);
+  } catch {
+    return true;
+  }
+
+  if (parsed.origin !== siteOrigin) {
+    return true;
+  }
+
+  const route = parsed.pathname.replace(/\/+$/, '') || '/';
+  return manifestRoutes.has(route) || publicPathExistsInBuild(parsed.pathname);
+};
+
+const extractUrls = content => {
+  const urls = new Set();
+  const markdownLinkRegex = /\[[^\]]+\]\((https?:\/\/[^)\s]+)\)/g;
+  const plainUrlRegex = /https?:\/\/[^\s)]+/g;
+
+  for (const match of content.matchAll(markdownLinkRegex)) {
+    urls.add(match[1].replace(/[.,;]+$/, ''));
+  }
+  for (const match of content.matchAll(plainUrlRegex)) {
+    urls.add(match[0].replace(/[.,;]+$/, ''));
+  }
+
+  return [...urls];
+};
 
 // ── 1. Required build artifacts exist ─────────────────────────────────────
 
@@ -58,6 +121,11 @@ const requiredFiles = [
     fix: 'npm run build',
   },
   {
+    rel: path.join('llm-docs', 'llms.txt'),
+    label: 'llm-docs/llms.txt',
+    fix: 'npm run build',
+  },
+  {
     rel: path.join('llm-docs', 'markdown-routes-manifest.json'),
     label: 'markdown-routes-manifest.json',
     fix: 'npm run build',
@@ -75,6 +143,22 @@ for (const { rel, label, fix } of requiredFiles) {
     pass(`${label} exists`);
   } else {
     fail(`${label} is missing at build/${rel}`, fix);
+  }
+}
+
+for (const skill of Object.values(config.apiSkills)) {
+  if (!skill.zipPath) {
+    continue;
+  }
+
+  const full = buildPath(...toPublicPathSegments(skill.zipPath));
+  if (fs.existsSync(full)) {
+    pass(`${skill.label} ZIP exists`);
+  } else {
+    fail(
+      `${skill.label} ZIP is missing at build${skill.zipPath}`,
+      'npm run build (postbuild copies generated API skill packages)',
+    );
   }
 }
 
@@ -112,8 +196,12 @@ if (fs.existsSync(sitemapPath)) {
 
 // ── 4. llms.txt covers non-API sections ───────────────────────────────────
 
-const llmsTxtPath = buildPath('llms.txt');
-if (fs.existsSync(llmsTxtPath)) {
+const validateLlmsContent = (relPath, label) => {
+  const llmsTxtPath = buildPath(...relPath.split('/'));
+  if (!fs.existsSync(llmsTxtPath)) {
+    return;
+  }
+
   const llmsTxtContent = fs.readFileSync(llmsTxtPath, 'utf8');
   const requiredSections = [
     'Getting Started',
@@ -123,23 +211,26 @@ if (fs.existsSync(llmsTxtPath)) {
   ];
   for (const section of requiredSections) {
     if (llmsTxtContent.includes(section)) {
-      pass(`llms.txt contains section: ${section}`);
+      pass(`${label} contains section: ${section}`);
     } else {
       fail(
-        `llms.txt is missing section: "${section}"`,
+        `${label} is missing section: "${section}"`,
         'Check agent-docs.config.js sections and re-run npm run build',
       );
     }
   }
 
   if (!llmsTxtContent.includes('GraphQL API only')) {
-    pass('llms.txt does not claim API-only coverage');
+    pass(`${label} does not claim API-only coverage`);
   } else {
     warn(
-      'llms.txt may still claim API-only coverage — check the generated content',
+      `${label} may still claim API-only coverage — check the generated content`,
     );
   }
-}
+};
+
+validateLlmsContent('llms.txt', 'llms.txt');
+validateLlmsContent(path.join('llm-docs', 'llms.txt'), 'llm-docs/llms.txt');
 
 // ── 5. agent-index.json entries have existing Markdown targets ─────────────
 
@@ -272,6 +363,43 @@ if (fs.existsSync(manifestPath)) {
       warn(`${idx.filename}: ${dupes} duplicate route(s) found`);
     }
     seenInIndexes[idx.key] = routes.length;
+  }
+}
+
+// ── 9. Same-site links in generated indexes resolve ─────────────────────────
+
+const manifestRoutes = readManifestRoutes();
+const linkFiles = [
+  'llms.txt',
+  'llms-full.txt',
+  path.join('llm-docs', 'llms.txt'),
+  ...config.topicIndexes.map(idx =>
+    path.join('llm-docs', 'indexes', idx.filename),
+  ),
+];
+
+for (const relPath of linkFiles) {
+  const fullPath = buildPath(...relPath.split('/'));
+  if (!fs.existsSync(fullPath)) {
+    continue;
+  }
+
+  const content = fs.readFileSync(fullPath, 'utf8');
+  const urls = extractUrls(content);
+  const unresolved = urls.filter(
+    url => !sameSiteUrlResolves(url, manifestRoutes),
+  );
+
+  if (unresolved.length === 0) {
+    pass(`${relPath}: all same-site links resolve`);
+  } else {
+    for (const url of unresolved.slice(0, 5)) {
+      warn(`${relPath}: unresolved same-site link ${url}`);
+    }
+    fail(
+      `${relPath} has ${unresolved.length} unresolved same-site link(s)`,
+      'Check agent-docs.config.js and re-run npm run build',
+    );
   }
 }
 

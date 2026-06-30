@@ -28,6 +28,8 @@ const INDEXES_DIR = path.join(LLM_DOCS_BUILD_DIR, 'indexes');
 const config = require('../agent-docs.config.js');
 
 const readJsonFile = filePath => JSON.parse(fs.readFileSync(filePath, 'utf8'));
+const siteBuildPath = publicPath =>
+  path.join(BUILD_DIR, ...publicPath.replace(/^\/+/, '').split('/'));
 
 const isExcluded = route =>
   config.excludedRoutePatterns.some(
@@ -59,7 +61,11 @@ const buildDocMetadata = () => {
     const route = permalink.replace(/\/+$/, '') || '/';
     meta[route] = {
       title: payload.title || null,
-      sidebarLabel: payload.sidebar_label || payload.sidebarLabel || null,
+      sidebarLabel:
+        payload.frontMatter?.sidebar_label ||
+        payload.sidebar_label ||
+        payload.sidebarLabel ||
+        null,
       sourcePath: typeof payload.source === 'string' ? payload.source : null,
     };
   }
@@ -131,6 +137,41 @@ const writeAgentIndex = catalog => {
   return outPath;
 };
 
+const copyApiSkillPackages = () => {
+  const copied = [];
+  const missing = [];
+
+  for (const skill of Object.values(config.apiSkills)) {
+    if (!skill.zipSourcePath || !skill.zipPath) {
+      continue;
+    }
+
+    const sourcePath = path.join(SITE_DIR, skill.zipSourcePath);
+    const outputPath = siteBuildPath(skill.zipPath);
+
+    if (!fs.existsSync(sourcePath)) {
+      missing.push(skill.zipSourcePath);
+      continue;
+    }
+
+    fs.mkdirSync(path.dirname(outputPath), { recursive: true });
+    fs.copyFileSync(sourcePath, outputPath);
+    copied.push({
+      label: skill.label,
+      sourcePath,
+      outputPath,
+    });
+  }
+
+  for (const missingPath of missing) {
+    console.warn(
+      `[agent-docs] WARNING: API skill package missing at ${missingPath}; generated llms.txt will still include the configured link`,
+    );
+  }
+
+  return copied;
+};
+
 // Build the concise llms.txt from config sections + manifest.
 const buildLlmsTxt = manifest => {
   const lines = [
@@ -160,8 +201,8 @@ const buildLlmsTxt = manifest => {
     lines.push(
       `- [${skill.label}](${config.siteUrl}${skill.docsRoute}): Downloadable agent skill package`,
     );
-    if (skill.zipUrl) {
-      lines.push(`  - ZIP: ${skill.zipUrl}`);
+    if (skill.zipPath) {
+      lines.push(`  - ZIP: ${config.siteUrl}${skill.zipPath}`);
     }
   }
 
@@ -294,11 +335,14 @@ const main = () => {
   // agent-index.json
   const catalog = buildAgentIndex(manifest, docMeta);
   const agentIndexPath = writeAgentIndex(catalog);
+  const copiedApiSkills = copyApiSkillPackages();
 
   // llms.txt → build/llms.txt
   const llmsTxt = buildLlmsTxt(manifest);
   const llmsTxtPath = path.join(BUILD_DIR, 'llms.txt');
   fs.writeFileSync(llmsTxtPath, llmsTxt);
+  const llmDocsLlmsTxtPath = path.join(LLM_DOCS_BUILD_DIR, 'llms.txt');
+  fs.writeFileSync(llmDocsLlmsTxtPath, llmsTxt);
 
   // llms-full.txt → build/llms-full.txt
   const llmsFullTxt = buildLlmsFullTxt(manifest, docMeta);
@@ -325,6 +369,8 @@ const main = () => {
     [
       `[agent-docs] Wrote agent-index.json with ${catalog.length} entries → ${path.relative(SITE_DIR, agentIndexPath)}`,
       `[agent-docs] Wrote llms.txt → ${path.relative(SITE_DIR, llmsTxtPath)}`,
+      `[agent-docs] Wrote llm-docs/llms.txt alias → ${path.relative(SITE_DIR, llmDocsLlmsTxtPath)}`,
+      `[agent-docs] Copied ${copiedApiSkills.length} API skill package(s) → build/${LLM_DOCS_DIRNAME}/agent-skills/`,
       `[agent-docs] Wrote llms-full.txt with ${Object.keys(manifest.routes).length} routes → ${path.relative(SITE_DIR, llmsFullPath)}`,
       `[agent-docs] Wrote ${config.topicIndexes.length} topic indexes (${totalIndexRoutes} total route entries) → build/${LLM_DOCS_DIRNAME}/indexes/`,
     ].join('\n'),
