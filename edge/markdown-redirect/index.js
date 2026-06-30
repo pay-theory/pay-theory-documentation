@@ -101,14 +101,14 @@ const rewriteRequest = (request, routesManifest = manifest) => {
   return request;
 };
 
-const handler = (event, _context, callback) => {
+const handler = async event => {
   const request = event?.Records?.[0]?.cf?.request;
   try {
-    callback(null, rewriteRequest(request));
+    return rewriteRequest(request);
   } catch {
     // Fail open: Markdown negotiation is optional, but the docs page should
     // still load if a malformed edge event or manifest ever reaches runtime.
-    callback(null, request);
+    return request;
   }
 };
 
