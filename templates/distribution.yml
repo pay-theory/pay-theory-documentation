@@ -19,8 +19,19 @@ Parameters:
       - standard
       - '-new'
       - '-old'
+  MarkdownEdgeLambdaS3Bucket:
+    Type: String
+    Description: S3 bucket containing the packaged Markdown Lambda@Edge artifact.
+    Default: ''
+  MarkdownEdgeLambdaS3Key:
+    Type: String
+    Description: S3 key for the packaged Markdown Lambda@Edge artifact.
+    Default: ''
 Conditions:
   isStandard: !Equals [ !Ref TargetMode, standard]
+  HasMarkdownEdgeLambdaArtifact: !And
+    - !Not [!Equals [!Ref MarkdownEdgeLambdaS3Bucket, '']]
+    - !Not [!Equals [!Ref MarkdownEdgeLambdaS3Key, '']]
 Resources:
   V2HostedZone:
     Type: AWS::Route53::HostedZone
@@ -76,7 +87,60 @@ Resources:
       Value: !GetAtt V2Certificate.CertificateArn
       Description: !Sub 'Certificate arn for ${Repository}-${Partner}-${Stage}'
 
+  MarkdownEdgeLambdaRole:
+    Condition: HasMarkdownEdgeLambdaArtifact
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub '${Repository}-${Partner}-${Stage}-markdown-edge'
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+                - edgelambda.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+
+  MarkdownEdgeLambdaFunction:
+    Condition: HasMarkdownEdgeLambdaArtifact
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub '${Repository}-${Partner}-${Stage}-markdown-edge'
+      Description: !Sub 'Markdown negotiation for ${Repository}-${Partner}-${Stage}'
+      Runtime: nodejs24.x
+      Handler: index.handler
+      Role: !GetAtt MarkdownEdgeLambdaRole.Arn
+      MemorySize: 128
+      Timeout: 1
+      Code:
+        S3Bucket: !Ref MarkdownEdgeLambdaS3Bucket
+        S3Key: !Ref MarkdownEdgeLambdaS3Key
+
+  MarkdownEdgeLambdaVersion:
+    Condition: HasMarkdownEdgeLambdaArtifact
+    Type: AWS::Lambda::Version
+    Properties:
+      FunctionName: !Ref MarkdownEdgeLambdaFunction
+      Description: !Sub 'Markdown edge artifact ${MarkdownEdgeLambdaS3Key}'
+
+  MarkdownEdgeLambdaVersionArnParameter:
+    Condition: HasMarkdownEdgeLambdaArtifact
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Sub '${Repository}-${Partner}-${Stage}-markdown-edge-lambda-version-arn'
+      Type: String
+      Value: !Ref MarkdownEdgeLambdaVersion
+      Description: !Sub 'Published Lambda@Edge version ARN for ${Repository}-${Partner}-${Stage}'
+
 Outputs:
   Renew:
     Description: Trigger to update/rebuild formation
     Value: 'Mar 14 2022'
+  MarkdownEdgeLambdaVersionArn:
+    Condition: HasMarkdownEdgeLambdaArtifact
+    Description: Published Lambda@Edge version ARN.
+    Value: !Ref MarkdownEdgeLambdaVersion
