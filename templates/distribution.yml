@@ -115,7 +115,7 @@ Resources:
       Handler: index.handler
       Role: !GetAtt MarkdownEdgeLambdaRole.Arn
       MemorySize: 128
-      Timeout: 1
+      Timeout: 3
       Code:
         S3Bucket: !Ref MarkdownEdgeLambdaS3Bucket
         S3Key: !Ref MarkdownEdgeLambdaS3Key
