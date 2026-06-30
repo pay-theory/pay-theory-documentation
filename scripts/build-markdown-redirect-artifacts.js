@@ -77,6 +77,49 @@ const isApiRoute = route =>
   route === '/docs/lab/api' ||
   route.startsWith('/docs/lab/api/');
 
+// Conservative MDX normalizer: removes frontmatter, MDX imports/exports, and
+// converts Tabs/TabItem JSX boundaries to Markdown headings. Falls back to raw
+// content on any uncaught error and emits a warning instead of failing the build.
+const normalizeMdxSource = (content, sourcePath) => {
+  try {
+    let text = content;
+
+    // Strip YAML frontmatter block at file start
+    text = text.replace(/^---\n[\s\S]*?\n---\n?/, '');
+
+    // Strip MDX import statements (import X from '...' or import '...')
+    text = text.replace(/^import\s[^\n]*\n/gm, '');
+
+    // Strip export statements (export default ..., export { ... })
+    text = text.replace(/^export\s+(?:default\s+)?[^\n]*\n/gm, '');
+
+    // Convert <TabItem ...> to ### heading, preferring label over value
+    text = text.replace(/<TabItem\b([^>]*)>/g, (_, attrs) => {
+      const labelMatch = attrs.match(/label="([^"]*)"/);
+      const valueMatch = attrs.match(/value="([^"]*)"/);
+      const heading =
+        (labelMatch && labelMatch[1]) || (valueMatch && valueMatch[1]) || 'Tab';
+      return `### ${heading}`;
+    });
+    text = text.replace(/<\/TabItem>/g, '');
+    text = text.replace(/<Tabs\b[^>]*>/g, '');
+    text = text.replace(/<\/Tabs>/g, '');
+
+    // Collapse runs of 3+ blank lines to 2
+    text = text.replace(/\n{3,}/g, '\n\n');
+
+    return `${text.trim()}\n`;
+  } catch (err) {
+    console.warn(
+      `[markdown-artifacts] WARNING: normalization failed for ${path.relative(
+        process.cwd(),
+        sourcePath,
+      )}: ${err.message} — using raw source`,
+    );
+    return content;
+  }
+};
+
 const buildApiRoutes = () => {
   const routes = {};
   const markdownFiles = listFiles(
@@ -159,7 +202,9 @@ const buildSourceDocRoutes = () => {
     const outputRelativePath = `${route.replace(/^\/+/, '')}${extension}`;
     const outputPath = path.join(SOURCE_DOCS_DIR, outputRelativePath);
     fs.mkdirSync(path.dirname(outputPath), { recursive: true });
-    fs.copyFileSync(sourcePath, outputPath);
+    const rawContent = fs.readFileSync(sourcePath, 'utf8');
+    const normalizedContent = normalizeMdxSource(rawContent, sourcePath);
+    fs.writeFileSync(outputPath, normalizedContent);
     routes[route] = `${SOURCE_DOCS_PUBLIC_PREFIX}${toPosixPath(
       outputRelativePath,
     )}`;
