@@ -246,7 +246,7 @@ const buildSourceDocRoutes = () => {
       continue;
     }
 
-    const outputRelativePath = `${route.replace(/^\/+/, '')}${extension}`;
+    const outputRelativePath = `${route.replace(/^\/+/, '')}.md`;
     const outputPath = path.join(SOURCE_DOCS_DIR, outputRelativePath);
     fs.mkdirSync(path.dirname(outputPath), { recursive: true });
     const rawContent = fs.readFileSync(sourcePath, 'utf8');
