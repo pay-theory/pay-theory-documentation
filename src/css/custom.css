@@ -7,6 +7,8 @@
 /* You can override the default Infima variables here. */
 
 @import url('https://use.typekit.net/azk4wlx.css');
+@import '@lewl/graphql-doc/components/styles.css';
+@import '@lewl/graphql-doc/components/docusaurus.css';
 
 :root {
   --ifm-color-primary: #600075;
@@ -101,7 +103,7 @@
   --ifm-global-radius: 0.5rem;
 
   --ifm-hover-overlay: var(--ifm-color-gray-200);
-  
+
   --ifm-font-color-base: var(--ifm-color-content);
   --ifm-font-color-base-inverse: var(--ifm-color-content-inverse);
   --ifm-font-color-secondary: var(--ifm-color-content-secondary);
@@ -136,13 +138,13 @@
   --ifm-z-index-overlay: 400;
   --ifm-container-width: 1140px;
   --ifm-container-width-xl: 1320px;
-  
+
   --ifm-code-background: var(--ifm-color-gray-800);
   --ifm-code-border-radius: var(--ifm-global-radius);
   --ifm-code-font-size: var(--ifm-p-font-size);
   --ifm-code-padding-horizontal: 0.1rem;
   --ifm-code-padding-vertical: 0.1rem;
-  
+
   --ifm-pre-background: var(--ifm-code-background);
   --ifm-pre-border-radius: var(--ifm-code-border-radius);
   --ifm-pre-color: inherit;
@@ -248,7 +250,7 @@
   --ifm-button-transition-duration: var(--ifm-transition-fast);
   --ifm-button-border-radius: calc( var(--ifm-global-radius) * var(--ifm-button-size-multiplier) );
   --ifm-button-group-spacing: .125rem;
-  
+
   --ifm-card-background-color: var(--ifm-background-surface-color);
   --ifm-card-border-radius: calc(var(--ifm-global-radius) * 2);
   --ifm-card-horizontal-spacing: var(--ifm-global-spacing);
@@ -359,7 +361,7 @@
 
   --docsearch-key-gradient: linear-gradient(-225deg,#d5dbe4,#f8f8f8) !important;
   --docsearch-key-shadow: inset 0 -2px 0 0 #cdcde6,inset 0 0 1px 1px #fff,0 1px 2px 1px rgba(30,35,90,0.4) !important;
-  
+
   --docsearch-footer-height: 3rem !important;
   --docsearch-footer-background: var(--ifm-color-white) !important;
   --docsearch-footer-shadow: 0 -1px 0 0 transparent,0 -1px 1px 0 var(--ifm-color-gray-300) !important;
@@ -380,7 +382,7 @@
   --ifm-color-primary-lightest: #FAF1FF;
   --docusaurus-highlighted-code-line-bg: var(--ifm-color-gray-700);
 
-  
+
 }
 
 /*.theme-admonition-danger, .theme-admonition-tip, .theme-admonition-warning, .theme-admonition-info, .theme-admonition-success {
@@ -392,7 +394,7 @@
 .markdown {
   --ifm-vertical-rhythm-top: 1;
   --ifm-vertical-rhythm-bottom: 1;
-  
+
   --ifm-heading-vertical-rhythm-top: 1.25;
 
   --ifm-h1-vertical-rhythm-bottom: .25;
@@ -559,7 +561,7 @@ img{
 
 .menu{
   font-weight: var(--ifm-font-weight-book);
-  font-feature-settings: "ss12" 1 !important;
+  font-feature-settings: "ss03" 1, "ss08" 1, "ss12" 1, "ss15" 1, "ss18" 1, "ss19" 1 !important;
 }
 
 .menu__link--active{
@@ -585,7 +587,7 @@ img{
 
 
 .theme-doc-sidebar-item-category-level-1{
-  padding-bottom: 0 !important;  
+  padding-bottom: 0 !important;
 }
 
 .menu__list .menu__list-item-collapsible{
@@ -596,7 +598,7 @@ img{
 }
 
 .theme-doc-sidebar-item-category .theme-doc-sidebar-item-category-level-2 .menu__list-item-collapsible {
-   margin-top: 0 ; 
+   margin-top: 0 ;
 }
 
 .menu_node_modules-\@docusaurus-theme-classic-lib-theme-DocSidebar-Desktop-Content-styles-module, .menu_SIkG {
@@ -1068,7 +1070,7 @@ table tr:last-child td:first-child{
 }
 
 .prism-code{
-  line-height: 1.5rem; 
+  line-height: 1.5rem;
   background-color: var(--ifm-color-gray-900) !important;
   color: var(--ifm-color-white);
 }
@@ -1086,7 +1088,7 @@ code{
 
 .codeBlockTitle_node_modules-\@docusaurus-theme-classic-lib-theme-CodeBlock-Content-styles-module, .codeBlockTitle_Ktv7{
   color: var(--ifm-color-white) ;
-  background-color: var(--ifm-color-gray-800) ; 
+  background-color: var(--ifm-color-gray-800) ;
   margin-top: 1rem ;
   border: 1px solid var(--ifm-color-gray-800);
 }
@@ -1133,7 +1135,7 @@ code{
   font-family: 'IBM Plex Mono', monospace;
   font-weight: var(--ifm-font-weight-normal);
   font-size: var(--ifm-h4-font-size);
-  line-height: 1.35rem; 
+  line-height: 1.35rem;
   padding: 3px 6px 4px;
   background-color: var(--ifm-color-gray-100);
   color: var(--ifm-color-gray-700);
@@ -1181,10 +1183,10 @@ code{
 
 .token.variable, .token.parameter{
   color: var(--ifm-color-primary-light) !important;
-} 
+}
 
 
- 
+
 /*-----------FOOTER------------ */
 .footer{
   padding: .5rem;
@@ -1405,7 +1407,7 @@ code{
   width: 2.5rem;
   margin: 0 20px 0 8px;
   padding: 0;
-  
+
 }
 .home .col--2 .features:hover img{
   filter:brightness(22.5%) saturate(10000%) hue-rotate(59deg);
@@ -1482,7 +1484,7 @@ code{
   .home .col--3 .row .col{
     flex-basis: 31.5%;
   }
-  
+
   .hero h1{
     font-size: 3.25rem !important;
   }
@@ -1506,7 +1508,7 @@ code{
     font-size: 1rem !important;
     line-height: 1.5rem !important;
   }
- 
+
 }
 
 @media (max-width: 800px) {
@@ -1523,7 +1525,7 @@ code{
   .home .col--3 .row .col{
     max-width: 100%;
   }
-  
+
 
 }
 
@@ -1557,3 +1559,72 @@ code{
 
 }
 
+/* Mermaid Diagram Styling */
+.mermaid {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 2rem auto;
+  padding: 2rem 1rem;
+  background: var(--ifm-color-emphasis-100);
+  border-radius: 8px;
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+.mermaid svg {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Style Mermaid flowchart nodes */
+.mermaid .node rect,
+.mermaid .node circle,
+.mermaid .node ellipse,
+.mermaid .node polygon {
+  fill: var(--ifm-color-primary-lightest) !important;
+  stroke: var(--ifm-color-primary) !important;
+  stroke-width: 2px !important;
+}
+
+/* Style Mermaid text */
+.mermaid .node .label {
+  color: var(--ifm-color-primary-darkest) !important;
+  font-family: var(--ifm-font-family-base) !important;
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  line-height: 1.4 !important;
+}
+
+/* Style Mermaid edges/arrows */
+.mermaid .edgePath .path {
+  stroke: var(--ifm-color-primary) !important;
+  stroke-width: 2px !important;
+}
+
+.mermaid .edgePath marker {
+  fill: var(--ifm-color-primary) !important;
+}
+
+/* Dark mode overrides for Mermaid */
+[data-theme='dark'] .mermaid {
+  background: var(--ifm-color-emphasis-100);
+}
+
+[data-theme='dark'] .mermaid .node rect,
+[data-theme='dark'] .mermaid .node circle,
+[data-theme='dark'] .mermaid .node ellipse,
+[data-theme='dark'] .mermaid .node polygon {
+  fill: var(--ifm-color-primary-darker) !important;
+  stroke: var(--ifm-color-primary-light) !important;
+}
+
+[data-theme='dark'] .mermaid .node .label {
+  color: var(--ifm-color-white) !important;
+}
+
+[data-theme='dark'] .mermaid .edgePath .path,
+[data-theme='dark'] .mermaid .edgePath marker {
+  stroke: var(--ifm-color-primary-light) !important;
+  fill: var(--ifm-color-primary-light) !important;
+}

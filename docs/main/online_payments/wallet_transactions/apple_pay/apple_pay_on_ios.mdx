@@ -1,0 +1,364 @@
+---
+sidebar_position: 3
+sidebar_label: 'Apple Pay™ on iOS'
+title: 'Apple Pay™ on iOS'
+---
+
+# Apple Pay™ on iOS
+
+Implement Apple Pay™ in your native iOS applications using the Pay Theory iOS SDK.
+
+---
+
+## Overview
+
+The Pay Theory iOS SDK provides seamless Apple Pay™ integration for native iOS applications. Accept payments directly through Apple's secure payment platform with minimal implementation effort.
+
+### Key Features
+
+- Native Apple Pay™ button with customizable styling
+- Direct SDK payment processing or server-side token processing
+- Automatic service fee calculation and display
+- Built-in error handling and validation
+- Support for all Apple Pay™ enabled devices
+
+---
+
+## Requirements
+
+Before implementing Apple Pay™ in your iOS app:
+
+### Apple Developer Requirements
+- Active Apple Developer account
+- Apple Pay™ merchant identifier configured
+- Payment processing certificate from Pay Theory
+- App ID with Apple Pay™ capability enabled
+
+### Pay Theory Requirements
+- Active Pay Theory merchant account
+- iOS app registered in Pay Theory portal
+- Pay Theory iOS SDK installed (version 3.0+)
+
+### Technical Requirements
+- iOS 13.0 or later
+- Xcode 14.0 or later
+- Swift 5.5 or later
+
+---
+
+## Setup Process
+
+### 1. Configure Apple Developer Account
+
+1. **Create Merchant ID**
+   - Log in to [Apple Developer Portal](https://developer.apple.com)
+   - Navigate to Certificates, Identifiers & Profiles
+   - Create a new Merchant ID (e.g., `merchant.com.yourcompany`)
+
+2. **Enable Apple Pay™ Capability**
+   - Select your App ID
+   - Enable Apple Pay™ capability
+   - Associate your Merchant ID
+
+### 2. Configure Pay Theory Portal
+
+1. **Register Your iOS App**
+   - Log in to Pay Theory Portal
+   - Navigate to Settings → iOS App Configuration
+   - Enter your App ID: `{App ID Prefix}.{Bundle ID}`
+   - Upload DeviceCheck Key and Key ID
+
+2. **Set Up Apple Pay™ Certificate**
+   - Click "Configure Apple Pay™"
+   - Download the CSR file from Pay Theory
+   - Upload CSR to Apple Developer Portal
+   - Download the payment processing certificate
+   - Upload certificate back to Pay Theory
+
+### 3. Install Pay Theory SDK
+
+Add the Pay Theory iOS SDK to your project:
+
+```swift
+// Using Swift Package Manager
+dependencies: [
+    .package(url: "https://github.com/pay-theory/pay-theory-ios", from: "3.0.0")
+]
+```
+---
+
+## Implementation
+
+### Basic Apple Pay™ Setup
+
+```swift
+import PayTheory
+import PassKit
+
+class PaymentViewController: UIViewController {
+    let payTheory = PayTheory(apiKey: "YOUR_API_KEY")
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        setupApplePay()
+    }
+    
+    func setupApplePay() {
+        // Create payment items
+        let items = [
+            PKPaymentSummaryItem(
+                label: "Product Total", 
+                amount: NSDecimalNumber(value: 99.99)
+            )
+        ]
+        
+        // Configure payment request
+        let config = PTApplePayRequestConfig(
+            merchantIdentifier: "merchant.com.yourcompany",
+            paymentSummaryItems: items
+        )
+        
+        // Configure payment sheet with direct processing
+        let sheetConfig = PTApplePaySheetConfig(
+            requestConfiguration: config,
+            onPaymentCompletion: { response in
+                self.handlePaymentResponse(response)
+            }
+        )
+        
+        // Configure Pay Theory for Apple Pay
+        payTheory.configureApplePaySheet(sheetConfig)
+    }
+    
+    func handlePaymentResponse(_ response: PTApplePayResponse) {
+        switch response {
+        case .success(let transaction):
+            print("Payment successful: \(transaction.transactionId)")
+            // Show success UI
+            
+        case .failure(let failedTransaction):
+            print("Payment failed: \(failedTransaction.failureReasons)")
+            // Show error UI
+            
+        case .error(let error):
+            print("Error: \(error.localizedDescription)")
+            // Handle error
+        }
+    }
+}
+```
+
+### SwiftUI Implementation
+
+```swift
+import SwiftUI
+import PayTheory
+
+struct CheckoutView: View {
+    @StateObject private var payTheory = PayTheory(apiKey: "YOUR_API_KEY")
+    @State private var amount = 99.99
+    
+    var body: some View {
+        VStack(spacing: 20) {
+            Text("Total: $\(amount, specifier: "%.2f")")
+                .font(.title)
+            
+            // Apple Pay button
+            payTheory.createApplePayButton()
+                .frame(width: 240, height: 45)
+                .onAppear {
+                    configureApplePay()
+                }
+        }
+    }
+    
+    func configureApplePay() {
+        let items = [
+            PKPaymentSummaryItem(
+                label: "Total",
+                amount: NSDecimalNumber(value: amount)
+            )
+        ]
+        
+        let config = PTApplePayRequestConfig(
+            merchantIdentifier: "merchant.com.yourcompany",
+            paymentSummaryItems: items
+        )
+        
+        let sheetConfig = PTApplePaySheetConfig(
+            requestConfiguration: config,
+            onPaymentCompletion: handlePayment
+        )
+        
+        payTheory.configureApplePaySheet(sheetConfig)
+    }
+    
+    func handlePayment(_ response: PTApplePayResponse) {
+        // Handle payment response
+    }
+}
+```
+
+---
+
+## Processing Options
+
+### Option 1: Direct SDK Processing
+
+Process payments immediately through the SDK:
+
+```swift
+let sheetConfig = PTApplePaySheetConfig(
+    requestConfiguration: config,
+    onPaymentCompletion: { response in
+        // Payment is processed automatically
+        // Handle the response
+    }
+)
+```
+
+### Option 2: Server-Side Processing
+
+Receive a token for server-side processing:
+
+```swift
+let sheetConfig = PTApplePaySheetConfig(
+    requestConfiguration: config,
+    onPaymentTokenizationCompletion: { tokenData in
+        // Send tokenData to your server
+        // Process using Pay Theory API
+        sendToServer(token: tokenData)
+    }
+)
+```
+
+:::warning Processing Options
+You can use either `onPaymentCompletion` OR `onPaymentTokenizationCompletion`, but not both.
+:::
+
+---
+
+## Advanced Features
+
+### Service Fees
+
+Add service fees to transactions:
+
+```swift
+let serviceFee = PKPaymentSummaryItem(
+    label: "Service Fee",
+    amount: NSDecimalNumber(value: 2.50)
+)
+
+let total = PKPaymentSummaryItem(
+    label: "Total",
+    amount: NSDecimalNumber(value: 102.50)
+)
+
+let items = [productItem, serviceFee, total]
+```
+
+### Shipping Options
+
+Configure shipping methods:
+
+```swift
+let shippingMethod = PKShippingMethod(
+    label: "Standard Shipping",
+    amount: NSDecimalNumber(value: 5.00)
+)
+shippingMethod.identifier = "standard"
+shippingMethod.detail = "5-7 business days"
+
+config.shippingMethods = [shippingMethod]
+config.requiredShippingContactFields = [.postalAddress, .phoneNumber]
+```
+
+### Custom Button Styling
+
+```swift
+// Available button types:
+// .plain, .buy, .donate, .checkout, .book, .subscribe
+
+// Available button styles:
+// .black, .white, .whiteOutline
+
+let button = payTheory.createApplePayButton(
+    type: .checkout,
+    style: .black
+)
+```
+
+---
+
+## Testing
+
+### Sandbox Testing
+
+1. Use Pay Theory sandbox API keys
+2. Test on real iOS devices (Apple Pay™ not available in simulator)
+3. Use test cards from your Apple Wallet
+4. Monitor transactions in Pay Theory dashboard
+
+### Test Cards
+
+Apple provides test cards in the Sandbox environment:
+- Add test cards through Wallet app in sandbox mode
+- Use any valid test card number
+- Transactions won't be charged
+
+---
+
+## Troubleshooting
+
+### Common Issues
+
+| Issue | Solution |
+|-------|----------|
+| Apple Pay™ button not showing | Verify device supports Apple Pay™ and has cards in Wallet |
+| Merchant validation fails | Check merchant ID configuration in both Apple and Pay Theory |
+| Payment processing errors | Verify API keys and network connectivity |
+| Certificate issues | Ensure certificate is valid and properly uploaded |
+
+### Debug Tips
+
+```swift
+// Check Apple Pay availability
+if PKPaymentAuthorizationViewController.canMakePayments() {
+    // Apple Pay is available
+}
+
+// Check specific card networks
+let networks: [PKPaymentNetwork] = [.visa, .masterCard, .amex]
+if PKPaymentAuthorizationViewController.canMakePayments(
+    usingNetworks: networks
+) {
+    // Supported cards available
+}
+```
+
+---
+
+## Complete SDK Documentation
+
+For detailed implementation guides and API references:
+
+- [iOS SDK Apple Pay™ Guide](../../../../sdk/apple/apple_pay/overview)
+- [App Registration Guide](../../../../sdk/apple/app_registration)
+
+### Additional SDK Resources
+
+- [Apple Pay™ Button Configuration](../../../../sdk/apple/apple_pay/button)
+- [Apple Pay™ Functions Reference](../../../../sdk/apple/apple_pay/functions)
+- [Apple Pay™ Models & Types](../../../../sdk/apple/apple_pay/models)
+
+---
+
+## Next Steps
+
+1. **Complete Setup** - Register your app with Apple and Pay Theory
+2. **Implement Basic Flow** - Start with the basic implementation above
+3. **Test in Sandbox** - Verify everything works with test cards
+4. **Go Live** - Switch to production keys when ready
+
+Need help? Contact Pay Theory support at support@paytheory.com

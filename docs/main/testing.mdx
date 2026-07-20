@@ -1,55 +1,88 @@
 ---
-sidebar_position: 6
+sidebar_position: 7
 sidebar_label: 'Testing'
-title: "Testing"
+title: 'Testing'
 ---
 
+import CopyButton from '@site/src/components/CopyButton';
+
 # Testing
+
 This guide will show you how to test card and ACH payments, card failures and disputes.
 
 :::danger Before you start
-In order to test a payment method you need be set up to accept online payments.  
+In order to test a payment method you need be set up to accept online payments.
 
-<a href= "getting_started/Quickstart" class="button button--primary button--md">Accepting Online Payments</a>
+<a href="getting_started/quickstart" class="button button--primary button--md">
+  Accepting Online Payments
+</a>
 :::
 
-***
-
+---
 
 ## Testing Card Transactions
+
 When testing you will be using an SDK import and API Key that contains either paytheorylab or paytheorystudy.
 
 ### Card Brands
-|Card Brand |Testing Number        |
-------------|----------------------|    
-|Discover   |6542 1548 4662 3459   |
-|Mastercard |5454 5454 5454 5454   |
-|Amex       |3434 343434 34343     |
-|Visa       |4111 1111 1111 1111   |
+
+| Card Brand | Testing Number                                                 |
+| ---------- | -------------------------------------------------------------- |
+| Visa       | 4835 0345 9845 7895 <CopyButton value="4835 0345 9845 7895" /> |
+| Discover   | 6560 0545 6789 1235 <CopyButton value="6560 0545 6789 1235" /> |
+| MasterCard | 5560 9578 9456 1234 <CopyButton value="5560 9578 9456 1234" /> |
+| Amex       | 3479 847894 56149 <CopyButton value="3479 847894 56149" />     |
+
+### Card Types
+
+| Card Type       | Testing Number                                                 |
+| --------------- | -------------------------------------------------------------- |
+| Business Credit | 4389 9414 7258 3697 <CopyButton value="4389 9414 7258 3697" /> |
+| Business Debit  | 4472 7136 9258 1472 <CopyButton value="4472 7136 9258 1472" /> |
+| Credit Card     | 4835 0325 8143 6793 <CopyButton value="4835 0325 8143 6793" /> |
+| Debit Card      | 4398 8445 6789 1232 <CopyButton value="4398 8445 6789 1232" /> |
+| Prepaid Card    | 4307 6415 9482 6375 <CopyButton value="4307 6415 9482 6375" /> |
+
+### Cards By Country
+
+| Card Type | Testing Number                                                 |
+| --------- | -------------------------------------------------------------- |
+| Canada    | 4527 7111 5544 8861 <CopyButton value="4527 7111 5544 8861" /> |
+| USA       | 4835 0345 9845 7895 <CopyButton value="4835 0345 9845 7895" /> |
 
 ### Card Failures
+
 To trigger certain failures process a payment using the following amounts. These failures will not work when using `service_fee` fee mode.
 
+**_These amounts are in cents._**
 
-|Amount |Error Type                             |
-------------|---------------------------------------|    
-|102        |GENERIC_DECLINE                        |
-|193        |INSUFFICIENT_FUNDS                     |
-|194        |INVALID_ACCOUNT_NUMBER                 |
-|889986     |ADDRESS_VERIFICATION_FAILED_RISK_RULES |
-|889987     |CVV_FAILED_RISK_RULES                  |
-|888888     |DISPUTE
+| Amount | Error Type                             |
+| ------ | -------------------------------------- |
+| 102    | GENERIC_DECLINE                        |
+| 193    | INSUFFICIENT_FUNDS                     |
+| 194    | INVALID_ACCOUNT_NUMBER                 |
+| 889986 | ADDRESS_VERIFICATION_FAILED_RISK_RULES |
+| 889987 | CVV_FAILED_RISK_RULES                  |
+| 888888 | DISPUTE                                |
+
+For a complete list of failure codes and their descriptions, see the [Failure Codes documentation](after_payments/failed_transactions).
 
 :::note Triggering a dispute
 If you want to trigger a dispute in sandbox, run a transaction for `888888`. You will get a success back and a dispute will be generated as well from this transaction.
 :::
 
-***
-
+---
 
 ## Testing ACH Transactions
-|Name on Account    |Account Number      | Routing Number     |
---------------------|--------------------|--------------------|
-|Any                |789456124           |789456124           |
 
+| Transaction Outcome | Account Number                                                                           | Routing Number                                                                         |
+| ------------------- | ---------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| Success             | <span style={{whiteSpace: 'nowrap'}}>0000000016 <CopyButton value="0000000016" /></span> | <span style={{whiteSpace: 'nowrap'}}>122105278 <CopyButton value="122105278" /></span> |
+| Failure             | <span style={{whiteSpace: 'nowrap'}}>0000000005 <CopyButton value="0000000005" /></span> | <span style={{whiteSpace: 'nowrap'}}>122105278 <CopyButton value="122105278" /></span> |
 
+## Sandbox API Calls
+
+These GraphQL requests are specifically for testing in sandbox environments and only work when using sandbox credentials (API keys accessing paytheorylab or paytheorystudy).
+
+- [Create Barcode Payment](../api/sandbox/create-barcode-payment-sandbox) - Simulate processing a barcode payment
+- [Create Batch Capture](../api/sandbox/create-batch-capture) - Trigger a settlement batch creation to test settlement flows

@@ -1,0 +1,20 @@
+---
+id: cancel-recurring-payment
+title: cancelRecurringPayment
+sidebar_label: Cancel Recurring Payment
+hide_title: true
+api: true
+---
+
+import { OperationView } from '@lewl/graphql-doc/components';
+import operationsByType from '../_data/operations.json';
+import typesByName from '../_data/types.json';
+
+export const examplesByOperation = {
+  "cancelRecurringPayment": (operationsByType["mutation"]["cancelRecurringPayment"]?.examples ?? []),
+};
+
+export const operation = operationsByType["mutation"]["cancelRecurringPayment"];
+
+<OperationView operation={ operation } typesByName={typesByName} headingLevel={ 1 } defaultExpandedLevels={ 0 } maxDepth={ 5 } typeLinkBase="../types" llmDocsBasePath="/llm-docs" siteBasePath="/docs/api">
+</OperationView>

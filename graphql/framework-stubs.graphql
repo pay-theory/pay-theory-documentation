@@ -1,0 +1,29 @@
+"""AWS date in ISO-8601 format (YYYY-MM-DD)."""
+scalar AWSDate
+
+"""AWS datetime in ISO-8601 format."""
+scalar AWSDateTime
+
+"""AWS JSON-encoded object."""
+scalar AWSJSON
+
+"""AWS IP address string."""
+scalar AWSIPAddress
+
+"""AWS email address string."""
+scalar AWSEmail
+
+"""AWS phone number string."""
+scalar AWSPhone
+
+"""AWS URL string."""
+scalar AWSURL
+
+"""AppSync Lambda authorization directive."""
+directive @aws_lambda on FIELD_DEFINITION | OBJECT | INPUT_OBJECT | ENUM | INTERFACE | UNION | SCALAR
+
+"""AppSync IAM authorization directive."""
+directive @aws_iam on FIELD_DEFINITION | OBJECT | INPUT_OBJECT | ENUM | INTERFACE | UNION | SCALAR
+
+"""AppSync Cognito authorization directive."""
+directive @aws_cognito_user_pools on FIELD_DEFINITION | OBJECT | INPUT_OBJECT | ENUM | INTERFACE | UNION | SCALAR
