@@ -1,0 +1,129 @@
+---
+sidebar_position: 8
+sidebar_label: Webhooks
+title: Webhooks
+---
+
+# Webhooks
+
+Pay Theory webhooks send an HTTP `POST` to your application when a Pay Theory event happens. Use them when your system needs to react after the payment flow, such as syncing transactions, storing new payors, updating saved payment methods, or tracking disputes.
+
+For copy/paste JSON payloads, see [Webhook Sample Payloads](webhook_sample_payloads).
+
+***
+
+## Before You Start
+
+Make sure you have:
+
+- A public HTTPS endpoint that Pay Theory can reach.
+- A server route that accepts `POST` requests.
+- JSON body parsing enabled on that route.
+- A way to return a quick `2xx` response after receiving the event.
+- Retry-safe handling so duplicate deliveries do not create duplicate side effects.
+- Separate webhook URLs for sandbox/testing and production.
+- Basic logging for webhook request bodies while testing.
+
+If you are testing locally, use a public tunnel such as ngrok or a request inspection tool such as RequestBin. A `localhost` URL will not work because Pay Theory cannot reach your machine directly.
+
+***
+
+## How It Works
+
+1. An event happens in Pay Theory.
+2. Pay Theory sends your endpoint an HTTP `POST`.
+3. Your endpoint reads the JSON body.
+4. Your endpoint returns a `2xx` response.
+5. Your application processes the event.
+
+Process the event idempotently. In practice, that means your code should be safe if the same payload is received more than once.
+
+***
+
+## Webhook Request Shape
+
+Every Pay Theory webhook uses this top-level shape:
+
+| Field | Type | Description |
+|---|---|---|
+| `event` | string | The event family, such as `MERCHANT`, `PAYOR`, or `PAYMENT_METHOD`. |
+| `subtype` | string | The event action or state, such as `CREATED`, `UPDATED`, or `DELETED`. |
+| `payload` | object | The event-specific data object. |
+
+Example:
+
+```json
+{
+    "event": "PAYOR",
+    "subtype": "CREATED",
+    "payload": {
+    "payor_id": "payor_123",
+    "merchant_uid": "mer_123",
+    "email": "jane@example.com"
+  }
+}
+```
+
+Use `event` and `subtype` to route the webhook in your application. Use `payload` for the event data.
+
+***
+
+## Create A Webhook
+
+You can manage webhooks from the Pay Theory portal or through the GraphQL API.
+
+When creating a webhook, provide:
+
+- `endpoint`: the HTTPS URL Pay Theory should call.
+- `name`: a human-readable name for the webhook.
+
+API references:
+
+- [Create Webhook](../../api/webhooks/create-webhook)
+- [List Webhooks](../../api/webhooks)
+- [Update Webhook](../../api/webhooks/update-webhook)
+- [Delete Webhook](../../api/webhooks/delete-webhook)
+- [List Webhook Events](../../api/webhooks/webhook-events)
+
+***
+
+## Event Types
+
+The currently confirmed webhook event families are:
+
+| Event | Documented subtypes | Description |
+|---|---|---|
+| `AUTHORIZATION` | `CREATED`, `UPDATED` | Authorization activity was emitted. |
+| `TRANSACTION` | `CREATED`, `UPDATED` | Transaction activity was emitted. |
+| `SPLIT_FUNDING` | `CREATED`, `UPDATED` | Split funding activity was emitted. |
+| `PAYOR` | `CREATED`, `UPDATED` | A payor record was created or updated. |
+| `PAYMENT_METHOD` | `CREATED`, `UPDATED` | A payment method token record was created or updated. |
+| `DISPUTE` | `CREATED`, `UPDATED` | Dispute activity was emitted. |
+
+See [Webhook Sample Payloads](webhook_sample_payloads) for documented field tables and JSON examples.
+
+***
+
+## Testing Webhooks
+
+Use this checklist when testing:
+
+- Create a webhook that points to a test endpoint.
+- Trigger an event in the sandbox environment.
+- Confirm your endpoint receives a `POST`.
+- Confirm the body has `event`, `subtype`, and `payload`.
+- Return a `2xx` response from your endpoint.
+- Check [webhookEvents](../../api/webhooks/webhook-events) if you need delivery history.
+- Confirm your application does not duplicate work if the same event is processed more than once.
+
+***
+
+## Troubleshooting
+
+| Problem | What to check |
+|---|---|
+| You are not receiving events | Confirm the webhook is active and the endpoint is public HTTPS. |
+| Local testing does not work | Use a public tunnel or request inspection URL instead of `localhost`. |
+| Pay Theory reports delivery failures | Confirm your endpoint returns a `2xx` response without timing out. |
+| The payload is not what you expected | Check the `event` and `subtype`, then compare against the sample payload page. |
+| Your system creates duplicates | Add idempotency handling before creating records or triggering side effects. |
