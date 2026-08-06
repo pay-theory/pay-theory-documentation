@@ -6,7 +6,7 @@ title: Webhooks
 
 # Webhooks
 
-Pay Theory webhooks send an HTTP `POST` to your application when a Pay Theory event happens. Use them when your system needs to react after the payment flow, such as syncing transactions, storing new payors, updating saved payment methods, or tracking disputes.
+Pay Theory webhooks send an HTTP `POST` to your application when a Pay Theory event happens. Use them when your system needs to react after the payment flow, such as syncing merchants, transactions, settlements, payors, saved payment methods, or disputes.
 
 For copy/paste JSON payloads, see [Webhook Sample Payloads](webhook_sample_payloads).
 
@@ -46,17 +46,17 @@ Every Pay Theory webhook uses this top-level shape:
 
 | Field | Type | Description |
 |---|---|---|
-| `event` | string | The event family, such as `MERCHANT`, `PAYOR`, or `PAYMENT_METHOD`. |
-| `subtype` | string | The event action or state, such as `CREATED`, `UPDATED`, or `DELETED`. |
+| `event` | string | The event family, such as `MERCHANT`, `TRANSACTION`, or `PAYMENT_METHOD`. |
+| `subtype` | string | The event action or state, such as `CREATED` or `UPDATED`. |
 | `payload` | object | The event-specific data object. |
 
 Example:
 
 ```json
 {
-    "event": "PAYOR",
-    "subtype": "CREATED",
-    "payload": {
+  "event": "PAYOR",
+  "subtype": "CREATED",
+  "payload": {
     "payor_id": "payor_123",
     "merchant_uid": "mer_123",
     "email": "jane@example.com"
@@ -94,6 +94,8 @@ The currently confirmed webhook event families are:
 | Event | Documented subtypes | Description |
 |---|---|---|
 | `AUTHORIZATION` | `CREATED`, `UPDATED` | Authorization activity was emitted. |
+| `MERCHANT` | `CREATED`, `UPDATED` | A merchant record was created or updated. |
+| `SETTLEMENT` | `CREATED`, `UPDATED` | Settlement activity was emitted. |
 | `TRANSACTION` | `CREATED`, `UPDATED` | Transaction activity was emitted. |
 | `SPLIT_FUNDING` | `CREATED`, `UPDATED` | Split funding activity was emitted. |
 | `PAYOR` | `CREATED`, `UPDATED` | A payor record was created or updated. |

@@ -89,6 +89,72 @@ This example is abbreviated. Real transaction payloads may include additional ne
 
 ***
 
+## MERCHANT
+
+Merchant webhooks notify your endpoint when a merchant record is created or updated.
+Hard deletes are not currently documented as webhook events.
+
+### Payload Fields
+
+| Field | Type | Description |
+|---|---|---|
+| `merchant_uid` | string | Unique merchant identifier. |
+| `merchant_name` | string | Merchant display name. |
+| `is_system` | boolean | Whether this is a system merchant. |
+| `country_code` | string, optional | Merchant country code. |
+| `parent_merchant_uid` | string, optional | Parent merchant identifier when nested. |
+| `ach_active` | boolean, optional | Whether ACH payments are active. |
+| `card_active` | boolean, optional | Whether card payments are active. |
+| `cash_active` | boolean, optional | Whether cash payments are active. |
+| `submitted_onboarding` | boolean, optional | Whether onboarding has been submitted. |
+| `settings` | object, optional | Merchant profile, social, or contact settings. |
+
+### MERCHANT.CREATED
+
+```json
+{
+  "event": "MERCHANT",
+  "subtype": "CREATED",
+  "payload": {
+    "merchant_uid": "mer_123",
+    "merchant_name": "Acme Store",
+    "is_system": false,
+    "country_code": "USA",
+    "ach_active": true,
+    "card_active": true,
+    "cash_active": false,
+    "submitted_onboarding": false
+  }
+}
+```
+
+### MERCHANT.UPDATED
+
+```json
+{
+  "event": "MERCHANT",
+  "subtype": "UPDATED",
+  "payload": {
+    "merchant_uid": "mer_123",
+    "merchant_name": "Acme Store",
+    "is_system": false,
+    "country_code": "USA",
+    "parent_merchant_uid": null,
+    "ach_active": true,
+    "card_active": true,
+    "cash_active": false,
+    "submitted_onboarding": true,
+    "settings": {
+      "contact_email": "ops@acme.com",
+      "contact_phone": "+18005551212",
+      "website": "https://paytheory.com"
+    }
+  }
+}
+```
+
+***
+
 ## PAYOR
 
 Payor webhooks notify your endpoint when a payor record is created or updated.
@@ -130,8 +196,6 @@ Payor webhooks notify your endpoint when a payor record is created or updated.
   }
 }
 ```
-
-***
 
 ## PAYMENT_METHOD
 
