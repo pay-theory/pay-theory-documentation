@@ -16,11 +16,13 @@ Each webhook has the same top-level envelope:
 {
   "event": "PAYOR",
   "subtype": "CREATED",
-  "payload": {}
+  "payload": {},
+  "event_id": "evt_01J4MEY4W7YSC3R6G5AR2M1P9Q",
+  "occurred_at": "2026-08-06T15:30:00Z"
 }
 ```
 
-The `payload` fields depend on the `event` and `subtype`.
+The `payload` fields depend on the `event` and `subtype`. `event_id` and `occurred_at` identify the logical event and stay the same across delivery retries.
 
 ***
 
@@ -30,22 +32,22 @@ Transaction webhooks notify your endpoint when transaction activity is emitted.
 
 ### Payload Fields
 
-| Field | Type | Description |
-|---|---|---|
-| `transaction_id` | string | Unique transaction identifier. |
-| `transaction_type` | string | Transaction type, such as `DEBIT`. |
-| `status` | string | Current transaction status. |
-| `gross_amount` | number | Total transaction amount in cents. |
-| `fees` | number | Fee amount in cents. |
-| `net_amount` | number | Net amount in cents. |
-| `currency` | string | Transaction currency. |
-| `merchant_uid` | string | Merchant identifier associated with the transaction. |
-| `transaction_date` | string | Transaction timestamp. |
-| `metadata` | string | JSON string of transaction metadata. |
-| `merchant` | object | Merchant details included with the transaction. |
-| `payment_method` | object | Payment method details included with the transaction. |
-| `invoice` | object | Invoice details when the transaction is connected to an invoice. |
-| `recurring` | object | Recurring payment details when the transaction is connected to a recurring payment. |
+| Field              | Type   | Description                                                                         |
+| ------------------ | ------ | ----------------------------------------------------------------------------------- |
+| `transaction_id`   | string | Unique transaction identifier.                                                      |
+| `transaction_type` | string | Transaction type, such as `DEBIT`.                                                  |
+| `status`           | string | Current transaction status.                                                         |
+| `gross_amount`     | number | Total transaction amount in cents.                                                  |
+| `fees`             | number | Fee amount in cents.                                                                |
+| `net_amount`       | number | Net amount in cents.                                                                |
+| `currency`         | string | Transaction currency.                                                               |
+| `merchant_uid`     | string | Merchant identifier associated with the transaction.                                |
+| `transaction_date` | string | Transaction timestamp.                                                              |
+| `metadata`         | string | JSON string of transaction metadata.                                                |
+| `merchant`         | object | Merchant details included with the transaction.                                     |
+| `payment_method`   | object | Payment method details included with the transaction.                               |
+| `invoice`          | object | Invoice details when the transaction is connected to an invoice.                    |
+| `recurring`        | object | Recurring payment details when the transaction is connected to a recurring payment. |
 
 ### TRANSACTION.CREATED
 
@@ -83,7 +85,9 @@ This example is abbreviated. Real transaction payloads may include additional ne
         "email": "jane@example.com"
       }
     }
-  }
+  },
+  "event_id": "evt_transaction_123",
+  "occurred_at": "2026-07-29T18:41:48Z"
 }
 ```
 
@@ -96,18 +100,18 @@ Hard deletes are not currently documented as webhook events.
 
 ### Payload Fields
 
-| Field | Type | Description |
-|---|---|---|
-| `merchant_uid` | string | Unique merchant identifier. |
-| `merchant_name` | string | Merchant display name. |
-| `is_system` | boolean | Whether this is a system merchant. |
-| `country_code` | string, optional | Merchant country code. |
-| `parent_merchant_uid` | string, optional | Parent merchant identifier when nested. |
-| `ach_active` | boolean, optional | Whether ACH payments are active. |
-| `card_active` | boolean, optional | Whether card payments are active. |
-| `cash_active` | boolean, optional | Whether cash payments are active. |
-| `submitted_onboarding` | boolean, optional | Whether onboarding has been submitted. |
-| `settings` | object, optional | Merchant profile, social, or contact settings. |
+| Field                  | Type              | Description                                    |
+| ---------------------- | ----------------- | ---------------------------------------------- |
+| `merchant_uid`         | string            | Unique merchant identifier.                    |
+| `merchant_name`        | string            | Merchant display name.                         |
+| `is_system`            | boolean           | Whether this is a system merchant.             |
+| `country_code`         | string, optional  | Merchant country code.                         |
+| `parent_merchant_uid`  | string, optional  | Parent merchant identifier when nested.        |
+| `ach_active`           | boolean, optional | Whether ACH payments are active.               |
+| `card_active`          | boolean, optional | Whether card payments are active.              |
+| `cash_active`          | boolean, optional | Whether cash payments are active.              |
+| `submitted_onboarding` | boolean, optional | Whether onboarding has been submitted.         |
+| `settings`             | object, optional  | Merchant profile, social, or contact settings. |
 
 ### MERCHANT.CREATED
 
@@ -124,7 +128,9 @@ Hard deletes are not currently documented as webhook events.
     "card_active": true,
     "cash_active": false,
     "submitted_onboarding": false
-  }
+  },
+  "event_id": "evt_merchant_created_123",
+  "occurred_at": "2026-08-06T15:30:00Z"
 }
 ```
 
@@ -149,7 +155,9 @@ Hard deletes are not currently documented as webhook events.
       "contact_phone": "+18005551212",
       "website": "https://paytheory.com"
     }
-  }
+  },
+  "event_id": "evt_merchant_updated_123",
+  "occurred_at": "2026-08-06T16:00:00Z"
 }
 ```
 
@@ -161,19 +169,19 @@ Payor webhooks notify your endpoint when a payor record is created or updated.
 
 ### Payload Fields
 
-| Field | Type | Description |
-|---|---|---|
-| `payor_id` | string | Unique payor identifier. |
-| `merchant_uid` | string | Merchant identifier associated with the payor. |
-| `full_name` | string, optional | Payor full name. |
-| `email` | string, optional | Payor email address. |
-| `phone` | string, optional | Payor phone number. |
-| `address_line1` | string, optional | Primary street address. |
-| `address_line2` | string, optional | Secondary street address. |
-| `city` | string, optional | City. |
-| `region` | string, optional | State or region. |
-| `postal_code` | string, optional | Postal or ZIP code. |
-| `country` | string, optional | Country code or name. |
+| Field           | Type             | Description                                    |
+| --------------- | ---------------- | ---------------------------------------------- |
+| `payor_id`      | string           | Unique payor identifier.                       |
+| `merchant_uid`  | string           | Merchant identifier associated with the payor. |
+| `full_name`     | string, optional | Payor full name.                               |
+| `email`         | string, optional | Payor email address.                           |
+| `phone`         | string, optional | Payor phone number.                            |
+| `address_line1` | string, optional | Primary street address.                        |
+| `address_line2` | string, optional | Secondary street address.                      |
+| `city`          | string, optional | City.                                          |
+| `region`        | string, optional | State or region.                               |
+| `postal_code`   | string, optional | Postal or ZIP code.                            |
+| `country`       | string, optional | Country code or name.                          |
 
 ### PAYOR.CREATED
 
@@ -193,9 +201,13 @@ Payor webhooks notify your endpoint when a payor record is created or updated.
     "region": "TX",
     "postal_code": "78701",
     "country": "USA"
-  }
+  },
+  "event_id": "evt_payor_123",
+  "occurred_at": "2026-08-06T15:30:00Z"
 }
 ```
+
+***
 
 ## PAYMENT_METHOD
 
@@ -204,33 +216,33 @@ Payment method updates use the same event family with the `UPDATED` subtype.
 
 ### Payload Fields
 
-| Field | Type | Description |
-|---|---|---|
-| `payment_method_id` | string | Unique payment method identifier. |
-| `merchant_uid` | string | Merchant identifier associated with the payment method. |
-| `payor_id` | string, optional | Associated payor identifier. |
-| `payment_type` | string, optional | Payment type or category. |
-| `card_brand` | string, optional | Card brand for card payment methods. |
-| `card_type` | string, optional | Card type, such as credit or debit. |
-| `exp_date` | string, optional | Expiration date in the source format. |
-| `last_four` | string, optional | Last four digits. |
-| `cvv_status` | string, optional | CVV verification status. |
-| `bank_account_type` | string, optional | Bank account type for ACH payment methods. |
-| `bank_code` | string, optional | Bank routing number or bank code. |
-| `wallet_type` | string, optional | Wallet provider or type. |
-| `barcode_id` | string, optional | Barcode identifier for cash payment flows. |
-| `processor` | string, optional | Upstream processor name. |
-| `processor_token` | string, optional | Processor token or reference. |
-| `paytheory_encoded` | string, optional | Encoded Pay Theory value or token. |
-| `issuing_country_code` | string, optional | Issuing country code. |
-| `is_active` | boolean, optional | Whether the payment method is active. |
-| `full_name` | string, optional | Cardholder or account holder name. |
-| `address_line1` | string, optional | Billing address line 1. |
-| `address_line2` | string, optional | Billing address line 2. |
-| `city` | string, optional | Billing city. |
-| `region` | string, optional | Billing state or region. |
-| `postal_code` | string, optional | Billing postal or ZIP code. |
-| `country` | string, optional | Billing country. |
+| Field                  | Type              | Description                                             |
+| ---------------------- | ----------------- | ------------------------------------------------------- |
+| `payment_method_id`    | string            | Unique payment method identifier.                       |
+| `merchant_uid`         | string            | Merchant identifier associated with the payment method. |
+| `payor_id`             | string, optional  | Associated payor identifier.                            |
+| `payment_type`         | string, optional  | Payment type or category.                               |
+| `card_brand`           | string, optional  | Card brand for card payment methods.                    |
+| `card_type`            | string, optional  | Card type, such as credit or debit.                     |
+| `exp_date`             | string, optional  | Expiration date in the source format.                   |
+| `last_four`            | string, optional  | Last four digits.                                       |
+| `cvv_status`           | string, optional  | CVV verification status.                                |
+| `bank_account_type`    | string, optional  | Bank account type for ACH payment methods.              |
+| `bank_code`            | string, optional  | Bank routing number or bank code.                       |
+| `wallet_type`          | string, optional  | Wallet provider or type.                                |
+| `barcode_id`           | string, optional  | Barcode identifier for cash payment flows.              |
+| `processor`            | string, optional  | Upstream processor name.                                |
+| `processor_token`      | string, optional  | Processor token or reference.                           |
+| `paytheory_encoded`    | string, optional  | Encoded Pay Theory value or token.                      |
+| `issuing_country_code` | string, optional  | Issuing country code.                                   |
+| `is_active`            | boolean, optional | Whether the payment method is active.                   |
+| `full_name`            | string, optional  | Cardholder or account holder name.                      |
+| `address_line1`        | string, optional  | Billing address line 1.                                 |
+| `address_line2`        | string, optional  | Billing address line 2.                                 |
+| `city`                 | string, optional  | Billing city.                                           |
+| `region`               | string, optional  | Billing state or region.                                |
+| `postal_code`          | string, optional  | Billing postal or ZIP code.                             |
+| `country`              | string, optional  | Billing country.                                        |
 
 ### PAYMENT_METHOD.CREATED
 
@@ -255,6 +267,8 @@ Payment method updates use the same event family with the `UPDATED` subtype.
     "region": "TX",
     "postal_code": "78701",
     "country": "USA"
-  }
+  },
+  "event_id": "evt_payment_method_123",
+  "occurred_at": "2026-08-06T15:30:00Z"
 }
 ```

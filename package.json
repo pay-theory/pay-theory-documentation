@@ -24,6 +24,7 @@
     "check-ts": "tsc --noEmit -p ./tsconfig.json",
     "prettier": "npx prettier -c './src/**/*.{ts,tsx,js,jsx}'",
     "prettier:fix": "npx prettier --write './src/**/*.{ts,tsx,js,jsx}'",
+    "test:docs": "node --test tests/docs/*.test.mjs",
     "prepare": "husky"
   },
   "dependencies": {
