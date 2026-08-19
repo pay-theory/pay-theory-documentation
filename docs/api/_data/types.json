@@ -41963,28 +41963,6 @@
       }
     ]
   },
-  "PayloadValidation": {
-    "kind": "OBJECT",
-    "name": "PayloadValidation",
-    "description": "A payload validation is used to validate a payload.",
-    "fields": [
-      {
-        "name": "is_valid",
-        "description": "Whether the payload is valid.",
-        "type": {
-          "kind": "TYPE_REF",
-          "name": "Boolean",
-          "link": "#boolean"
-        },
-        "typeString": "Boolean",
-        "isRequired": false,
-        "isList": false,
-        "isDeprecated": false
-      }
-    ],
-    "interfaces": [],
-    "isCollapsible": false
-  },
   "PaymentLink": {
     "kind": "OBJECT",
     "name": "PaymentLink",

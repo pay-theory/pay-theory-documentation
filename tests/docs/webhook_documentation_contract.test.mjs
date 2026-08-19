@@ -68,14 +68,20 @@ test('documents exact signature headers and local verification boundary', () => 
   }
   assert.match(GUIDE, /timestamp \+ "\." \+ raw request body/);
   assert.match(GUIDE, /more than five minutes in the past or future/);
-  assert.match(GUIDE, /verify locally with the copied public JWKS/);
+  assert.match(GUIDE, /Cache this trusted JWKS/);
+  assert.match(GUIDE, /select the verification key whose `kid` matches/);
   assert.match(GUIDE, /does not currently provide a public JWKS URL/);
-  assert.match(GUIDE, /diagnostics; your receiver should verify locally/i);
+  assert.match(GUIDE, /Perform every validation step locally/);
+  assert.match(GUIDE, /requires no Pay Theory API call/);
+  assert.match(GUIDE, /do not send the request body, signature/);
   assert.match(GUIDE, /payload\.merchant_uid/);
   assert.match(GUIDE, /Deduplicate atomically on `event_id`/);
+  const removedOperation = ['validate', 'Payload'].join('');
+  const removedType = ['Payload', 'Validation'].join('');
+  assert.doesNotMatch(GUIDE, new RegExp(`${removedOperation}|${removedType}`));
 });
 
-test('GraphQL examples use the reviewed operation names and arguments', () => {
+test('delivery-history example uses the reviewed operation and arguments', () => {
   assert.match(GUIDE, /webhookEvents\(\s*endpoint: \$endpoint/);
   for (const field of [
     'id',
@@ -91,11 +97,6 @@ test('GraphQL examples use the reviewed operation names and arguments', () => {
   ]) {
     assert.match(GUIDE, new RegExp(`\\n      ${field}\\n`));
   }
-  assert.match(
-    GUIDE,
-    /validatePayload\(\s*payload: \$payload\s*signature: \$signature\s*timestamp: \$timestamp\s*keyId: \$keyId/,
-  );
-  assert.match(GUIDE, /\n    is_valid\n/);
 });
 
 test('every sample JSON envelope includes stable logical-event metadata', () => {

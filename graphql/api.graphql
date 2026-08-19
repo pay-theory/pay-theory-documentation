@@ -2687,12 +2687,6 @@ enum OwnershipType {
   PUBLIC
 }
 
-"A payload validation is used to validate a payload."
-type PayloadValidation @aws_lambda @aws_iam @aws_cognito_user_pools {
-  "Whether the payload is valid."
-  is_valid: Boolean
-}
-
 "Payment link object."
 type PaymentLink @aws_lambda @aws_iam @aws_cognito_user_pools {
   "The payment methods that will be available to a payor when making a payment."
@@ -3199,13 +3193,6 @@ type Query @aws_lambda @aws_iam @aws_cognito_user_pools {
     "Pay Theory unique identifier for the merchant."
     merchant_uid: String
   ): [UserV2] @docIgnore
-  "Validates payload."
-  validatePayload(
-    "The payload."
-    payload: AWSJSON!
-    "The signature."
-    signature: String!
-  ): PayloadValidation @docIgnore
   "This mutation validates whether a provided card or bank account number matches a specific payment method."
   validatePaymentMethodOwnership(
     "The unique payment method id that identifies the payment method to validate against."

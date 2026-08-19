@@ -169,7 +169,9 @@ The timestamp and period are ASCII bytes. The body is the exact byte sequence re
 3. In **Webhook verification**, copy the public JWKS.
 4. Store that JWKS in your receiver's environment-specific configuration.
 
-The copied JWKS contains public Ed25519 fields only: `alg`, `crv`, `kid`, `kty`, `use`, and `x`. It is shared by the partner and environment; it is not a private key or a per-merchant secret. Pay Theory does not currently provide a public JWKS URL, so do not build a runtime fetch into your receiver.
+The copied JWKS contains public Ed25519 fields only: `alg`, `crv`, `kid`, `kty`, `use`, and `x`. It is shared by the partner and environment; it is not a private key or a per-merchant secret. Cache this trusted JWKS in environment-specific local configuration and select the verification key whose `kid` matches `X-Webhook-Key-Id`. Pay Theory does not currently provide a public JWKS URL, so do not build a runtime fetch into your receiver.
+
+Perform every validation step locally. The webhook request path requires no Pay Theory API call: do not send the request body, signature, or other delivery headers back to Pay Theory during request handling.
 
 ### Node.js Example
 
@@ -222,30 +224,6 @@ app.post(
   },
 );
 ```
-
-:::note Diagnostic API
-
-The authenticated GraphQL `validatePayload` query can check one captured delivery, including its exact raw body, signature, timestamp, and key ID. It applies the same five-minute freshness window and returns only `is_valid`. Use it for diagnostics; your receiver should verify locally with the copied public JWKS and must not call Pay Theory during request handling.
-
-```graphql title="GraphQL"
-query ValidateWebhookPayload(
-  $payload: String!
-  $signature: String!
-  $timestamp: String!
-  $keyId: String!
-) {
-  validatePayload(
-    payload: $payload
-    signature: $signature
-    timestamp: $timestamp
-    keyId: $keyId
-  ) {
-    is_valid
-  }
-}
-```
-
-:::
 
 ***
 
