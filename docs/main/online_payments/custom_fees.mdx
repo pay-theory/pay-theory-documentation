@@ -1,0 +1,93 @@
+---
+sidebar_position: 8
+sidebar_label: 'Custom Fees'
+title: 'Custom Fees'
+---
+
+# Custom Fees
+
+This guide explains how `CUSTOM_FEE` works, how it differs from existing fee modes, and what to expect in request and response payloads.
+
+
+:::note
+Custom fees are not enabled for all partners. If this is something you're interested in, please reach out to Pay Theory support.
+:::
+
+## Enablement and Bounds
+
+`CUSTOM_FEE` is gated and must be enabled by Pay Theory in your account configuration.
+
+When Pay Theory enables `CUSTOM_FEE`, we also define an allowed fee floor and ceiling. You can submit custom fee values only within those agreed bounds.
+
+## How It Relates to Existing Fee Modes
+
+`MERCHANT_FEE` and `SERVICE_FEE` continue to behave exactly as they do today. In those modes, Pay Theory validates fee amounts against the fee matrix.
+
+`CUSTOM_FEE` acts as a third fee mode:
+
+- Your system owns fee calculation.
+- Pay Theory does not apply fee matrix validation for the fee amount.
+- Pay Theory validates only that your submitted fee is within your configured floor and ceiling.
+
+## Request and Response Behavior
+
+Once `CUSTOM_FEE` is enabled for your account, Pay Theory treats any non-null `fee` value as a custom fee whenever `fee_mode` is either `null` or `MERCHANT_FEE`. This applies regardless of whether the fee is submitted through the API or an SDK, so you do not need to send a separate `CUSTOM_FEE` flag.
+
+To submit a custom fee, pass your calculated fee value along with one of the following:
+
+- `fee_mode: MERCHANT_FEE`, or
+- `fee_mode: null` (omitted)
+
+If the fee passes floor/ceiling validation, the response returns:
+
+- `fee_mode: CUSTOM_FEE`
+
+The examples below pass a `300` cent fee on a `10300` cent request. Both produce the same outcome — the request is processed as a custom fee.
+
+When initiating a payment with the SDK, set `fee` to your calculated value and leave `feeMode` as the default `MERCHANT_FEE` (or omit it). Pay Theory will process the non-null `fee` as a custom fee.
+
+```javascript title="javascript"
+const TRANSACTING_PARAMETERS = {
+  amount: 10300,
+  fee: 300,
+  feeMode: window.paytheory.MERCHANT_FEE, // optional; MERCHANT_FEE is the default
+}
+
+paytheory.transact(TRANSACTING_PARAMETERS)
+```
+
+When submitting the request to the API, pass your calculated `fee` with `fee_mode: MERCHANT_FEE` (or `null`). Pay Theory will process the non-null `fee` as a custom fee.
+
+```graphql title="Example Mutation"
+mutation {
+  createTransaction(
+    merchant_uid: "your-merchant-uid",
+    amount: 10300,
+    fee: 300,
+    fee_mode: MERCHANT_FEE,
+    payment_method_id: "pt_pmt_123"
+  ) {
+    transaction_id
+    amount
+    fee
+    fee_mode
+    status
+  }
+}
+```
+
+## Controlling Who Pays the Fee
+
+Because `CUSTOM_FEE` is a separate, third fee mode, Pay Theory has no visibility into the intent behind the fee. Whether you mean for the merchant to absorb the fee, the payor to pay it, or the fee to be split between the two, that intent is yours to define and track on your own.
+
+Since you set both the gross amount and the fee, you can adjust the gross amount so the merchant nets exactly what you intend — whether that's a full payor-pay, a merchant-absorbed fee, or a split:
+
+- **Payor pays the full fee** — embed the fee in the gross amount so the merchant nets the base amount. To net $100.00 with a 3.0% fee: `amount: 10300`, `fee: 300`.
+- **Merchant absorbs the fee** — keep the gross amount at the base amount so the fee comes out of the merchant's net. To net $97.00 on a $100.00 charge: `amount: 10000`, `fee: 300`.
+- **Split the fee** — embed only the payor's share in the gross amount. To split a $3.00 fee evenly: `amount: 10150`, `fee: 300`, so the merchant nets $98.50.
+
+## Tracking Fee Intent
+
+Because the request is processed simply as a `CUSTOM_FEE`, the response `fee_mode` does not preserve whether you intended the merchant or the payor to pay, or how a split was applied — it returns as `CUSTOM_FEE` in all cases.
+
+If you need to preserve that intent, track it on your own — for example, by stamping it in transaction metadata when you create the transaction.
