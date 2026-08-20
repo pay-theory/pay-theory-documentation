@@ -17,12 +17,12 @@ Each webhook has the same top-level envelope:
   "event": "PAYOR",
   "subtype": "CREATED",
   "payload": {},
-  "event_id": "evt_01J4MEY4W7YSC3R6G5AR2M1P9Q",
+  "event_id": "pt_webh_01J4MEY4W7YSC3R6G5AR2M1P9Q",
   "occurred_at": "2026-08-06T15:30:00Z"
 }
 ```
 
-The `payload` fields depend on the `event` and `subtype`. `event_id` and `occurred_at` identify the logical event and stay the same across delivery retries.
+The `payload` fields depend on the `event` and `subtype`. `event_id` identifies the delivery to one endpoint and stays the same across its retries. `occurred_at` identifies when the source event happened.
 
 ***
 
@@ -86,7 +86,7 @@ This example is abbreviated. Real transaction payloads may include additional ne
       }
     }
   },
-  "event_id": "evt_transaction_123",
+  "event_id": "pt_webh_transaction_123",
   "occurred_at": "2026-07-29T18:41:48Z"
 }
 ```
@@ -129,7 +129,7 @@ Hard deletes are not currently documented as webhook events.
     "cash_active": false,
     "submitted_onboarding": false
   },
-  "event_id": "evt_merchant_created_123",
+  "event_id": "pt_webh_merchant_created_123",
   "occurred_at": "2026-08-06T15:30:00Z"
 }
 ```
@@ -156,7 +156,7 @@ Hard deletes are not currently documented as webhook events.
       "website": "https://paytheory.com"
     }
   },
-  "event_id": "evt_merchant_updated_123",
+  "event_id": "pt_webh_merchant_updated_123",
   "occurred_at": "2026-08-06T16:00:00Z"
 }
 ```
@@ -202,7 +202,7 @@ Payor webhooks notify your endpoint when a payor record is created or updated.
     "postal_code": "78701",
     "country": "USA"
   },
-  "event_id": "evt_payor_123",
+  "event_id": "pt_webh_payor_123",
   "occurred_at": "2026-08-06T15:30:00Z"
 }
 ```
@@ -268,7 +268,7 @@ Payment method updates use the same event family with the `UPDATED` subtype.
     "postal_code": "78701",
     "country": "USA"
   },
-  "event_id": "evt_payment_method_123",
+  "event_id": "pt_webh_payment_method_123",
   "occurred_at": "2026-08-06T15:30:00Z"
 }
 ```

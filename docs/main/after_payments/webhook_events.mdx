@@ -34,11 +34,11 @@ Webhook endpoints have one of two scopes:
 | Partner        | Events for every merchant in the partner.                                 |
 | Merchant       | Events whose signed `payload.merchant_uid` exactly matches that merchant. |
 
-For an event with a valid `merchant_uid`, Pay Theory delivers to active partner endpoints and active endpoints for that one merchant. It does not deliver the event to endpoints owned by other merchants. A partner endpoint and the matching merchant endpoint can therefore receive the same logical event.
+For an event with a valid `merchant_uid`, Pay Theory delivers to active partner endpoints and active endpoints for that one merchant. It does not deliver the event to endpoints owned by other merchants. A partner endpoint and the matching merchant endpoint can therefore receive the same logical event, but each destination receives its own `event_id`.
 
 Even when you use a merchant-scoped endpoint, compare the signed `payload.merchant_uid` with the merchant that owns your route before doing any work.
 
-Manage endpoints in the portal under **Developers → Webhooks**, or use the GraphQL API:
+Manage endpoints in the portal under **Settings → Webhooks**, or use the GraphQL API:
 
 - [Create Webhook](../../api/webhooks/create-webhook)
 - [List Webhooks](../../api/webhooks)
@@ -49,14 +49,14 @@ Manage endpoints in the portal under **Developers → Webhooks**, or use the Gra
 
 ## Request Body
 
-The existing `event`, `subtype`, and `payload` fields retain their meanings. `event_id` and `occurred_at` are additive logical-event metadata:
+The existing `event`, `subtype`, and `payload` fields retain their meanings. `event_id` identifies one destination delivery, while `occurred_at` describes the source event:
 
 | Field         | Type   | Description                                                                |
 | ------------- | ------ | -------------------------------------------------------------------------- |
 | `event`       | string | Event family, such as `MERCHANT`, `TRANSACTION`, or `PAYMENT_METHOD`.      |
 | `subtype`     | string | Event action or state, such as `CREATED` or `UPDATED`.                     |
 | `payload`     | object | Event-specific data. Tenant-bound payloads include `merchant_uid`.         |
-| `event_id`    | string | Stable identifier for this logical event. Use it as the deduplication key. |
+| `event_id`    | string | Public ID for this endpoint's delivery. Use it as the deduplication key.   |
 | `occurred_at` | string | Stable ISO 8601 UTC time associated with the logical event.                |
 
 ```json
@@ -68,12 +68,12 @@ The existing `event`, `subtype`, and `payload` fields retain their meanings. `ev
     "merchant_uid": "mer_123",
     "email": "jane@example.com"
   },
-  "event_id": "evt_01J4MEY4W7YSC3R6G5AR2M1P9Q",
+  "event_id": "pt_webh_01J4MEY4W7YSC3R6G5AR2M1P9Q",
   "occurred_at": "2026-08-06T15:30:00Z"
 }
 ```
 
-`event_id`, `occurred_at`, and the body remain stable across retries. Each attempt has a new signature timestamp and signature.
+`event_id`, `occurred_at`, and the body remain stable across retries to that endpoint. The same source event sent to another partner or merchant endpoint has a different `event_id`. Each attempt has a new signature timestamp and signature.
 
 ***
 
@@ -104,7 +104,7 @@ This is at most nine attempts: one initial attempt plus eight retries. Pay Theor
 
 ## Delivery History
 
-Delivery history is a flat list: each initial delivery or retry is its own attempt record. Records are retained for 15 days from the attempt's `started_at` time. Deleting an endpoint does not delete its existing history.
+Delivery history is a flat list: each initial delivery or retry is its own attempt record. Every attempt uses the same public ID sent as `event_id` in the request body. GraphQL does not expose the internal attempt or source-event IDs. Records are retained for 15 days from the attempt's `started_at` time. Deleting an endpoint does not delete its existing history.
 
 Query one endpoint's attempts with authenticated GraphQL. Pass the returned opaque `last_evaluated_key` unchanged to request the next page.
 
@@ -134,6 +134,22 @@ query WebhookDeliveryHistory(
       response
     }
     last_evaluated_key
+  }
+}
+```
+
+To inspect one delivery, pass its public `event_id` as the `id` argument. The query returns all attempts for that delivery with the newest first, so `events[0]` is the most recent attempt.
+
+```graphql title="GraphQL"
+query WebhookDeliveryAttempts($id: ID!) {
+  webhookEvents(id: $id) {
+    events {
+      id
+      retry_count
+      result
+      started_at
+      status_code
+    }
   }
 }
 ```

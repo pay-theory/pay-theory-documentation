@@ -100,9 +100,12 @@ test('delivery-history example uses the reviewed operation and arguments', () =>
   ]) {
     assert.match(GUIDE, new RegExp(`\\n      ${field}\\n`));
   }
+  assert.match(GUIDE, /same public ID sent as `event_id`/i);
+  assert.match(GUIDE, /all attempts.*newest first/i);
+  assert.match(GUIDE, /does not expose.*attempt.*source.*IDs/i);
 });
 
-test('every sample JSON envelope includes stable logical-event metadata', () => {
+test('every sample JSON envelope includes a branded delivery ID', () => {
   const jsonBlocks = [...SAMPLES.matchAll(/```json\n([\s\S]*?)\n```/g)];
   assert.ok(
     jsonBlocks.length >= 6,
@@ -114,6 +117,7 @@ test('every sample JSON envelope includes stable logical-event metadata', () => 
     assert.equal(typeof example.subtype, 'string');
     assert.equal(typeof example.payload, 'object');
     assert.equal(typeof example.event_id, 'string');
+    assert.match(example.event_id, /^pt(?:l|s)?_webh_/);
     assert.equal(typeof example.occurred_at, 'string');
   }
 });
