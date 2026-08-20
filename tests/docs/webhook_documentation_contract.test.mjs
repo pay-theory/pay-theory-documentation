@@ -71,6 +71,9 @@ test('documents exact signature headers and local verification boundary', () => 
   assert.match(GUIDE, /Cache this trusted JWKS/);
   assert.match(GUIDE, /select the verification key whose `kid` matches/);
   assert.match(GUIDE, /does not currently provide a public JWKS URL/);
+  assert.match(GUIDE, /query WebhookVerificationKeys/);
+  assert.match(GUIDE, /data\.jwks\.keys/);
+  assert.doesNotMatch(GUIDE, /Webhook verification/);
   assert.match(GUIDE, /Perform every validation step locally/);
   assert.match(GUIDE, /requires no Pay Theory API call/);
   assert.match(GUIDE, /do not send the request body, signature/);
