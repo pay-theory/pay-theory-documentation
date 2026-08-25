@@ -104,7 +104,11 @@ This is at most nine attempts: one initial attempt plus eight retries. Pay Theor
 
 ## Delivery History
 
-Delivery history is a flat list: each initial delivery or retry is its own attempt record. Every attempt uses the same public ID sent as `event_id` in the request body. GraphQL does not expose the internal attempt or source-event IDs. Records are retained for 15 days from the attempt's `started_at` time. Deleting an endpoint does not delete its existing history.
+Delivery history is a flat list. Each initial delivery or retry is its own attempt record. The `id` field is the unique Attempt ID for that record. The nullable `event_id` field is the stable public ID sent in the request body, and every retry to the same destination shares it. GraphQL does not expose any separate internal attempt or source-event ID.
+
+Attempts created before the public Webhook Event ID rollout return `null` for `event_id`. When you display an attempt, show `event_id` when it is present. Otherwise, show `id` and label it as the Attempt ID.
+
+Records are retained for 15 days from the attempt's `started_at` time. Deleting an endpoint does not delete its existing history.
 
 Query one endpoint's attempts with authenticated GraphQL. Pass the returned opaque `last_evaluated_key` unchanged to request the next page.
 
@@ -123,8 +127,10 @@ query WebhookDeliveryHistory(
   ) {
     events {
       id
+      event_id
       endpoint
       event
+      retry_count
       result
       started_at
       finished_at
@@ -138,13 +144,39 @@ query WebhookDeliveryHistory(
 }
 ```
 
-To inspect one delivery, pass its public `event_id` as the `id` argument. The query returns all attempts for that delivery with the newest first, so `events[0]` is the most recent attempt.
+The `webhookEvents` query supports three lookup modes. Choose exactly one for each request:
+
+- Pass `endpoint`, with optional `result`, `last_evaluated_key`, and `limit`, for paginated endpoint history.
+- Pass `id` for one exact attempt.
+- Pass `event_id` for every available attempt associated with one destination delivery.
+
+Do not combine `id` and `event_id`, or combine either ID with endpoint-history arguments. The API rejects mixed lookup modes before reading delivery history. An ID that does not exist or does not belong to the authenticated subscriber returns `events: []`.
+
+To inspect one exact attempt, pass its Attempt ID as the `id` argument. The query returns zero or one record.
 
 ```graphql title="GraphQL"
-query WebhookDeliveryAttempts($id: ID!) {
+query WebhookDeliveryAttempt($id: ID!) {
   webhookEvents(id: $id) {
     events {
       id
+      event_id
+      retry_count
+      result
+      started_at
+      status_code
+    }
+  }
+}
+```
+
+To inspect a destination delivery and its retries, pass the public Webhook Event ID as the `event_id` argument. The query returns every available attempt with the newest first, so `events[0]` is the most recent attempt. This lookup has no public pagination cursor or limit.
+
+```graphql title="GraphQL"
+query WebhookDeliveryAttempts($eventId: ID!) {
+  webhookEvents(event_id: $eventId) {
+    events {
+      id
+      event_id
       retry_count
       result
       started_at

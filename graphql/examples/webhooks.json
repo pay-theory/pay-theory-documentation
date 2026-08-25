@@ -107,11 +107,11 @@
         "description": "Returns webhook events.",
         "query": "query WebhookEvents($id: ID, $endpoint: String, $result: WebhookNotificationResult, $last_evaluated_key: String, $limit: Int) {\n  webhookEvents(id: $id, endpoint: $endpoint, result: $result, last_evaluated_key: $last_evaluated_key, limit: $limit) {\n  last_evaluated_key\n  events {\n    id\n    endpoint\n    error\n    event\n    finished_at\n  }\n  }\n}",
         "variables": {
-          "id": "id_123",
-          "endpoint": "example",
+          "id": null,
+          "endpoint": "https://example.com/webhook/1772470171799",
           "result": "FAILURE",
-          "last_evaluated_key": "example",
-          "limit": 123
+          "last_evaluated_key": null,
+          "limit": 5
         },
         "response": {
           "type": "success",

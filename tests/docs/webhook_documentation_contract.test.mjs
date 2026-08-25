@@ -16,8 +16,19 @@ const SAMPLE_PATH = path.join(
   ROOT,
   'docs/main/after_payments/webhook_sample_payloads.mdx',
 );
+const SCHEMA_PATH = path.join(ROOT, 'graphql/api.graphql');
+const WEBHOOK_EXAMPLES_PATH = path.join(ROOT, 'graphql/examples/webhooks.json');
 const GUIDE = fs.readFileSync(GUIDE_PATH, 'utf8');
 const SAMPLES = fs.readFileSync(SAMPLE_PATH, 'utf8');
+const SCHEMA = fs.readFileSync(SCHEMA_PATH, 'utf8');
+const WEBHOOK_EXAMPLES = JSON.parse(
+  fs.readFileSync(WEBHOOK_EXAMPLES_PATH, 'utf8'),
+);
+
+const GENERATED_API_TARGETS = [
+  path.join(ROOT, 'docs/api/_data'),
+  path.join(ROOT, 'versioned_docs/version-lab/api/_data'),
+];
 
 test('states the additive envelope, delivery result, and retry contracts', () => {
   for (const field of [
@@ -84,12 +95,14 @@ test('documents exact signature headers and local verification boundary', () => 
   assert.doesNotMatch(GUIDE, new RegExp(`${removedOperation}|${removedType}`));
 });
 
-test('delivery-history example uses the reviewed operation and arguments', () => {
+test('documents the three delivery-history lookup modes and identity fields', () => {
   assert.match(GUIDE, /webhookEvents\(\s*endpoint: \$endpoint/);
   for (const field of [
     'id',
+    'event_id',
     'endpoint',
     'event',
+    'retry_count',
     'result',
     'started_at',
     'finished_at',
@@ -100,9 +113,84 @@ test('delivery-history example uses the reviewed operation and arguments', () =>
   ]) {
     assert.match(GUIDE, new RegExp(`\\n      ${field}\\n`));
   }
-  assert.match(GUIDE, /same public ID sent as `event_id`/i);
-  assert.match(GUIDE, /all attempts.*newest first/i);
-  assert.match(GUIDE, /does not expose.*attempt.*source.*IDs/i);
+  assert.match(GUIDE, /`id` field is the unique Attempt ID/);
+  assert.match(GUIDE, /nullable `event_id` field is the stable public ID/);
+  assert.match(GUIDE, /return `null` for `event_id`/);
+  assert.match(GUIDE, /show `id` and label it as the Attempt ID/);
+  assert.match(GUIDE, /webhookEvents\(id: \$id\)/);
+  assert.match(GUIDE, /returns zero or one record/);
+  assert.match(GUIDE, /webhookEvents\(event_id: \$eventId\)/);
+  assert.match(GUIDE, /returns every available attempt with the newest first/);
+  assert.match(GUIDE, /no public pagination cursor or limit/);
+  assert.match(GUIDE, /rejects mixed lookup modes before reading/);
+  assert.match(GUIDE, /returns `events: \[\]`/);
+  assert.match(
+    GUIDE,
+    /does not expose any separate internal attempt or source-event ID/,
+  );
+});
+
+test('generated GraphQL references match the public webhook schema', () => {
+  assert.match(SCHEMA, /webhookEvents\([\s\S]*?event_id: ID/);
+  assert.match(SCHEMA, /type WebhookEvent[\s\S]*?event_id: ID/);
+  assert.doesNotMatch(SCHEMA, /\b(?:validatePayload|PayloadValidation)\b/);
+
+  const webhookEventsExample = WEBHOOK_EXAMPLES.find(
+    operation => operation.operation === 'webhookEvents',
+  ).examples[0];
+  assert.equal(webhookEventsExample.variables.id, null);
+  assert.equal(typeof webhookEventsExample.variables.endpoint, 'string');
+  assert.equal(webhookEventsExample.variables.last_evaluated_key, null);
+
+  for (const dataDirectory of GENERATED_API_TARGETS) {
+    const operations = JSON.parse(
+      fs.readFileSync(path.join(dataDirectory, 'operations.json'), 'utf8'),
+    );
+    const types = JSON.parse(
+      fs.readFileSync(path.join(dataDirectory, 'types.json'), 'utf8'),
+    );
+    const webhookEvents = operations.query.webhookEvents;
+
+    assert.deepEqual(
+      webhookEvents.arguments.map(argument => argument.name),
+      ['id', 'event_id', 'endpoint', 'result', 'last_evaluated_key', 'limit'],
+    );
+    assert.match(
+      webhookEvents.arguments.find(argument => argument.name === 'id')
+        .description,
+      /exact matching attempt/,
+    );
+    assert.match(
+      webhookEvents.arguments.find(argument => argument.name === 'event_id')
+        .description,
+      /all matching attempts newest first without public pagination/,
+    );
+    assert.deepEqual(
+      webhookEvents.examples[0].variables,
+      webhookEventsExample.variables,
+    );
+
+    const webhookEventFields = Object.fromEntries(
+      types.WebhookEvent.fields.map(field => [field.name, field]),
+    );
+    assert.equal(webhookEventFields.id.typeString, 'ID!');
+    assert.equal(webhookEventFields.event_id.typeString, 'ID');
+    assert.equal(webhookEventFields.attempt_id, undefined);
+    assert.equal(webhookEventFields.source_event_id, undefined);
+
+    assert.deepEqual(
+      types.JWK.fields.map(field => field.name),
+      ['alg', 'crv', 'kid', 'kty', 'use', 'x'],
+    );
+    assert.deepEqual(
+      types.JWKS.fields.map(field => field.name),
+      ['keys'],
+    );
+    assert.equal(types.JWKS.fields[0].typeString, '[JWK!]!');
+    assert.equal(operations.query.validatePayload, undefined);
+    assert.equal(operations.mutation.validatePayload, undefined);
+    assert.equal(types.PayloadValidation, undefined);
+  }
 });
 
 test('every sample JSON envelope includes a branded delivery ID', () => {
