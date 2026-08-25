@@ -1901,11 +1901,6 @@ const __gqlDocsItems = [
       },
       {
         type: 'doc',
-        id: 'api/types/types/payload-validation',
-        label: 'PayloadValidation',
-      },
-      {
-        type: 'doc',
         id: 'api/types/types/payment-link',
         label: 'PaymentLink',
       },

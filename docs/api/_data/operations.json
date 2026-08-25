@@ -2296,11 +2296,23 @@
     "webhookEvents": {
       "name": "webhookEvents",
       "operationType": "query",
-      "description": "Returns webhook events.",
+      "description": "Returns webhook delivery attempts through one lookup mode. Unknown or unowned IDs return an empty events list.",
       "arguments": [
         {
           "name": "id",
-          "description": "Unique identifier.",
+          "description": "Unique delivery-attempt ID. Returns the exact matching attempt.",
+          "isRequired": false,
+          "type": {
+            "kind": "TYPE_REF",
+            "name": "ID",
+            "link": "#id"
+          },
+          "typeString": "ID",
+          "directives": {}
+        },
+        {
+          "name": "event_id",
+          "description": "Stable public per-destination Webhook Event ID. Returns all matching attempts newest first without public pagination.",
           "isRequired": false,
           "type": {
             "kind": "TYPE_REF",
@@ -2312,7 +2324,7 @@
         },
         {
           "name": "endpoint",
-          "description": "The endpoint.",
+          "description": "The endpoint for paginated delivery history. Cannot be combined with id or event_id.",
           "isRequired": false,
           "type": {
             "kind": "TYPE_REF",
@@ -2324,7 +2336,7 @@
         },
         {
           "name": "result",
-          "description": "The result.",
+          "description": "Optional result filter for endpoint history. Cannot be combined with id or event_id.",
           "isRequired": false,
           "type": {
             "kind": "TYPE_REF",
@@ -2336,7 +2348,7 @@
         },
         {
           "name": "last_evaluated_key",
-          "description": "The last evaluated key.",
+          "description": "Opaque cursor for endpoint history. Cannot be combined with id or event_id.",
           "isRequired": false,
           "type": {
             "kind": "TYPE_REF",
@@ -2348,7 +2360,7 @@
         },
         {
           "name": "limit",
-          "description": "Maximum number of items to return.",
+          "description": "Maximum number of endpoint-history items to return. Cannot be combined with id or event_id.",
           "isRequired": false,
           "type": {
             "kind": "TYPE_REF",
@@ -2385,11 +2397,11 @@
           "description": "Returns webhook events.",
           "query": "query WebhookEvents($id: ID, $endpoint: String, $result: WebhookNotificationResult, $last_evaluated_key: String, $limit: Int) {\n  webhookEvents(id: $id, endpoint: $endpoint, result: $result, last_evaluated_key: $last_evaluated_key, limit: $limit) {\n  last_evaluated_key\n  events {\n    id\n    endpoint\n    error\n    event\n    finished_at\n  }\n  }\n}",
           "variables": {
-            "id": "id_123",
-            "endpoint": "example",
+            "id": null,
+            "endpoint": "https://example.com/webhook/1772470171799",
             "result": "FAILURE",
-            "last_evaluated_key": "example",
-            "limit": 123
+            "last_evaluated_key": null,
+            "limit": 5
           },
           "response": {
             "type": "success",

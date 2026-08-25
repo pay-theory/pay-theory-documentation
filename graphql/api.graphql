@@ -1697,32 +1697,26 @@ input InvoiceUpdateInput {
   settings: InvoiceSettingsInput
 }
 
-"A JWK is a JSON Web Key."
+"Public Ed25519 material for the partner and environment that signed a webhook."
 type JWK @aws_lambda @aws_iam @aws_cognito_user_pools {
-  "The curve used for the JWK."
-  crv: String
-  "The key type used for the JWK."
-  kty: String
-  "The x coordinate used for the JWK."
-  x: String
-  "The y coordinate used for the JWK."
-  y: String
-  "The use of the JWK."
-  use: String
-  "The algorithm used for the JWK."
-  alg: String
-  "The key id used for the JWK."
-  kid: String
+  "The EdDSA algorithm identifier."
+  alg: String!
+  "The Ed25519 curve identifier."
+  crv: String!
+  "The identifier sent in the webhook signature key ID header."
+  kid: String!
+  "The OKP key type identifier."
+  kty: String!
+  "The signature-use identifier."
+  use: String!
+  "The base64url-encoded public key."
+  x: String!
 }
 
-"A JWKS is a JSON Web Key Set."
+"The public verification keys for this authenticated partner and environment."
 type JWKS @aws_lambda @aws_iam @aws_cognito_user_pools {
-  "The URI of the JWKS."
-  jwks_uri: String
-  "The issuer of the JWKS."
-  issuer: String
-  "The keys in the JWKS."
-  keys: [JWK]
+  "Public keys that can verify webhook deliveries from this environment."
+  keys: [JWK!]!
 }
 
 "Level3 data line item object."
@@ -2687,12 +2681,6 @@ enum OwnershipType {
   PUBLIC
 }
 
-"A payload validation is used to validate a payload."
-type PayloadValidation @aws_lambda @aws_iam @aws_cognito_user_pools {
-  "Whether the payload is valid."
-  is_valid: Boolean
-}
-
 "Payment link object."
 type PaymentLink @aws_lambda @aws_iam @aws_cognito_user_pools {
   "The payment methods that will be available to a payor when making a payment."
@@ -3199,13 +3187,6 @@ type Query @aws_lambda @aws_iam @aws_cognito_user_pools {
     "Pay Theory unique identifier for the merchant."
     merchant_uid: String
   ): [UserV2] @docIgnore
-  "Validates payload."
-  validatePayload(
-    "The payload."
-    payload: AWSJSON!
-    "The signature."
-    signature: String!
-  ): PayloadValidation @docIgnore
   "This mutation validates whether a provided card or bank account number matches a specific payment method."
   validatePaymentMethodOwnership(
     "The unique payment method id that identifies the payment method to validate against."
@@ -3213,17 +3194,19 @@ type Query @aws_lambda @aws_iam @aws_cognito_user_pools {
     "The card number or account number to validate. For card payment methods, this is the full card number. For ACH payment methods, this is the full account number."
     number: String!
   ): Boolean! @docGroup(name: "Payment Method Token", sidebarTitle: "Validate Payment Method Ownership") @docPriority(level: 4)
-  "Returns webhook events."
+  "Returns webhook delivery attempts through one lookup mode. Unknown or unowned IDs return an empty events list."
   webhookEvents(
-    "Unique identifier."
+    "Unique delivery-attempt ID. Returns the exact matching attempt."
     id: ID
-    "The endpoint."
+    "Stable public per-destination Webhook Event ID. Returns all matching attempts newest first without public pagination."
+    event_id: ID
+    "The endpoint for paginated delivery history. Cannot be combined with id or event_id."
     endpoint: String
-    "The result."
+    "Optional result filter for endpoint history. Cannot be combined with id or event_id."
     result: WebhookNotificationResult
-    "The last evaluated key."
+    "Opaque cursor for endpoint history. Cannot be combined with id or event_id."
     last_evaluated_key: String
-    "Maximum number of items to return."
+    "Maximum number of endpoint-history items to return. Cannot be combined with id or event_id."
     limit: Int
   ): WebhookEvents! @docGroup(name: "Webhooks", sidebarTitle: "List Webhook Events")
   "Returns webhooks."
@@ -4189,35 +4172,39 @@ type Webhook @aws_lambda @aws_iam @aws_cognito_user_pools {
   name: String!
 }
 
-"A webhook event object represents a webhook trigger, meaning it may have sent a notification to your endpoint if it was active at the time."
+"One webhook delivery attempt to an endpoint."
 type WebhookEvent @aws_lambda @aws_iam @aws_cognito_user_pools {
   "The endpoint of the webhook associated with the event."
   endpoint: String!
-  "An error message present only if the event failed."
+  "An error message present only if this delivery attempt failed."
   error: String
   "The type of event that was sent."
   event: String!
-  "The time the response was received or the last attempt to contact the endpoint was made."
+  "The time this delivery attempt finished."
   finished_at: String!
-  "A unique ID for the event."
+  "The unique ID for this delivery attempt. Use it for an exact attempt lookup."
   id: ID!
-  "A JSON string of the request that was sent to the endpoint."
+  "The stable public Webhook Event ID for one destination delivery, shared by all retry attempts. Legacy attempts return null."
+  event_id: ID
+  "A JSON string of the request sent during this delivery attempt."
   request: AWSJSON!
-  "A JSON string of the response received from the endpoint. Not present if no response was received."
+  "A JSON string of the response received for this attempt. Not present if no response was received."
   response: AWSJSON
-  "The final outcome of the event."
+  "The outcome of this delivery attempt."
   result: WebhookNotificationResult!
-  "The time the first request was made."
+  "The zero-based retry number for this delivery attempt."
+  retry_count: Int
+  "The time this delivery attempt started."
   started_at: String!
-  "The HTTP status code of the last response. Not present if no response was received."
+  "The HTTP status code returned for this attempt. Not present if no response was received."
   status_code: Int
 }
 
-"Webhook events object."
+"Webhook delivery attempts. Endpoint history is paginated; ID lookups are not."
 type WebhookEvents @aws_lambda @aws_iam @aws_cognito_user_pools {
-  "List of Webhook Events."
+  "Matching delivery attempts, ordered newest first when more than one is returned."
   events: [WebhookEvent]!
-  "The last evaluated key."
+  "The endpoint-history cursor. ID lookups do not return a cursor."
   last_evaluated_key: String
 }
 

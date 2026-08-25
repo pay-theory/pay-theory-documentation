@@ -30774,96 +30774,83 @@
   "JWK": {
     "kind": "OBJECT",
     "name": "JWK",
-    "description": "A JWK is a JSON Web Key.",
+    "description": "Public Ed25519 material for the partner and environment that signed a webhook.",
     "fields": [
       {
-        "name": "crv",
-        "description": "The curve used for the JWK.",
-        "type": {
-          "kind": "TYPE_REF",
-          "name": "String",
-          "link": "#string"
-        },
-        "typeString": "String",
-        "isRequired": false,
-        "isList": false,
-        "isDeprecated": false
-      },
-      {
-        "name": "kty",
-        "description": "The key type used for the JWK.",
-        "type": {
-          "kind": "TYPE_REF",
-          "name": "String",
-          "link": "#string"
-        },
-        "typeString": "String",
-        "isRequired": false,
-        "isList": false,
-        "isDeprecated": false
-      },
-      {
-        "name": "x",
-        "description": "The x coordinate used for the JWK.",
-        "type": {
-          "kind": "TYPE_REF",
-          "name": "String",
-          "link": "#string"
-        },
-        "typeString": "String",
-        "isRequired": false,
-        "isList": false,
-        "isDeprecated": false
-      },
-      {
-        "name": "y",
-        "description": "The y coordinate used for the JWK.",
-        "type": {
-          "kind": "TYPE_REF",
-          "name": "String",
-          "link": "#string"
-        },
-        "typeString": "String",
-        "isRequired": false,
-        "isList": false,
-        "isDeprecated": false
-      },
-      {
-        "name": "use",
-        "description": "The use of the JWK.",
-        "type": {
-          "kind": "TYPE_REF",
-          "name": "String",
-          "link": "#string"
-        },
-        "typeString": "String",
-        "isRequired": false,
-        "isList": false,
-        "isDeprecated": false
-      },
-      {
         "name": "alg",
-        "description": "The algorithm used for the JWK.",
+        "description": "The EdDSA algorithm identifier.",
         "type": {
           "kind": "TYPE_REF",
           "name": "String",
           "link": "#string"
         },
-        "typeString": "String",
-        "isRequired": false,
+        "typeString": "String!",
+        "isRequired": true,
+        "isList": false,
+        "isDeprecated": false
+      },
+      {
+        "name": "crv",
+        "description": "The Ed25519 curve identifier.",
+        "type": {
+          "kind": "TYPE_REF",
+          "name": "String",
+          "link": "#string"
+        },
+        "typeString": "String!",
+        "isRequired": true,
         "isList": false,
         "isDeprecated": false
       },
       {
         "name": "kid",
-        "description": "The key id used for the JWK.",
+        "description": "The identifier sent in the webhook signature key ID header.",
         "type": {
           "kind": "TYPE_REF",
           "name": "String",
           "link": "#string"
         },
-        "typeString": "String",
-        "isRequired": false,
+        "typeString": "String!",
+        "isRequired": true,
+        "isList": false,
+        "isDeprecated": false
+      },
+      {
+        "name": "kty",
+        "description": "The OKP key type identifier.",
+        "type": {
+          "kind": "TYPE_REF",
+          "name": "String",
+          "link": "#string"
+        },
+        "typeString": "String!",
+        "isRequired": true,
+        "isList": false,
+        "isDeprecated": false
+      },
+      {
+        "name": "use",
+        "description": "The signature-use identifier.",
+        "type": {
+          "kind": "TYPE_REF",
+          "name": "String",
+          "link": "#string"
+        },
+        "typeString": "String!",
+        "isRequired": true,
+        "isList": false,
+        "isDeprecated": false
+      },
+      {
+        "name": "x",
+        "description": "The base64url-encoded public key.",
+        "type": {
+          "kind": "TYPE_REF",
+          "name": "String",
+          "link": "#string"
+        },
+        "typeString": "String!",
+        "isRequired": true,
         "isList": false,
         "isDeprecated": false
       }
@@ -30874,132 +30861,93 @@
   "JWKS": {
     "kind": "OBJECT",
     "name": "JWKS",
-    "description": "A JWKS is a JSON Web Key Set.",
+    "description": "The public verification keys for this authenticated partner and environment.",
     "fields": [
       {
-        "name": "jwks_uri",
-        "description": "The URI of the JWKS.",
-        "type": {
-          "kind": "TYPE_REF",
-          "name": "String",
-          "link": "#string"
-        },
-        "typeString": "String",
-        "isRequired": false,
-        "isList": false,
-        "isDeprecated": false
-      },
-      {
-        "name": "issuer",
-        "description": "The issuer of the JWKS.",
-        "type": {
-          "kind": "TYPE_REF",
-          "name": "String",
-          "link": "#string"
-        },
-        "typeString": "String",
-        "isRequired": false,
-        "isList": false,
-        "isDeprecated": false
-      },
-      {
         "name": "keys",
-        "description": "The keys in the JWKS.",
+        "description": "Public keys that can verify webhook deliveries from this environment.",
         "type": {
           "kind": "LIST",
           "ofType": {
             "kind": "OBJECT",
             "name": "JWK",
-            "description": "A JWK is a JSON Web Key.",
+            "description": "Public Ed25519 material for the partner and environment that signed a webhook.",
             "fields": [
               {
-                "name": "crv",
-                "description": "The curve used for the JWK.",
-                "type": {
-                  "kind": "TYPE_REF",
-                  "name": "String",
-                  "link": "#string"
-                },
-                "typeString": "String",
-                "isRequired": false,
-                "isList": false,
-                "isDeprecated": false
-              },
-              {
-                "name": "kty",
-                "description": "The key type used for the JWK.",
-                "type": {
-                  "kind": "TYPE_REF",
-                  "name": "String",
-                  "link": "#string"
-                },
-                "typeString": "String",
-                "isRequired": false,
-                "isList": false,
-                "isDeprecated": false
-              },
-              {
-                "name": "x",
-                "description": "The x coordinate used for the JWK.",
-                "type": {
-                  "kind": "TYPE_REF",
-                  "name": "String",
-                  "link": "#string"
-                },
-                "typeString": "String",
-                "isRequired": false,
-                "isList": false,
-                "isDeprecated": false
-              },
-              {
-                "name": "y",
-                "description": "The y coordinate used for the JWK.",
-                "type": {
-                  "kind": "TYPE_REF",
-                  "name": "String",
-                  "link": "#string"
-                },
-                "typeString": "String",
-                "isRequired": false,
-                "isList": false,
-                "isDeprecated": false
-              },
-              {
-                "name": "use",
-                "description": "The use of the JWK.",
-                "type": {
-                  "kind": "TYPE_REF",
-                  "name": "String",
-                  "link": "#string"
-                },
-                "typeString": "String",
-                "isRequired": false,
-                "isList": false,
-                "isDeprecated": false
-              },
-              {
                 "name": "alg",
-                "description": "The algorithm used for the JWK.",
+                "description": "The EdDSA algorithm identifier.",
                 "type": {
                   "kind": "TYPE_REF",
                   "name": "String",
                   "link": "#string"
                 },
-                "typeString": "String",
-                "isRequired": false,
+                "typeString": "String!",
+                "isRequired": true,
+                "isList": false,
+                "isDeprecated": false
+              },
+              {
+                "name": "crv",
+                "description": "The Ed25519 curve identifier.",
+                "type": {
+                  "kind": "TYPE_REF",
+                  "name": "String",
+                  "link": "#string"
+                },
+                "typeString": "String!",
+                "isRequired": true,
                 "isList": false,
                 "isDeprecated": false
               },
               {
                 "name": "kid",
-                "description": "The key id used for the JWK.",
+                "description": "The identifier sent in the webhook signature key ID header.",
                 "type": {
                   "kind": "TYPE_REF",
                   "name": "String",
                   "link": "#string"
                 },
-                "typeString": "String",
-                "isRequired": false,
+                "typeString": "String!",
+                "isRequired": true,
+                "isList": false,
+                "isDeprecated": false
+              },
+              {
+                "name": "kty",
+                "description": "The OKP key type identifier.",
+                "type": {
+                  "kind": "TYPE_REF",
+                  "name": "String",
+                  "link": "#string"
+                },
+                "typeString": "String!",
+                "isRequired": true,
+                "isList": false,
+                "isDeprecated": false
+              },
+              {
+                "name": "use",
+                "description": "The signature-use identifier.",
+                "type": {
+                  "kind": "TYPE_REF",
+                  "name": "String",
+                  "link": "#string"
+                },
+                "typeString": "String!",
+                "isRequired": true,
+                "isList": false,
+                "isDeprecated": false
+              },
+              {
+                "name": "x",
+                "description": "The base64url-encoded public key.",
+                "type": {
+                  "kind": "TYPE_REF",
+                  "name": "String",
+                  "link": "#string"
+                },
+                "typeString": "String!",
+                "isRequired": true,
                 "isList": false,
                 "isDeprecated": false
               }
@@ -31008,8 +30956,8 @@
             "isCollapsible": true
           }
         },
-        "typeString": "[JWK]",
-        "isRequired": false,
+        "typeString": "[JWK!]!",
+        "isRequired": true,
         "isList": true,
         "isDeprecated": false
       }
@@ -41962,28 +41910,6 @@
         "isDeprecated": false
       }
     ]
-  },
-  "PayloadValidation": {
-    "kind": "OBJECT",
-    "name": "PayloadValidation",
-    "description": "A payload validation is used to validate a payload.",
-    "fields": [
-      {
-        "name": "is_valid",
-        "description": "Whether the payload is valid.",
-        "type": {
-          "kind": "TYPE_REF",
-          "name": "Boolean",
-          "link": "#boolean"
-        },
-        "typeString": "Boolean",
-        "isRequired": false,
-        "isList": false,
-        "isDeprecated": false
-      }
-    ],
-    "interfaces": [],
-    "isCollapsible": false
   },
   "PaymentLink": {
     "kind": "OBJECT",
@@ -63989,7 +63915,7 @@
   "WebhookEvent": {
     "kind": "OBJECT",
     "name": "WebhookEvent",
-    "description": "A webhook event object represents a webhook trigger, meaning it may have sent a notification to your endpoint if it was active at the time.",
+    "description": "One webhook delivery attempt to an endpoint.",
     "fields": [
       {
         "name": "endpoint",
@@ -64006,7 +63932,7 @@
       },
       {
         "name": "error",
-        "description": "An error message present only if the event failed.",
+        "description": "An error message present only if this delivery attempt failed.",
         "type": {
           "kind": "TYPE_REF",
           "name": "String",
@@ -64032,7 +63958,7 @@
       },
       {
         "name": "finished_at",
-        "description": "The time the response was received or the last attempt to contact the endpoint was made.",
+        "description": "The time this delivery attempt finished.",
         "type": {
           "kind": "TYPE_REF",
           "name": "String",
@@ -64045,7 +63971,7 @@
       },
       {
         "name": "id",
-        "description": "A unique ID for the event.",
+        "description": "The unique ID for this delivery attempt. Use it for an exact attempt lookup.",
         "type": {
           "kind": "TYPE_REF",
           "name": "ID",
@@ -64057,8 +63983,21 @@
         "isDeprecated": false
       },
       {
+        "name": "event_id",
+        "description": "The stable public Webhook Event ID for one destination delivery, shared by all retry attempts. Legacy attempts return null.",
+        "type": {
+          "kind": "TYPE_REF",
+          "name": "ID",
+          "link": "#id"
+        },
+        "typeString": "ID",
+        "isRequired": false,
+        "isList": false,
+        "isDeprecated": false
+      },
+      {
         "name": "request",
-        "description": "A JSON string of the request that was sent to the endpoint.",
+        "description": "A JSON string of the request sent during this delivery attempt.",
         "type": {
           "kind": "TYPE_REF",
           "name": "AWSJSON",
@@ -64071,7 +64010,7 @@
       },
       {
         "name": "response",
-        "description": "A JSON string of the response received from the endpoint. Not present if no response was received.",
+        "description": "A JSON string of the response received for this attempt. Not present if no response was received.",
         "type": {
           "kind": "TYPE_REF",
           "name": "AWSJSON",
@@ -64084,7 +64023,7 @@
       },
       {
         "name": "result",
-        "description": "The final outcome of the event.",
+        "description": "The outcome of this delivery attempt.",
         "type": {
           "kind": "ENUM",
           "name": "WebhookNotificationResult",
@@ -64113,8 +64052,21 @@
         "isDeprecated": false
       },
       {
+        "name": "retry_count",
+        "description": "The zero-based retry number for this delivery attempt.",
+        "type": {
+          "kind": "TYPE_REF",
+          "name": "Int",
+          "link": "#int"
+        },
+        "typeString": "Int",
+        "isRequired": false,
+        "isList": false,
+        "isDeprecated": false
+      },
+      {
         "name": "started_at",
-        "description": "The time the first request was made.",
+        "description": "The time this delivery attempt started.",
         "type": {
           "kind": "TYPE_REF",
           "name": "String",
@@ -64127,7 +64079,7 @@
       },
       {
         "name": "status_code",
-        "description": "The HTTP status code of the last response. Not present if no response was received.",
+        "description": "The HTTP status code returned for this attempt. Not present if no response was received.",
         "type": {
           "kind": "TYPE_REF",
           "name": "Int",
@@ -64145,17 +64097,17 @@
   "WebhookEvents": {
     "kind": "OBJECT",
     "name": "WebhookEvents",
-    "description": "Webhook events object.",
+    "description": "Webhook delivery attempts. Endpoint history is paginated; ID lookups are not.",
     "fields": [
       {
         "name": "events",
-        "description": "List of Webhook Events.",
+        "description": "Matching delivery attempts, ordered newest first when more than one is returned.",
         "type": {
           "kind": "LIST",
           "ofType": {
             "kind": "OBJECT",
             "name": "WebhookEvent",
-            "description": "A webhook event object represents a webhook trigger, meaning it may have sent a notification to your endpoint if it was active at the time.",
+            "description": "One webhook delivery attempt to an endpoint.",
             "fields": [
               {
                 "name": "endpoint",
@@ -64172,7 +64124,7 @@
               },
               {
                 "name": "error",
-                "description": "An error message present only if the event failed.",
+                "description": "An error message present only if this delivery attempt failed.",
                 "type": {
                   "kind": "TYPE_REF",
                   "name": "String",
@@ -64198,7 +64150,7 @@
               },
               {
                 "name": "finished_at",
-                "description": "The time the response was received or the last attempt to contact the endpoint was made.",
+                "description": "The time this delivery attempt finished.",
                 "type": {
                   "kind": "TYPE_REF",
                   "name": "String",
@@ -64211,7 +64163,7 @@
               },
               {
                 "name": "id",
-                "description": "A unique ID for the event.",
+                "description": "The unique ID for this delivery attempt. Use it for an exact attempt lookup.",
                 "type": {
                   "kind": "TYPE_REF",
                   "name": "ID",
@@ -64223,8 +64175,21 @@
                 "isDeprecated": false
               },
               {
+                "name": "event_id",
+                "description": "The stable public Webhook Event ID for one destination delivery, shared by all retry attempts. Legacy attempts return null.",
+                "type": {
+                  "kind": "TYPE_REF",
+                  "name": "ID",
+                  "link": "#id"
+                },
+                "typeString": "ID",
+                "isRequired": false,
+                "isList": false,
+                "isDeprecated": false
+              },
+              {
                 "name": "request",
-                "description": "A JSON string of the request that was sent to the endpoint.",
+                "description": "A JSON string of the request sent during this delivery attempt.",
                 "type": {
                   "kind": "TYPE_REF",
                   "name": "AWSJSON",
@@ -64237,7 +64202,7 @@
               },
               {
                 "name": "response",
-                "description": "A JSON string of the response received from the endpoint. Not present if no response was received.",
+                "description": "A JSON string of the response received for this attempt. Not present if no response was received.",
                 "type": {
                   "kind": "TYPE_REF",
                   "name": "AWSJSON",
@@ -64250,7 +64215,7 @@
               },
               {
                 "name": "result",
-                "description": "The final outcome of the event.",
+                "description": "The outcome of this delivery attempt.",
                 "type": {
                   "kind": "ENUM",
                   "name": "WebhookNotificationResult",
@@ -64279,8 +64244,21 @@
                 "isDeprecated": false
               },
               {
+                "name": "retry_count",
+                "description": "The zero-based retry number for this delivery attempt.",
+                "type": {
+                  "kind": "TYPE_REF",
+                  "name": "Int",
+                  "link": "#int"
+                },
+                "typeString": "Int",
+                "isRequired": false,
+                "isList": false,
+                "isDeprecated": false
+              },
+              {
                 "name": "started_at",
-                "description": "The time the first request was made.",
+                "description": "The time this delivery attempt started.",
                 "type": {
                   "kind": "TYPE_REF",
                   "name": "String",
@@ -64293,7 +64271,7 @@
               },
               {
                 "name": "status_code",
-                "description": "The HTTP status code of the last response. Not present if no response was received.",
+                "description": "The HTTP status code returned for this attempt. Not present if no response was received.",
                 "type": {
                   "kind": "TYPE_REF",
                   "name": "Int",
@@ -64316,7 +64294,7 @@
       },
       {
         "name": "last_evaluated_key",
-        "description": "The last evaluated key.",
+        "description": "The endpoint-history cursor. ID lookups do not return a cursor.",
         "type": {
           "kind": "TYPE_REF",
           "name": "String",

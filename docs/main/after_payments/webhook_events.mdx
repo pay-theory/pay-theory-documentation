@@ -1,0 +1,303 @@
+---
+sidebar_position: 8
+sidebar_label: Webhooks
+title: Webhooks
+---
+
+# Webhooks
+
+Pay Theory webhooks send an HTTP `POST` when an event happens. A receiver should authenticate the request from its exact raw bytes, acknowledge it quickly, and process the event idempotently.
+
+For representative event payloads, see [Webhook Sample Payloads](webhook_sample_payloads).
+
+***
+
+## Before You Start
+
+Prepare:
+
+- A public HTTPS endpoint that accepts `POST` requests.
+- Access to the authenticated [Pay Theory Portal](https://portal.paytheory.com).
+- Storage with a unique constraint on `event_id` for deduplication.
+- Separate endpoint configuration for sandbox and production.
+
+Your framework must retain the raw request bytes. Do not let JSON middleware parse and re-serialize the body before signature verification.
+
+***
+
+## Delivery Routing
+
+Webhook endpoints have one of two scopes:
+
+| Endpoint scope | Deliveries received                                                       |
+| -------------- | ------------------------------------------------------------------------- |
+| Partner        | Events for every merchant in the partner.                                 |
+| Merchant       | Events whose signed `payload.merchant_uid` exactly matches that merchant. |
+
+For an event with a valid `merchant_uid`, Pay Theory delivers to active partner endpoints and active endpoints for that one merchant. It does not deliver the event to endpoints owned by other merchants. A partner endpoint and the matching merchant endpoint can therefore receive the same logical event, but each destination receives its own `event_id`.
+
+Even when you use a merchant-scoped endpoint, compare the signed `payload.merchant_uid` with the merchant that owns your route before doing any work.
+
+Manage endpoints in the portal under **Settings → Webhooks**, or use the GraphQL API:
+
+- [Create Webhook](../../api/webhooks/create-webhook)
+- [List Webhooks](../../api/webhooks)
+- [Update Webhook](../../api/webhooks/update-webhook)
+- [Delete Webhook](../../api/webhooks/delete-webhook)
+
+***
+
+## Request Body
+
+The existing `event`, `subtype`, and `payload` fields retain their meanings. `event_id` identifies one destination delivery, while `occurred_at` describes the source event:
+
+| Field         | Type   | Description                                                                |
+| ------------- | ------ | -------------------------------------------------------------------------- |
+| `event`       | string | Event family, such as `MERCHANT`, `TRANSACTION`, or `PAYMENT_METHOD`.      |
+| `subtype`     | string | Event action or state, such as `CREATED` or `UPDATED`.                     |
+| `payload`     | object | Event-specific data. Tenant-bound payloads include `merchant_uid`.         |
+| `event_id`    | string | Public ID for this endpoint's delivery. Use it as the deduplication key.   |
+| `occurred_at` | string | Stable ISO 8601 UTC time associated with the logical event.                |
+
+```json
+{
+  "event": "PAYOR",
+  "subtype": "CREATED",
+  "payload": {
+    "payor_id": "payor_123",
+    "merchant_uid": "mer_123",
+    "email": "jane@example.com"
+  },
+  "event_id": "pt_webh_01J4MEY4W7YSC3R6G5AR2M1P9Q",
+  "occurred_at": "2026-08-06T15:30:00Z"
+}
+```
+
+`event_id`, `occurred_at`, and the body remain stable across retries to that endpoint. The same source event sent to another partner or merchant endpoint has a different `event_id`. Each attempt has a new signature timestamp and signature.
+
+***
+
+## Success, Failure, And Retries
+
+Webhook delivery is **at least once** and **unordered**. The same `event_id` can arrive more than once, and a later event can arrive before an earlier one. Claim a new `event_id` atomically before applying side effects; if it is already claimed, acknowledge the duplicate without applying those effects again.
+
+An attempt has one 10-second response window and no hidden HTTP retries:
+
+- Any `2xx` response is successful.
+- Redirects and every non-`2xx` response, including `4xx` and `5xx`, fail.
+- Timeouts and connection failures fail.
+
+After a failed initial attempt, Pay Theory schedules exactly eight retries at these delays:
+
+1. 1 minute
+2. 5 minutes
+3. 30 minutes
+4. 2 hours
+5. 6 hours
+6. 12 hours
+7. 24 hours
+8. 48 hours
+
+This is at most nine attempts: one initial attempt plus eight retries. Pay Theory does not automatically deactivate an endpoint after failures. A scheduled retry runs only if that exact endpoint still exists and is active; deleting or disabling it prevents the retry, and re-enabling it later does not revive a skipped retry.
+
+***
+
+## Delivery History
+
+Delivery history is a flat list. Each initial delivery or retry is its own attempt record. The `id` field is the unique Attempt ID for that record. The nullable `event_id` field is the stable public ID sent in the request body, and every retry to the same destination shares it. GraphQL does not expose any separate internal attempt or source-event ID.
+
+Attempts created before the public Webhook Event ID rollout return `null` for `event_id`. When you display an attempt, show `event_id` when it is present. Otherwise, show `id` and label it as the Attempt ID.
+
+Records are retained for 15 days from the attempt's `started_at` time. Deleting an endpoint does not delete its existing history.
+
+Query one endpoint's attempts with authenticated GraphQL. Pass the returned opaque `last_evaluated_key` unchanged to request the next page.
+
+```graphql title="GraphQL"
+query WebhookDeliveryHistory(
+  $endpoint: String!
+  $result: WebhookNotificationResult
+  $lastEvaluatedKey: String
+  $limit: Int
+) {
+  webhookEvents(
+    endpoint: $endpoint
+    result: $result
+    last_evaluated_key: $lastEvaluatedKey
+    limit: $limit
+  ) {
+    events {
+      id
+      event_id
+      endpoint
+      event
+      retry_count
+      result
+      started_at
+      finished_at
+      status_code
+      error
+      request
+      response
+    }
+    last_evaluated_key
+  }
+}
+```
+
+The `webhookEvents` query supports three lookup modes. Choose exactly one for each request:
+
+- Pass `endpoint`, with optional `result`, `last_evaluated_key`, and `limit`, for paginated endpoint history.
+- Pass `id` for one exact attempt.
+- Pass `event_id` for every available attempt associated with one destination delivery.
+
+Do not combine `id` and `event_id`, or combine either ID with endpoint-history arguments. The API rejects mixed lookup modes before reading delivery history. An ID that does not exist or does not belong to the authenticated subscriber returns `events: []`.
+
+To inspect one exact attempt, pass its Attempt ID as the `id` argument. The query returns zero or one record.
+
+```graphql title="GraphQL"
+query WebhookDeliveryAttempt($id: ID!) {
+  webhookEvents(id: $id) {
+    events {
+      id
+      event_id
+      retry_count
+      result
+      started_at
+      status_code
+    }
+  }
+}
+```
+
+To inspect a destination delivery and its retries, pass the public Webhook Event ID as the `event_id` argument. The query returns every available attempt with the newest first, so `events[0]` is the most recent attempt. This lookup has no public pagination cursor or limit.
+
+```graphql title="GraphQL"
+query WebhookDeliveryAttempts($eventId: ID!) {
+  webhookEvents(event_id: $eventId) {
+    events {
+      id
+      event_id
+      retry_count
+      result
+      started_at
+      status_code
+    }
+  }
+}
+```
+
+See [List Webhook Events](../../api/webhooks/webhook-events) for the operation reference.
+
+***
+
+## Verify A Signature
+
+Signature verification is optional, but recommended for receivers exposed to the public internet.
+
+Every signed delivery includes:
+
+| Header                | Value                                                |
+| --------------------- | ---------------------------------------------------- |
+| `X-Webhook-Signature` | Base64-encoded Ed25519 signature.                    |
+| `X-Webhook-Timestamp` | Decimal Unix timestamp in seconds for this attempt.  |
+| `X-Webhook-Key-Id`    | `kid` of the public key that verifies the signature. |
+
+The exact signing input is:
+
+```text
+timestamp + "." + raw request body
+```
+
+The timestamp and period are ASCII bytes. The body is the exact byte sequence received over HTTP, not parsed or re-formatted JSON.
+
+### Get The Public Keys
+
+Request the public keys from the authenticated GraphQL API for the same environment that sends the webhooks:
+
+```graphql
+query WebhookVerificationKeys {
+  jwks {
+    keys {
+      alg
+      crv
+      kid
+      kty
+      use
+      x
+    }
+  }
+}
+```
+
+Store the returned `data.jwks.keys` array as a JWKS object such as `{"keys": [...]}` in your receiver's environment-specific configuration. This is a setup or key-refresh operation, not part of webhook request handling.
+
+The returned JWKS contains public Ed25519 fields only: `alg`, `crv`, `kid`, `kty`, `use`, and `x`. It is shared by the partner and environment; it is not a private key or a per-merchant secret. Cache this trusted JWKS in environment-specific local configuration and select the verification key whose `kid` matches `X-Webhook-Key-Id`. Pay Theory does not currently provide a public JWKS URL, so do not build a runtime fetch into your receiver.
+
+Perform every validation step locally. The webhook request path requires no Pay Theory API call: do not send the request body, signature, or other delivery headers back to Pay Theory during request handling.
+
+### Node.js Example
+
+The complete [Node.js/TypeScript verification example](https://github.com/pay-theory/pay-theory-documentation/blob/premain/examples/webhooks/verify_webhook.mjs) uses only Node's built-in `crypto` module. It performs these checks in order:
+
+1. Require all three signature headers.
+2. Reject timestamps more than five minutes in the past or future.
+3. Select the copied public JWK by `X-Webhook-Key-Id`.
+4. Verify `timestamp + "." + raw body` before parsing JSON.
+5. Compare the signed `payload.merchant_uid` with the route's merchant.
+6. Reject an `event_id` that was already processed.
+
+The module is JavaScript that is also valid TypeScript. This Express example keeps `request.body` as a `Buffer` and calls it before business logic:
+
+```typescript title="receiver.ts"
+import express from 'express';
+import { verifyWebhookDelivery } from './verify_webhook.mjs';
+
+const app = express();
+const jwks = JSON.parse(process.env.PAY_THEORY_WEBHOOK_JWKS!);
+
+// A Set makes this snippet runnable in one process. In production, this
+// callback must use one atomic insert with a unique event_id constraint.
+const processedEventIds = new Set<string>();
+const claimEventId = (eventId: string) => {
+  if (processedEventIds.has(eventId)) return false;
+  processedEventIds.add(eventId);
+  return true;
+};
+
+app.post(
+  '/webhooks/mer_123',
+  express.raw({ type: 'application/json' }),
+  (request, response) => {
+    try {
+      const event = verifyWebhookDelivery({
+        rawBody: request.body,
+        headers: request.headers,
+        jwks,
+        expectedMerchantUid: 'mer_123',
+        claimEventId,
+      });
+
+      // Queue verified work keyed by event.event_id, then acknowledge quickly.
+      queueForProcessing(event);
+      response.sendStatus(204);
+    } catch (error) {
+      response.status(400).json({ error: 'Invalid webhook' });
+    }
+  },
+);
+```
+
+***
+
+## Receiver Checklist
+
+- Capture the raw body and verify the signature before JSON parsing.
+- Enforce the five-minute timestamp freshness window.
+- Match the header key ID to the cached JWKS.
+- Compare the signed `payload.merchant_uid` with the receiving route.
+- Deduplicate atomically on `event_id`.
+- Make processing safe for unordered events.
+- Return any `2xx` response within 10 seconds after durable acceptance.
+- Monitor the 15-day delivery history for failed attempts.
+
+For event-specific fields, continue to [Webhook Sample Payloads](webhook_sample_payloads).
