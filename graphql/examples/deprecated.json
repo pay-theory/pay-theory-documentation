@@ -4,67 +4,25 @@
     "operationType": "mutation",
     "examples": [
       {
-        "name": "Example createOneTimePayment",
-        "description": "This call was deprecated in favor of the createTransaction mutation. The createTransaction mutation returns a more detailed response than this call.",
-        "query": "mutation CreateOneTimePayment($merchant_uid: String!, $amount: Int!, $payment_method_id: String, $payment_method: PaymentMethodInput, $recurring_id: String, $invoice_id: String, $fee: Int, $fee_mode: FeeMode, $payment_parameters_name: String, $account_code: String, $reference: String, $send_receipt: Boolean, $receipt_description: String, $metadata: AWSJSON, $health_expense_type: HealthExpenseType, $additional_purchase_data: AdditionalPurchaseDataInput) {\n  createOneTimePayment(merchant_uid: $merchant_uid, amount: $amount, payment_method_id: $payment_method_id, payment_method: $payment_method, recurring_id: $recurring_id, invoice_id: $invoice_id, fee: $fee, fee_mode: $fee_mode, payment_parameters_name: $payment_parameters_name, account_code: $account_code, reference: $reference, send_receipt: $send_receipt, receipt_description: $receipt_description, metadata: $metadata, health_expense_type: $health_expense_type, additional_purchase_data: $additional_purchase_data) {\n  transaction_id\n  created_at\n  amount\n  card_brand\n  currency\n  }\n}",
+        "name": "Charge a card",
+        "query": "mutation CreateOneTimePayment(\n  $merchant_uid: String!\n  $amount: Int!\n  $payment_method: PaymentMethodInput\n  $fee_mode: FeeMode\n  $reference: String\n) {\n  createOneTimePayment(\n    merchant_uid: $merchant_uid\n    amount: $amount\n    payment_method: $payment_method\n    fee_mode: $fee_mode\n    reference: $reference\n  ) {\n    transaction_id\n    status\n    amount\n    service_fee\n    card_brand\n    last_four\n    currency\n    failure_reason\n    created_at\n  }\n}",
         "variables": {
-          "merchant_uid": "example",
-          "amount": 123,
-          "payment_method_id": "example",
+          "amount": 200,
+          "fee_mode": "MERCHANT_FEE",
+          "merchant_uid": "<MERCHANT_UID>",
           "payment_method": {
-            "ach": {
-              "account_number": "example",
-              "account_type": "BUSINESS_CHECKING",
-              "name_on_account": "example",
-              "routing_number": "example"
-            },
-            "canadian_eft": {
-              "account_number": "example",
-              "account_type": "BUSINESS_CHECKING",
-              "institution_number": "example",
-              "name_on_account": "example",
-              "transit_number": "example"
-            },
             "card": {
-              "card_number": "example",
+              "card_number": "4835034598457895",
               "exp_date": {
-                "month": "example",
-                "year": "example"
+                "month": "12",
+                "year": "30"
               },
-              "postal_code": "example",
-              "security_code": "example"
-            },
-            "metadata": {
-              "key": "value"
-            },
-            "payor": {
-              "address_line1": "example"
-            },
-            "payor_id": "example"
-          },
-          "recurring_id": "example",
-          "invoice_id": "example",
-          "fee": 123,
-          "fee_mode": "CUSTOM_FEE",
-          "payment_parameters_name": "example",
-          "account_code": "example",
-          "reference": "example",
-          "send_receipt": true,
-          "receipt_description": "example",
-          "metadata": {
-            "key": "value"
-          },
-          "health_expense_type": "CLINICAL",
-          "additional_purchase_data": {
-            "level3_data_line_item": [
-              {
-                "item_code": "example"
-              }
-            ],
-            "level3_data_summary": {
-              "dest_postal_code": "example"
+              "full_name": "Jane Cardholder",
+              "postal_code": "45209",
+              "security_code": "123"
             }
-          }
+          },
+          "reference": "docs-otp-abca89f1"
         },
         "response": {
           "type": "success",
@@ -72,15 +30,198 @@
           "body": {
             "data": {
               "createOneTimePayment": {
-                "transaction_id": "example",
-                "created_at": "2025-01-01T00:00:00Z",
-                "amount": 123,
-                "card_brand": "example",
-                "currency": "example"
+                "transaction_id": "ptl_txn_4eh6z8uGcOq62ebqfMOSAU",
+                "status": "PENDING",
+                "amount": 200,
+                "service_fee": 0,
+                "card_brand": "VISA",
+                "last_four": "7895",
+                "currency": "USD",
+                "failure_reason": null,
+                "created_at": "2026-09-03T17:33:15.093Z"
               }
             }
           }
-        }
+        },
+        "description": "Creates a deprecated one-time card payment."
+      },
+      {
+        "name": "Missing payment method",
+        "query": "mutation CreateOneTimePayment(\n  $merchant_uid: String!\n  $amount: Int!\n  $fee_mode: FeeMode\n) {\n  createOneTimePayment(\n    merchant_uid: $merchant_uid\n    amount: $amount\n    fee_mode: $fee_mode\n  ) {\n    transaction_id\n    status\n    amount\n    service_fee\n    card_brand\n    last_four\n    currency\n    failure_reason\n    created_at\n  }\n}",
+        "variables": {
+          "amount": 200,
+          "fee_mode": "MERCHANT_FEE",
+          "merchant_uid": "<MERCHANT_UID>"
+        },
+        "response": {
+          "type": "error",
+          "httpStatus": 200,
+          "body": {
+            "data": null,
+            "errors": [
+              {
+                "path": [
+                  "createOneTimePayment"
+                ],
+                "data": null,
+                "errorType": "VALIDATION_ERROR",
+                "errorInfo": null,
+                "locations": [
+                  {
+                    "line": 18,
+                    "column": 5,
+                    "sourceName": null
+                  }
+                ],
+                "message": "Either payment_method or payment_method_id must be passed in."
+              }
+            ]
+          }
+        },
+        "description": "Returns an error when neither payment_method nor payment_method_id is supplied."
+      },
+      {
+        "name": "Interchange fee mode refused",
+        "query": "mutation CreateOneTimePayment(\n  $merchant_uid: String!\n  $amount: Int!\n  $payment_method: PaymentMethodInput\n  $fee_mode: FeeMode\n) {\n  createOneTimePayment(\n    merchant_uid: $merchant_uid\n    amount: $amount\n    payment_method: $payment_method\n    fee_mode: $fee_mode\n  ) {\n    transaction_id\n    status\n    amount\n    service_fee\n    card_brand\n    last_four\n    currency\n    failure_reason\n    created_at\n  }\n}",
+        "variables": {
+          "amount": 200,
+          "fee_mode": "INTERCHANGE",
+          "merchant_uid": "<MERCHANT_UID>",
+          "payment_method": {
+            "card": {
+              "card_number": "4835034598457895",
+              "exp_date": {
+                "month": "12",
+                "year": "30"
+              },
+              "full_name": "Jane Cardholder",
+              "postal_code": "45209",
+              "security_code": "123"
+            }
+          }
+        },
+        "response": {
+          "type": "error",
+          "httpStatus": 200,
+          "body": {
+            "data": null,
+            "errors": [
+              {
+                "path": [
+                  "createOneTimePayment"
+                ],
+                "data": null,
+                "errorType": "VALIDATION_ERROR",
+                "errorInfo": {
+                  "upstream_code": "PARAMETER_ERROR",
+                  "upstream_service": "merchant-application"
+                },
+                "locations": [
+                  {
+                    "line": 18,
+                    "column": 5,
+                    "sourceName": null
+                  }
+                ],
+                "message": "invalid fee_mode: must be one of merchant_fee, service_fee, custom_fee"
+              }
+            ]
+          }
+        },
+        "description": "Returns an error when the deprecated INTERCHANGE fee mode reaches the resolver."
+      },
+      {
+        "name": "Amount is zero",
+        "query": "mutation CreateOneTimePayment(\n  $merchant_uid: String!\n  $amount: Int!\n  $payment_method: PaymentMethodInput\n  $fee_mode: FeeMode\n) {\n  createOneTimePayment(\n    merchant_uid: $merchant_uid\n    amount: $amount\n    payment_method: $payment_method\n    fee_mode: $fee_mode\n  ) {\n    transaction_id\n    status\n    amount\n    service_fee\n    card_brand\n    last_four\n    currency\n    failure_reason\n    created_at\n  }\n}",
+        "variables": {
+          "amount": 0,
+          "fee_mode": "MERCHANT_FEE",
+          "merchant_uid": "<MERCHANT_UID>",
+          "payment_method": {
+            "card": {
+              "card_number": "4835034598457895",
+              "exp_date": {
+                "month": "12",
+                "year": "30"
+              },
+              "full_name": "Jane Cardholder",
+              "postal_code": "45209",
+              "security_code": "123"
+            }
+          }
+        },
+        "response": {
+          "type": "error",
+          "httpStatus": 200,
+          "body": {
+            "data": null,
+            "errors": [
+              {
+                "path": [
+                  "createOneTimePayment"
+                ],
+                "data": null,
+                "errorType": "Lambda:Unhandled",
+                "errorInfo": null,
+                "locations": [
+                  {
+                    "line": 18,
+                    "column": 5,
+                    "sourceName": null
+                  }
+                ],
+                "message": "Payment amount cannot be 0."
+              }
+            ]
+          }
+        },
+        "description": "Returns an error when amount is 0."
+      },
+      {
+        "name": "Read the charge",
+        "query": "query OneTimePaymentStored($query: SqlQuery, $limit: Int) {\r\n    transactions(query: $query, limit: $limit) {\r\n      items {\r\n        transaction_id\r\n        merchant_uid\r\n        gross_amount\r\n        currency\r\n        status\r\n        account_code\r\n        reference\r\n        metadata\r\n      }\r\n      total_row_count\r\n    }\r\n  }",
+        "variables": {
+          "limit": 1,
+          "query": {
+            "query_list": [
+              {
+                "key": "merchant_uid",
+                "operator": "EQUAL",
+                "value": "<MERCHANT_UID>",
+                "conjunctive_operator": "AND_NEXT"
+              },
+              {
+                "key": "reference",
+                "operator": "EQUAL",
+                "value": "docs-otp-abca89f1"
+              }
+            ]
+          }
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "transactions": {
+                "items": [
+                  {
+                    "transaction_id": "ptl_txn_4eh6z8uGcOq62ebqfMOSAU",
+                    "merchant_uid": "<MERCHANT_UID>",
+                    "gross_amount": 200,
+                    "currency": "USD",
+                    "status": "PENDING",
+                    "account_code": null,
+                    "reference": "docs-otp-abca89f1",
+                    "metadata": "{}"
+                  }
+                ],
+                "total_row_count": 1
+              }
+            }
+          }
+        },
+        "description": "Reads the stored transaction created by the deprecated payment mutation."
       }
     ]
   },
@@ -89,17 +230,15 @@
     "operationType": "mutation",
     "examples": [
       {
-        "name": "Example createRefund",
-        "description": "This call will create a refund for a transaction.",
-        "query": "mutation CreateRefund($transaction_id: String!, $amount: Int!, $refund_reason: RefundReasonInput!, $refund_email: String) {\n  createRefund(transaction_id: $transaction_id, amount: $amount, refund_reason: $refund_reason, refund_email: $refund_email)\n}",
+        "name": "Refund a settled charge",
+        "query": "mutation CreateRefund(\n  $transaction_id: String!\n  $amount: Int!\n  $refund_reason: RefundReasonInput!\n) {\n  createRefund(\n    transaction_id: $transaction_id\n    amount: $amount\n    refund_reason: $refund_reason\n  )\n}",
         "variables": {
-          "transaction_id": "example",
-          "amount": 123,
+          "amount": 1,
           "refund_reason": {
-            "reason_code": "DUPLICATE",
-            "reason_details": "example"
+            "reason_code": "REQUESTED_BY_CUSTOMER",
+            "reason_details": "Docs example"
           },
-          "refund_email": "example"
+          "transaction_id": "ptl_txn_11OTxnMLiIfGFAVDo8Zjkl"
         },
         "response": {
           "type": "success",
@@ -109,7 +248,124 @@
               "createRefund": true
             }
           }
-        }
+        },
+        "description": "Creates a deprecated refund for a settled charge."
+      },
+      {
+        "name": "Read the refund",
+        "query": "query ReversalTransaction($query: SqlQuery, $limit: Int) {\r\n    transactions(query: $query, limit: $limit) {\r\n      items {\r\n        transaction_id\r\n        merchant_uid\r\n        status\r\n        is_settled\r\n        refunded_amount\r\n        gross_amount\r\n        transaction_type\r\n        parent_id\r\n      }\r\n      total_row_count\r\n    }\r\n  }",
+        "variables": {
+          "limit": 1,
+          "query": {
+            "query_list": [
+              {
+                "key": "transaction_id",
+                "operator": "EQUAL",
+                "value": "ptl_txn_11OTxnMLiIfGFAVDo8Zjkl"
+              }
+            ]
+          }
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "transactions": {
+                "items": [
+                  {
+                    "transaction_id": "ptl_txn_11OTxnMLiIfGFAVDo8Zjkl",
+                    "merchant_uid": "<MERCHANT_UID>",
+                    "status": "PARTIALLY_REFUNDED",
+                    "is_settled": true,
+                    "refunded_amount": 32,
+                    "gross_amount": 2601,
+                    "transaction_type": "DEBIT",
+                    "parent_id": null
+                  }
+                ],
+                "total_row_count": 1
+              }
+            }
+          }
+        },
+        "description": "Reads the refunded amount back from transactions."
+      },
+      {
+        "name": "Refund amount is too high",
+        "query": "mutation CreateRefund(\n  $transaction_id: String!\n  $amount: Int!\n  $refund_reason: RefundReasonInput!\n) {\n  createRefund(\n    transaction_id: $transaction_id\n    amount: $amount\n    refund_reason: $refund_reason\n  )\n}",
+        "variables": {
+          "amount": 26010,
+          "refund_reason": {
+            "reason_code": "REQUESTED_BY_CUSTOMER",
+            "reason_details": "Docs example"
+          },
+          "transaction_id": "ptl_txn_11OTxnMLiIfGFAVDo8Zjkl"
+        },
+        "response": {
+          "type": "error",
+          "httpStatus": 200,
+          "body": {
+            "data": null,
+            "errors": [
+              {
+                "path": [
+                  "createRefund"
+                ],
+                "data": null,
+                "errorType": "VALIDATION_ERROR",
+                "errorInfo": null,
+                "locations": [
+                  {
+                    "line": 8,
+                    "column": 5,
+                    "sourceName": null
+                  }
+                ],
+                "message": "Refund amount exceeds remaining transaction balance."
+              }
+            ]
+          }
+        },
+        "description": "Returns an error when the refund amount is greater than the remaining balance."
+      },
+      {
+        "name": "Invalid transaction id",
+        "query": "mutation CreateRefund(\n  $transaction_id: String!\n  $amount: Int!\n  $refund_reason: RefundReasonInput!\n) {\n  createRefund(\n    transaction_id: $transaction_id\n    amount: $amount\n    refund_reason: $refund_reason\n  )\n}",
+        "variables": {
+          "amount": 1,
+          "refund_reason": {
+            "reason_code": "REQUESTED_BY_CUSTOMER",
+            "reason_details": "Docs example"
+          },
+          "transaction_id": "ptl_txn_not_a_real_id"
+        },
+        "response": {
+          "type": "error",
+          "httpStatus": 200,
+          "body": {
+            "data": null,
+            "errors": [
+              {
+                "path": [
+                  "createRefund"
+                ],
+                "data": null,
+                "errorType": "Lambda:Unhandled",
+                "errorInfo": null,
+                "locations": [
+                  {
+                    "line": 8,
+                    "column": 5,
+                    "sourceName": null
+                  }
+                ],
+                "message": "Payment was not found."
+              }
+            ]
+          }
+        },
+        "description": "Returns an error when transaction_id does not identify a payment."
       }
     ]
   },
@@ -118,12 +374,11 @@
     "operationType": "query",
     "examples": [
       {
-        "name": "Example serviceFeeAmount",
-        "description": "This call was deprecated in favor of the serviceFee query. The serviceFee query returns a single fee object that contains the fee, total, and adjusted total for the transaction based on the amount and payment method details passed in.",
-        "query": "query ServiceFeeAmount($merchant_uid: String!, $amount: Int!) {\n  serviceFeeAmount(merchant_uid: $merchant_uid, amount: $amount) {\n  ach {\n    adjusted_total\n    fee\n    fee_limit_reached\n    total\n  }\n  card {\n    adjusted_total\n    fee\n    fee_limit_reached\n    total\n  }\n  }\n}",
+        "name": "Read both service fees",
+        "query": "query ServiceFeeAmount($merchant_uid: String!, $amount: Int!) {\r\n    serviceFeeAmount(merchant_uid: $merchant_uid, amount: $amount) {\r\n      ach {\r\n        fee\r\n        total\r\n        adjusted_total\r\n      }\r\n      card {\r\n        fee\r\n        total\r\n        adjusted_total\r\n      }\r\n    }\r\n  }",
         "variables": {
-          "merchant_uid": "example",
-          "amount": 123
+          "merchant_uid": "<MERCHANT_UID>",
+          "amount": 200
         },
         "response": {
           "type": "success",
@@ -132,21 +387,95 @@
             "data": {
               "serviceFeeAmount": {
                 "ach": {
-                  "adjusted_total": 123,
-                  "fee": 123,
-                  "fee_limit_reached": true,
-                  "total": 123
+                  "fee": 41,
+                  "total": 200,
+                  "adjusted_total": 241
                 },
                 "card": {
-                  "adjusted_total": 123,
-                  "fee": 123,
-                  "fee_limit_reached": true,
-                  "total": 123
+                  "fee": 195,
+                  "total": 200,
+                  "adjusted_total": 395
                 }
               }
             }
           }
-        }
+        },
+        "description": "Reads the deprecated ACH and card fee quote shape in one call."
+      },
+      {
+        "name": "Missing merchant id",
+        "query": "query ServiceFeeAmount($merchant_uid: String!, $amount: Int!) {\r\n    serviceFeeAmount(merchant_uid: $merchant_uid, amount: $amount) {\r\n      ach {\r\n        fee\r\n        total\r\n        adjusted_total\r\n      }\r\n      card {\r\n        fee\r\n        total\r\n        adjusted_total\r\n      }\r\n    }\r\n  }",
+        "variables": {
+          "merchant_uid": "",
+          "amount": 200
+        },
+        "response": {
+          "type": "error",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "serviceFeeAmount": null
+            },
+            "errors": [
+              {
+                "path": [
+                  "serviceFeeAmount"
+                ],
+                "data": null,
+                "errorType": "VALIDATION_ERROR",
+                "errorInfo": null,
+                "locations": [
+                  {
+                    "line": 3,
+                    "column": 5,
+                    "sourceName": null
+                  }
+                ],
+                "message": "Merchant UID is required and cannot be empty."
+              }
+            ]
+          }
+        },
+        "description": "Returns an error when merchant_uid is empty."
+      },
+      {
+        "name": "Amount is zero",
+        "query": "query ServiceFeeAmount($merchant_uid: String!, $amount: Int!) {\r\n    serviceFeeAmount(merchant_uid: $merchant_uid, amount: $amount) {\r\n      ach {\r\n        fee\r\n        total\r\n        adjusted_total\r\n      }\r\n      card {\r\n        fee\r\n        total\r\n        adjusted_total\r\n      }\r\n    }\r\n  }",
+        "variables": {
+          "merchant_uid": "<MERCHANT_UID>",
+          "amount": 0
+        },
+        "response": {
+          "type": "error",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "serviceFeeAmount": null
+            },
+            "errors": [
+              {
+                "path": [
+                  "serviceFeeAmount"
+                ],
+                "data": null,
+                "errorType": "VALIDATION_ERROR",
+                "errorInfo": {
+                  "upstream_code": "PARAMETER_ERROR",
+                  "upstream_service": "merchant-application"
+                },
+                "locations": [
+                  {
+                    "line": 3,
+                    "column": 5,
+                    "sourceName": null
+                  }
+                ],
+                "message": "amount must be greater than 0"
+              }
+            ]
+          }
+        },
+        "description": "Returns an error when amount is 0."
       }
     ]
   }

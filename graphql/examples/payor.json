@@ -4,26 +4,19 @@
     "operationType": "query",
     "examples": [
       {
-        "name": "Example payors",
-        "description": "Returns payors.",
-        "query": "query Payors($query: SqlQuery, $limit: Int, $offset: String, $direction: MoveDirection, $offset_id: String) {\n  payors(query: $query, limit: $limit, offset: $offset, direction: $direction, offset_id: $offset_id) {\n  items {\n    payor_id\n    address_line1\n    address_line2\n    city\n    country\n  }\n  total_row_count\n  }\n}",
+        "name": "List payors",
+        "query": "query Payors($query: SqlQuery, $limit: Int) {\r\n    payors(query: $query, limit: $limit) {\r\n      items {\r\n        payor_id\r\n        merchant_uid\r\n        full_name\r\n        email\r\n        phone\r\n        address_line1\r\n        city\r\n        region\r\n        postal_code\r\n        country\r\n      }\r\n      total_row_count\r\n    }\r\n  }",
         "variables": {
           "query": {
             "query_list": [
               {
-                "conjunctive_operator": "AND_NEXT"
-              }
-            ],
-            "sort_list": [
-              {
-                "direction": "ASC"
+                "key": "merchant_uid",
+                "value": "<MERCHANT_UID>",
+                "operator": "EQUAL"
               }
             ]
           },
-          "limit": 123,
-          "offset": "example",
-          "direction": "BACKWARD",
-          "offset_id": "example"
+          "limit": 2
         },
         "response": {
           "type": "success",
@@ -33,18 +26,144 @@
               "payors": {
                 "items": [
                   {
-                    "payor_id": "example",
-                    "address_line1": "example",
-                    "address_line2": "example",
-                    "city": "example",
-                    "country": "example"
+                    "payor_id": "ptl_pay_10juZtcNdkEUTxm0SaepXH",
+                    "merchant_uid": "<MERCHANT_UID>",
+                    "full_name": "E2E Checkout",
+                    "email": "e2e-checkout@example.test",
+                    "phone": null,
+                    "address_line1": "123 Test Street",
+                    "city": "Cincinnati",
+                    "region": "OH",
+                    "postal_code": "45202",
+                    "country": "USA"
+                  },
+                  {
+                    "payor_id": "ptl_pay_11Tvd4EamaiPn90XGtfqdD",
+                    "merchant_uid": "<MERCHANT_UID>",
+                    "full_name": "Payor create-void-for-authorization-<TEST_RUN_ID>",
+                    "email": "create-void-for-authorization-<TEST_RUN_ID>@example.com",
+                    "phone": "+15555550123",
+                    "address_line1": "123 Test Street",
+                    "city": "Cincinnati",
+                    "region": "OH",
+                    "postal_code": "45209",
+                    "country": "USA"
                   }
                 ],
-                "total_row_count": 123
+                "total_row_count": 1220
               }
             }
           }
-        }
+        },
+        "description": "Lists payors for a merchant with a SqlQuery filter."
+      },
+      {
+        "name": "Read a payor",
+        "query": "query Payors($query: SqlQuery, $limit: Int) {\r\n    payors(query: $query, limit: $limit) {\r\n      items {\r\n        payor_id\r\n        merchant_uid\r\n        full_name\r\n        email\r\n        phone\r\n        address_line1\r\n        city\r\n        region\r\n        postal_code\r\n        country\r\n      }\r\n      total_row_count\r\n    }\r\n  }",
+        "variables": {
+          "query": {
+            "query_list": [
+              {
+                "key": "payor_id",
+                "value": "ptl_pay_6tOEQ5lesXwGSGaKECSfJy",
+                "operator": "EQUAL"
+              }
+            ]
+          },
+          "limit": 1
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "payors": {
+                "items": [
+                  {
+                    "payor_id": "ptl_pay_6tOEQ5lesXwGSGaKECSfJy",
+                    "merchant_uid": "<MERCHANT_UID>",
+                    "full_name": "Jane Payor Updated",
+                    "email": "partial@example.com",
+                    "phone": "+15555550125",
+                    "address_line1": "456 Updated Street",
+                    "city": "Columbus",
+                    "region": "OH",
+                    "postal_code": "43004",
+                    "country": "USA"
+                  }
+                ],
+                "total_row_count": 1
+              }
+            }
+          }
+        },
+        "description": "Reads one payor by payor_id."
+      },
+      {
+        "name": "No payors found",
+        "query": "query Payors($query: SqlQuery, $limit: Int) {\r\n    payors(query: $query, limit: $limit) {\r\n      items {\r\n        payor_id\r\n        merchant_uid\r\n        full_name\r\n        email\r\n        phone\r\n        address_line1\r\n        city\r\n        region\r\n        postal_code\r\n        country\r\n      }\r\n      total_row_count\r\n    }\r\n  }",
+        "variables": {
+          "query": {
+            "query_list": [
+              {
+                "key": "email",
+                "value": "nobody@example.invalid",
+                "operator": "EQUAL"
+              }
+            ]
+          },
+          "limit": 2
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "payors": {
+                "items": [],
+                "total_row_count": 0
+              }
+            }
+          }
+        },
+        "description": "Returns an empty list when the filter matches nothing."
+      },
+      {
+        "name": "Invalid column",
+        "query": "query Payors($query: SqlQuery, $limit: Int) {\r\n    payors(query: $query, limit: $limit) {\r\n      items {\r\n        payor_id\r\n        merchant_uid\r\n        full_name\r\n        email\r\n        phone\r\n        address_line1\r\n        city\r\n        region\r\n        postal_code\r\n        country\r\n      }\r\n      total_row_count\r\n    }\r\n  }",
+        "variables": {
+          "query": {
+            "query_list": [
+              {
+                "key": "not_a_column",
+                "value": "x",
+                "operator": "EQUAL"
+              }
+            ]
+          },
+          "limit": 2
+        },
+        "response": {
+          "type": "error",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "payors": null
+            },
+            "errors": [
+              {
+                "path": [
+                  "payors"
+                ],
+                "data": null,
+                "errorType": "VALIDATION_ERROR",
+                "errorInfo": null,
+                "message": "The call is refused for an unknown query column."
+              }
+            ]
+          }
+        },
+        "description": "Returns an error when the query filter uses an unknown column. The raw database error from this defect is intentionally omitted."
       }
     ]
   },
@@ -53,24 +172,20 @@
     "operationType": "mutation",
     "examples": [
       {
-        "name": "Example createPayor",
-        "description": "Creates payor.",
-        "query": "mutation CreatePayor($input: PayorInput!) {\n  createPayor(input: $input) {\n  payor_id\n  address_line1\n  address_line2\n  city\n  country\n  }\n}",
+        "name": "Create a full payor",
+        "query": "mutation CreatePayor($input: PayorInput!) {\r\n    createPayor(input: $input) {\r\n      payor_id\r\n      merchant_uid\r\n      full_name\r\n      email\r\n      phone\r\n      address_line1\r\n      city\r\n      region\r\n      postal_code\r\n      country\r\n    }\r\n  }",
         "variables": {
           "input": {
-            "address_line1": "example",
-            "address_line2": "example",
-            "city": "example",
-            "country": "example",
-            "email": "example",
-            "full_name": "example",
-            "merchant_uid": "example",
-            "metadata": {
-              "key": "value"
-            },
-            "phone": "example",
-            "postal_code": "example",
-            "region": "example"
+            "merchant_uid": "<MERCHANT_UID>",
+            "full_name": "Jane Payor",
+            "email": "payor@example.com",
+            "phone": "+15555550123",
+            "address_line1": "123 Test Street",
+            "address_line2": "Suite 200",
+            "city": "Cincinnati",
+            "region": "OH",
+            "postal_code": "45209",
+            "country": "USA"
           }
         },
         "response": {
@@ -79,15 +194,192 @@
           "body": {
             "data": {
               "createPayor": {
-                "payor_id": "example",
-                "address_line1": "example",
-                "address_line2": "example",
-                "city": "example",
-                "country": "example"
+                "payor_id": "ptl_pay_6tOEQ5lesXwGSGaKECSfJy",
+                "merchant_uid": "<MERCHANT_UID>",
+                "full_name": "Jane Payor",
+                "email": "payor@example.com",
+                "phone": "+15555550123",
+                "address_line1": "123 Test Street",
+                "city": "Cincinnati",
+                "region": "OH",
+                "postal_code": "45209",
+                "country": "USA"
               }
             }
           }
-        }
+        },
+        "description": "Creates a payor with all common contact fields."
+      },
+      {
+        "name": "Create a basic payor",
+        "query": "mutation CreatePayor($input: PayorInput!) {\r\n    createPayor(input: $input) {\r\n      payor_id\r\n      merchant_uid\r\n      full_name\r\n      email\r\n      phone\r\n      address_line1\r\n      city\r\n      region\r\n      postal_code\r\n      country\r\n    }\r\n  }",
+        "variables": {
+          "input": {
+            "merchant_uid": "<MERCHANT_UID>"
+          }
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "createPayor": {
+                "payor_id": "ptl_pay_6vdon4xwjXT8GZ0NhbGECw",
+                "merchant_uid": "<MERCHANT_UID>",
+                "full_name": null,
+                "email": null,
+                "phone": null,
+                "address_line1": null,
+                "city": null,
+                "region": null,
+                "postal_code": null,
+                "country": null
+              }
+            }
+          }
+        },
+        "description": "Creates a payor with only the required merchant id."
+      },
+      {
+        "name": "Add metadata",
+        "query": "mutation CreatePayor($input: PayorInput!) {\r\n    createPayor(input: $input) {\r\n      payor_id\r\n      merchant_uid\r\n      full_name\r\n      email\r\n      phone\r\n      address_line1\r\n      city\r\n      region\r\n      postal_code\r\n      country\r\n    }\r\n  }",
+        "variables": {
+          "input": {
+            "merchant_uid": "<MERCHANT_UID>",
+            "full_name": "Metadata Payor",
+            "metadata": "{\"student_id\":\"1234\",\"grade\":\"5\"}"
+          }
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "createPayor": {
+                "payor_id": "ptl_pay_6wgFKkomcmB9iDplgFo8rW",
+                "merchant_uid": "<MERCHANT_UID>",
+                "full_name": "Metadata Payor",
+                "email": null,
+                "phone": null,
+                "address_line1": null,
+                "city": null,
+                "region": null,
+                "postal_code": null,
+                "country": null
+              }
+            }
+          }
+        },
+        "description": "Creates a payor with metadata sent as an AWSJSON string."
+      },
+      {
+        "name": "Bad metadata",
+        "query": "mutation CreatePayor($input: PayorInput!) {\r\n    createPayor(input: $input) {\r\n      payor_id\r\n      merchant_uid\r\n      full_name\r\n      email\r\n      phone\r\n      address_line1\r\n      city\r\n      region\r\n      postal_code\r\n      country\r\n    }\r\n  }",
+        "variables": {
+          "input": {
+            "merchant_uid": "<MERCHANT_UID>",
+            "full_name": "Bad Metadata Payor",
+            "metadata": {
+              "student_id": "1234"
+            }
+          }
+        },
+        "response": {
+          "type": "error",
+          "httpStatus": 200,
+          "body": {
+            "data": null,
+            "errors": [
+              {
+                "path": null,
+                "locations": [
+                  {
+                    "line": 2,
+                    "column": 24,
+                    "sourceName": null
+                  }
+                ],
+                "message": "Variable 'metadata' has an invalid value."
+              }
+            ]
+          }
+        },
+        "description": "Returns an error when metadata is sent as a nested object instead of an AWSJSON string."
+      },
+      {
+        "name": "Missing merchant id",
+        "query": "mutation CreatePayor($input: PayorInput!) {\r\n    createPayor(input: $input) {\r\n      payor_id\r\n      merchant_uid\r\n      full_name\r\n      email\r\n      phone\r\n      address_line1\r\n      city\r\n      region\r\n      postal_code\r\n      country\r\n    }\r\n  }",
+        "variables": {
+          "input": {
+            "full_name": "No Merchant Payor"
+          }
+        },
+        "response": {
+          "type": "error",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "createPayor": null
+            },
+            "errors": [
+              {
+                "path": [
+                  "createPayor"
+                ],
+                "data": null,
+                "errorType": "Lambda:Unhandled",
+                "errorInfo": null,
+                "locations": [
+                  {
+                    "line": 3,
+                    "column": 5,
+                    "sourceName": null
+                  }
+                ],
+                "message": "Merchant UID is required."
+              }
+            ]
+          }
+        },
+        "description": "Returns an error when merchant_uid is empty."
+      },
+      {
+        "name": "Unauthorized merchant",
+        "query": "mutation CreatePayor($input: PayorInput!) {\r\n    createPayor(input: $input) {\r\n      payor_id\r\n      merchant_uid\r\n      full_name\r\n      email\r\n      phone\r\n      address_line1\r\n      city\r\n      region\r\n      postal_code\r\n      country\r\n    }\r\n  }",
+        "variables": {
+          "input": {
+            "merchant_uid": "example",
+            "full_name": "Wrong Merchant Payor"
+          }
+        },
+        "response": {
+          "type": "error",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "createPayor": null
+            },
+            "errors": [
+              {
+                "path": [
+                  "createPayor"
+                ],
+                "data": null,
+                "errorType": "Lambda:Unhandled",
+                "errorInfo": null,
+                "locations": [
+                  {
+                    "line": 3,
+                    "column": 5,
+                    "sourceName": null
+                  }
+                ],
+                "message": "Not Authorized."
+              }
+            ]
+          }
+        },
+        "description": "Returns an error when the key cannot access the merchant_uid."
       }
     ]
   },
@@ -96,21 +388,20 @@
     "operationType": "mutation",
     "examples": [
       {
-        "name": "Example updatePayor",
-        "description": "Updates payor.",
-        "query": "mutation UpdatePayor($payor_id: String!, $payor_data: PayorData!) {\n  updatePayor(payor_id: $payor_id, payor_data: $payor_data)\n}",
+        "name": "Update a full payor",
+        "query": "mutation UpdatePayor($payor_id: String!, $payor_data: PayorData!) {\r\n    updatePayor(payor_id: $payor_id, payor_data: $payor_data)\r\n  }",
         "variables": {
-          "payor_id": "example",
+          "payor_id": "ptl_pay_6tOEQ5lesXwGSGaKECSfJy",
           "payor_data": {
-            "address_line1": "example",
-            "address_line2": "example",
-            "city": "example",
-            "country": "example",
-            "email": "example",
-            "full_name": "example",
-            "phone": "example",
-            "postal_code": "example",
-            "region": "example"
+            "full_name": "Jane Payor Updated",
+            "email": "updated@example.com",
+            "phone": "+15555550124",
+            "address_line1": "456 Updated Street",
+            "address_line2": "Suite 300",
+            "city": "Columbus",
+            "region": "OH",
+            "postal_code": "43004",
+            "country": "USA"
           }
         },
         "response": {
@@ -121,7 +412,85 @@
               "updatePayor": true
             }
           }
-        }
+        },
+        "description": "Updates all common fields on an existing payor."
+      },
+      {
+        "name": "Update some payor fields",
+        "query": "mutation UpdatePayor($payor_id: String!, $payor_data: PayorData!) {\r\n    updatePayor(payor_id: $payor_id, payor_data: $payor_data)\r\n  }",
+        "variables": {
+          "payor_id": "ptl_pay_6tOEQ5lesXwGSGaKECSfJy",
+          "payor_data": {
+            "email": "partial@example.com",
+            "phone": "+15555550125"
+          }
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "updatePayor": true
+            }
+          }
+        },
+        "description": "Updates only the fields sent in payor_data."
+      },
+      {
+        "name": "Empty update is accepted",
+        "query": "mutation UpdatePayor($payor_id: String!, $payor_data: PayorData!) {\r\n    updatePayor(payor_id: $payor_id, payor_data: $payor_data)\r\n  }",
+        "variables": {
+          "payor_id": "ptl_pay_6tOEQ5lesXwGSGaKECSfJy",
+          "payor_data": {}
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "updatePayor": true
+            }
+          }
+        },
+        "description": "Shows that an empty payor_data object is accepted."
+      },
+      {
+        "name": "Payor not found",
+        "query": "mutation UpdatePayor($payor_id: String!, $payor_data: PayorData!) {\r\n    updatePayor(payor_id: $payor_id, payor_data: $payor_data)\r\n  }",
+        "variables": {
+          "payor_id": "ptl_pay_not_a_real_payor",
+          "payor_data": {
+            "full_name": "Nobody"
+          }
+        },
+        "response": {
+          "type": "error",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "updatePayor": null
+            },
+            "errors": [
+              {
+                "path": [
+                  "updatePayor"
+                ],
+                "data": null,
+                "errorType": "Lambda:Unhandled",
+                "errorInfo": null,
+                "locations": [
+                  {
+                    "line": 3,
+                    "column": 5,
+                    "sourceName": null
+                  }
+                ],
+                "message": "{'status': 'FAILED', 'reason': {'error_code': \"Exception('Payor was deleted.')\", 'error_text': \"Exception('Payor was deleted.')\"}}"
+              }
+            ]
+          }
+        },
+        "description": "Returns an error when the payor_id does not exist."
       }
     ]
   }

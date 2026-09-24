@@ -4,12 +4,10 @@
     "operationType": "query",
     "examples": [
       {
-        "name": "Example merchant",
-        "description": "Returns merchant.",
-        "query": "query Merchant($merchant_uid: String, $merchant_name: String) {\n  merchant(merchant_uid: $merchant_uid, merchant_name: $merchant_name) {\n  merchant_uid\n  ach_active\n  api_key\n  card_active\n  cash_active\n  }\n}",
+        "name": "Read a merchant",
+        "query": "query Merchant($merchant_uid: String) {\r\n    merchant(merchant_uid: $merchant_uid) {\r\n      merchant_uid\r\n      merchant_name\r\n      card_active\r\n      ach_active\r\n      cash_active\r\n      country_code\r\n      settings {\r\n        contact_email\r\n        website\r\n      }\r\n    }\r\n  }",
         "variables": {
-          "merchant_uid": "example",
-          "merchant_name": "example"
+          "merchant_uid": "<MERCHANT_UID>"
         },
         "response": {
           "type": "success",
@@ -17,15 +15,60 @@
           "body": {
             "data": {
               "merchant": {
-                "merchant_uid": "example",
-                "ach_active": true,
-                "api_key": "example",
+                "merchant_uid": "<MERCHANT_UID>",
+                "merchant_name": "<MERCHANT_NAME>",
                 "card_active": true,
-                "cash_active": true
+                "ach_active": true,
+                "cash_active": true,
+                "country_code": "USA",
+                "settings": {
+                  "contact_email": null,
+                  "website": null
+                }
               }
             }
           }
-        }
+        },
+        "description": "Reads merchant details for the key."
+      },
+      {
+        "name": "Merchant not found",
+        "query": "query Merchant($merchant_uid: String) {\r\n    merchant(merchant_uid: $merchant_uid) {\r\n      merchant_uid\r\n      merchant_name\r\n      card_active\r\n      ach_active\r\n      cash_active\r\n      country_code\r\n      settings {\r\n        contact_email\r\n        website\r\n      }\r\n    }\r\n  }",
+        "variables": {
+          "merchant_uid": "example"
+        },
+        "response": {
+          "type": "error",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "merchant": null
+            },
+            "errors": [
+              {
+                "path": [
+                  "merchant"
+                ],
+                "data": null,
+                "errorType": "NOT_FOUND",
+                "errorInfo": {
+                  "arguments": {
+                    "merchant_uid": "example"
+                  }
+                },
+                "locations": [
+                  {
+                    "line": 3,
+                    "column": 5,
+                    "sourceName": null
+                  }
+                ],
+                "message": "Merchant not found."
+              }
+            ]
+          }
+        },
+        "description": "Returns an error when the merchant_uid does not exist."
       }
     ]
   },
@@ -34,26 +77,10 @@
     "operationType": "query",
     "examples": [
       {
-        "name": "Example merchants",
-        "description": "Returns merchants.",
-        "query": "query Merchants($query: SqlQuery, $limit: Int, $offset: String, $direction: MoveDirection, $offset_id: String) {\n  merchants(query: $query, limit: $limit, offset: $offset, direction: $direction, offset_id: $offset_id) {\n  items {\n    merchant_uid\n    updated_row_at\n    ach_active\n    card_active\n    cash_active\n  }\n  total_row_count\n  }\n}",
+        "name": "List merchants",
+        "query": "query Merchants($limit: Int) {\n  merchants(limit: $limit) {\n    items {\n      merchant_uid\n      merchant_name\n      card_active\n      ach_active\n      cash_active\n      country_code\n      parent_merchant_uid\n    }\n    total_row_count\n  }\n}",
         "variables": {
-          "query": {
-            "query_list": [
-              {
-                "conjunctive_operator": "AND_NEXT"
-              }
-            ],
-            "sort_list": [
-              {
-                "direction": "ASC"
-              }
-            ]
-          },
-          "limit": 123,
-          "offset": "example",
-          "direction": "BACKWARD",
-          "offset_id": "example"
+          "limit": 2
         },
         "response": {
           "type": "success",
@@ -63,18 +90,97 @@
               "merchants": {
                 "items": [
                   {
-                    "merchant_uid": "example",
-                    "updated_row_at": "2025-01-01T00:00:00Z",
-                    "ach_active": true,
+                    "merchant_uid": "<MERCHANT_UID>",
+                    "merchant_name": "<MERCHANT_NAME>",
                     "card_active": true,
-                    "cash_active": true
+                    "ach_active": true,
+                    "cash_active": true,
+                    "country_code": "USA",
+                    "parent_merchant_uid": null
                   }
                 ],
-                "total_row_count": 123
+                "total_row_count": 1
               }
             }
           }
-        }
+        },
+        "description": "Lists merchants visible to the key."
+      },
+      {
+        "name": "Filter by merchant name",
+        "query": "query Merchants($query: SqlQuery, $limit: Int) {\n  merchants(query: $query, limit: $limit) {\n    items {\n      merchant_uid\n      merchant_name\n      card_active\n      ach_active\n      cash_active\n      country_code\n      parent_merchant_uid\n    }\n    total_row_count\n  }\n}",
+        "variables": {
+          "query": {
+            "query_list": [
+              {
+                "key": "merchant_name",
+                "value": "<MERCHANT_NAME>",
+                "operator": "EQUAL"
+              }
+            ]
+          },
+          "limit": 2
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "merchants": {
+                "items": [
+                  {
+                    "merchant_uid": "<MERCHANT_UID>",
+                    "merchant_name": "<MERCHANT_NAME>",
+                    "card_active": true,
+                    "ach_active": true,
+                    "cash_active": true,
+                    "country_code": "USA",
+                    "parent_merchant_uid": null
+                  }
+                ],
+                "total_row_count": 1
+              }
+            }
+          }
+        },
+        "description": "Filters visible merchants by merchant_name."
+      },
+      {
+        "name": "Invalid column",
+        "query": "query Merchants($query: SqlQuery, $limit: Int) {\n  merchants(query: $query, limit: $limit) {\n    items {\n      merchant_uid\n      merchant_name\n      card_active\n      ach_active\n      cash_active\n      country_code\n      parent_merchant_uid\n    }\n    total_row_count\n  }\n}",
+        "variables": {
+          "query": {
+            "query_list": [
+              {
+                "key": "not_a_column",
+                "value": "x",
+                "operator": "EQUAL"
+              }
+            ]
+          },
+          "limit": 2
+        },
+        "response": {
+          "type": "error",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "merchants": null
+            },
+            "errors": [
+              {
+                "path": [
+                  "merchants"
+                ],
+                "data": null,
+                "errorType": "VALIDATION_ERROR",
+                "errorInfo": null,
+                "message": "The call is refused for an unknown query column."
+              }
+            ]
+          }
+        },
+        "description": "Returns an error when the query filter uses an unknown column. The raw database error from this defect is intentionally omitted."
       }
     ]
   },
@@ -83,21 +189,11 @@
     "operationType": "mutation",
     "examples": [
       {
-        "name": "Example createMerchant",
-        "description": "Creates merchant.",
-        "query": "mutation CreateMerchant($merchant_name: String!, $parent_merchant_uid: String, $user: MerchantUserInput, $metadata: AWSJSON) {\n  createMerchant(merchant_name: $merchant_name, parent_merchant_uid: $parent_merchant_uid, user: $user, metadata: $metadata) {\n  merchant_uid\n  updated_row_at\n  ach_active\n  card_active\n  cash_active\n  }\n}",
+        "name": "Create a merchant",
+        "query": "mutation CreateMerchant(\n  $merchant_name: String!\n  $metadata: AWSJSON\n) {\n  createMerchant(\n    merchant_name: $merchant_name\n    metadata: $metadata\n  ) {\n    merchant_uid\n    merchant_name\n    parent_merchant_uid\n    ach_active\n    card_active\n    cash_active\n    country_code\n    is_system\n    submitted_onboarding\n    metadata\n  }\n}",
         "variables": {
-          "merchant_name": "example",
-          "parent_merchant_uid": "example",
-          "user": {
-            "email": "user@example.com",
-            "first_name": "example",
-            "last_name": "example",
-            "phone": "+15555555555"
-          },
-          "metadata": {
-            "key": "value"
-          }
+          "merchant_name": "e2e-doc-abca89f1-child",
+          "metadata": "{\"created_by\":\"docs-example\"}"
         },
         "response": {
           "type": "success",
@@ -105,15 +201,114 @@
           "body": {
             "data": {
               "createMerchant": {
-                "merchant_uid": "example",
-                "updated_row_at": "2025-01-01T00:00:00Z",
+                "merchant_uid": "<NEW_MERCHANT_UID>",
+                "merchant_name": "e2e-doc-abca89f1-child",
+                "parent_merchant_uid": null,
                 "ach_active": true,
                 "card_active": true,
-                "cash_active": true
+                "cash_active": true,
+                "country_code": "USA",
+                "is_system": false,
+                "submitted_onboarding": true,
+                "metadata": "{\"created_by\":\"docs-example\"}"
               }
             }
           }
-        }
+        },
+        "description": "Creates a merchant with a partner key."
+      },
+      {
+        "name": "Merchant key cannot create merchant",
+        "query": "mutation CreateMerchant($merchant_name: String!) {\n  createMerchant(merchant_name: $merchant_name) {\n    merchant_uid\n    merchant_name\n    parent_merchant_uid\n    ach_active\n    card_active\n    cash_active\n    country_code\n    is_system\n    submitted_onboarding\n    metadata\n  }\n}",
+        "variables": {
+          "merchant_name": "e2e-doc-abca89f1-refused"
+        },
+        "response": {
+          "type": "error",
+          "httpStatus": 200,
+          "body": {
+            "data": null,
+            "errors": [
+              {
+                "path": [
+                  "createMerchant"
+                ],
+                "data": null,
+                "errorType": "Lambda:Unhandled",
+                "errorInfo": null,
+                "locations": [
+                  {
+                    "line": 8,
+                    "column": 5,
+                    "sourceName": null
+                  }
+                ],
+                "message": "You do not have permission to create a merchant."
+              }
+            ]
+          }
+        },
+        "description": "Returns an error when a merchant key tries to create a merchant."
+      },
+      {
+        "name": "Parent merchant not found",
+        "query": "mutation CreateMerchant(\n  $merchant_name: String!\n  $parent_merchant_uid: String\n) {\n  createMerchant(\n    merchant_name: $merchant_name\n    parent_merchant_uid: $parent_merchant_uid\n  ) {\n    merchant_uid\n    merchant_name\n    parent_merchant_uid\n    ach_active\n    card_active\n    cash_active\n    country_code\n    is_system\n    submitted_onboarding\n    metadata\n  }\n}",
+        "variables": {
+          "merchant_name": "e2e-doc-abca89f1-orphan",
+          "parent_merchant_uid": "not-a-merchant"
+        },
+        "response": {
+          "type": "error",
+          "httpStatus": 200,
+          "body": {
+            "data": null,
+            "errors": [
+              {
+                "path": [
+                  "createMerchant"
+                ],
+                "data": null,
+                "errorType": "Lambda:Unhandled",
+                "errorInfo": null,
+                "locations": [
+                  {
+                    "line": 8,
+                    "column": 5,
+                    "sourceName": null
+                  }
+                ],
+                "message": "Parent merchant not found."
+              }
+            ]
+          }
+        },
+        "description": "Returns an error when parent_merchant_uid does not exist."
+      },
+      {
+        "name": "Read the new merchant",
+        "query": "query CreatedMerchant($merchant_uid: String) {\r\n    merchant(merchant_uid: $merchant_uid) {\r\n      merchant_uid\r\n      merchant_name\r\n      parent_merchant_uid\r\n      ach_active\r\n      card_active\r\n      cash_active\r\n      country_code\r\n      metadata\r\n    }\r\n  }",
+        "variables": {
+          "merchant_uid": "<NEW_MERCHANT_UID>"
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "merchant": {
+                "merchant_uid": "<NEW_MERCHANT_UID>",
+                "merchant_name": "e2e-doc-abca89f1-child",
+                "parent_merchant_uid": null,
+                "ach_active": true,
+                "card_active": true,
+                "cash_active": true,
+                "country_code": "USA",
+                "metadata": "{\"created_by\":\"docs-example\"}"
+              }
+            }
+          }
+        },
+        "description": "Reads the newly created merchant after the read model catches up."
       }
     ]
   },
