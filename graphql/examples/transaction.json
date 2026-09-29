@@ -57,6 +57,58 @@
         }
       },
       {
+        "name": "Filter transactions by card and payor",
+        "description": "Nested query_list arguments filter transaction rows when the corresponding fields are selected.",
+        "query": "query TransactionsByCardAndPayor($query: SqlQuery, $paymentMethodQuery: [QueryPair], $payorQuery: [QueryPair]) {\n  transactions(query: $query, limit: 10) {\n    items {\n      transaction_id\n      payment_method(query_list: $paymentMethodQuery) {\n        last_four\n        payor(query_list: $payorQuery) {\n          email\n        }\n      }\n    }\n    total_row_count\n  }\n}",
+        "variables": {
+          "query": {
+            "query_list": [
+              {
+                "key": "merchant_uid",
+                "value": "<MERCHANT_UID>",
+                "operator": "EQUAL"
+              }
+            ]
+          },
+          "paymentMethodQuery": [
+            {
+              "key": "last_four",
+              "value": "4242",
+              "operator": "EQUAL"
+            }
+          ],
+          "payorQuery": [
+            {
+              "key": "email",
+              "value": "customer@example.com",
+              "operator": "EQUAL"
+            }
+          ]
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "transactions": {
+                "items": [
+                  {
+                    "transaction_id": "ptl_txn_example_card_payor",
+                    "payment_method": {
+                      "last_four": "4242",
+                      "payor": {
+                        "email": "customer@example.com"
+                      }
+                    }
+                  }
+                ],
+                "total_row_count": 1
+              }
+            }
+          }
+        }
+      },
+      {
         "name": "Invalid column",
         "query": "query Transactions($query: SqlQuery, $limit: Int) {\n    transactions(query: $query, limit: $limit) {\n      items {\n        transaction_id\n        merchant_uid\n        gross_amount\n        net_amount\n        currency\n        status\n        transaction_date\n        settlement_batch\n        transaction_type\n        fee_mode\n      }\n      total_row_count\n    }\n  }",
         "variables": {

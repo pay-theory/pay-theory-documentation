@@ -66,6 +66,7 @@
           "directives": {}
         }
       ],
+      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "Authorizations",
@@ -166,6 +167,7 @@
           "directives": {}
         }
       ],
+      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "Barcode",
@@ -281,6 +283,7 @@
           "directives": {}
         }
       ],
+      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "Disputes",
@@ -417,6 +420,7 @@
           "directives": {}
         }
       ],
+      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "Invoices",
@@ -517,6 +521,7 @@
           "directives": {}
         }
       ],
+      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "Merchant",
@@ -674,6 +679,7 @@
           "directives": {}
         }
       ],
+      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "Merchants",
@@ -873,6 +879,7 @@
           "directives": {}
         }
       ],
+      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "PaymentLinks",
@@ -1009,6 +1016,23 @@
           "directives": {}
         }
       ],
+      "nestedArguments": [
+        {
+          "name": "items.payor.query_list",
+          "description": "When selected, filters payment method token rows by payor fields such as email.",
+          "isRequired": false,
+          "type": {
+            "kind": "LIST",
+            "ofType": {
+              "kind": "TYPE_REF",
+              "name": "QueryPair",
+              "link": "#query-pair"
+            }
+          },
+          "typeString": "[QueryPair]",
+          "directives": {}
+        }
+      ],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "PaymentMethodTokens",
@@ -1022,6 +1046,14 @@
         },
         "docPriority": {
           "level": 1
+        },
+        "docNestedArgs": {
+          "args": [
+            {
+              "path": "items.payor.query_list",
+              "description": "When selected, filters payment method token rows by payor fields such as email."
+            }
+          ]
         }
       },
       "referencedTypes": [
@@ -1029,7 +1061,8 @@
         "SqlQuery",
         "Int",
         "String",
-        "MoveDirection"
+        "MoveDirection",
+        "QueryPair"
       ],
       "isDeprecated": false,
       "examples": [
@@ -1222,6 +1255,7 @@
           "directives": {}
         }
       ],
+      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "Boolean",
@@ -1330,6 +1364,7 @@
           "directives": {}
         }
       ],
+      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "Payors",
@@ -1585,6 +1620,7 @@
           "directives": {}
         }
       ],
+      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "RecurringPayments",
@@ -1673,6 +1709,7 @@
           "directives": {}
         }
       ],
+      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "MissedRecurringPaymentData",
@@ -1784,6 +1821,7 @@
           "directives": {}
         }
       ],
+      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "Settlements",
@@ -1872,6 +1910,7 @@
           "directives": {}
         }
       ],
+      "nestedArguments": [],
       "returnType": {
         "kind": "LIST",
         "ofType": {
@@ -1948,6 +1987,7 @@
           "directives": {}
         }
       ],
+      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "FundingTransfers",
@@ -2030,6 +2070,7 @@
           "directives": {}
         }
       ],
+      "nestedArguments": [],
       "returnType": {
         "kind": "LIST",
         "ofType": {
@@ -2147,6 +2188,7 @@
           "directives": {}
         }
       ],
+      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "Splits",
@@ -2283,6 +2325,38 @@
           "directives": {}
         }
       ],
+      "nestedArguments": [
+        {
+          "name": "items.payment_method.query_list",
+          "description": "When selected, filters transaction rows by payment method fields such as last_four.",
+          "isRequired": false,
+          "type": {
+            "kind": "LIST",
+            "ofType": {
+              "kind": "TYPE_REF",
+              "name": "QueryPair",
+              "link": "#query-pair"
+            }
+          },
+          "typeString": "[QueryPair]",
+          "directives": {}
+        },
+        {
+          "name": "items.payment_method.payor.query_list",
+          "description": "When selected, filters transaction rows by payor fields such as email.",
+          "isRequired": false,
+          "type": {
+            "kind": "LIST",
+            "ofType": {
+              "kind": "TYPE_REF",
+              "name": "QueryPair",
+              "link": "#query-pair"
+            }
+          },
+          "typeString": "[QueryPair]",
+          "directives": {}
+        }
+      ],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "Transactions",
@@ -2296,6 +2370,18 @@
         },
         "docPriority": {
           "level": 1
+        },
+        "docNestedArgs": {
+          "args": [
+            {
+              "path": "items.payment_method.query_list",
+              "description": "When selected, filters transaction rows by payment method fields such as last_four."
+            },
+            {
+              "path": "items.payment_method.payor.query_list",
+              "description": "When selected, filters transaction rows by payor fields such as email."
+            }
+          ]
         }
       },
       "referencedTypes": [
@@ -2303,7 +2389,8 @@
         "SqlQuery",
         "Int",
         "String",
-        "MoveDirection"
+        "MoveDirection",
+        "QueryPair"
       ],
       "isDeprecated": false,
       "examples": [
@@ -2355,6 +2442,58 @@
                     }
                   ],
                   "total_row_count": 609
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Filter transactions by card and payor",
+          "description": "Nested query_list arguments filter transaction rows when the corresponding fields are selected.",
+          "query": "query TransactionsByCardAndPayor($query: SqlQuery, $paymentMethodQuery: [QueryPair], $payorQuery: [QueryPair]) {\n  transactions(query: $query, limit: 10) {\n    items {\n      transaction_id\n      payment_method(query_list: $paymentMethodQuery) {\n        last_four\n        payor(query_list: $payorQuery) {\n          email\n        }\n      }\n    }\n    total_row_count\n  }\n}",
+          "variables": {
+            "query": {
+              "query_list": [
+                {
+                  "key": "merchant_uid",
+                  "value": "<MERCHANT_UID>",
+                  "operator": "EQUAL"
+                }
+              ]
+            },
+            "paymentMethodQuery": [
+              {
+                "key": "last_four",
+                "value": "4242",
+                "operator": "EQUAL"
+              }
+            ],
+            "payorQuery": [
+              {
+                "key": "email",
+                "value": "customer@example.com",
+                "operator": "EQUAL"
+              }
+            ]
+          },
+          "response": {
+            "type": "success",
+            "httpStatus": 200,
+            "body": {
+              "data": {
+                "transactions": {
+                  "items": [
+                    {
+                      "transaction_id": "ptl_txn_example_card_payor",
+                      "payment_method": {
+                        "last_four": "4242",
+                        "payor": {
+                          "email": "customer@example.com"
+                        }
+                      }
+                    }
+                  ],
+                  "total_row_count": 1
                 }
               }
             }
@@ -2483,6 +2622,7 @@
           "directives": {}
         }
       ],
+      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "ServiceFeeCalculation",
@@ -2653,6 +2793,7 @@
           "directives": {}
         }
       ],
+      "nestedArguments": [],
       "returnType": {
         "kind": "LIST",
         "ofType": {
@@ -2723,6 +2864,7 @@
           "directives": {}
         }
       ],
+      "nestedArguments": [],
       "returnType": {
         "kind": "LIST",
         "ofType": {
@@ -2837,6 +2979,7 @@
           "directives": {}
         }
       ],
+      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "WebhookEvents",
@@ -2923,6 +3066,7 @@
           "directives": {}
         }
       ],
+      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "ServiceFeeAmount",
@@ -3240,6 +3384,7 @@
           "directives": {}
         }
       ],
+      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "Authorization",
@@ -3673,6 +3818,7 @@
           "directives": {}
         }
       ],
+      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "Authorization",
@@ -3892,6 +4038,7 @@
           "directives": {}
         }
       ],
+      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "Transaction",
@@ -4008,6 +4155,7 @@
           "directives": {}
         }
       ],
+      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "Boolean",
@@ -4135,6 +4283,7 @@
           "directives": {}
         }
       ],
+      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "Barcode",
@@ -4218,6 +4367,7 @@
           "directives": {}
         }
       ],
+      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "Invoice",
@@ -4320,6 +4470,7 @@
           "directives": {}
         }
       ],
+      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "Boolean",
@@ -4398,6 +4549,7 @@
           "directives": {}
         }
       ],
+      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "Boolean",
@@ -4457,6 +4609,7 @@
           "directives": {}
         }
       ],
+      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "Boolean",
@@ -4516,6 +4669,7 @@
           "directives": {}
         }
       ],
+      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "OfflineTransaction",
@@ -4623,6 +4777,7 @@
           "directives": {}
         }
       ],
+      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "ListMerchant",
@@ -4789,6 +4944,7 @@
           "directives": {}
         }
       ],
+      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "FeeMatrix",
@@ -4969,6 +5125,7 @@
           "directives": {}
         }
       ],
+      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "Boolean",
@@ -5075,6 +5232,7 @@
           "directives": {}
         }
       ],
+      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "Boolean",
@@ -5180,6 +5338,7 @@
           "directives": {}
         }
       ],
+      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "Boolean",
@@ -5245,6 +5404,7 @@
           "directives": {}
         }
       ],
+      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "PaymentLink",
@@ -5327,6 +5487,7 @@
           "directives": {}
         }
       ],
+      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "PaymentLink",
@@ -5435,6 +5596,7 @@
           "directives": {}
         }
       ],
+      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "PaymentMethodToken",
@@ -6011,6 +6173,7 @@
           "directives": {}
         }
       ],
+      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "Boolean",
@@ -6124,6 +6287,7 @@
           "directives": {}
         }
       ],
+      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "Payor",
@@ -6388,6 +6552,7 @@
           "directives": {}
         }
       ],
+      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "Boolean",
@@ -6533,6 +6698,7 @@
           "directives": {}
         }
       ],
+      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "RecurringPayment",
@@ -6618,6 +6784,7 @@
           "directives": {}
         }
       ],
+      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "RecurringPayment",
@@ -6688,6 +6855,7 @@
           "directives": {}
         }
       ],
+      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "Boolean",
@@ -6747,6 +6915,7 @@
           "directives": {}
         }
       ],
+      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "Boolean",
@@ -6806,6 +6975,7 @@
           "directives": {}
         }
       ],
+      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "Instruction",
@@ -6870,6 +7040,7 @@
           "directives": {}
         }
       ],
+      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "CreateSettlementInstructionResponse",
@@ -7147,6 +7318,7 @@
           "directives": {}
         }
       ],
+      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "Transaction",
@@ -7875,6 +8047,7 @@
           "directives": {}
         }
       ],
+      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "Transaction",
@@ -8041,6 +8214,7 @@
           "directives": {}
         }
       ],
+      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "ReversalResponse",
@@ -8237,6 +8411,7 @@
           "directives": {}
         }
       ],
+      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "Boolean",
@@ -8311,6 +8486,7 @@
           "directives": {}
         }
       ],
+      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "Boolean",
@@ -8372,6 +8548,7 @@
           "directives": {}
         }
       ],
+      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "User",
@@ -8457,6 +8634,7 @@
           "directives": {}
         }
       ],
+      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "Boolean",
@@ -8530,6 +8708,7 @@
           "directives": {}
         }
       ],
+      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "Boolean",
@@ -8614,6 +8793,7 @@
           "directives": {}
         }
       ],
+      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "Boolean",
@@ -8675,6 +8855,7 @@
           "directives": {}
         }
       ],
+      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "Boolean",
@@ -8746,6 +8927,7 @@
           "directives": {}
         }
       ],
+      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "BarcodePaymentResponse",
@@ -8811,6 +8993,7 @@
           "directives": {}
         }
       ],
+      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "Boolean",
@@ -8870,6 +9053,7 @@
           "directives": {}
         }
       ],
+      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "SandboxAchReturnResult",
@@ -8933,6 +9117,7 @@
           "directives": {}
         }
       ],
+      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "SandboxDisputeResult",
@@ -8996,6 +9181,7 @@
           "directives": {}
         }
       ],
+      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "SandboxSettlementResult",
@@ -9056,6 +9242,7 @@
           "directives": {}
         }
       ],
+      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "SandboxSettlementBatchPrepResult",
@@ -9124,6 +9311,7 @@
           "directives": {}
         }
       ],
+      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "SandboxDisputeUpdateResult",
@@ -9364,6 +9552,7 @@
           "directives": {}
         }
       ],
+      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "OneTimePayment",
@@ -9670,6 +9859,7 @@
           "directives": {}
         }
       ],
+      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "Boolean",

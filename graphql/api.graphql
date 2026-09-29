@@ -1278,6 +1278,16 @@ directive @docPriority(level: Int!) on FIELD_DEFINITION
 
 directive @docTags(tags: [String!]!) on FIELD_DEFINITION
 
+"One nested field argument to document for an operation."
+input DocNestedArg {
+  "Path from the operation return type to the field argument."
+  path: String!
+  "Optional description used only on this operation's page."
+  description: String
+}
+
+directive @docNestedArgs(args: [DocNestedArg!]!) on FIELD_DEFINITION
+
 "Document object."
 type Document @aws_lambda @aws_iam @aws_cognito_user_pools {
   "Unique identifier for the attachment."
@@ -2838,7 +2848,10 @@ type PaymentMethodToken @aws_lambda @aws_iam @aws_cognito_user_pools {
   "The type of payment method. It can be one of the following: CARD, ACH"
   payment_type: PaymentType
   "The payor object. Refer to the Payor docs for more info."
-  payor(query_list: [QueryPair]): Payor
+  payor(
+    "Query conditions for payor fields such as email. Supported filtering depends on the operation."
+    query_list: [QueryPair]
+  ): Payor
   "The postal code of the billing address."
   postal_code: String
   "The region of the billing address."
@@ -3098,7 +3111,15 @@ type Query @aws_lambda @aws_iam @aws_cognito_user_pools {
     direction: MoveDirection
     "The payment_method_id of the offset item."
     offset_id: String
-  ): PaymentMethodTokens @docGroup(name: "Payment Method Token", sidebarTitle: "List Payment Method Tokens") @docPriority(level: 1)
+  ): PaymentMethodTokens
+    @docGroup(name: "Payment Method Token", sidebarTitle: "List Payment Method Tokens")
+    @docPriority(level: 1)
+    @docNestedArgs(args: [
+      {
+        path: "items.payor.query_list"
+        description: "When selected, filters payment method token rows by payor fields such as email."
+      }
+    ])
   "Returns payors."
   payors(
     "The query to filter the payors with based on Pay Theory defined data. Detailed information about the query object can be found here."
@@ -3184,7 +3205,19 @@ type Query @aws_lambda @aws_iam @aws_cognito_user_pools {
     direction: MoveDirection
     "The transaction_id of the offset item."
     offset_id: String
-  ): Transactions @docGroup(name: "Transaction", sidebarTitle: "List Transactions") @docPriority(level: 1)
+  ): Transactions
+    @docGroup(name: "Transaction", sidebarTitle: "List Transactions")
+    @docPriority(level: 1)
+    @docNestedArgs(args: [
+      {
+        path: "items.payment_method.query_list"
+        description: "When selected, filters transaction rows by payment method fields such as last_four."
+      }
+      {
+        path: "items.payment_method.payor.query_list"
+        description: "When selected, filters transaction rows by payor fields such as email."
+      }
+    ])
   "Returns users."
   users(
     "The user pool to query. One of the following: MERCHANT, SYSTEM, PARTNER."
@@ -3763,7 +3796,10 @@ type Transaction @aws_lambda @aws_iam @aws_cognito_user_pools {
   "The Pay Theory unique identifier for the parent transaction if any."
   parent_id: String
   "The payment method used to make the transaction."
-  payment_method(query_list: [QueryPair]): PaymentMethodToken
+  payment_method(
+    "Query conditions for payment method fields such as last_four. Supported filtering depends on the operation."
+    query_list: [QueryPair]
+  ): PaymentMethodToken
   processor: String
   "The recurring payment that the transaction belongs to if any."
   recurring: RecurringPayment
