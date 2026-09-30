@@ -1,0 +1,41 @@
+---
+sidebar_position: 3
+sidebar_label: 'Address'
+title: "Address"
+---
+
+# Address
+
+The Address class represents a physical address for billing or personal information.
+
+## Properties
+
+| Property | Type | Description |
+|----------|------|-------------|
+| line1 | String? | Primary address line |
+| line2 | String? | Secondary address line (optional) |
+| city | String? | City name |
+| region | String? | State/Province/Region |
+| postal_code | String? | ZIP/Postal code |
+| country | String? | Country code |
+
+## Example
+
+```kotlin
+val address = Address(
+    line1 = "123 Main St",
+    line2 = "Apt 4B",
+    city = "Columbus",
+    region = "OH",
+    postal_code = "43215",
+    country = "USA"
+)
+```
+
+## Usage Notes
+
+- All fields are optional and can be null
+- Used for both billing and personal addresses
+- Country defaults to USA if not specified
+- Postal code validation is performed for US addresses
+- Required when requireBillingAddress is true in configuration 

@@ -1,8 +1,8 @@
 {
   "label": "Android SDK",
-  "position": 1,
+  "position": 3,
   "link": {
     "type": "generated-index",
-    
+    "description": "Documentation for integrating Pay Theory's Android SDK into your application."
   }
 }

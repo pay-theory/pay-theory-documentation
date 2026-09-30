@@ -89,7 +89,7 @@ You will be passed back an object with the following properties:
 - **last_four**: (String) The last four digits of the card number or account number
 - **amount** (Int): The amount of the transaction
 - **service_fee** (Int): The service fee of the transaction
-- **receipt_number** (String): The Pay Theory receipt number
+- **receipt_number** (String): The unique transaction_id assigned to a transaction by Pay Theory
 
 
 ### captureObserver
@@ -113,7 +113,7 @@ A successful capture will return the following properties:
 - **last_four** (String): The last four digits of the card number or account number
 - **amount** (Int): The amount of the transaction
 - **service_fee** (Int): The service fee of the transaction
-- **receipt_number** (String): The Pay Theory receipt number
+- **receipt_number** (String): The unique transaction_id assigned to a transaction by Pay Theory
 - **brand** (String): The brand of the card
 - **created_at** (String): The date and time the transaction was created
 - **state** (String): The status of the transaction
@@ -123,7 +123,7 @@ A successful capture will return the following properties:
 
 If a failure or decline occurs during the payment, the response will be similar to the following:
 
-- **receipt_number** (String): The Pay Theory receipt number
+- **receipt_number** (String): The unique transaction_id assigned to a transaction by Pay Theory
 - **last_four** (String): The last four digits of the card number or account number
 - **brand** (String): The brand of the card
 - **state** (String): The state of the transaction
@@ -151,7 +151,7 @@ A successful capture will return the following properties:
 - **last_four** (String): The last four digits of the card number or account number
 - **amount** (Int): The amount of the transaction
 - **service_fee** (Int): The service fee of the transaction
-- **receipt_number** (String): The Pay Theory receipt number
+- **receipt_number** (String): The unique transaction_id assigned to a transaction by Pay Theory
 - **brand** (String): The brand of the card
 - **created_at** (String): The date and time the transaction was created
 - **state** (String): The status of the transaction
@@ -161,7 +161,7 @@ A successful capture will return the following properties:
 
 If a failure or decline occurs during the payment, the response will be similar to the following:
 
-- **receipt_number** (String): The Pay Theory receipt number
+- **receipt_number** (String): The unique transaction_id assigned to a transaction by Pay Theory
 - **last_four** (String): The last four digits of the card number or account number
 - **brand** (String): The brand of the card
 - **state** (String): The state of the transaction

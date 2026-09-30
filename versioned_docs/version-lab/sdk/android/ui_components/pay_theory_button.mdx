@@ -1,0 +1,63 @@
+---
+sidebar_position: 1
+sidebar_label: 'PayTheory Button'
+title: "PayTheory Button"
+---
+
+# PayTheory Button
+
+The `PayTheoryButton` is a custom Material Button component used to trigger payment transactions or tokenization in the Pay Theory SDK. It extends `MaterialButton` and includes built-in state management.
+
+## Usage
+
+Add the button to your layout:
+
+```xml
+<com.paytheory.android.sdk.view.PayTheoryButton
+    android:id="@+id/submit"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Pay" />
+```
+
+## Setting Up Click Listener
+
+The button must be configured with a click listener to trigger either payment processing or tokenization:
+
+### For Payment Processing
+```kotlin
+payTheoryButton.setOnClickListener {
+    payTheoryFragment.transact()
+}
+```
+
+### For Payment Method Tokenization
+```kotlin
+payTheoryButton.setOnClickListener {
+    payTheoryFragment.tokenize()
+}
+```
+
+## Styling
+
+The button can be styled using Material Design button styles:
+
+```xml
+<style name="MyButtonStyle" parent="Widget.Material3.Button">
+    <item name="android:textColor">@color/white</item>
+    <item name="backgroundTint">@color/primary</item>
+    <!-- Add other MaterialButton style attributes -->
+</style>
+
+<com.paytheory.android.sdk.view.PayTheoryButton
+    style="@style/MyButtonStyle"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" />
+```
+
+## Important Notes
+
+- The button's enabled state is automatically managed based on form validation
+- The button must be configured with setOnClickListener to trigger either `transact()` or `tokenize()`
+- The button will automatically disable during payment processing
+- The button inherits all MaterialButton attributes and styling options 

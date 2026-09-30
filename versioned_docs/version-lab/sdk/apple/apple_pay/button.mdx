@@ -1,0 +1,70 @@
+---
+sidebar_position: 2
+title: "Apple Pay Button"
+---
+
+# Apple Pay Button
+
+The Pay Theory SDK provides a convenient way to create and customize Apple Pay buttons in your iOS application.
+
+## Creating a Button
+
+You can create an Apple Pay button using the `createApplePayButton` function:
+
+```swift
+let applePayButton = payTheory.createApplePayButton(
+    type: .plain,
+    style: .black
+)
+```
+
+## Button Types
+
+The SDK supports all standard Apple Pay button types through [`PKPaymentButtonType`](https://developer.apple.com/documentation/passkit/pkpaymentbuttontype)
+
+## Button Styles
+
+You can customize the button appearance using [`PKPaymentButtonStyle`](https://developer.apple.com/documentation/passkit/pkpaymentbuttonstyle)
+
+## Example Usage
+
+Here's a complete example of creating and implementing an Apple Pay button:
+
+```swift
+import SwiftUI
+
+struct PaymentView: View {
+    let payTheory: PayTheory
+    
+    var body: some View {
+        VStack {
+            // Create Apple Pay button
+            payTheory.createApplePayButton(
+                type: .buy,
+                style: .black
+            )
+        }
+    }
+}
+```
+
+## Availability Checking
+
+Before displaying the Apple Pay button, you should check if Apple Pay is available:
+
+```swift
+// Basic availability check
+if payTheory.canMakeApplePayments() {
+    // Show Apple Pay button
+}
+
+// Check for specific payment networks
+if payTheory.canMakeApplePayments(supporting: [.visa, .masterCard]) {
+    // Show Apple Pay button for specific card types
+}
+```
+
+The button will be disabled if:
+- Apple Pay is not Available
+- The payment sheet is not configured
+- The PayTheory class is not ready

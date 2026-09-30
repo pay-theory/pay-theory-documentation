@@ -1,0 +1,20 @@
+---
+id: create-invoice-email
+title: createInvoiceEmail
+sidebar_label: Create Invoice Email
+hide_title: true
+api: true
+---
+
+import { OperationView } from '@lewl/graphql-doc/components';
+import operationsByType from '../_data/operations.json';
+import typesByName from '../_data/types.json';
+
+export const examplesByOperation = {
+  "createInvoiceEmail": (operationsByType["mutation"]["createInvoiceEmail"]?.examples ?? []),
+};
+
+export const operation = operationsByType["mutation"]["createInvoiceEmail"];
+
+<OperationView operation={ operation } typesByName={typesByName} headingLevel={ 1 } defaultExpandedLevels={ 0 } maxDepth={ 5 } typeLinkBase="../types" llmDocsBasePath="/llm-docs/lab" siteBasePath="/api">
+</OperationView>

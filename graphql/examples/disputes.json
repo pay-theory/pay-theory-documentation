@@ -1,0 +1,51 @@
+[
+  {
+    "operation": "disputes",
+    "operationType": "query",
+    "examples": [
+      {
+        "name": "Example disputes",
+        "description": "Returns disputes.",
+        "query": "query Disputes($query: SqlQuery, $limit: Int, $offset: String, $direction: MoveDirection, $offset_id: String) {\n  disputes(query: $query, limit: $limit, offset: $offset, direction: $direction, offset_id: $offset_id) {\n  items {\n    dispute_id\n    dispute_date\n    amount\n    evidence_last_send_date\n    expiration_date\n  }\n  total_row_count\n  }\n}",
+        "variables": {
+          "query": {
+            "query_list": [
+              {
+                "conjunctive_operator": "AND_NEXT"
+              }
+            ],
+            "sort_list": [
+              {
+                "direction": "ASC"
+              }
+            ]
+          },
+          "limit": 123,
+          "offset": "example",
+          "direction": "BACKWARD",
+          "offset_id": "example"
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "disputes": {
+                "items": [
+                  {
+                    "dispute_id": "example",
+                    "dispute_date": "2025-01-01T00:00:00Z",
+                    "amount": 123,
+                    "evidence_last_send_date": "2025-01-01T00:00:00Z",
+                    "expiration_date": "2025-01-01T00:00:00Z"
+                  }
+                ],
+                "total_row_count": 123
+              }
+            }
+          }
+        }
+      }
+    ]
+  }
+]

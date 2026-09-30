@@ -1,0 +1,75 @@
+---
+sidebar_position: 8
+sidebar_label: 'Custom Fees Quick Start'
+title: 'Custom Fees Quick Start'
+---
+
+# Custom Fees Quick Start
+
+:::note
+Custom fees are not enabled for all partners. If this is something you're interested in, please reach out to Pay Theory support.
+:::
+
+This guide explains how `CUSTOM_FEE` works, how it differs from existing fee modes, and what to expect in request and response payloads.
+
+## Enablement and Bounds
+
+`CUSTOM_FEE` is gated and must be enabled by Pay Theory in your account configuration.
+
+When Pay Theory enables `CUSTOM_FEE`, we also define an allowed fee floor and ceiling. You can submit custom fee values only within those agreed bounds.
+
+## How It Relates to Existing Fee Modes
+
+`MERCHANT_FEE` and `SERVICE_FEE` continue to behave exactly as they do today. In those modes, Pay Theory validates fee amounts against the fee matrix.
+
+`CUSTOM_FEE` acts as a third fee mode:
+
+- Your system owns fee calculation.
+- Pay Theory does not apply fee matrix validation for the fee amount.
+- Pay Theory validates only that your submitted fee is within your configured floor and ceiling.
+
+## Request and Response Behavior
+
+When using custom fees, pass your calculated fee value and either:
+
+- `fee_mode: MERCHANT_FEE`, or
+- `fee_mode: null`
+
+If the fee passes floor/ceiling validation, the response returns:
+
+- `fee_mode: CUSTOM_FEE`
+
+```graphql title="Example Mutation"
+mutation {
+  createTransaction(
+    merchant_uid: "your-merchant-uid",
+    amount: 10300,
+    fee: 300,
+    fee_mode: MERCHANT_FEE,
+    payment_method_id: "pt_pmt_123"
+  ) {
+    transaction_id
+    amount
+    fee
+    fee_mode
+    status
+  }
+}
+```
+
+## Building Service-Fee-Equivalent Outcomes
+
+`CUSTOM_FEE` does not separate "payer absorbs" vs "merchant absorbs" at the API layer. You construct the amount math directly.
+
+To net the merchant to a base amount of $100.00:
+
+- 2.5% fee: `amount: 10250`, `fee: 250`
+- 3.0% fee: `amount: 10300`, `fee: 300`
+
+In both examples, the fee is embedded in the gross amount so the merchant nets $100.00.
+
+## Response Semantics Caveat
+
+Once a transaction is processed as `CUSTOM_FEE`, response `fee_mode` does not preserve whether you intended "service fee" or "merchant fee." Both return as `CUSTOM_FEE`.
+
+If you need to preserve that intent, stamp it in transaction metadata on create.

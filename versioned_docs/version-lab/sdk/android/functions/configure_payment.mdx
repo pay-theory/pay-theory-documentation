@@ -1,0 +1,86 @@
+---
+sidebar_position: 1
+sidebar_label: 'configurePayment'
+title: "configurePayment"
+---
+
+# configurePayment
+
+The `configurePayment` function initializes the PayTheory Fragment for processing payments. It sets up the payment fields and validation for collecting and processing payment information.
+
+## Function Signature
+
+```kotlin
+fun configurePayment(
+    configuration: PayTheoryConfiguration,
+    merchantActivity: PayTheoryMerchantActivity
+)
+```
+
+## Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| configuration | PayTheoryConfiguration | Configuration object containing all payment settings |
+| merchantActivity | PayTheoryMerchantActivity | Activity that implements the PayTheoryMerchantActivity interface |
+
+## Example Usage
+
+```kotlin
+// Get submit button reference and the PayTheoryFragment
+val submitButton = findViewById<PayTheoryButton>(R.id.submit_button)
+val payTheoryFragment = supportFragmentManager.findFragmentById(R.id.payment_fragment) as PayTheoryFragment
+
+
+// Create configuration
+val configuration = PayTheoryConfiguration(
+    apiKey = resources.getString(R.string.api_key),
+    payTheoryButton = submitButton
+).apply {
+    amount = 1000
+    paymentMethodType = PaymentMethodType.BANK
+}
+
+// Configure the payment after fragment is attached
+payTheoryFragment.configurePayment(
+    merchantActivity = requireActivity() as PayTheoryMerchantActivity,
+    configuration = configuration
+)
+```
+
+## Key Configuration Parameters for Payments
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| payTheoryButton | PayTheoryButton | Yes | Button that triggers payment |
+| apiKey | String | Yes | Your Pay Theory API key |
+| amount | Int | Yes | Payment amount in cents (must be > 0) |
+| paymentMethodType | PaymentMethodType | Yes | Type of payment (CARD, BANK, or CASH) |
+| requireAccountName | Boolean | No | Whether to require account name field |
+| requireBillingAddress | Boolean | No | Whether to require billing address fields |
+| feeMode | String | No | Fee handling mode ("service_fee", "surcharge", etc.) |
+| confirmation | Boolean | No | Whether to require payment confirmation |
+| metadata | Map&lt;String, Any&gt; | No | Additional data to associate with payment |
+| payorInfo | PayorInfo | No | Information about the person paying |
+| sendReceipt | Boolean | No | Whether to send a receipt |
+| receiptDescription | String | No | Description for the receipt |
+| paymentParameters | String | No | Additional payment parameters |
+| reference | String | No | Reference identifier for the payment |
+| accountCode | String | No | Account code for the payment |
+| invoiceId | String | No | Invoice identifier |
+
+## Important Notes
+
+- The `amount` parameter must be greater than 0 (will throw an exception if ≤ 0)
+- The API key must be valid and contain the correct partner and stage information
+- A network connection is required for payment processing
+- The fragment must be configured before calling `transact()`
+- Different payment methods (CARD, BANK, CASH) will display different input fields
+- Billing address zip code is always required, even if `requireBillingAddress` is false
+
+## Related Documentation
+
+For complete details on all available configuration options, please see:
+- [PayTheoryConfiguration](../data_models/configuration.mdx)
+- [PayorInfo](../data_models/payor.mdx)
+- [Address](../data_models/address.mdx)

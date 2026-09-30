@@ -29,7 +29,7 @@ These are the parameters that you can pass into the `payTheoryFields` function t
 |--------------|---------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | apiKey       | String                                      | Your Pay Theory API key. This is required to initialize the Hosted Fields.                                                                                                                                                                   |
 | amount       | Int                                         | The amount of the transaction in cents. This is an optional field that will allow the SDK to calculate the service fee and return it to the [state observer](/docs/sdk/javascript/event_listeners#stateobserver).                                                                    |
-| country      | String                                      | The country code for the country of the merchant you are initializing the SDK for. This should alight with the `country_code` on their [merchant](/docs/api/merchant#the-merchant-object) object. Defaults to `USA` if nothing is passed in. |
+| country      | String                                      | The country code for the country of the merchant you are initializing the SDK for. This should alight with the `country_code` on their [merchant](../../api/types/types/merchant) object. Defaults to `USA` if nothing is passed in. |
 | placeholders | Object                                      | An object that contains any custom placeholders you would like to use for the fields.                                                                                                                                                        |
 | styles       | [Style Object](hosted_fields#styles-object) | An object that contains the styles for the Hosted Fields.                                                                                                                                                                                    |
 
@@ -335,7 +335,7 @@ This is the value of the `body` key in the response if the `type` is `SUCCESS`:
 |last_four          |String       |The last four digits of the card number or account number|
 |amount             |Int          |The amount of the transaction|
 |service_fee        |Int          |The service fee of the transaction|
-|receipt_number     |String       |The Pay Theory receipt number|
+|receipt_number     |String       |The unique transaction_id assigned to a transaction by Pay Theory|
 |brand              |String       |The brand of the card|
 |created_at         |String       |The date and time the transaction was created|
 |state              |String       |The status of the transaction|
@@ -351,7 +351,7 @@ This is the value of the `body` key in the response if the `type` is `FAILED`:
 
 |Key                |type         |       description                     |
 |-------------------|-------------|---------------------------------------|
-|receipt_number     |String       |The Pay Theory receipt number|
+|receipt_number     |String       |The unique transaction_id assigned to a transaction by Pay Theory|
 |last_four          |String       |The last four digits of the card number or account number|
 |brand              |String       |The brand of the card|
 |state              |String       |The state of the transaction. This will be `FAILURE`|
@@ -361,7 +361,7 @@ This is the value of the `body` key in the response if the `type` is `FAILED`:
 
 | Key          | type   | description                                                                           |
 |--------------|--------|---------------------------------------------------------------------------------------|
-| failure_code | String | The failure code for the failure. You can find a list of failure codes [here](errors) |
+| failure_code | String | The failure code for the failure. You can find a list of failure codes [here](../../main/after_payments/failed_transactions) |
 | failure_text | String | The message for the failure                                                           |
 
 ### Confirmation Response
@@ -374,7 +374,7 @@ This is the value of the `body` key in the response if the `type` is `CONFIRMATI
 |last_four          |String       |The last four digits of the card number or account number|
 |amount             |Int          |The amount of the transaction|
 |service_fee        |Int          |The service fee of the transaction|
-|receipt_number     |String       |The Pay Theory receipt number|
+|receipt_number     |String       |The unique transaction_id assigned to a transaction by Pay Theory|
 
 ### Cash Response
 

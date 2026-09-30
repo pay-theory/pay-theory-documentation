@@ -1,0 +1,54 @@
+---
+sidebar_position: 1
+sidebar_label: 'Pay Theory Messenger'
+title: "Pay Theory Messenger"
+---
+
+# Pay Theory Messenger
+
+The Pay Theory Messenger class enables secure processing of digital wallet transactions including Apple Pay, Google Pay, and Paze.
+
+***
+## Constructor
+
+```javascript
+const messenger = new paytheory.PayTheoryMessenger(options)
+```
+
+### Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| options | Object | Yes | Configuration object |
+
+#### Options Attributes
+
+| Attribute | Type | Required | Description |
+|-----------|------|----------|-------------|
+| apiKey | String | Yes | Your Pay Theory API key |
+
+### Returns
+
+Returns a new instance of the PayTheoryMessenger class.
+
+***
+## Static Properties
+
+### Wallet Type Constants
+
+```javascript
+PayTheoryMessenger.applePay   // 'APPLE_PAY'
+PayTheoryMessenger.googlePay  // 'GOOGLE_PAY'
+PayTheoryMessenger.paze       // 'PAZE'
+```
+
+***
+## Functions
+
+The PayTheoryMessenger instance provides the following functions:
+
+- **[initialize()](./initialize)** - Initializes the messenger connection
+- **[getApplePaySession()](./getApplePaySession)** - Validates merchant identity with Apple Pay
+- **[processWalletTransaction()](./processWalletTransaction)** - Processes a digital wallet transaction
+- **[on()](./on)** - Registers an event listener
+- **[destroy()](./destroy)** - Cleans up resources and disconnects

@@ -1,0 +1,52 @@
+---
+sidebar_position: 2
+sidebar_label: 'PayTheory Barcode'
+title: "PayTheory Barcode"
+---
+
+# PayTheory Barcode
+
+The `PayTheoryBarcode` is a custom ImageView component used to display SVG barcodes for cash payments. It extends `AppCompatImageView` and provides automatic SVG loading and rendering capabilities.
+
+## Usage
+
+Add the barcode view to your layout:
+
+```xml
+<com.paytheory.android.sdk.view.PayTheoryBarcode
+    android:id="@+id/barcode"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" />
+```
+
+## Public Methods
+
+### displayBarcode()
+Loads and displays a barcode from a BarcodeResult:
+```kotlin
+fun displayBarcode(barcodeResult: BarcodeResult)
+```
+
+## Example Implementation
+
+```kotlin
+class PaymentActivity : PayTheoryMerchantActivity(), Payable {
+    override fun handleBarcodeSuccess(barcodeResult: BarcodeResult) {
+        // Display the barcode when received
+        findViewById<PayTheoryBarcode>(R.id.payTheoryBarcode).displayBarcode(barcodeResult)
+    }
+}
+```
+
+## Important Notes
+
+- Only used for cash payment transactions
+- Automatically handles SVG loading and rendering
+- The barcode URL is provided in the BarcodeResult after a successful cash payment setup
+
+## Error Handling
+
+The component includes built-in error handling for:
+- Network failures when loading SVG
+- SVG parsing errors
+- Invalid URLs

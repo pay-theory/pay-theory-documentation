@@ -1,0 +1,61 @@
+---
+sidebar_position: 3
+sidebar_label: 'getApplePaySession'
+title: "getApplePaySession"
+---
+
+# getApplePaySession
+
+Validates merchant identity with Apple Pay and returns a session object required for completing Apple Pay merchant validation.
+
+***
+## Function
+
+```javascript
+await messenger.getApplePaySession()
+```
+
+***
+## Parameters
+
+This function takes no parameters.
+
+***
+## Returns
+
+```javascript
+{
+  type: String  // 'SUCCESS' or 'ERROR'
+  session: Object
+  error: String
+}
+```
+
+| Key | Type | Description |
+|-----|------|-------------|
+| type | String | Response type indicating success or error |
+| session | Object | Apple Pay merchant session object used for validation |
+| error | String | Error message if the operation failed |
+
+***
+## Usage
+
+```javascript
+const result = await messenger.getApplePaySession();
+
+if (result.type === 'SUCCESS') {
+  // Use the session for Apple Pay validation
+  const session = result.session;
+  // Complete merchant validation with Apple
+} else {
+  console.error('Failed to get Apple Pay session:', result.error);
+}
+```
+
+***
+## Notes
+
+- Must be called after initializing the messenger
+- The session object is used to complete Apple Pay merchant validation
+- If the token has expired, the method will automatically attempt to refresh it
+- Returns an error response if the connection cannot be established

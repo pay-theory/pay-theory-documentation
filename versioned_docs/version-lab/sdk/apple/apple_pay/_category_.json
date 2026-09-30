@@ -1,0 +1,8 @@
+{
+  "label": "Apple Pay",
+  "position": 5,
+  "link": {
+    "type": "generated-index",
+    "description": "Documentation for Pay Theory's Apple Pay integration."
+  }
+} 

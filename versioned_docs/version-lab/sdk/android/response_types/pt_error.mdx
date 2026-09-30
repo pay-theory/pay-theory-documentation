@@ -1,0 +1,58 @@
+---
+sidebar_position: 1
+sidebar_label: 'PTError'
+title: "PTError"
+---
+
+# PTError
+
+The `PTError` class represents errors that may occur during SDK operations. It provides a standardized error format with an error code and description.
+
+## Properties
+
+| Property | Type | Description |
+|----------|------|-------------|
+| code | ErrorCode | Enum indicating the type of error |
+| error | String | Human-readable description of the error |
+
+## Error Codes
+
+| Code | Description |
+|------|-------------|
+| ActionComplete | The requested action has already been completed |
+| ActionInProgress | An action is currently in progress, preventing a new action |
+| AttestationFailed | The device attestation process failed |
+| InProgress | The operation is still in progress |
+| InvalidAPIKey | The provided API key is invalid or not recognized |
+| InvalidParam | An invalid parameter was provided to the SDK |
+| NoFields | Required fields were not provided for the operation |
+| NotReady | The SDK is not in a ready state for the requested operation |
+| NotValid | The provided data failed validation checks |
+| SocketError | An error occurred with the WebSocket connection |
+| TokenFailed | Token generation or validation failed |
+
+## Example Usage
+
+```kotlin
+class PaymentActivity : PayTheoryMerchantActivity(), Payable {
+    override fun handleError(error: PTError) {
+        when (error.code) {
+            ErrorCode.InvalidAPIKey -> {
+                // Handle invalid API key
+                showError("Invalid API Key: ${error.error}")
+            }
+            ErrorCode.NotValid -> {
+                // Handle validation error
+                showError("Validation Error: ${error.error}")
+            }
+            ErrorCode.SocketError -> {
+                // Handle connection error
+                showError("Connection Error: ${error.error}")
+            }
+            else -> {
+                // Handle other errors
+                showError("Error: ${error.error}")
+            }
+        }
+    }
+} 

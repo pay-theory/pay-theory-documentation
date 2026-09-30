@@ -1,0 +1,145 @@
+[
+  {
+    "operation": "paymentLinks",
+    "operationType": "query",
+    "examples": [
+      {
+        "name": "Example paymentLinks",
+        "description": "Returns payment links.",
+        "query": "query PaymentLinks($query: SqlQuery, $limit: Int, $offset: String, $direction: MoveDirection, $offset_id: String) {\n  paymentLinks(query: $query, limit: $limit, offset: $offset, direction: $direction, offset_id: $offset_id) {\n  items {\n    link_id\n    created_date\n    accepted_payment_methods\n    account_code\n    amount\n  }\n  total_row_count\n  }\n}",
+        "variables": {
+          "query": {
+            "query_list": [
+              {
+                "conjunctive_operator": "AND_NEXT"
+              }
+            ],
+            "sort_list": [
+              {
+                "direction": "ASC"
+              }
+            ]
+          },
+          "limit": 123,
+          "offset": "example",
+          "direction": "BACKWARD",
+          "offset_id": "example"
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "paymentLinks": {
+                "items": [
+                  {
+                    "link_id": "example",
+                    "created_date": "2025-01-01T00:00:00Z",
+                    "accepted_payment_methods": "example",
+                    "account_code": "example",
+                    "amount": 123
+                  }
+                ],
+                "total_row_count": 123
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "operation": "createPaymentLink",
+    "operationType": "mutation",
+    "examples": [
+      {
+        "name": "Example createPaymentLink",
+        "description": "Creates payment link.",
+        "query": "mutation CreatePaymentLink($input: PaymentLinkInput!) {\n  createPaymentLink(input: $input) {\n  link_id\n  created_date\n  accepted_payment_methods\n  account_code\n  amount\n  }\n}",
+        "variables": {
+          "input": {
+            "accepted_payment_methods": "ALL",
+            "account_code": "example",
+            "amount": 123,
+            "amount_is_variable": true,
+            "call_to_action": "BOOK",
+            "currency": "example",
+            "custom_success_message": "example",
+            "fee_mode": "CUSTOM_FEE",
+            "link_name": "example",
+            "max_amount": 123,
+            "merchant_uid": "example",
+            "min_amount": 123,
+            "payment_description": "example",
+            "payment_name": "example",
+            "redirect_url": "example",
+            "require_phone": true
+          }
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "createPaymentLink": {
+                "link_id": "example",
+                "created_date": "2025-01-01T00:00:00Z",
+                "accepted_payment_methods": "example",
+                "account_code": "example",
+                "amount": 123
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "operation": "updatePaymentLink",
+    "operationType": "mutation",
+    "examples": [
+      {
+        "name": "Example updatePaymentLink",
+        "description": "Updates payment link.",
+        "query": "mutation UpdatePaymentLink($input: UpdatePaymentLinkInput!) {\n  updatePaymentLink(input: $input) {\n  link_id\n  created_date\n  accepted_payment_methods\n  account_code\n  amount\n  }\n}",
+        "variables": {
+          "input": {
+            "accepted_payment_methods": "ALL",
+            "account_code": "example",
+            "amount": 123,
+            "amount_is_variable": true,
+            "call_to_action": "BOOK",
+            "currency": "example",
+            "custom_success_message": "example",
+            "fee_mode": "CUSTOM_FEE",
+            "is_active": true,
+            "link_id": "example",
+            "link_name": "example",
+            "max_amount": 123,
+            "merchant_uid": "example",
+            "min_amount": 123,
+            "payment_description": "example",
+            "payment_name": "example",
+            "redirect_url": "example",
+            "require_phone": true
+          }
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "updatePaymentLink": {
+                "link_id": "example",
+                "created_date": "2025-01-01T00:00:00Z",
+                "accepted_payment_methods": "example",
+                "account_code": "example",
+                "amount": 123
+              }
+            }
+          }
+        }
+      }
+    ]
+  }
+]

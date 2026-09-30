@@ -21,7 +21,7 @@ The `PayTheory` class conforms to `ObservableObject`, allowing it to be used wit
 The `PayTheory` class is initialized with the following function signature:
 
 ```swift
-public init(amount: Int? = nil, apiKey: String, devMode: Bool = false, errorHandler: @escaping (PTError) -> Void)
+public init(amount: Int? = nil, apiKey: String, devMode: Bool = false, attestationEnvironment: AttestationEnvironment = .local, attestationKey: String? = nil, errorHandler: @escaping (PTError) -> Void)
 ```
 
 Here's a detailed description of each parameter:
@@ -31,7 +31,13 @@ Here's a detailed description of each parameter:
 | amount       | `Int?`                        | An optional integer representing the transaction amount in cents. If provided, it will be used to calculate fees for Service Fee mode. Defaults to `nil`.                                     |
 | apiKey       | `String`                      | A string containing the API key for authentication with PayTheory services. It should be in the format `'{partner}-{paytheorystage}-{UUID}'`.                                                 |
 | devMode      | `Bool`                        | A boolean flag indicating whether to run in development mode. When `true` it allows you to skip the app attestation process and run in the simulator. This cannot be turned on in production. |
-| errorHandler | `@escaping (PTError) -> Void` | A closure that handles any errors that might occur during initialization and other background actions. It takes a `PTError` parameter and doesn't return a value.                             |
+| attestationEnvironment | `AttestationEnvironment` | The environment to use for attestation. Defaults to `.local`. If you are running from Xcode you will use `.local`. If you are deploying to testflight or the app store you will use `.production`. |
+| attestationKey | `String?`                     | A string containing the attestation key for the app. This is used if you want to manage the app attestation key in your own code. If not provided, the SDK will manage it for you. |
+| errorHandler   | `@escaping (PTError) -> Void`  | A closure that handles any errors that might occur during initialization and other background actions. It takes a `PTError` parameter and doesn't return a value.                             |
+
+:::warning Important
+You **must** set `attestationEnvironment` to `.production` before deploying your app to TestFlight or the App Store. If you leave it set to `.local`, app attestation will fail in these environments and your app will not be able to process payments.
+:::
 
 ### Example Usage
 

@@ -1,0 +1,493 @@
+[
+  {
+    "operation": "authorizations",
+    "operationType": "query",
+    "examples": [
+      {
+        "name": "Example authorizations",
+        "description": "This query will return a list of authorizations for a merchant.",
+        "query": "query Authorizations($query: SqlQuery, $limit: Int, $offset: String, $direction: MoveDirection, $offset_id: String) {\n  authorizations(query: $query, limit: $limit, offset: $offset, direction: $direction, offset_id: $offset_id) {\n  items {\n    authorization_id\n    authorization_date\n    account_code\n    amount\n    avs_status\n  }\n  total_row_count\n  }\n}",
+        "variables": {
+          "query": {
+            "query_list": [
+              {
+                "conjunctive_operator": "AND_NEXT"
+              }
+            ],
+            "sort_list": [
+              {
+                "direction": "ASC"
+              }
+            ]
+          },
+          "limit": 123,
+          "offset": "example",
+          "direction": "BACKWARD",
+          "offset_id": "example"
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "authorizations": {
+                "items": [
+                  {
+                    "authorization_id": "example",
+                    "authorization_date": "2025-01-01T00:00:00Z",
+                    "account_code": "example",
+                    "amount": 123,
+                    "avs_status": "example"
+                  }
+                ],
+                "total_row_count": 123
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "operation": "createAuthorization",
+    "operationType": "mutation",
+    "examples": [
+      {
+        "name": "Place a hold on a card",
+        "query": "mutation CreateAuthorization(\n  $merchant_uid: String!\n  $amount: Int!\n  $payment_method: PaymentMethodInput\n  $fee_mode: FeeMode\n) {\n  createAuthorization(\n    merchant_uid: $merchant_uid\n    amount: $amount\n    payment_method: $payment_method\n    fee_mode: $fee_mode\n  ) {\n    authorization_id\n    merchant_uid\n    amount\n    currency\n    status\n    fee_mode\n    fees\n    authorization_date\n    expiration_date\n    sale_id\n  }\n}",
+        "variables": {
+          "merchant_uid": "<MERCHANT_UID>",
+          "amount": 800,
+          "payment_method": {
+            "card": {
+              "card_number": "4835034598457895",
+              "exp_date": {
+                "month": "12",
+                "year": "30"
+              },
+              "security_code": "123",
+              "full_name": "Jane Holder",
+              "address_line1": "123 Test Street",
+              "city": "Cincinnati",
+              "region": "OH",
+              "postal_code": "45209",
+              "country": "USA"
+            },
+            "payor": {
+              "full_name": "Jane Holder",
+              "email": "payor@example.com",
+              "phone": "+15555550123",
+              "merchant_uid": "<MERCHANT_UID>"
+            }
+          },
+          "fee_mode": "MERCHANT_FEE"
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "createAuthorization": {
+                "authorization_id": "ptl_auth_5xhiVIdYV1XRd6At4B8Ioc",
+                "merchant_uid": "<MERCHANT_UID>",
+                "amount": 800,
+                "currency": "USD",
+                "status": "SUCCEEDED",
+                "fee_mode": "MERCHANT_FEE",
+                "fees": 46,
+                "authorization_date": "2026-09-02T20:56:04.134Z",
+                "expiration_date": "2026-09-03T20:56:04.134Z",
+                "sale_id": "ptl_sale_5xBL0OK9Dzzx0QDrLTgzCM"
+              }
+            }
+          }
+        }
+      },
+      {
+        "name": "Place a hold to release later",
+        "query": "mutation CreateAuthorization(\n  $merchant_uid: String!\n  $amount: Int!\n  $payment_method: PaymentMethodInput\n  $fee_mode: FeeMode\n) {\n  createAuthorization(\n    merchant_uid: $merchant_uid\n    amount: $amount\n    payment_method: $payment_method\n    fee_mode: $fee_mode\n  ) {\n    authorization_id\n    merchant_uid\n    amount\n    currency\n    status\n    fee_mode\n    fees\n    authorization_date\n    expiration_date\n    sale_id\n  }\n}",
+        "variables": {
+          "merchant_uid": "<MERCHANT_UID>",
+          "amount": 400,
+          "payment_method": {
+            "card": {
+              "card_number": "4835034598457895",
+              "exp_date": {
+                "month": "12",
+                "year": "30"
+              },
+              "security_code": "123",
+              "full_name": "Jane Void",
+              "address_line1": "123 Test Street",
+              "city": "Cincinnati",
+              "region": "OH",
+              "postal_code": "45209",
+              "country": "USA"
+            },
+            "payor": {
+              "full_name": "Jane Void",
+              "email": "payor@example.com",
+              "phone": "+15555550123",
+              "merchant_uid": "<MERCHANT_UID>"
+            }
+          },
+          "fee_mode": "MERCHANT_FEE"
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "createAuthorization": {
+                "authorization_id": "ptl_auth_5zisQDsW7qPhRy7YFHJZvH",
+                "merchant_uid": "<MERCHANT_UID>",
+                "amount": 400,
+                "currency": "USD",
+                "status": "SUCCEEDED",
+                "fee_mode": "MERCHANT_FEE",
+                "fees": 35,
+                "authorization_date": "2026-09-02T20:56:05.927Z",
+                "expiration_date": "2026-09-03T20:56:05.927Z",
+                "sale_id": "ptl_sale_5zD4T0TrkmNOkHuUALzKxO"
+              }
+            }
+          }
+        }
+      },
+      {
+        "name": "ACH cannot be authorized",
+        "query": "mutation CreateAuthorization(\n  $merchant_uid: String!\n  $amount: Int!\n  $payment_method: PaymentMethodInput\n) {\n  createAuthorization(\n    merchant_uid: $merchant_uid\n    amount: $amount\n    payment_method: $payment_method\n  ) {\n    authorization_id\n    merchant_uid\n    amount\n    currency\n    status\n    fee_mode\n    fees\n    authorization_date\n    expiration_date\n    sale_id\n  }\n}",
+        "variables": {
+          "merchant_uid": "<MERCHANT_UID>",
+          "amount": 800,
+          "payment_method": {
+            "ach": {
+              "account_number": "0000000016",
+              "account_type": "PERSONAL_CHECKING",
+              "name_on_account": "ACH Hold",
+              "routing_number": "122105278"
+            },
+            "payor": {
+              "full_name": "ACH Hold",
+              "email": "payor@example.com",
+              "merchant_uid": "<MERCHANT_UID>"
+            }
+          }
+        },
+        "response": {
+          "type": "error",
+          "httpStatus": 200,
+          "body": {
+            "data": null,
+            "errors": [
+              {
+                "path": [
+                  "createAuthorization"
+                ],
+                "data": null,
+                "errorType": "VALIDATION_ERROR",
+                "errorInfo": null,
+                "locations": [
+                  {
+                    "line": 18,
+                    "column": 5,
+                    "sourceName": null
+                  }
+                ],
+                "message": "ACH payment types cannot be used for authorizations."
+              }
+            ]
+          }
+        }
+      },
+      {
+        "name": "Amount is zero",
+        "query": "mutation CreateAuthorization(\n  $merchant_uid: String!\n  $amount: Int!\n  $payment_method: PaymentMethodInput\n) {\n  createAuthorization(\n    merchant_uid: $merchant_uid\n    amount: $amount\n    payment_method: $payment_method\n  ) {\n    authorization_id\n    merchant_uid\n    amount\n    currency\n    status\n    fee_mode\n    fees\n    authorization_date\n    expiration_date\n    sale_id\n  }\n}",
+        "variables": {
+          "merchant_uid": "<MERCHANT_UID>",
+          "amount": 0,
+          "payment_method": {
+            "card": {
+              "card_number": "4835034598457895",
+              "exp_date": {
+                "month": "12",
+                "year": "30"
+              },
+              "security_code": "123",
+              "full_name": "Zero Hold",
+              "address_line1": "123 Test Street",
+              "city": "Cincinnati",
+              "region": "OH",
+              "postal_code": "45209",
+              "country": "USA"
+            },
+            "payor": {
+              "full_name": "Zero Hold",
+              "email": "payor@example.com",
+              "phone": "+15555550123",
+              "merchant_uid": "<MERCHANT_UID>"
+            }
+          }
+        },
+        "response": {
+          "type": "error",
+          "httpStatus": 200,
+          "body": {
+            "data": null,
+            "errors": [
+              {
+                "path": [
+                  "createAuthorization"
+                ],
+                "data": null,
+                "errorType": "VALIDATION_ERROR",
+                "errorInfo": null,
+                "locations": [
+                  {
+                    "line": 18,
+                    "column": 5,
+                    "sourceName": null
+                  }
+                ],
+                "message": "Authorization amount cannot be 0."
+              }
+            ]
+          }
+        }
+      }
+    ]
+  },
+  {
+    "operation": "createWalletAuthorization",
+    "operationType": "mutation",
+    "examples": [
+      {
+        "name": "Example createWalletAuthorization",
+        "description": "This call is used to create an authorization for a wallet payment via Apple Pay or Google Pay. It works in conjunction with our SDKs to allow you to create an authorization via our API.",
+        "query": "mutation CreateWalletAuthorization($app_id: String, $merchant_uid: String!, $sale_id: String, $wallet_type: WalletType, $digital_wallet_payload: String!, $amount: Int, $fee: Int, $billing_address: BillingAddressInput, $payor_id: String, $payor: PayorInput, $invoice_id: String, $account_code: String, $reference: String, $metadata: AWSJSON, $health_expense_type: HealthExpenseType, $additional_purchase_data: AdditionalPurchaseDataInput) {\n  createWalletAuthorization(app_id: $app_id, merchant_uid: $merchant_uid, sale_id: $sale_id, wallet_type: $wallet_type, digital_wallet_payload: $digital_wallet_payload, amount: $amount, fee: $fee, billing_address: $billing_address, payor_id: $payor_id, payor: $payor, invoice_id: $invoice_id, account_code: $account_code, reference: $reference, metadata: $metadata, health_expense_type: $health_expense_type, additional_purchase_data: $additional_purchase_data) {\n  authorization_id\n  authorization_date\n  account_code\n  amount\n  avs_status\n  }\n}",
+        "variables": {
+          "app_id": "example",
+          "merchant_uid": "example",
+          "sale_id": "example",
+          "wallet_type": "APPLE_PAY",
+          "digital_wallet_payload": "example",
+          "amount": 123,
+          "fee": 123,
+          "billing_address": {
+            "address_line1": "example",
+            "address_line2": "example",
+            "city": "example",
+            "country": "example",
+            "full_name": "example",
+            "postal_code": "example",
+            "region": "example"
+          },
+          "payor_id": "example",
+          "payor": {
+            "address_line1": "example",
+            "address_line2": "example",
+            "city": "example",
+            "country": "example",
+            "email": "example",
+            "full_name": "example",
+            "merchant_uid": "example",
+            "metadata": {
+              "key": "value"
+            },
+            "phone": "example",
+            "postal_code": "example",
+            "region": "example"
+          },
+          "invoice_id": "example",
+          "account_code": "example",
+          "reference": "example",
+          "metadata": {
+            "key": "value"
+          },
+          "health_expense_type": "CLINICAL",
+          "additional_purchase_data": {
+            "level3_data_line_item": [
+              {
+                "item_code": "example"
+              }
+            ],
+            "level3_data_summary": {
+              "dest_postal_code": "example"
+            }
+          }
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "createWalletAuthorization": {
+                "authorization_id": "example",
+                "authorization_date": "2025-01-01T00:00:00Z",
+                "account_code": "example",
+                "amount": 123,
+                "avs_status": "example"
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "operation": "createCapture",
+    "operationType": "mutation",
+    "examples": [
+      {
+        "name": "Capture the held funds",
+        "query": "mutation CreateCapture(\n  $merchant_uid: String!\n  $authorization_id: String!\n  $amount: Int!\n) {\n  createCapture(\n    merchant_uid: $merchant_uid\n    authorization_id: $authorization_id\n    amount: $amount\n  ) {\n    transaction_id\n    merchant_uid\n    gross_amount\n    net_amount\n    status\n    fee_mode\n    authorization_id\n  }\n}",
+        "variables": {
+          "merchant_uid": "<MERCHANT_UID>",
+          "authorization_id": "ptl_auth_5xhiVIdYV1XRd6At4B8Ioc",
+          "amount": 800
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "createCapture": {
+                "transaction_id": "ptl_txn_6e48x97GGxtIaHYyLq2u6A",
+                "merchant_uid": "<MERCHANT_UID>",
+                "gross_amount": 800,
+                "net_amount": 754,
+                "status": "PENDING",
+                "fee_mode": "MERCHANT_FEE",
+                "authorization_id": "ptl_auth_5xhiVIdYV1XRd6At4B8Ioc"
+              }
+            }
+          }
+        }
+      },
+      {
+        "name": "Amount is too high",
+        "query": "mutation CreateCapture(\n  $merchant_uid: String!\n  $authorization_id: String!\n  $amount: Int!\n) {\n  createCapture(\n    merchant_uid: $merchant_uid\n    authorization_id: $authorization_id\n    amount: $amount\n  ) {\n    transaction_id\n    merchant_uid\n    gross_amount\n    net_amount\n    status\n    fee_mode\n    authorization_id\n  }\n}",
+        "variables": {
+          "merchant_uid": "<MERCHANT_UID>",
+          "authorization_id": "ptl_auth_5Dw8uyq3NCg4NBVnmqBvpa",
+          "amount": 900
+        },
+        "response": {
+          "type": "error",
+          "httpStatus": 200,
+          "body": {
+            "data": null,
+            "errors": [
+              {
+                "path": [
+                  "createCapture"
+                ],
+                "data": null,
+                "errorType": "VALIDATION_ERROR",
+                "errorInfo": null,
+                "locations": [
+                  {
+                    "line": 13,
+                    "column": 5,
+                    "sourceName": null
+                  }
+                ],
+                "message": "Amount exceeds authorization amount."
+              }
+            ]
+          }
+        }
+      }
+    ]
+  },
+  {
+    "operation": "createVoidForAuthorization",
+    "operationType": "mutation",
+    "examples": [
+      {
+        "name": "Release a hold",
+        "query": "mutation CreateVoidForAuthorization($authorization_id: String!) {\n    createVoidForAuthorization(authorization_id: $authorization_id)\n  }",
+        "variables": {
+          "authorization_id": "ptl_auth_5zisQDsW7qPhRy7YFHJZvH"
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "createVoidForAuthorization": true
+            }
+          }
+        }
+      },
+      {
+        "name": "Hold was already captured",
+        "query": "mutation CreateVoidForAuthorization($authorization_id: String!) {\n    createVoidForAuthorization(authorization_id: $authorization_id)\n  }",
+        "variables": {
+          "authorization_id": "ptl_auth_5xhiVIdYV1XRd6At4B8Ioc"
+        },
+        "response": {
+          "type": "error",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "createVoidForAuthorization": null
+            },
+            "errors": [
+              {
+                "path": [
+                  "createVoidForAuthorization"
+                ],
+                "data": null,
+                "errorType": "VALIDATION_ERROR",
+                "errorInfo": null,
+                "locations": [
+                  {
+                    "line": 3,
+                    "column": 5,
+                    "sourceName": null
+                  }
+                ],
+                "message": "An authorization cannot be voided if a capture has already been performed, and can only be voided once."
+              }
+            ]
+          }
+        }
+      },
+      {
+        "name": "Authorization not found",
+        "query": "mutation CreateVoidForAuthorization($authorization_id: String!) {\n    createVoidForAuthorization(authorization_id: $authorization_id)\n  }",
+        "variables": {
+          "authorization_id": "ptl_auth_not_a_real_authorization"
+        },
+        "response": {
+          "type": "error",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "createVoidForAuthorization": null
+            },
+            "errors": [
+              {
+                "path": [
+                  "createVoidForAuthorization"
+                ],
+                "data": null,
+                "errorType": "VALIDATION_ERROR",
+                "errorInfo": null,
+                "locations": [
+                  {
+                    "line": 3,
+                    "column": 5,
+                    "sourceName": null
+                  }
+                ],
+                "message": "Authorization not found."
+              }
+            ]
+          }
+        }
+      }
+    ]
+  }
+]

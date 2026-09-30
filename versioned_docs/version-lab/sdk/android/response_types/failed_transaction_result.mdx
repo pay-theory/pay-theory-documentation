@@ -1,0 +1,51 @@
+---
+sidebar_position: 5
+sidebar_label: 'FailedTransactionResult'
+title: "FailedTransactionResult"
+---
+
+# FailedTransactionResult
+
+The `FailedTransactionResult` class represents a failed payment transaction. It provides details about the attempted payment and why it failed.
+
+For a complete list of failure codes and their descriptions, see the [Failure Codes documentation](../../../main/after_payments/failed_transactions).
+
+## Properties
+
+| Property | Type | Description |
+|----------|------|-------------|
+| state | String | The state of the transaction (will be "FAILURE") |
+| brand | String | The payment method brand (e.g., "visa", "mastercard") |
+| lastFour | String | Last four digits of the payment method |
+| receiptNumber | String | The unique transaction_id assigned to a transaction by Pay Theory for the failed transaction |
+| paymentMethodId | String | ID of the payment method that was used |
+| payorId | String | ID of the payor who attempted the payment |
+
+## Example Usage
+
+```kotlin
+class PaymentActivity : PayTheoryMerchantActivity(), Payable {
+    override fun handleFailure(result: FailedTransactionResult) {
+        // Log the failure details
+        Log.e("Payment", "Transaction failed: ${result.receiptNumber}")
+
+        // Access failed transaction information
+        val paymentInfo = """
+            Payment Method: ${result.brand} ending in ${result.lastFour}
+            Receipt Number: ${result.receiptNumber}
+            Payor ID: ${result.payorId}
+        """.trimIndent()
+
+        // Show failure UI to user
+        showError("""
+            Payment Failed
+            $paymentInfo
+            Please try again or use a different payment method.
+        """.trimIndent())
+    }
+
+    override fun handleError(error: PTError) {
+        // Handle any system errors separately
+        showError("System Error: ${error.error}")
+    }
+}

@@ -1,0 +1,10 @@
+{
+  "label": "Apple Pay",
+  "position": 2,
+  "link": {
+    "type": "generated-index",
+    "title": "Apple Pay Integration",
+    "description": "Complete guide to implementing Apple Pay with Pay Theory",
+    "slug": "/main/online_payments/wallet_transactions/apple_pay"
+  }
+}

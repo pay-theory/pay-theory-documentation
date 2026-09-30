@@ -1,0 +1,93 @@
+[
+  {
+    "operation": "users",
+    "operationType": "query",
+    "examples": [
+      {
+        "name": "Example users",
+        "description": "Returns users.",
+        "query": "query Users($user_pool: UserPool!, $merchant_uid: String) {\n  users(user_pool: $user_pool, merchant_uid: $merchant_uid) {\n  email\n  full_name\n  phone\n  user_status\n  username\n  }\n}",
+        "variables": {
+          "user_pool": "MERCHANT",
+          "merchant_uid": "example"
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "users": {
+                "email": "example",
+                "full_name": "example",
+                "phone": "example",
+                "user_status": "example",
+                "username": "example"
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "operation": "createUser",
+    "operationType": "mutation",
+    "examples": [
+      {
+        "name": "Example createUser",
+        "description": "Creates user.",
+        "query": "mutation CreateUser($input: UserInput!) {\n  createUser(input: $input) {\n  email\n  full_name\n  phone\n  user_status\n  username\n  }\n}",
+        "variables": {
+          "input": {
+            "bypass_merchant_validation": true,
+            "email": "user@example.com",
+            "first_name": "example",
+            "last_name": "example",
+            "merchant_uid": "example",
+            "phone": "+15555555555",
+            "user_pool": "MERCHANT"
+          }
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "createUser": {
+                "email": "example",
+                "full_name": "example",
+                "phone": "example",
+                "user_status": "example",
+                "username": "example"
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "operation": "deleteUser",
+    "operationType": "mutation",
+    "examples": [
+      {
+        "name": "Example deleteUser",
+        "description": "Deletes user.",
+        "query": "mutation DeleteUser($username: String!, $user_pool: UserPool!) {\n  deleteUser(username: $username, user_pool: $user_pool)\n}",
+        "variables": {
+          "username": "example",
+          "user_pool": "MERCHANT"
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "deleteUser": true
+            }
+          }
+        }
+      }
+    ]
+  }
+]

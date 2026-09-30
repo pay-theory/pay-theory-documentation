@@ -108,3 +108,34 @@ payTheory.transact(amount: 15000,
     // Handle transaction response
 }
 ```
+
+## AttestationEnvironment
+
+The `AttestationEnvironment` enum defines the environment to use for app attestation in the Pay Theory SDK.
+
+```swift
+public enum AttestationEnvironment: String, Codable {
+    case local
+    case production
+}
+```
+
+### Cases
+
+| Case | Description |
+|------|-------------|
+| `local` | Used for development and testing in Xcode local device builds. |
+| `production` | Used for TestFlight and App Store builds. |
+
+### Usage
+
+```swift
+// Example: Initializing PayTheory with local attestation environment
+let payTheory = PayTheory(
+    apiKey: "partner-sandbox-xxx",
+    attestationEnvironment: .local,
+    errorHandler: { error in
+        // Handle error
+    }
+)
+```

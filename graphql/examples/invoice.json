@@ -1,0 +1,227 @@
+[
+  {
+    "operation": "invoices",
+    "operationType": "query",
+    "examples": [
+      {
+        "name": "Example invoices",
+        "description": "Returns invoices.",
+        "query": "query Invoices($query: SqlQuery, $limit: Int, $offset: String, $direction: MoveDirection, $offset_id: String) {\n  invoices(query: $query, limit: $limit, offset: $offset, direction: $direction, offset_id: $offset_id) {\n  items {\n    invoice_id\n    created_date\n    account_code\n    currency\n    due_by\n  }\n  total_row_count\n  }\n}",
+        "variables": {
+          "query": {
+            "query_list": [
+              {
+                "conjunctive_operator": "AND_NEXT"
+              }
+            ],
+            "sort_list": [
+              {
+                "direction": "ASC"
+              }
+            ]
+          },
+          "limit": 123,
+          "offset": "example",
+          "direction": "BACKWARD",
+          "offset_id": "example"
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "invoices": {
+                "items": [
+                  {
+                    "invoice_id": "example",
+                    "created_date": "2025-01-01T00:00:00Z",
+                    "account_code": "example",
+                    "currency": "example",
+                    "due_by": "2025-01-01"
+                  }
+                ],
+                "total_row_count": 123
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "operation": "createInvoice",
+    "operationType": "mutation",
+    "examples": [
+      {
+        "name": "Example createInvoice",
+        "description": "Creates an invoice.",
+        "query": "mutation CreateInvoice($input: InvoiceInput!) {\n  createInvoice(input: $input) {\n  invoice_id\n  created_date\n  account_code\n  currency\n  due_by\n  }\n}",
+        "variables": {
+          "input": {
+            "account_code": "example",
+            "currency": "example",
+            "due_by": "2025-01-01",
+            "fee_mode": "CUSTOM_FEE",
+            "invoice_amount": 123,
+            "invoice_date": "2025-01-01",
+            "invoice_description": "example",
+            "invoice_name": "example",
+            "merchant_uid": "example",
+            "merchant_invoice_number": "example",
+            "metadata": {
+              "key": "value"
+            },
+            "payor_id": "example",
+            "payor": {
+              "address_line1": "example"
+            },
+            "reference": "example",
+            "send_email": true,
+            "settings": {
+              "accepted_payment_methods": {
+                "ach": true
+              }
+            }
+          }
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "createInvoice": {
+                "invoice_id": "example",
+                "created_date": "2025-01-01T00:00:00Z",
+                "account_code": "example",
+                "currency": "example",
+                "due_by": "2025-01-01"
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "operation": "updateInvoice",
+    "operationType": "mutation",
+    "examples": [
+      {
+        "name": "Example updateInvoice",
+        "description": "Updates an invoice.",
+        "query": "mutation UpdateInvoice($invoice_id: String!, $invoice_update_input: InvoiceUpdateInput!) {\n  updateInvoice(invoice_id: $invoice_id, invoice_update_input: $invoice_update_input)\n}",
+        "variables": {
+          "invoice_id": "example",
+          "invoice_update_input": {
+            "account_code": "example",
+            "currency": "example",
+            "due_by": "2025-01-01",
+            "fee_mode": "CUSTOM_FEE",
+            "invoice_amount": 123,
+            "invoice_date": "2025-01-01",
+            "invoice_name": "example",
+            "invoice_description": "example",
+            "merchant_invoice_number": "example",
+            "reference": "example",
+            "send_email": true,
+            "settings": {
+              "accepted_payment_methods": {
+                "ach": true
+              }
+            }
+          }
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "updateInvoice": true
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "operation": "deleteInvoice",
+    "operationType": "mutation",
+    "examples": [
+      {
+        "name": "Example deleteInvoice",
+        "description": "Deletes an invoice.",
+        "query": "mutation DeleteInvoice($invoice_id: String!) {\n  deleteInvoice(invoice_id: $invoice_id)\n}",
+        "variables": {
+          "invoice_id": "example"
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "deleteInvoice": true
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "operation": "createInvoiceEmail",
+    "operationType": "mutation",
+    "examples": [
+      {
+        "name": "Example createInvoiceEmail",
+        "description": "This call is used to resend Invoice emails for a specific invoice.",
+        "query": "mutation CreateInvoiceEmail($invoice_id: String!) {\n  createInvoiceEmail(invoice_id: $invoice_id)\n}",
+        "variables": {
+          "invoice_id": "example"
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "createInvoiceEmail": true
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "operation": "createOfflineTransaction",
+    "operationType": "mutation",
+    "examples": [
+      {
+        "name": "Example createOfflineTransaction",
+        "description": "This call is used to create an offline transaction for an invoice. Offline transactions are used to track payments that are made outside Pay Theory toward an Invoice.",
+        "query": "mutation CreateOfflineTransaction($input: OfflineTransactionInput!) {\n  createOfflineTransaction(input: $input) {\n  instance_id\n  transaction_date\n  amount\n  invoice_id\n  note\n  }\n}",
+        "variables": {
+          "input": {
+            "amount": 123,
+            "invoice_id": "example",
+            "note": "example",
+            "transaction_date": "2025-01-01",
+            "type": "ACH"
+          }
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "createOfflineTransaction": {
+                "instance_id": "example",
+                "transaction_date": "2025-01-01",
+                "amount": 123,
+                "invoice_id": "example",
+                "note": "example"
+              }
+            }
+          }
+        }
+      }
+    ]
+  }
+]

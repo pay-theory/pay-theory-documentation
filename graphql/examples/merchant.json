@@ -1,0 +1,480 @@
+[
+  {
+    "operation": "merchant",
+    "operationType": "query",
+    "examples": [
+      {
+        "name": "Read a merchant",
+        "query": "query Merchant($merchant_uid: String) {\r\n    merchant(merchant_uid: $merchant_uid) {\r\n      merchant_uid\r\n      merchant_name\r\n      card_active\r\n      ach_active\r\n      cash_active\r\n      country_code\r\n      settings {\r\n        contact_email\r\n        website\r\n      }\r\n    }\r\n  }",
+        "variables": {
+          "merchant_uid": "<MERCHANT_UID>"
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "merchant": {
+                "merchant_uid": "<MERCHANT_UID>",
+                "merchant_name": "<MERCHANT_NAME>",
+                "card_active": true,
+                "ach_active": true,
+                "cash_active": true,
+                "country_code": "USA",
+                "settings": {
+                  "contact_email": null,
+                  "website": null
+                }
+              }
+            }
+          }
+        },
+        "description": "Reads merchant details for the key."
+      },
+      {
+        "name": "Merchant not found",
+        "query": "query Merchant($merchant_uid: String) {\r\n    merchant(merchant_uid: $merchant_uid) {\r\n      merchant_uid\r\n      merchant_name\r\n      card_active\r\n      ach_active\r\n      cash_active\r\n      country_code\r\n      settings {\r\n        contact_email\r\n        website\r\n      }\r\n    }\r\n  }",
+        "variables": {
+          "merchant_uid": "example"
+        },
+        "response": {
+          "type": "error",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "merchant": null
+            },
+            "errors": [
+              {
+                "path": [
+                  "merchant"
+                ],
+                "data": null,
+                "errorType": "NOT_FOUND",
+                "errorInfo": {
+                  "arguments": {
+                    "merchant_uid": "example"
+                  }
+                },
+                "locations": [
+                  {
+                    "line": 3,
+                    "column": 5,
+                    "sourceName": null
+                  }
+                ],
+                "message": "Merchant not found."
+              }
+            ]
+          }
+        },
+        "description": "Returns an error when the merchant_uid does not exist."
+      }
+    ]
+  },
+  {
+    "operation": "merchants",
+    "operationType": "query",
+    "examples": [
+      {
+        "name": "List merchants",
+        "query": "query Merchants($limit: Int) {\n  merchants(limit: $limit) {\n    items {\n      merchant_uid\n      merchant_name\n      card_active\n      ach_active\n      cash_active\n      country_code\n      parent_merchant_uid\n    }\n    total_row_count\n  }\n}",
+        "variables": {
+          "limit": 2
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "merchants": {
+                "items": [
+                  {
+                    "merchant_uid": "<MERCHANT_UID>",
+                    "merchant_name": "<MERCHANT_NAME>",
+                    "card_active": true,
+                    "ach_active": true,
+                    "cash_active": true,
+                    "country_code": "USA",
+                    "parent_merchant_uid": null
+                  }
+                ],
+                "total_row_count": 1
+              }
+            }
+          }
+        },
+        "description": "Lists merchants visible to the key."
+      },
+      {
+        "name": "Filter by merchant name",
+        "query": "query Merchants($query: SqlQuery, $limit: Int) {\n  merchants(query: $query, limit: $limit) {\n    items {\n      merchant_uid\n      merchant_name\n      card_active\n      ach_active\n      cash_active\n      country_code\n      parent_merchant_uid\n    }\n    total_row_count\n  }\n}",
+        "variables": {
+          "query": {
+            "query_list": [
+              {
+                "key": "merchant_name",
+                "value": "<MERCHANT_NAME>",
+                "operator": "EQUAL"
+              }
+            ]
+          },
+          "limit": 2
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "merchants": {
+                "items": [
+                  {
+                    "merchant_uid": "<MERCHANT_UID>",
+                    "merchant_name": "<MERCHANT_NAME>",
+                    "card_active": true,
+                    "ach_active": true,
+                    "cash_active": true,
+                    "country_code": "USA",
+                    "parent_merchant_uid": null
+                  }
+                ],
+                "total_row_count": 1
+              }
+            }
+          }
+        },
+        "description": "Filters visible merchants by merchant_name."
+      },
+      {
+        "name": "Invalid column",
+        "query": "query Merchants($query: SqlQuery, $limit: Int) {\n  merchants(query: $query, limit: $limit) {\n    items {\n      merchant_uid\n      merchant_name\n      card_active\n      ach_active\n      cash_active\n      country_code\n      parent_merchant_uid\n    }\n    total_row_count\n  }\n}",
+        "variables": {
+          "query": {
+            "query_list": [
+              {
+                "key": "not_a_column",
+                "value": "x",
+                "operator": "EQUAL"
+              }
+            ]
+          },
+          "limit": 2
+        },
+        "response": {
+          "type": "error",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "merchants": null
+            },
+            "errors": [
+              {
+                "path": [
+                  "merchants"
+                ],
+                "data": null,
+                "errorType": "VALIDATION_ERROR",
+                "errorInfo": null,
+                "message": "The call is refused for an unknown query column."
+              }
+            ]
+          }
+        },
+        "description": "Returns an error when the query filter uses an unknown column. The raw database error from this defect is intentionally omitted."
+      }
+    ]
+  },
+  {
+    "operation": "createMerchant",
+    "operationType": "mutation",
+    "examples": [
+      {
+        "name": "Create a merchant",
+        "query": "mutation CreateMerchant(\n  $merchant_name: String!\n  $metadata: AWSJSON\n) {\n  createMerchant(\n    merchant_name: $merchant_name\n    metadata: $metadata\n  ) {\n    merchant_uid\n    merchant_name\n    parent_merchant_uid\n    ach_active\n    card_active\n    cash_active\n    country_code\n    is_system\n    submitted_onboarding\n    metadata\n  }\n}",
+        "variables": {
+          "merchant_name": "e2e-doc-abca89f1-child",
+          "metadata": "{\"created_by\":\"docs-example\"}"
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "createMerchant": {
+                "merchant_uid": "<NEW_MERCHANT_UID>",
+                "merchant_name": "e2e-doc-abca89f1-child",
+                "parent_merchant_uid": null,
+                "ach_active": true,
+                "card_active": true,
+                "cash_active": true,
+                "country_code": "USA",
+                "is_system": false,
+                "submitted_onboarding": true,
+                "metadata": "{\"created_by\":\"docs-example\"}"
+              }
+            }
+          }
+        },
+        "description": "Creates a merchant with a partner key."
+      },
+      {
+        "name": "Merchant key cannot create merchant",
+        "query": "mutation CreateMerchant($merchant_name: String!) {\n  createMerchant(merchant_name: $merchant_name) {\n    merchant_uid\n    merchant_name\n    parent_merchant_uid\n    ach_active\n    card_active\n    cash_active\n    country_code\n    is_system\n    submitted_onboarding\n    metadata\n  }\n}",
+        "variables": {
+          "merchant_name": "e2e-doc-abca89f1-refused"
+        },
+        "response": {
+          "type": "error",
+          "httpStatus": 200,
+          "body": {
+            "data": null,
+            "errors": [
+              {
+                "path": [
+                  "createMerchant"
+                ],
+                "data": null,
+                "errorType": "Lambda:Unhandled",
+                "errorInfo": null,
+                "locations": [
+                  {
+                    "line": 8,
+                    "column": 5,
+                    "sourceName": null
+                  }
+                ],
+                "message": "You do not have permission to create a merchant."
+              }
+            ]
+          }
+        },
+        "description": "Returns an error when a merchant key tries to create a merchant."
+      },
+      {
+        "name": "Parent merchant not found",
+        "query": "mutation CreateMerchant(\n  $merchant_name: String!\n  $parent_merchant_uid: String\n) {\n  createMerchant(\n    merchant_name: $merchant_name\n    parent_merchant_uid: $parent_merchant_uid\n  ) {\n    merchant_uid\n    merchant_name\n    parent_merchant_uid\n    ach_active\n    card_active\n    cash_active\n    country_code\n    is_system\n    submitted_onboarding\n    metadata\n  }\n}",
+        "variables": {
+          "merchant_name": "e2e-doc-abca89f1-orphan",
+          "parent_merchant_uid": "not-a-merchant"
+        },
+        "response": {
+          "type": "error",
+          "httpStatus": 200,
+          "body": {
+            "data": null,
+            "errors": [
+              {
+                "path": [
+                  "createMerchant"
+                ],
+                "data": null,
+                "errorType": "Lambda:Unhandled",
+                "errorInfo": null,
+                "locations": [
+                  {
+                    "line": 8,
+                    "column": 5,
+                    "sourceName": null
+                  }
+                ],
+                "message": "Parent merchant not found."
+              }
+            ]
+          }
+        },
+        "description": "Returns an error when parent_merchant_uid does not exist."
+      },
+      {
+        "name": "Read the new merchant",
+        "query": "query CreatedMerchant($merchant_uid: String) {\r\n    merchant(merchant_uid: $merchant_uid) {\r\n      merchant_uid\r\n      merchant_name\r\n      parent_merchant_uid\r\n      ach_active\r\n      card_active\r\n      cash_active\r\n      country_code\r\n      metadata\r\n    }\r\n  }",
+        "variables": {
+          "merchant_uid": "<NEW_MERCHANT_UID>"
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "merchant": {
+                "merchant_uid": "<NEW_MERCHANT_UID>",
+                "merchant_name": "e2e-doc-abca89f1-child",
+                "parent_merchant_uid": null,
+                "ach_active": true,
+                "card_active": true,
+                "cash_active": true,
+                "country_code": "USA",
+                "metadata": "{\"created_by\":\"docs-example\"}"
+              }
+            }
+          }
+        },
+        "description": "Reads the newly created merchant after the read model catches up."
+      }
+    ]
+  },
+  {
+    "operation": "updateFeeMatrix",
+    "operationType": "mutation",
+    "examples": [
+      {
+        "name": "Example updateFeeMatrix",
+        "description": ":::note Limited Access This mutation is only available to users with Partner level access. Please contact Pay Theory support if you need to update a merchant's fee matrix and do not have Partner level access. :::",
+        "query": "mutation UpdateFeeMatrix($fee_matrix: FeeMatrixInput!) {\n  updateFeeMatrix(fee_matrix: $fee_matrix) {\n  merchant_uid\n  card_account_updater\n  ach_return_disputed_fee\n  ach_return_fee\n  cash\n  }\n}",
+        "variables": {
+          "fee_matrix": {
+            "ach": {
+              "merchant_fee": {
+                "basis_points": 123
+              },
+              "service_fee": {
+                "basis_points": 123,
+                "fixed": 123
+              }
+            },
+            "ach_return_fee": 123,
+            "ach_return_disputed_fee": 123,
+            "business_credit": {
+              "merchant_fee": {
+                "basis_points": 123,
+                "fixed": 123
+              },
+              "service_fee": {
+                "basis_points": 123,
+                "fixed": 123
+              }
+            },
+            "business_debit": {
+              "merchant_fee": {
+                "basis_points": 123,
+                "fixed": 123
+              },
+              "service_fee": {
+                "basis_points": 123,
+                "fixed": 123
+              }
+            },
+            "amex": {
+              "merchant_fee": {
+                "basis_points": 123,
+                "fixed": 123
+              }
+            },
+            "card": {
+              "merchant_fee": {
+                "basis_points": 123,
+                "fixed": 123
+              },
+              "service_fee": {
+                "basis_points": 123,
+                "fixed": 123
+              }
+            },
+            "card_account_updater": 123,
+            "cash": 123,
+            "chargeback_fee": 123,
+            "credit_card": {
+              "merchant_fee": {
+                "basis_points": 123,
+                "fixed": 123
+              },
+              "service_fee": {
+                "basis_points": 123,
+                "fixed": 123
+              }
+            },
+            "debit_card": {
+              "merchant_fee": {
+                "basis_points": 123,
+                "fixed": 123
+              },
+              "service_fee": {
+                "basis_points": 123,
+                "fixed": 123
+              }
+            },
+            "discover": {
+              "merchant_fee": {
+                "basis_points": 123,
+                "fixed": 123
+              }
+            },
+            "interchange_plus": true,
+            "international_card_basis": 123,
+            "mastercard": {
+              "merchant_fee": {
+                "basis_points": 123,
+                "fixed": 123
+              }
+            },
+            "merchant_uid": "example",
+            "prepaid_card": {
+              "merchant_fee": {
+                "basis_points": 123,
+                "fixed": 123
+              },
+              "service_fee": {
+                "basis_points": 123,
+                "fixed": 123
+              }
+            },
+            "service_fee_enabled": true,
+            "visa": {
+              "merchant_fee": {
+                "basis_points": 123,
+                "fixed": 123
+              }
+            }
+          }
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "updateFeeMatrix": {
+                "merchant_uid": "example",
+                "card_account_updater": 123,
+                "ach_return_disputed_fee": 123,
+                "ach_return_fee": 123,
+                "cash": 123
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "operation": "updateMerchantSettings",
+    "operationType": "mutation",
+    "examples": [
+      {
+        "name": "Example updateMerchantSettings",
+        "description": "Updates merchant settings.",
+        "query": "mutation UpdateMerchantSettings($merchant_uid: ID!, $settings: MerchantSettingsInput!) {\n  updateMerchantSettings(merchant_uid: $merchant_uid, settings: $settings)\n}",
+        "variables": {
+          "merchant_uid": "id_123",
+          "settings": {
+            "contact_email": "user@example.com",
+            "contact_phone": "+15555555555",
+            "facebook": "https://example.com",
+            "instagram": "https://example.com",
+            "linkedin": "https://example.com",
+            "tiktok": "https://example.com",
+            "twitter": "https://example.com",
+            "website": "https://example.com"
+          }
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "updateMerchantSettings": true
+            }
+          }
+        }
+      }
+    ]
+  }
+]

@@ -1,0 +1,170 @@
+[
+  {
+    "operation": "settlements",
+    "operationType": "query",
+    "examples": [
+      {
+        "name": "Example settlements",
+        "description": "Returns settlements.",
+        "query": "query Settlements($query: SqlQuery, $limit: Int, $offset: String, $direction: MoveDirection, $offset_id: String) {\n  settlements(query: $query, limit: $limit, offset: $offset, direction: $direction, offset_id: $offset_id) {\n  items {\n    merchant_uid\n    settlement_date\n    currency\n    gross_amount\n    gross_amount_64bit\n  }\n  total_row_count\n  }\n}",
+        "variables": {
+          "query": {
+            "query_list": [
+              {
+                "conjunctive_operator": "AND_NEXT"
+              }
+            ],
+            "sort_list": [
+              {
+                "direction": "ASC"
+              }
+            ]
+          },
+          "limit": 123,
+          "offset": "example",
+          "direction": "BACKWARD",
+          "offset_id": "example"
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "settlements": {
+                "items": [
+                  {
+                    "merchant_uid": "example",
+                    "settlement_date": "2025-01-01T00:00:00Z",
+                    "currency": "example",
+                    "gross_amount": 123,
+                    "gross_amount_64bit": "example"
+                  }
+                ],
+                "total_row_count": 123
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "operation": "createBatchCapture",
+    "operationType": "mutation",
+    "examples": [
+      {
+        "name": "Example createBatchCapture",
+        "description": "This mutation will capture all PENDING transactions for a merchant in a batch and shortly after create a settlement for the merchant.",
+        "query": "mutation CreateBatchCapture($merchant_uid: String!) {\n  createBatchCapture(merchant_uid: $merchant_uid)\n}",
+        "variables": {
+          "merchant_uid": "example"
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "createBatchCapture": true
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "operation": "availableFundsBalance",
+    "operationType": "query",
+    "examples": [
+      {
+        "name": "Example availableFundsBalance",
+        "description": "This query returns the instructional hold and reserve balances for a merchant, along with the instruction window status.",
+        "query": "query AvailableFundsBalance($merchant_uid: ID!) {\n  availableFundsBalance(merchant_uid: $merchant_uid) {\n  instructional_hold_balance_updated\n  instruction_window_status\n  instructional_hold_balance\n  reserve_balance\n  }\n}",
+        "variables": {
+          "merchant_uid": "id_123"
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "availableFundsBalance": {
+                "instructional_hold_balance_updated": true,
+                "instruction_window_status": "example",
+                "instructional_hold_balance": "example",
+                "reserve_balance": "example"
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "operation": "fundingTransfers",
+    "operationType": "query",
+    "examples": [
+      {
+        "name": "Example fundingTransfers",
+        "description": "Returns funding transfers.",
+        "query": "query FundingTransfers($merchant_uid: ID!, $settlement_batch: Int!) {\n  fundingTransfers(merchant_uid: $merchant_uid, settlement_batch: $settlement_batch) {\n  transfers {\n    id\n    transfer_date\n    ach_return\n    amount\n    created_at\n  }\n  }\n}",
+        "variables": {
+          "merchant_uid": "id_123",
+          "settlement_batch": 123
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "fundingTransfers": {
+                "transfers": [
+                  {
+                    "id": "id_123",
+                    "transfer_date": "2025-01-01T00:00:00Z",
+                    "ach_return": {
+                      "key": "value"
+                    },
+                    "amount": "example",
+                    "created_at": "2025-01-01T00:00:00Z"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "operation": "instruction",
+    "operationType": "query",
+    "examples": [
+      {
+        "name": "Example instruction",
+        "description": "Returns instruction.",
+        "query": "query Instruction($merchant_uid: ID!, $date: AWSDate!) {\n  instruction(merchant_uid: $merchant_uid, date: $date) {\n  id\n  date\n  amount\n  merchant_uid\n  metadata\n  }\n}",
+        "variables": {
+          "merchant_uid": "id_123",
+          "date": "2025-01-01"
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "instruction": {
+                "id": "id_123",
+                "date": "2025-01-01",
+                "amount": "example",
+                "merchant_uid": "id_123",
+                "metadata": {
+                  "key": "value"
+                }
+              }
+            }
+          }
+        }
+      }
+    ]
+  }
+]

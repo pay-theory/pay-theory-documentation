@@ -1,0 +1,70 @@
+[
+  {
+    "operation": "cancelSettlementInstruction",
+    "operationType": "mutation",
+    "examples": [
+      {
+        "name": "Example cancelSettlementInstruction",
+        "description": "Cancels settlement instruction.",
+        "query": "mutation CancelSettlementInstruction($merchant_uid: ID!) {\n  cancelSettlementInstruction(merchant_uid: $merchant_uid) {\n  id\n  date\n  amount\n  merchant_uid\n  metadata\n  }\n}",
+        "variables": {
+          "merchant_uid": "id_123"
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "cancelSettlementInstruction": {
+                "id": "id_123",
+                "date": "2025-01-01",
+                "amount": "example",
+                "merchant_uid": "id_123",
+                "metadata": {
+                  "key": "value"
+                }
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "operation": "createSettlementInstruction",
+    "operationType": "mutation",
+    "examples": [
+      {
+        "name": "Example createSettlementInstruction",
+        "description": "This mutation creates an instructional funding request for a merchant.",
+        "query": "mutation CreateSettlementInstruction($input: CreateSettlementInstructionInput!) {\n  createSettlementInstruction(input: $input) {\n  instruction_id\n  scheduled_processing_date\n  metadata\n  projected_reserve_balance\n  settlement_batch\n  }\n}",
+        "variables": {
+          "input": {
+            "merchant_uid": "id_123",
+            "amount": "example",
+            "metadata": {
+              "key": "value"
+            }
+          }
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "createSettlementInstruction": {
+                "instruction_id": "id_123",
+                "scheduled_processing_date": "2025-01-01T00:00:00Z",
+                "metadata": {
+                  "key": "value"
+                },
+                "projected_reserve_balance": "example",
+                "settlement_batch": 123
+              }
+            }
+          }
+        }
+      }
+    ]
+  }
+]

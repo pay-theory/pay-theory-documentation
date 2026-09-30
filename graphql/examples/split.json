@@ -1,0 +1,51 @@
+[
+  {
+    "operation": "splits",
+    "operationType": "query",
+    "examples": [
+      {
+        "name": "Example splits",
+        "description": "Returns splits.",
+        "query": "query Splits($query: SqlQuery, $limit: Int, $offset: String, $direction: MoveDirection, $offset_id: String) {\n  splits(query: $query, limit: $limit, offset: $offset, direction: $direction, offset_id: $offset_id) {\n  items {\n    id\n    created_at\n    account_code\n    amount\n    currency\n  }\n  total_row_count\n  }\n}",
+        "variables": {
+          "query": {
+            "query_list": [
+              {
+                "conjunctive_operator": "AND_NEXT"
+              }
+            ],
+            "sort_list": [
+              {
+                "direction": "ASC"
+              }
+            ]
+          },
+          "limit": 123,
+          "offset": "example",
+          "direction": "BACKWARD",
+          "offset_id": "example"
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "splits": {
+                "items": [
+                  {
+                    "id": "example",
+                    "created_at": "2025-01-01T00:00:00Z",
+                    "account_code": "example",
+                    "amount": 123,
+                    "currency": "example"
+                  }
+                ],
+                "total_row_count": 123
+              }
+            }
+          }
+        }
+      }
+    ]
+  }
+]

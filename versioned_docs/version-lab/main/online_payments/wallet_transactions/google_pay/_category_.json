@@ -1,0 +1,10 @@
+{
+  "label": "Google Pay",
+  "position": 3,
+  "link": {
+    "type": "generated-index",
+    "title": "Google Pay Integration",
+    "description": "Complete guide to implementing Google Pay with Pay Theory",
+    "slug": "/main/online_payments/wallet_transactions/google_pay"
+  }
+}

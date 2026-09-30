@@ -1,0 +1,124 @@
+---
+sidebar_position: 4
+sidebar_label: 'processWalletTransaction'
+title: 'processWalletTransaction'
+---
+
+# processWalletTransaction
+
+Processes a digital wallet transaction for Apple Pay, Google Pay, or Paze.
+
+---
+
+## Function
+
+```javascript
+await messenger.processWalletTransaction(payload);
+```
+
+---
+
+## Parameters
+
+| Parameter | Type   | Required | Description                |
+| --------- | ------ | -------- | -------------------------- |
+| payload   | Object | Yes      | Transaction payload object |
+
+### Payload Attributes
+
+| Attribute              | Type    | Required | Description                                           |
+| ---------------------- | ------- | -------- | ----------------------------------------------------- |
+| amount                 | Number  | Yes      | Transaction amount in cents                           |
+| digitalWalletPayload   | Object  | Yes      | Payment data from the digital wallet                  |
+| walletType             | String  | Yes      | Type of wallet ('APPLE_PAY', 'GOOGLE_PAY', or 'PAZE') |
+| payor                  | Object  | No       | Payor information object                              |
+| reference              | String  | No       | Custom reference for the transaction                  |
+| accountCode            | String  | No       | Account code for the transaction                      |
+| metadata               | Object  | No       | Custom metadata to store with the transaction         |
+| additionalPurchaseData | Object  | No       | Additional purchase information                       |
+| billingAddress         | Object  | No       | Billing address information                           |
+| fee                    | Number  | No       | Fee amount in cents                                   |
+| healthExpenseType      | String  | No       | Type of health expense                                |
+| invoiceId              | String  | No       | Associated invoice ID                                 |
+| receiptDescription     | String  | No       | Description for the receipt                           |
+| payorId                | String  | No       | Existing payor ID                                     |
+| recurringId            | String  | No       | Associated recurring payment ID                       |
+| sendReceipt            | Boolean | No       | Whether to send a receipt email                       |
+| split                  | Object  | No       | Split payment configuration                           |
+
+---
+
+## Payor Object
+
+```javascript
+{
+  full_name: String;
+  email: String;
+  phone: String;
+  address_line1: String;
+  address_line2: String;
+  city: String;
+  region: String;
+  postal_code: String;
+  country: String;
+}
+```
+
+---
+
+## Returns
+
+```javascript
+{
+  type: String; // 'SUCCESS' or 'ERROR'
+  transaction: Object;
+  error: String;
+}
+```
+
+| Key         | Type                                 | Description                                                 |
+| ----------- | ------------------------------------ | ----------------------------------------------------------- |
+| type        | String                               | Response type indicating success or error                   |
+| transaction | [Transaction](../../../api/types/types/transaction) | Contains the transaction, payment method, and payor objects |
+| error       | String                               | Error message if the transaction failed                     |
+
+---
+
+## Usage
+
+```javascript
+const payload = {
+  amount: 1000, // $10.00
+  digitalWalletPayload: paymentData, // From Apple Pay, Google Pay, etc.
+  walletType: PayTheoryMessenger.applePay, // or 'APPLE_PAY'
+  payor: {
+    full_name: 'Jane Doe',
+    email: 'jane@example.com',
+    phone: '+15551234567',
+    address_line1: '123 Main St',
+    address_line2: 'Apt 4',
+    city: 'Austin',
+    region: 'TX',
+    postal_code: '78701',
+    country: 'USA',
+  },
+};
+
+const result = await messenger.processWalletTransaction(payload);
+
+if (result.type === 'SUCCESS') {
+  console.log('Transaction successful:', result.transaction.transaction_id);
+} else {
+  console.error('Transaction failed:', result.error);
+}
+```
+
+---
+
+## Notes
+
+- The messenger must be initialized before calling this method
+- The `walletType` must match the type of `digitalWalletPayload` provided
+- The method automatically handles token refresh if needed
+- Failed transactions will trigger the 'transaction_error' event
+- Successful transactions will trigger the 'transaction_complete' event
