@@ -1,0 +1,13 @@
+{
+  "$schema": "https://schemas.agentskills.io/discovery/0.2.0/schema.json",
+  "skills": [
+    {
+      "name": "penny",
+      "type": "archive",
+      "description": "Use for Pay Theory integration work for external developers: Lab or Live setup, the vanilla JavaScript SDK and hosted fields, GraphQL reporting, webhooks, sandbox tests, security reviews, go-live, error triage, or integration repo reviews.",
+      "url": "/assets/files/pai-agent-skill-4f8a0dbf5026889b1e9d21a6ee2692e2.zip",
+      "digest": "sha256:152ca40b7792f688d75fcc543874632bf4ca023be4f2400b7b6e217623604c6e",
+      "version": "1.0.0"
+    }
+  ]
+}

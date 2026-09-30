@@ -52,6 +52,10 @@ const introDocs = [
     source: './graphql/intro_docs/query.md',
     outputPath: 'intro/query.mdx',
   },
+  {
+    source: './graphql/intro_docs/pai-agent-skill.md',
+    outputPath: 'intro/pai-agent-skill.mdx',
+  },
 ];
 
 const mainSidebarPath = path.resolve(__dirname, 'sidebars.js');

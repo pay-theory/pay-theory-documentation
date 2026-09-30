@@ -570,6 +570,11 @@ const __gqlDocsItems = [
   },
   {
     type: 'doc',
+    id: 'api/intro/pai-agent-skill',
+    label: 'PAI Agent Skill',
+  },
+  {
+    type: 'doc',
     id: 'api/intro/ai-agent-skill',
     label: 'AI Agent Skill',
   },
