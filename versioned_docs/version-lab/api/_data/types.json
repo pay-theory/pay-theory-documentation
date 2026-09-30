@@ -48639,7 +48639,7 @@
       },
       {
         "name": "transaction_id",
-        "description": "Pay Theory unique identifier for the transaction.",
+        "description": "Full void: no new transaction ID handed back. Partial void: new transaction ID for the adjusted debit. Refund: transaction ID points to the reversal.",
         "type": {
           "kind": "TYPE_REF",
           "name": "String",

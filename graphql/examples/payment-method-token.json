@@ -213,7 +213,7 @@
         }
       },
       {
-        "name": "Save a bank account",
+        "name": "Save an ACH account",
         "query": "mutation CreatePaymentMethod(\n  $merchant_uid: String!\n  $payment_method: PaymentMethodInput!\n) {\n  createPaymentMethod(\n    merchant_uid: $merchant_uid\n    payment_method: $payment_method\n  ) {\n    payment_method_id\n    merchant_uid\n    payment_type\n    last_four\n    card_brand\n    exp_date\n    full_name\n    is_active\n  }\n}",
         "variables": {
           "merchant_uid": "<MERCHANT_UID>",
@@ -241,6 +241,45 @@
                 "merchant_uid": "<MERCHANT_UID>",
                 "payment_type": "ACH",
                 "last_four": "0016",
+                "card_brand": null,
+                "exp_date": null,
+                "full_name": "Jane Accountholder",
+                "is_active": true
+              }
+            }
+          }
+        }
+      },
+      {
+        "name": "Save an EFT account",
+        "query": "mutation CreatePaymentMethod(\n  $merchant_uid: String!\n  $payment_method: PaymentMethodInput!\n) {\n  createPaymentMethod(\n    merchant_uid: $merchant_uid\n    payment_method: $payment_method\n  ) {\n    payment_method_id\n    merchant_uid\n    payment_type\n    last_four\n    card_brand\n    exp_date\n    full_name\n    is_active\n  }\n}",
+        "variables": {
+          "merchant_uid": "<MERCHANT_UID>",
+          "payment_method": {
+            "canadian_eft": {
+              "account_number": "123456789012",
+              "account_type": "PERSONAL_CHECKING",
+              "institution_number": "001",
+              "name_on_account": "Jane Accountholder",
+              "transit_number": "12345"
+            },
+            "payor": {
+              "full_name": "Jane Accountholder",
+              "email": "payor@example.com",
+              "merchant_uid": "<MERCHANT_UID>"
+            }
+          }
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "createPaymentMethod": {
+                "payment_method_id": "ptl_pmt_6GjzC7fqWHHQcUQ4S39V2n",
+                "merchant_uid": "<MERCHANT_UID>",
+                "payment_type": "ACH",
+                "last_four": "9012",
                 "card_brand": null,
                 "exp_date": null,
                 "full_name": "Jane Accountholder",

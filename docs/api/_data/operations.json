@@ -5668,7 +5668,7 @@
           }
         },
         {
-          "name": "Save a bank account",
+          "name": "Save an ACH account",
           "query": "mutation CreatePaymentMethod(\n  $merchant_uid: String!\n  $payment_method: PaymentMethodInput!\n) {\n  createPaymentMethod(\n    merchant_uid: $merchant_uid\n    payment_method: $payment_method\n  ) {\n    payment_method_id\n    merchant_uid\n    payment_type\n    last_four\n    card_brand\n    exp_date\n    full_name\n    is_active\n  }\n}",
           "variables": {
             "merchant_uid": "<MERCHANT_UID>",
@@ -5696,6 +5696,45 @@
                   "merchant_uid": "<MERCHANT_UID>",
                   "payment_type": "ACH",
                   "last_four": "0016",
+                  "card_brand": null,
+                  "exp_date": null,
+                  "full_name": "Jane Accountholder",
+                  "is_active": true
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Save an EFT account",
+          "query": "mutation CreatePaymentMethod(\n  $merchant_uid: String!\n  $payment_method: PaymentMethodInput!\n) {\n  createPaymentMethod(\n    merchant_uid: $merchant_uid\n    payment_method: $payment_method\n  ) {\n    payment_method_id\n    merchant_uid\n    payment_type\n    last_four\n    card_brand\n    exp_date\n    full_name\n    is_active\n  }\n}",
+          "variables": {
+            "merchant_uid": "<MERCHANT_UID>",
+            "payment_method": {
+              "canadian_eft": {
+                "account_number": "123456789012",
+                "account_type": "PERSONAL_CHECKING",
+                "institution_number": "001",
+                "name_on_account": "Jane Accountholder",
+                "transit_number": "12345"
+              },
+              "payor": {
+                "full_name": "Jane Accountholder",
+                "email": "payor@example.com",
+                "merchant_uid": "<MERCHANT_UID>"
+              }
+            }
+          },
+          "response": {
+            "type": "success",
+            "httpStatus": 200,
+            "body": {
+              "data": {
+                "createPaymentMethod": {
+                  "payment_method_id": "ptl_pmt_6GjzC7fqWHHQcUQ4S39V2n",
+                  "merchant_uid": "<MERCHANT_UID>",
+                  "payment_type": "ACH",
+                  "last_four": "9012",
                   "card_brand": null,
                   "exp_date": null,
                   "full_name": "Jane Accountholder",
@@ -7404,7 +7443,7 @@
           }
         },
         {
-          "name": "Charge a bank account",
+          "name": "Charge an ACH account",
           "description": "Creates an ACH transaction by passing bank account details directly in payment_method.",
           "query": "mutation CreateTransaction(\n  $merchant_uid: String!\n  $amount: Int!\n  $payment_method: PaymentMethodInput\n  $fee_mode: FeeMode\n) {\n  createTransaction(\n    merchant_uid: $merchant_uid\n    amount: $amount\n    payment_method: $payment_method\n    fee_mode: $fee_mode\n  ) {\n    transaction_id\n    merchant_uid\n    gross_amount\n    net_amount\n    currency\n    status\n    fee_mode\n    fees\n    transaction_type\n    transaction_date\n  }\n}",
           "variables": {
@@ -7441,6 +7480,50 @@
                   "fees": 43,
                   "transaction_type": "DEBIT",
                   "transaction_date": "2026-09-02T20:55:52.0Z"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Charge an EFT account",
+          "description": "Creates an EFT transaction by passing Canadian bank account details directly in payment_method.",
+          "query": "mutation CreateTransaction(\n  $merchant_uid: String!\n  $amount: Int!\n  $payment_method: PaymentMethodInput\n  $fee_mode: FeeMode\n) {\n  createTransaction(\n    merchant_uid: $merchant_uid\n    amount: $amount\n    payment_method: $payment_method\n    fee_mode: $fee_mode\n  ) {\n    transaction_id\n    merchant_uid\n    gross_amount\n    net_amount\n    currency\n    status\n    fee_mode\n    fees\n    transaction_type\n    transaction_date\n  }\n}",
+          "variables": {
+            "merchant_uid": "<MERCHANT_UID>",
+            "amount": 700,
+            "payment_method": {
+              "canadian_eft": {
+                "account_number": "123456789012",
+                "account_type": "PERSONAL_CHECKING",
+                "institution_number": "001",
+                "name_on_account": "Jane Accountholder",
+                "transit_number": "12345"
+              },
+              "payor": {
+                "full_name": "Jane Accountholder",
+                "email": "payor@example.com",
+                "merchant_uid": "<MERCHANT_UID>"
+              }
+            },
+            "fee_mode": "MERCHANT_FEE"
+          },
+          "response": {
+            "type": "success",
+            "httpStatus": 200,
+            "body": {
+              "data": {
+                "createTransaction": {
+                  "transaction_id": "ptl_txn_6PYLsHWqPe9cEpSdA72GRW",
+                  "merchant_uid": "<MERCHANT_UID>",
+                  "gross_amount": 700,
+                  "net_amount": 657,
+                  "currency": "USD",
+                  "status": "PENDING",
+                  "fee_mode": "MERCHANT_FEE",
+                  "fees": 43,
+                  "transaction_type": "DEBIT",
+                  "transaction_date": "2026-09-02T20:55:53.0Z"
                 }
               }
             }
@@ -8239,7 +8322,8 @@
       "isDeprecated": false,
       "examples": [
         {
-          "name": "Refund or void a transaction",
+          "name": "Full void",
+          "description": "Voids the full unsettled transaction. No new transaction ID is handed back.",
           "query": "mutation CreateReversal(\n  $transaction_id: String!\n  $amount: Int!\n  $refund_reason: RefundReasonInput!\n) {\n  createReversal(\n    transaction_id: $transaction_id\n    amount: $amount\n    refund_reason: $refund_reason\n  ) {\n    is_void\n    transaction_id\n  }\n}",
           "variables": {
             "amount": 700,
@@ -8263,46 +8347,33 @@
           }
         },
         {
-          "name": "Check the voided transaction",
-          "query": "query ReversalTransaction($query: SqlQuery, $limit: Int) {\n    transactions(query: $query, limit: $limit) {\n      items {\n        transaction_id\n        merchant_uid\n        status\n        is_settled\n        refunded_amount\n        gross_amount\n        transaction_type\n        parent_id\n      }\n      total_row_count\n    }\n  }",
+          "name": "Partial void",
+          "description": "Voids part of an unsettled transaction. The transaction ID is for the adjusted debit.",
+          "query": "mutation CreateReversal(\n  $transaction_id: String!\n  $amount: Int!\n  $refund_reason: RefundReasonInput!\n) {\n  createReversal(\n    transaction_id: $transaction_id\n    amount: $amount\n    refund_reason: $refund_reason\n  ) {\n    is_void\n    transaction_id\n  }\n}",
           "variables": {
-            "limit": 1,
-            "query": {
-              "query_list": [
-                {
-                  "key": "transaction_id",
-                  "operator": "EQUAL",
-                  "value": "ptl_txn_5fQ5C9zB7yqrfahxst1nJ8"
-                }
-              ]
-            }
+            "amount": 5000,
+            "refund_reason": {
+              "reason_code": "REQUESTED_BY_CUSTOMER",
+              "reason_details": "Docs example"
+            },
+            "transaction_id": "ptl_txn_2DUMuZpP6ox6ZrWnUyS3Fe"
           },
           "response": {
             "type": "success",
             "httpStatus": 200,
             "body": {
               "data": {
-                "transactions": {
-                  "items": [
-                    {
-                      "transaction_id": "ptl_txn_5fQ5C9zB7yqrfahxst1nJ8",
-                      "merchant_uid": "<MERCHANT_UID>",
-                      "status": "VOIDED",
-                      "is_settled": false,
-                      "refunded_amount": 0,
-                      "gross_amount": 700,
-                      "transaction_type": "DEBIT",
-                      "parent_id": null
-                    }
-                  ],
-                  "total_row_count": 1
+                "createReversal": {
+                  "is_void": true,
+                  "transaction_id": "ptl_txn_7D8hjxJp7D3yK7MJfRbWg1"
                 }
               }
             }
           }
         },
         {
-          "name": "Invalid transaction id",
+          "name": "Refund after capture",
+          "description": "Refunds a captured transaction. The transaction ID points to the reversal.",
           "query": "mutation CreateReversal(\n  $transaction_id: String!\n  $amount: Int!\n  $refund_reason: RefundReasonInput!\n) {\n  createReversal(\n    transaction_id: $transaction_id\n    amount: $amount\n    refund_reason: $refund_reason\n  ) {\n    is_void\n    transaction_id\n  }\n}",
           "variables": {
             "amount": 100,
@@ -8310,59 +8381,18 @@
               "reason_code": "REQUESTED_BY_CUSTOMER",
               "reason_details": "Docs example"
             },
-            "transaction_id": "ptl_txn_not_a_real_id"
+            "transaction_id": "ptl_txn_11OTxnMLiIfGFAVDo8Zjkl"
           },
           "response": {
-            "type": "error",
+            "type": "success",
             "httpStatus": 200,
             "body": {
-              "data": null,
-              "errors": [
-                {
-                  "path": [
-                    "createReversal"
-                  ],
-                  "data": null,
-                  "errorType": "Lambda:Unhandled",
-                  "errorInfo": null,
-                  "locations": [
-                    {
-                      "line": 8,
-                      "column": 5,
-                      "sourceName": null
-                    }
-                  ],
-                  "message": "Payment was not found."
+              "data": {
+                "createReversal": {
+                  "is_void": false,
+                  "transaction_id": "ptl_txn_6RvdLbnGEXzAbyPybDw2Sd"
                 }
-              ]
-            }
-          }
-        },
-        {
-          "name": "Amount is zero",
-          "description": "The call is refused for a zero amount. The raw internal error body is intentionally omitted.",
-          "query": "mutation CreateReversal(\n  $transaction_id: String!\n  $amount: Int!\n  $refund_reason: RefundReasonInput!\n) {\n  createReversal(\n    transaction_id: $transaction_id\n    amount: $amount\n    refund_reason: $refund_reason\n  ) {\n    is_void\n    transaction_id\n  }\n}",
-          "variables": {
-            "amount": 0,
-            "refund_reason": {
-              "reason_code": "REQUESTED_BY_CUSTOMER",
-              "reason_details": "Docs example"
-            },
-            "transaction_id": "ptl_txn_4leXm7f7Q2PRq4BuvPysI0"
-          },
-          "response": {
-            "type": "error",
-            "httpStatus": 200,
-            "body": {
-              "data": null,
-              "errors": [
-                {
-                  "path": [
-                    "createReversal"
-                  ],
-                  "message": "The call is refused for a zero amount."
-                }
-              ]
+              }
             }
           }
         }

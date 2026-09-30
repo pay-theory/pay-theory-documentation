@@ -3454,7 +3454,7 @@ enum ReserveAccountType {
 type ReversalResponse @aws_lambda @aws_iam @aws_cognito_user_pools {
   "Whether void."
   is_void: Boolean!
-  "Pay Theory unique identifier for the transaction."
+  "Full void: no new transaction ID handed back. Partial void: new transaction ID for the adjusted debit. Refund: transaction ID points to the reversal."
   transaction_id: String
 }
 
