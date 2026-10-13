@@ -9,7 +9,7 @@
         "query": "query Users($user_pool: UserPool!, $merchant_uid: String) {\n  users(user_pool: $user_pool, merchant_uid: $merchant_uid) {\n  email\n  full_name\n  phone\n  user_status\n  username\n  }\n}",
         "variables": {
           "user_pool": "MERCHANT",
-          "merchant_uid": "example"
+          "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
         },
         "response": {
           "type": "success",
@@ -43,7 +43,7 @@
             "email": "user@example.com",
             "first_name": "example",
             "last_name": "example",
-            "merchant_uid": "example",
+            "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
             "phone": "+15555555555",
             "user_pool": "MERCHANT"
           }

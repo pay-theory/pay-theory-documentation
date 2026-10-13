@@ -33,7 +33,7 @@
               "settlements": {
                 "items": [
                   {
-                    "merchant_uid": "example",
+                    "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
                     "settlement_date": "2025-01-01T00:00:00Z",
                     "currency": "example",
                     "gross_amount": 123,
@@ -57,7 +57,7 @@
         "description": "This mutation will capture all PENDING transactions for a merchant in a batch and shortly after create a settlement for the merchant.",
         "query": "mutation CreateBatchCapture($merchant_uid: String!) {\n  createBatchCapture(merchant_uid: $merchant_uid)\n}",
         "variables": {
-          "merchant_uid": "example"
+          "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
         },
         "response": {
           "type": "success",

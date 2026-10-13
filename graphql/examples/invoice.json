@@ -66,7 +66,7 @@
             "invoice_date": "2025-01-01",
             "invoice_description": "example",
             "invoice_name": "example",
-            "merchant_uid": "example",
+            "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
             "merchant_invoice_number": "example",
             "metadata": {
               "key": "value"

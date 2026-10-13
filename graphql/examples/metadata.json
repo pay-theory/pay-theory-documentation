@@ -10,7 +10,7 @@
         "variables": {
           "id": "example",
           "metadata_associate": "AUTHORIZATION",
-          "merchant_uid": "example",
+          "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
           "metadata": {
             "key": "value"
           }
@@ -38,7 +38,7 @@
         "variables": {
           "id": "example",
           "metadata_associate": "AUTHORIZATION",
-          "merchant_uid": "example",
+          "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
           "metadata_keys": [
             "example"
           ]

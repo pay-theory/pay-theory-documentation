@@ -4,10 +4,10 @@
     "operationType": "query",
     "examples": [
       {
-        "name": "Read a merchant",
-        "query": "query Merchant($merchant_uid: String) {\r\n    merchant(merchant_uid: $merchant_uid) {\r\n      merchant_uid\r\n      merchant_name\r\n      card_active\r\n      ach_active\r\n      cash_active\r\n      country_code\r\n      settings {\r\n        contact_email\r\n        website\r\n      }\r\n    }\r\n  }",
+        "name": "Get a merchant",
+        "query": "query Merchant($merchant_uid: String) {\n  merchant(merchant_uid: $merchant_uid) {\n    merchant_uid\n    merchant_name\n    card_active\n    ach_active\n    cash_active\n    country_code\n    settings {\n      contact_email\n      website\n    }\n  }\n}",
         "variables": {
-          "merchant_uid": "<MERCHANT_UID>"
+          "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
         },
         "response": {
           "type": "success",
@@ -15,7 +15,7 @@
           "body": {
             "data": {
               "merchant": {
-                "merchant_uid": "<MERCHANT_UID>",
+                "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
                 "merchant_name": "<MERCHANT_NAME>",
                 "card_active": true,
                 "ach_active": true,
@@ -33,9 +33,9 @@
       },
       {
         "name": "Merchant not found",
-        "query": "query Merchant($merchant_uid: String) {\r\n    merchant(merchant_uid: $merchant_uid) {\r\n      merchant_uid\r\n      merchant_name\r\n      card_active\r\n      ach_active\r\n      cash_active\r\n      country_code\r\n      settings {\r\n        contact_email\r\n        website\r\n      }\r\n    }\r\n  }",
+        "query": "query Merchant($merchant_uid: String) {\n  merchant(merchant_uid: $merchant_uid) {\n    merchant_uid\n    merchant_name\n    card_active\n    ach_active\n    cash_active\n    country_code\n    settings {\n      contact_email\n      website\n    }\n  }\n}",
         "variables": {
-          "merchant_uid": "example"
+          "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
         },
         "response": {
           "type": "error",
@@ -53,16 +53,9 @@
                 "errorType": "NOT_FOUND",
                 "errorInfo": {
                   "arguments": {
-                    "merchant_uid": "example"
+                    "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
                   }
                 },
-                "locations": [
-                  {
-                    "line": 3,
-                    "column": 5,
-                    "sourceName": null
-                  }
-                ],
                 "message": "Merchant not found."
               }
             ]
@@ -77,7 +70,7 @@
     "operationType": "query",
     "examples": [
       {
-        "name": "List merchants",
+        "name": "Get merchants",
         "query": "query Merchants($limit: Int) {\n  merchants(limit: $limit) {\n    items {\n      merchant_uid\n      merchant_name\n      card_active\n      ach_active\n      cash_active\n      country_code\n      parent_merchant_uid\n    }\n    total_row_count\n  }\n}",
         "variables": {
           "limit": 2
@@ -90,7 +83,7 @@
               "merchants": {
                 "items": [
                   {
-                    "merchant_uid": "<MERCHANT_UID>",
+                    "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
                     "merchant_name": "<MERCHANT_NAME>",
                     "card_active": true,
                     "ach_active": true,
@@ -129,7 +122,7 @@
               "merchants": {
                 "items": [
                   {
-                    "merchant_uid": "<MERCHANT_UID>",
+                    "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
                     "merchant_name": "<MERCHANT_NAME>",
                     "card_active": true,
                     "ach_active": true,
@@ -144,43 +137,6 @@
           }
         },
         "description": "Filters visible merchants by merchant_name."
-      },
-      {
-        "name": "Invalid column",
-        "query": "query Merchants($query: SqlQuery, $limit: Int) {\n  merchants(query: $query, limit: $limit) {\n    items {\n      merchant_uid\n      merchant_name\n      card_active\n      ach_active\n      cash_active\n      country_code\n      parent_merchant_uid\n    }\n    total_row_count\n  }\n}",
-        "variables": {
-          "query": {
-            "query_list": [
-              {
-                "key": "not_a_column",
-                "value": "x",
-                "operator": "EQUAL"
-              }
-            ]
-          },
-          "limit": 2
-        },
-        "response": {
-          "type": "error",
-          "httpStatus": 200,
-          "body": {
-            "data": {
-              "merchants": null
-            },
-            "errors": [
-              {
-                "path": [
-                  "merchants"
-                ],
-                "data": null,
-                "errorType": "VALIDATION_ERROR",
-                "errorInfo": null,
-                "message": "The call is refused for an unknown query column."
-              }
-            ]
-          }
-        },
-        "description": "Returns an error when the query filter uses an unknown column. The raw database error from this defect is intentionally omitted."
       }
     ]
   },
@@ -192,7 +148,7 @@
         "name": "Create a merchant",
         "query": "mutation CreateMerchant(\n  $merchant_name: String!\n  $metadata: AWSJSON\n) {\n  createMerchant(\n    merchant_name: $merchant_name\n    metadata: $metadata\n  ) {\n    merchant_uid\n    merchant_name\n    parent_merchant_uid\n    ach_active\n    card_active\n    cash_active\n    country_code\n    is_system\n    submitted_onboarding\n    metadata\n  }\n}",
         "variables": {
-          "merchant_name": "e2e-doc-abca89f1-child",
+          "merchant_name": "Northstar Books",
           "metadata": "{\"created_by\":\"docs-example\"}"
         },
         "response": {
@@ -202,7 +158,7 @@
             "data": {
               "createMerchant": {
                 "merchant_uid": "<NEW_MERCHANT_UID>",
-                "merchant_name": "e2e-doc-abca89f1-child",
+                "merchant_name": "Northstar Books",
                 "parent_merchant_uid": null,
                 "ach_active": true,
                 "card_active": true,
@@ -215,100 +171,7 @@
             }
           }
         },
-        "description": "Creates a merchant with a partner key."
-      },
-      {
-        "name": "Merchant key cannot create merchant",
-        "query": "mutation CreateMerchant($merchant_name: String!) {\n  createMerchant(merchant_name: $merchant_name) {\n    merchant_uid\n    merchant_name\n    parent_merchant_uid\n    ach_active\n    card_active\n    cash_active\n    country_code\n    is_system\n    submitted_onboarding\n    metadata\n  }\n}",
-        "variables": {
-          "merchant_name": "e2e-doc-abca89f1-refused"
-        },
-        "response": {
-          "type": "error",
-          "httpStatus": 200,
-          "body": {
-            "data": null,
-            "errors": [
-              {
-                "path": [
-                  "createMerchant"
-                ],
-                "data": null,
-                "errorType": "Lambda:Unhandled",
-                "errorInfo": null,
-                "locations": [
-                  {
-                    "line": 8,
-                    "column": 5,
-                    "sourceName": null
-                  }
-                ],
-                "message": "You do not have permission to create a merchant."
-              }
-            ]
-          }
-        },
-        "description": "Returns an error when a merchant key tries to create a merchant."
-      },
-      {
-        "name": "Parent merchant not found",
-        "query": "mutation CreateMerchant(\n  $merchant_name: String!\n  $parent_merchant_uid: String\n) {\n  createMerchant(\n    merchant_name: $merchant_name\n    parent_merchant_uid: $parent_merchant_uid\n  ) {\n    merchant_uid\n    merchant_name\n    parent_merchant_uid\n    ach_active\n    card_active\n    cash_active\n    country_code\n    is_system\n    submitted_onboarding\n    metadata\n  }\n}",
-        "variables": {
-          "merchant_name": "e2e-doc-abca89f1-orphan",
-          "parent_merchant_uid": "not-a-merchant"
-        },
-        "response": {
-          "type": "error",
-          "httpStatus": 200,
-          "body": {
-            "data": null,
-            "errors": [
-              {
-                "path": [
-                  "createMerchant"
-                ],
-                "data": null,
-                "errorType": "Lambda:Unhandled",
-                "errorInfo": null,
-                "locations": [
-                  {
-                    "line": 8,
-                    "column": 5,
-                    "sourceName": null
-                  }
-                ],
-                "message": "Parent merchant not found."
-              }
-            ]
-          }
-        },
-        "description": "Returns an error when parent_merchant_uid does not exist."
-      },
-      {
-        "name": "Read the new merchant",
-        "query": "query CreatedMerchant($merchant_uid: String) {\r\n    merchant(merchant_uid: $merchant_uid) {\r\n      merchant_uid\r\n      merchant_name\r\n      parent_merchant_uid\r\n      ach_active\r\n      card_active\r\n      cash_active\r\n      country_code\r\n      metadata\r\n    }\r\n  }",
-        "variables": {
-          "merchant_uid": "<NEW_MERCHANT_UID>"
-        },
-        "response": {
-          "type": "success",
-          "httpStatus": 200,
-          "body": {
-            "data": {
-              "merchant": {
-                "merchant_uid": "<NEW_MERCHANT_UID>",
-                "merchant_name": "e2e-doc-abca89f1-child",
-                "parent_merchant_uid": null,
-                "ach_active": true,
-                "card_active": true,
-                "cash_active": true,
-                "country_code": "USA",
-                "metadata": "{\"created_by\":\"docs-example\"}"
-              }
-            }
-          }
-        },
-        "description": "Reads the newly created merchant after the read model catches up."
+        "description": "Creates a merchant in Pay Theory to start the underwriting process."
       }
     ]
   },
@@ -406,7 +269,7 @@
                 "fixed": 123
               }
             },
-            "merchant_uid": "example",
+            "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
             "prepaid_card": {
               "merchant_fee": {
                 "basis_points": 123,
@@ -432,7 +295,7 @@
           "body": {
             "data": {
               "updateFeeMatrix": {
-                "merchant_uid": "example",
+                "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
                 "card_account_updater": 123,
                 "ach_return_disputed_fee": 123,
                 "ach_return_fee": 123,

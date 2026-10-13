@@ -11,7 +11,7 @@
             "query_list": [
               {
                 "key": "merchant_uid",
-                "value": "<MERCHANT_UID>",
+                "value": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
                 "operator": "EQUAL"
               }
             ]
@@ -27,25 +27,25 @@
                 "items": [
                   {
                     "payment_method_id": "ptl_pmt_10juEAyVJfr38VsL4iDwDL",
-                    "merchant_uid": "<MERCHANT_UID>",
+                    "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
                     "payment_type": "CARD",
                     "last_four": "7895",
                     "card_brand": "VISA",
                     "card_type": "CREDIT_CARD",
                     "exp_date": "1230",
-                    "full_name": "E2E Checkout",
+                    "full_name": "Pat Theodore",
                     "is_active": true,
                     "wallet_type": null
                   },
                   {
                     "payment_method_id": "ptl_pmt_11TuPUJW5c4pfSioOwOMrj",
-                    "merchant_uid": "<MERCHANT_UID>",
+                    "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
                     "payment_type": "CARD",
                     "last_four": "1111",
                     "card_brand": "VISA",
                     "card_type": "DEBIT_CARD",
                     "exp_date": "1230",
-                    "full_name": "Payor create-void-for-authorization-<TEST_RUN_ID>",
+                    "full_name": "Pat Theodore",
                     "is_active": true,
                     "wallet_type": null
                   }
@@ -54,7 +54,8 @@
               }
             }
           }
-        }
+        },
+        "description": "Lists saved payment methods for the merchant."
       },
       {
         "name": "List active saved methods",
@@ -64,14 +65,13 @@
             "query_list": [
               {
                 "key": "merchant_uid",
-                "value": "<MERCHANT_UID>",
+                "value": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
                 "operator": "EQUAL",
                 "conjunctive_operator": "AND_NEXT"
               },
               {
                 "key": "is_active",
-                "value": "1",
-                "operator": "EQUAL",
+                "operator": "IS_TRUE",
                 "conjunctive_operator": "NONE_NEXT"
               }
             ]
@@ -87,25 +87,25 @@
                 "items": [
                   {
                     "payment_method_id": "ptl_pmt_10juEAyVJfr38VsL4iDwDL",
-                    "merchant_uid": "<MERCHANT_UID>",
+                    "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
                     "payment_type": "CARD",
                     "last_four": "7895",
                     "card_brand": "VISA",
                     "card_type": "CREDIT_CARD",
                     "exp_date": "1230",
-                    "full_name": "E2E Checkout",
+                    "full_name": "Pat Theodore",
                     "is_active": true,
                     "wallet_type": null
                   },
                   {
                     "payment_method_id": "ptl_pmt_11TuPUJW5c4pfSioOwOMrj",
-                    "merchant_uid": "<MERCHANT_UID>",
+                    "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
                     "payment_type": "CARD",
                     "last_four": "1111",
                     "card_brand": "VISA",
                     "card_type": "DEBIT_CARD",
                     "exp_date": "1230",
-                    "full_name": "Payor create-void-for-authorization-<TEST_RUN_ID>",
+                    "full_name": "Pat Theodore",
                     "is_active": true,
                     "wallet_type": null
                   }
@@ -114,7 +114,8 @@
               }
             }
           }
-        }
+        },
+        "description": "Lists active saved payment methods for the merchant."
       },
       {
         "name": "Invalid column",
@@ -146,18 +147,12 @@
                 "data": null,
                 "errorType": "VALIDATION_ERROR",
                 "errorInfo": null,
-                "locations": [
-                  {
-                    "line": 3,
-                    "column": 5,
-                    "sourceName": null
-                  }
-                ],
                 "message": "Invalid query column: not_a_column."
               }
             ]
           }
-        }
+        },
+        "description": "Returns an error when the filter contains an unsupported field."
       }
     ]
   },
@@ -169,7 +164,7 @@
         "name": "Save a card",
         "query": "mutation CreatePaymentMethod(\n  $merchant_uid: String!\n  $payment_method: PaymentMethodInput!\n) {\n  createPaymentMethod(\n    merchant_uid: $merchant_uid\n    payment_method: $payment_method\n  ) {\n    payment_method_id\n    merchant_uid\n    payment_type\n    last_four\n    card_brand\n    exp_date\n    full_name\n    is_active\n  }\n}",
         "variables": {
-          "merchant_uid": "<MERCHANT_UID>",
+          "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
           "payment_method": {
             "card": {
               "card_number": "4835034598457895",
@@ -189,7 +184,7 @@
               "full_name": "Jane Cardholder",
               "email": "payor@example.com",
               "phone": "+15555550123",
-              "merchant_uid": "<MERCHANT_UID>"
+              "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
             }
           }
         },
@@ -200,7 +195,7 @@
             "data": {
               "createPaymentMethod": {
                 "payment_method_id": "ptl_pmt_54LidQwRcTs5MU9g0QYrgt",
-                "merchant_uid": "<MERCHANT_UID>",
+                "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
                 "payment_type": "CARD",
                 "last_four": "7895",
                 "card_brand": "VISA",
@@ -210,13 +205,14 @@
               }
             }
           }
-        }
+        },
+        "description": "Saves a card as a payment method for later transactions."
       },
       {
         "name": "Save an ACH account",
         "query": "mutation CreatePaymentMethod(\n  $merchant_uid: String!\n  $payment_method: PaymentMethodInput!\n) {\n  createPaymentMethod(\n    merchant_uid: $merchant_uid\n    payment_method: $payment_method\n  ) {\n    payment_method_id\n    merchant_uid\n    payment_type\n    last_four\n    card_brand\n    exp_date\n    full_name\n    is_active\n  }\n}",
         "variables": {
-          "merchant_uid": "<MERCHANT_UID>",
+          "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
           "payment_method": {
             "ach": {
               "account_number": "0000000016",
@@ -227,7 +223,7 @@
             "payor": {
               "full_name": "Jane Accountholder",
               "email": "payor@example.com",
-              "merchant_uid": "<MERCHANT_UID>"
+              "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
             }
           }
         },
@@ -238,7 +234,7 @@
             "data": {
               "createPaymentMethod": {
                 "payment_method_id": "ptl_pmt_56Ckn08lJFiXCfUt6Pzd6s",
-                "merchant_uid": "<MERCHANT_UID>",
+                "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
                 "payment_type": "ACH",
                 "last_four": "0016",
                 "card_brand": null,
@@ -248,13 +244,14 @@
               }
             }
           }
-        }
+        },
+        "description": "Saves a bank account as a payment method for later ACH transactions."
       },
       {
         "name": "Save an EFT account",
         "query": "mutation CreatePaymentMethod(\n  $merchant_uid: String!\n  $payment_method: PaymentMethodInput!\n) {\n  createPaymentMethod(\n    merchant_uid: $merchant_uid\n    payment_method: $payment_method\n  ) {\n    payment_method_id\n    merchant_uid\n    payment_type\n    last_four\n    card_brand\n    exp_date\n    full_name\n    is_active\n  }\n}",
         "variables": {
-          "merchant_uid": "<MERCHANT_UID>",
+          "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
           "payment_method": {
             "canadian_eft": {
               "account_number": "123456789012",
@@ -266,7 +263,7 @@
             "payor": {
               "full_name": "Jane Accountholder",
               "email": "payor@example.com",
-              "merchant_uid": "<MERCHANT_UID>"
+              "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
             }
           }
         },
@@ -277,7 +274,7 @@
             "data": {
               "createPaymentMethod": {
                 "payment_method_id": "ptl_pmt_6GjzC7fqWHHQcUQ4S39V2n",
-                "merchant_uid": "<MERCHANT_UID>",
+                "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
                 "payment_type": "ACH",
                 "last_four": "9012",
                 "card_brand": null,
@@ -287,13 +284,14 @@
               }
             }
           }
-        }
+        },
+        "description": "Saves a Canadian bank account as a payment method for later EFT transactions."
       },
       {
         "name": "Bad card number",
         "query": "mutation CreatePaymentMethod(\n  $merchant_uid: String!\n  $payment_method: PaymentMethodInput!\n) {\n  createPaymentMethod(\n    merchant_uid: $merchant_uid\n    payment_method: $payment_method\n  ) {\n    payment_method_id\n    merchant_uid\n    payment_type\n    last_four\n    card_brand\n    exp_date\n    full_name\n    is_active\n  }\n}",
         "variables": {
-          "merchant_uid": "<MERCHANT_UID>",
+          "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
           "payment_method": {
             "card": {
               "card_number": "4111111111111112",
@@ -313,7 +311,7 @@
               "full_name": "Bad Number",
               "email": "payor@example.com",
               "phone": "+15555550123",
-              "merchant_uid": "<MERCHANT_UID>"
+              "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
             }
           }
         },
@@ -332,80 +330,18 @@
                 "data": null,
                 "errorType": "VALIDATION_ERROR",
                 "errorInfo": null,
-                "locations": [
-                  {
-                    "line": 7,
-                    "column": 5,
-                    "sourceName": null
-                  }
-                ],
                 "message": "Card number is not valid."
               }
             ]
           }
-        }
-      },
-      {
-        "name": "Card is expired",
-        "query": "mutation CreatePaymentMethod(\n  $merchant_uid: String!\n  $payment_method: PaymentMethodInput!\n) {\n  createPaymentMethod(\n    merchant_uid: $merchant_uid\n    payment_method: $payment_method\n  ) {\n    payment_method_id\n    merchant_uid\n    payment_type\n    last_four\n    card_brand\n    exp_date\n    full_name\n    is_active\n  }\n}",
-        "variables": {
-          "merchant_uid": "<MERCHANT_UID>",
-          "payment_method": {
-            "card": {
-              "card_number": "4835034598457895",
-              "exp_date": {
-                "month": "01",
-                "year": "20"
-              },
-              "security_code": "123",
-              "full_name": "Old Card",
-              "address_line1": "123 Test Street",
-              "city": "Cincinnati",
-              "region": "OH",
-              "postal_code": "45209",
-              "country": "USA"
-            },
-            "payor": {
-              "full_name": "Old Card",
-              "email": "payor@example.com",
-              "phone": "+15555550123",
-              "merchant_uid": "<MERCHANT_UID>"
-            }
-          }
         },
-        "response": {
-          "type": "error",
-          "httpStatus": 200,
-          "body": {
-            "data": {
-              "createPaymentMethod": null
-            },
-            "errors": [
-              {
-                "path": [
-                  "createPaymentMethod"
-                ],
-                "data": null,
-                "errorType": "VALIDATION_ERROR",
-                "errorInfo": null,
-                "locations": [
-                  {
-                    "line": 7,
-                    "column": 5,
-                    "sourceName": null
-                  }
-                ],
-                "message": "Card is expired: {'month': '01', 'year': '20'}."
-              }
-            ]
-          }
-        }
+        "description": "Returns an error when the card number is invalid."
       },
       {
         "name": "Bad security code",
         "query": "mutation CreatePaymentMethod(\n  $merchant_uid: String!\n  $payment_method: PaymentMethodInput!\n) {\n  createPaymentMethod(\n    merchant_uid: $merchant_uid\n    payment_method: $payment_method\n  ) {\n    payment_method_id\n    merchant_uid\n    payment_type\n    last_four\n    card_brand\n    exp_date\n    full_name\n    is_active\n  }\n}",
         "variables": {
-          "merchant_uid": "<MERCHANT_UID>",
+          "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
           "payment_method": {
             "card": {
               "card_number": "4835034598457895",
@@ -425,7 +361,7 @@
               "full_name": "Bad CVV",
               "email": "payor@example.com",
               "phone": "+15555550123",
-              "merchant_uid": "<MERCHANT_UID>"
+              "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
             }
           }
         },
@@ -444,24 +380,18 @@
                 "data": null,
                 "errorType": "VALIDATION_ERROR",
                 "errorInfo": null,
-                "locations": [
-                  {
-                    "line": 7,
-                    "column": 5,
-                    "sourceName": null
-                  }
-                ],
                 "message": "CVV is not valid."
               }
             ]
           }
-        }
+        },
+        "description": "Returns an error when the card security code is invalid."
       },
       {
         "name": "Card and bank both provided",
         "query": "mutation CreatePaymentMethod(\n  $merchant_uid: String!\n  $payment_method: PaymentMethodInput!\n) {\n  createPaymentMethod(\n    merchant_uid: $merchant_uid\n    payment_method: $payment_method\n  ) {\n    payment_method_id\n    merchant_uid\n    payment_type\n    last_four\n    card_brand\n    exp_date\n    full_name\n    is_active\n  }\n}",
         "variables": {
-          "merchant_uid": "<MERCHANT_UID>",
+          "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
           "payment_method": {
             "card": {
               "card_number": "4835034598457895",
@@ -481,7 +411,7 @@
               "full_name": "Card And Bank",
               "email": "payor@example.com",
               "phone": "+15555550123",
-              "merchant_uid": "<MERCHANT_UID>"
+              "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
             },
             "ach": {
               "account_number": "0000000016",
@@ -506,29 +436,23 @@
                 "data": null,
                 "errorType": "VALIDATION_ERROR",
                 "errorInfo": null,
-                "locations": [
-                  {
-                    "line": 7,
-                    "column": 5,
-                    "sourceName": null
-                  }
-                ],
                 "message": "A card and a bank account cannot both be provided in a payment method."
               }
             ]
           }
-        }
+        },
+        "description": "Returns an error when card and bank details are supplied together."
       },
       {
         "name": "No card or bank provided",
         "query": "mutation CreatePaymentMethod(\n  $merchant_uid: String!\n  $payment_method: PaymentMethodInput!\n) {\n  createPaymentMethod(\n    merchant_uid: $merchant_uid\n    payment_method: $payment_method\n  ) {\n    payment_method_id\n    merchant_uid\n    payment_type\n    last_four\n    card_brand\n    exp_date\n    full_name\n    is_active\n  }\n}",
         "variables": {
-          "merchant_uid": "<MERCHANT_UID>",
+          "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
           "payment_method": {
             "payor": {
               "full_name": "No Rail",
               "email": "payor@example.com",
-              "merchant_uid": "<MERCHANT_UID>"
+              "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
             }
           }
         },
@@ -547,24 +471,18 @@
                 "data": null,
                 "errorType": "VALIDATION_ERROR",
                 "errorInfo": null,
-                "locations": [
-                  {
-                    "line": 7,
-                    "column": 5,
-                    "sourceName": null
-                  }
-                ],
                 "message": "A card or a bank account must be provided as a payment method."
               }
             ]
           }
-        }
+        },
+        "description": "Returns an error when no card or bank details are supplied."
       },
       {
         "name": "Two payors provided",
         "query": "mutation CreatePaymentMethod(\n  $merchant_uid: String!\n  $payment_method: PaymentMethodInput!\n) {\n  createPaymentMethod(\n    merchant_uid: $merchant_uid\n    payment_method: $payment_method\n  ) {\n    payment_method_id\n    merchant_uid\n    payment_type\n    last_four\n    card_brand\n    exp_date\n    full_name\n    is_active\n  }\n}",
         "variables": {
-          "merchant_uid": "<MERCHANT_UID>",
+          "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
           "payment_method": {
             "card": {
               "card_number": "4835034598457895",
@@ -584,7 +502,7 @@
               "full_name": "Two Payors",
               "email": "payor@example.com",
               "phone": "+15555550123",
-              "merchant_uid": "<MERCHANT_UID>"
+              "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
             },
             "payor_id": "ptl_pay_not_a_real_payor"
           }
@@ -604,24 +522,18 @@
                 "data": null,
                 "errorType": "VALIDATION_ERROR",
                 "errorInfo": null,
-                "locations": [
-                  {
-                    "line": 7,
-                    "column": 5,
-                    "sourceName": null
-                  }
-                ],
                 "message": "A payor object and a payor_id cannot both be provided in a payment method."
               }
             ]
           }
-        }
+        },
+        "description": "Returns an error when more than one payor is supplied."
       },
       {
         "name": "Payor not found",
         "query": "mutation CreatePaymentMethod(\n  $merchant_uid: String!\n  $payment_method: PaymentMethodInput!\n) {\n  createPaymentMethod(\n    merchant_uid: $merchant_uid\n    payment_method: $payment_method\n  ) {\n    payment_method_id\n    merchant_uid\n    payment_type\n    last_four\n    card_brand\n    exp_date\n    full_name\n    is_active\n  }\n}",
         "variables": {
-          "merchant_uid": "<MERCHANT_UID>",
+          "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
           "payment_method": {
             "card": {
               "card_number": "4835034598457895",
@@ -655,18 +567,12 @@
                 "data": null,
                 "errorType": "VALIDATION_ERROR",
                 "errorInfo": null,
-                "locations": [
-                  {
-                    "line": 7,
-                    "column": 5,
-                    "sourceName": null
-                  }
-                ],
                 "message": "Payor ID is not valid."
               }
             ]
           }
-        }
+        },
+        "description": "Returns an error when the payor ID does not exist."
       },
       {
         "name": "Missing merchant id",
@@ -681,7 +587,7 @@
                 "year": "30"
               },
               "security_code": "123",
-              "full_name": "No Merchant",
+              "full_name": "Pat Theodore",
               "address_line1": "123 Test Street",
               "city": "Cincinnati",
               "region": "OH",
@@ -689,10 +595,10 @@
               "country": "USA"
             },
             "payor": {
-              "full_name": "No Merchant",
+              "full_name": "Pat Theodore",
               "email": "payor@example.com",
               "phone": "+15555550123",
-              "merchant_uid": "<MERCHANT_UID>"
+              "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
             }
           }
         },
@@ -711,18 +617,12 @@
                 "data": null,
                 "errorType": "VALIDATION_ERROR",
                 "errorInfo": null,
-                "locations": [
-                  {
-                    "line": 7,
-                    "column": 5,
-                    "sourceName": null
-                  }
-                ],
                 "message": "Merchant UID is required and cannot be empty."
               }
             ]
           }
-        }
+        },
+        "description": "Returns an error when merchant_uid is missing."
       }
     ]
   },
@@ -731,10 +631,10 @@
     "operationType": "mutation",
     "examples": [
       {
-        "name": "Disable a saved payment method",
-        "query": "mutation UpdatePaymentMethodToDisabled($merchant_uid: ID!, $payment_method_id: String!) {\r\n    updatePaymentMethodToDisabled(merchant_uid: $merchant_uid, payment_method_id: $payment_method_id)\r\n  }",
+        "name": "Disable a payment method",
+        "query": "mutation UpdatePaymentMethodToDisabled($merchant_uid: ID!, $payment_method_id: String!) {\n  updatePaymentMethodToDisabled(merchant_uid: $merchant_uid, payment_method_id: $payment_method_id)\n}",
         "variables": {
-          "merchant_uid": "<MERCHANT_UID>",
+          "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
           "payment_method_id": "ptl_pmt_70NrB489gNLgE0pFaPvfm1"
         },
         "response": {
@@ -746,31 +646,13 @@
             }
           }
         },
-        "description": "Disables a stored payment method so it cannot be used again."
-      },
-      {
-        "name": "Disable it again",
-        "query": "mutation UpdatePaymentMethodToDisabled($merchant_uid: ID!, $payment_method_id: String!) {\r\n    updatePaymentMethodToDisabled(merchant_uid: $merchant_uid, payment_method_id: $payment_method_id)\r\n  }",
-        "variables": {
-          "merchant_uid": "<MERCHANT_UID>",
-          "payment_method_id": "ptl_pmt_70NrB489gNLgE0pFaPvfm1"
-        },
-        "response": {
-          "type": "success",
-          "httpStatus": 200,
-          "body": {
-            "data": {
-              "updatePaymentMethodToDisabled": true
-            }
-          }
-        },
-        "description": "Shows that disabling the same stored payment method again still returns true."
+        "description": "Disables a stored payment method so it cannot be used for future transactions."
       },
       {
         "name": "Invalid payment method",
-        "query": "mutation UpdatePaymentMethodToDisabled($merchant_uid: ID!, $payment_method_id: String!) {\r\n    updatePaymentMethodToDisabled(merchant_uid: $merchant_uid, payment_method_id: $payment_method_id)\r\n  }",
+        "query": "mutation UpdatePaymentMethodToDisabled($merchant_uid: ID!, $payment_method_id: String!) {\n  updatePaymentMethodToDisabled(merchant_uid: $merchant_uid, payment_method_id: $payment_method_id)\n}",
         "variables": {
-          "merchant_uid": "<MERCHANT_UID>",
+          "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
           "payment_method_id": "ptl_pmt_not_a_real_token"
         },
         "response": {
@@ -784,16 +666,14 @@
                   "updatePaymentMethodToDisabled"
                 ],
                 "data": null,
-                "errorType": "Lambda:Unhandled",
-                "errorInfo": null,
-                "locations": [
-                  {
-                    "line": 3,
-                    "column": 5,
-                    "sourceName": null
-                  }
-                ],
-                "message": "Payment method ptl_pmt_not_a_real_token not found for merchant <MERCHANT_UID>."
+                "errorType": "CLIENT_ERROR",
+                "errorInfo": {
+                  "code": "NOT_FOUND",
+                  "method": "POST",
+                  "path": "/updatePaymentMethodToDisabled",
+                  "trigger_type": "appsync"
+                },
+                "message": "payment method not found"
               }
             ]
           }

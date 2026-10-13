@@ -62,7 +62,7 @@
             "amount": 123,
             "fee_mode": "CUSTOM_FEE",
             "first_payment_date": "2025-01-01",
-            "merchant_uid": "example",
+            "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
             "metadata": {
               "key": "value"
             },
