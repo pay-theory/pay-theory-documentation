@@ -274,6 +274,26 @@ mutation {
 
 ---
 
+## Testing Merchant Onboarding
+
+New sandbox merchants are boarded and ready to take payments as soon as you create them. To test the onboarding flow instead, include "onboarding" anywhere in the merchant name, such as `Acme Onboarding Test`. Case doesn't matter.
+
+```graphql title="Create an Onboarding Merchant"
+mutation {
+  createMerchant(merchant_name: "Acme Onboarding Test") {
+    merchant_uid
+  }
+}
+```
+
+A merchant with "onboarding" in its name:
+
+- Starts with card and ACH processing turned off.
+- Shows in the portal as a merchant who still needs to fill out the onboarding form.
+- Is approved automatically as soon as you submit the form in sandbox.
+
+---
+
 ## Testing Barcode Payments
 
 To simulate a customer paying a cash barcode, call `createBarcodePaymentSandbox` with the barcode ID and the amount paid in cents. The amount must match the barcode's amount. See the [create sandbox barcode payment reference](../api/sandbox/create-barcode-payment-sandbox) for the full request and response.
