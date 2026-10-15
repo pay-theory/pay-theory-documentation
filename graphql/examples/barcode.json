@@ -1,0 +1,107 @@
+[
+  {
+    "operation": "barcode",
+    "operationType": "query",
+    "examples": [
+      {
+        "name": "Example barcode",
+        "description": "This can be used to call back a single barcode.",
+        "query": "query Barcode($merchant_uid: ID!, $barcode_id: String!) {\n  barcode(merchant_uid: $merchant_uid, barcode_id: $barcode_id) {\n  barcode_id\n  expiration_date\n  account_code\n  amount\n  barcode_url\n  }\n}",
+        "variables": {
+          "merchant_uid": "id_123",
+          "barcode_id": "example"
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "barcode": {
+                "barcode_id": "example",
+                "expiration_date": "2025-01-01",
+                "account_code": "example",
+                "amount": 123,
+                "barcode_url": "example"
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "operation": "createBarcode",
+    "operationType": "mutation",
+    "examples": [
+      {
+        "name": "Example createBarcode",
+        "description": "This mutation will create a barcode for a payor to use to make a cash payment.",
+        "query": "mutation CreateBarcode($input: BarcodeInput!) {\n  createBarcode(input: $input) {\n  barcode_id\n  expiration_date\n  account_code\n  amount\n  barcode_url\n  }\n}",
+        "variables": {
+          "input": {
+            "account_code": "example",
+            "amount": 123,
+            "days_until_expiration": 123,
+            "email_or_phone": "example",
+            "expiration_date": "2025-01-01",
+            "full_name": "example",
+            "invoice_id": "example",
+            "merchant_uid": "example",
+            "metadata": {
+              "key": "value"
+            },
+            "payor": {
+              "address_line1": "example"
+            },
+            "payor_id": "example",
+            "reference": "example",
+            "sale_id": "example"
+          }
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "createBarcode": {
+                "barcode_id": "example",
+                "expiration_date": "2025-01-01",
+                "account_code": "example",
+                "amount": 123,
+                "barcode_url": "example"
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "operation": "createBarcodePaymentSandbox",
+    "operationType": "mutation",
+    "examples": [
+      {
+        "name": "Example createBarcodePaymentSandbox",
+        "description": "Sandbox Only This mutation will only work in sandbox environments. It is used to simulate barcode payments for testing purposes.",
+        "query": "mutation CreateBarcodePaymentSandbox($barcode_id: String!, $amount_to_pay: Int!) {\n  createBarcodePaymentSandbox(barcode_id: $barcode_id, amount_to_pay: $amount_to_pay) {\n  confirmation_code\n  status\n  status_message\n  }\n}",
+        "variables": {
+          "barcode_id": "example",
+          "amount_to_pay": 123
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "createBarcodePaymentSandbox": {
+                "confirmation_code": "example",
+                "status": "example",
+                "status_message": "example"
+              }
+            }
+          }
+        }
+      }
+    ]
+  }
+]

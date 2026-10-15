@@ -1,0 +1,101 @@
+---
+sidebar_position: 1
+sidebar_label: 'Getting Started'
+title: 'Paze Getting Started'
+---
+
+# Paze Getting Started
+
+Paze is a digital wallet that enables fast, secure online checkout. Customers can pay using cards enrolled in their Paze wallet without manually entering card details.
+
+---
+
+## Overview
+
+With Pay Theory's Paze integration:
+
+- Customers authenticate through the Paze checkout experience
+- Payment data is tokenized and encrypted for enhanced security
+- Transactions process through your existing Pay Theory merchant account
+
+---
+
+## Integration Flow
+
+Paze integration follows a straightforward flow:
+
+1. **Integrate the Paze SDK** - Implement Paze's checkout experience on your site
+2. **Capture the payload** - Receive the encrypted payload from Paze's `complete` function
+3. **Process with Pay Theory** - Pass the payload to Pay Theory to complete the transaction
+
+---
+
+## Paze SDK Integration
+
+To integrate Paze's checkout experience, follow their official documentation:
+
+<a href="https://developer.paze.com/public/docs/merchant-integration-guide" class="button button--secondary button--md" target="_blank">
+  Paze Merchant Integration Guide
+</a>
+
+The Paze SDK handles:
+- Consumer authentication and card selection
+- Address and contact information collection
+- Returning an encrypted payload containing payment credentials
+
+---
+
+## Merchant Registration
+
+Before accepting Paze payments, you must register your merchant account with Paze through the Pay Theory partner portal.
+
+Contact your Pay Theory representative or reach out to support@paytheory.com if you have questions about the registration process.
+
+---
+
+## Processing with Pay Theory
+
+After the customer completes the Paze checkout flow, you receive an encrypted payload from the `complete` function. Pass this payload to Pay Theory using either our JavaScript SDK or API.
+
+### Using JavaScript SDK
+
+```javascript title="javascript"
+const result = await messenger.processWalletTransaction({
+  amount: 1000, // Amount in cents
+  digitalWalletPayload: pazePayload, // Payload from Paze complete function
+  walletType: 'PAZE',
+  // Additional transaction options
+});
+```
+
+**Documentation:** [processWalletTransaction](../../../../sdk/javascript/messenger/processWalletTransaction)
+
+### Using API
+
+For server-side processing, use the Create Wallet Transaction endpoint.
+
+**Documentation:** [Create Wallet Transaction](../../../../api/transaction/create-wallet-transaction)
+
+---
+
+## Resources
+
+### Paze Official Resources
+
+- [Paze Merchant Integration Guide](https://developer.paze.com/public/docs/merchant-integration-guide)
+- [Paze JavaScript SDK](https://developer.paze.com/public/docs/merchant-javascript-sdk-1)
+
+### Pay Theory Integration
+
+- [Pay Theory Messenger SDK](../../../../sdk/javascript/messenger/pay_theory_messenger)
+- [processWalletTransaction](../../../../sdk/javascript/messenger/processWalletTransaction)
+- [Create Wallet Transaction API](../../../../api/transaction/create-wallet-transaction)
+
+---
+
+## Support
+
+Need help with your Paze integration?
+
+- Contact Pay Theory support at support@paytheory.com
+- Include your Pay Theory Merchant ID for faster assistance

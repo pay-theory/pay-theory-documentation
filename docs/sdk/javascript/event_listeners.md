@@ -19,7 +19,7 @@ The `readyObserver` will fire when the hosted fields are ready to be used. This 
 
 ```javascript
 const cleanupFunction =  window.paytheory.readyObserver(ready => {
-    // Logic to respond when the fields are ready
+  // Logic to respond when the fields are ready
 })
 ```
 
@@ -38,7 +38,7 @@ The `errorObserver` will fire when an error occurs anywhere inside the Pay Theor
 
 ```javascript
 const cleanupFunction =  window.paytheory.errorObserver(error => {
-    // Logic to respond to errors
+  // Logic to respond to errors
 })
 ```
 
@@ -57,49 +57,67 @@ A function that can be used to remove the listener.
 ***
 ## stateObserver
 
-The `stateObserver` will fire when the state of any hosted field changes. You can use this listener to respond when a hosted field is focused, blurred, or when it has been typed into.
+The `stateObserver` fires when the state of any hosted field changes, providing updates about focus, input, and validation states.
 
 ```javascript
-const cleanupFunction =  window.paytheory.stateObserver(state => {
-    // Logic to respond to state changes
+const cleanupFunction = window.paytheory.stateObserver(state => {
+  // Logic to respond to state changes
 })
 ```
 
-**Callback Parameter**
+### State Object Schema
 
-The callback will be passed a state object. The state object will include an object with all the possible fields.
+The callback receives a state object containing information about all possible payment fields and service fees. Each field contains the following properties:
 
-**Keys**
+**Common Field Properties**
 
+| Property | Type | Description |
+|----------|------|-------------|
+| isFocused | boolean | Whether the field currently has user focus |
+| isDirty | boolean | Whether the field contains any input |
+| errorMessages | string[] | Array of validation error messages |
+
+**Field Types**
+
+#### Card Payment Fields
 - `card-number`
 - `card-cvv`
 - `card-exp`
 - `card-name`
+
+#### Billing Address Fields
 - `billing-line1`
 - `billing-line2`
 - `billing-city`
 - `billing-state`
 - `billing-zip`
+
+#### Bank Payment Fields
 - `account-name`
 - `account-type`
 - `account-number`
 - `routing-number`
+- `institution-number` (Canadian accounts)
+- `transit-number` (Canadian accounts)
+
+#### Cash Payment Fields
 - `cash-name`
 - `cash-contact`
 
-**State Object**
-Each of the above keys will contain an object with the following keys:
+#### Service Fee Information
 
-|Key                |type         |       description                     |
-|-------------------|-------------|---------------------------------------|
-|isFocused          |boolean      |Indicates if the field is focused|
-|isDirty            |boolean      |Indicates if the field currently has text entered|
-|errorMessages      |array        |Array of error messages if the field is invalid|
+The state object includes a `service_fee` object with fee details:
 
-*Note: If using the combined card field you will receive state updates for number, cvv, and exp separately*
+| Property | Type | Description                                                                           |
+|----------|------|---------------------------------------------------------------------------------------|
+| amount | number | Total transaction amount in cents                                                     |
+| card_fee | number | Service fee in cents for card transactions (undefined if not calculated or no amount) |
+| bank_fee | number | Service fee in cents for bank transactions (undefined if not calculated or no amount) |
 
-This can be used to help if you want to display field specific error messages or style the fields based on the state.
-This can also be used to help if you are using the Card Billing fields to capture the payor info and want to ensure the fields are filled out.
+Note: Both `card_fee` and `bank_fee` will be undefined if:
+- No amount has been passed to the SDK
+- Fees haven't been calculated yet
+- The respective payment method isn't being used
 
 **Returns**
 
@@ -112,7 +130,7 @@ The `validObserver` will fire when a set of hosted fields are valid. This is whe
 
 ```javascript
 const cleanupFunction = window.paytheory.validObserver(valid => {
-    // Logic to respond when the form is valid
+  // Logic to respond when the form is valid
 })
 ```
 
@@ -128,9 +146,9 @@ There is a possibility that if you have multiple payment types mounted, that the
 
 ```javascript
 const cleanupFunction = myPayTheory.validObserver(valid => {
-    if (valid.includes("card")) {
-        // Logic to respond when the card is valid
-    }
+  if (valid.includes("card")) {
+    // Logic to respond when the card is valid
+  }
 })
 ```
 

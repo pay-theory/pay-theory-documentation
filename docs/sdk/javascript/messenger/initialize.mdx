@@ -1,0 +1,61 @@
+---
+sidebar_position: 2
+sidebar_label: 'initialize'
+title: "initialize"
+---
+
+# initialize
+
+Initializes the messenger connection. This method must be called before any other operations can be performed.
+
+***
+## Function
+
+```javascript
+await messenger.initialize()
+```
+
+***
+## Parameters
+
+This function takes no parameters.
+
+***
+## Returns
+
+```javascript
+{
+  success: Boolean
+  error: String
+}
+```
+
+| Key | Type | Description |
+|-----|------|-------------|
+| success | Boolean | Indicates whether initialization was successful |
+| error | String | Error message if initialization failed |
+
+***
+## Usage
+
+```javascript
+const messenger = new paytheory.PayTheoryMessenger({
+  apiKey: 'your-api-key'
+});
+
+const result = await messenger.initialize();
+
+if (result.success) {
+  // Messenger is ready for operations
+} else {
+  console.error('Initialization failed:', result.error);
+}
+```
+
+***
+## Notes
+
+- This method creates a secure iframe connection to Pay Theory's servers
+- It establishes a communication channel for processing wallet transactions
+- The method is idempotent - calling it multiple times on an already initialized messenger will return success
+- If initialization fails, you can retry by calling the method again

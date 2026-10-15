@@ -1,0 +1,75 @@
+---
+sidebar_position: 3
+sidebar_label: 'resetPT'
+title: "resetPT"
+---
+
+# resetPT
+
+The `resetPT` function is a utility method in the PayTheory SDK that allows you to reset the environment objects used by Pay Theory Fields. This function is useful when you need to clear all payment information and prepare the environment for a new transaction or tokenization.
+
+## Function Signature
+
+```swift
+public func resetPT()
+```
+
+This function doesn't take any parameters and doesn't return a value.
+
+## Functionality
+
+When called, the `resetPT` function performs the following actions:
+
+1. Clears the ACH environment object
+2. Clears the Card environment object
+3. Clears the Payor environment object
+4. Clears the Cash environment object
+5. Resets the transaction details
+6. Generates a new session ID
+7. Attempts to reconnect and fetch a new token
+
+## Usage
+
+You should call this function when you want to start a fresh payment process and clear all data in the hosted fields. This is particularly useful in scenarios such as:
+
+- After a successful payment, when you want to reset the form for a new transaction
+- When a user cancels a payment process and you want to clear all entered data
+
+### Example
+
+```swift
+class PaymentViewModel: ObservableObject {
+    @Published var payTheory: PayTheory
+
+    init() {
+        payTheory = PayTheory(apiKey: "your-api-key-here") { error in
+            print("PayTheory Error: \(error.error)")
+        }
+    }
+
+    func resetPaymentForm() {
+        payTheory.resetPT()
+    }
+}
+
+struct PaymentView: View {
+    @ObservedObject var viewModel: PaymentViewModel
+
+    var body: some View {
+        VStack {
+            // Payment form fields
+
+            Button("Reset Form") {
+                viewModel.resetPaymentForm()
+            }
+        }
+    }
+}
+```
+
+## Important Notes
+
+- Calling `resetPT` will clear all entered payment information. Make sure to call this function only when you're certain that you want to discard the current payment data.
+- After calling `resetPT`, you should update your UI to reflect that the payment fields have been cleared.
+- The function attempts to reconnect and fetch a new token. In case of network issues, it might not be able to complete this step immediately. Your error handler (provided during PayTheory initialization) will be called if any errors occur during this process.
+

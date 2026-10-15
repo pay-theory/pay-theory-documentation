@@ -1,0 +1,44 @@
+---
+sidebar_position: 3
+sidebar_label: 'BarcodeResult'
+title: "BarcodeResult"
+---
+
+# BarcodeResult
+
+The `BarcodeResult` class represents the response from a successful cash payment setup. It contains all the necessary information for processing a cash payment, including the barcode and payment location details.
+
+## Properties
+
+| Property | Type | Description |
+|----------|------|-------------|
+| barcodeId | String | Pay Theory's unique identifier for the barcode |
+| barcodeUrl | String | URL to view the barcode image |
+| barcode | String | The actual barcode number |
+| barcodeFee | String | Fee associated with the barcode payment |
+| merchant | String | The merchant identifier |
+| mapUrl | String | URL to find retail locations for making the payment |
+
+## Example Usage
+
+```kotlin
+class CashPaymentActivity : PayTheoryMerchantActivity(), Payable {
+    private lateinit var barcodeView: PayTheoryBarcode
+    
+    override fun handleBarcodeSuccess(result: BarcodeResult) {
+        // Display the barcode
+        barcodeView.displayBarcode(result)
+        
+        // Show payment details
+        println("Barcode ID: ${result.barcodeId}")
+        println("Payment Fee: ${result.barcodeFee}")
+        
+        // Open payment locations map
+        openUrl(result.mapUrl)
+    }
+    
+    override fun handleError(error: PTError) {
+        // Handle barcode generation errors
+        showError("Failed to generate barcode: ${error.error}")
+    }
+} 

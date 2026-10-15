@@ -1,0 +1,318 @@
+---
+sidebar_position: 2
+sidebar_label: 'Styling and Managing States'
+title: 'Styling and Managing States'
+hide_table_of_contents: true
+---
+
+import Tabs from '@site/components/Tabs';
+import TabItem from '@theme/TabItem';
+import Admonition from '@theme/Admonition';
+
+<Tabs
+  defaultValue="javascript"
+  groupId="current-os"
+  queryString
+  values={[
+    {label: 'Javascript', value: 'javascript'},
+    {label: 'Apple', value: 'apple'},
+    {label: 'Android', value: 'android'},
+  ]}>
+<TabItem value="javascript">
+
+# Styling and Managing States
+
+This guide will walk you through the basics of styling your Pay Theory Fields and state management. You will learn how to style the text inputs and radio buttons using CSS and how to use the stateObserver.
+
+## Styling the Pay Theory fields
+
+To style the Pay Theory fields you can pass in a custom style object to the create function in our SDK. The style object accepts a fixed set of keys for each surface — text inputs (across `default`, `success`, and `error` states), the ACH account-type radio buttons, the hosted checkout button, and the placeholder visibility flag. Any property not listed in the tables below is silently ignored.
+
+```jsx title="paytheory.js"
+const STYLES = {
+  default: {
+    color: 'black',
+    fontSize: '14px',
+    fontFamily: 'Helvetica, Arial, sans-serif',
+    padding: '10px',
+    border: '1px solid #ccc',
+    borderRadius: '4px',
+    backgroundColor: '#ffffff',
+  },
+  success: {
+    color: '#5cb85c',
+    borderColor: '#5cb85c',
+  },
+  error: {
+    color: '#d9534f',
+    borderColor: '#d9534f',
+  },
+  radio: {
+    width: 18,
+    fill: 'blue',
+    stroke: 'grey',
+    textFontSize: '14px',
+    textColor: 'grey',
+    textFontFamily: 'Helvetica, Arial, sans-serif',
+  },
+  button: {
+    color: 'PURPLE',
+    callToAction: 'PAY',
+    pill: false,
+    height: 48,
+  },
+  hidePlaceholder: false,
+};
+```
+
+### Top-level keys
+
+| Key               | type    | description                                                                                                                                    |
+| ----------------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| `default`         | object  | Styling applied to text inputs when not in `success` or `error` state. Accepts the [field state properties](#field-state-properties).          |
+| `success`         | object  | Styling applied to text inputs that pass validation. Merged on top of `default` — any property not set here falls back to its `default` value. |
+| `error`           | object  | Styling applied to text inputs that fail validation. Merged on top of `default` — same fallback behavior as `success`.                         |
+| `radio`           | object  | Styling for the ACH account-type radio buttons. See [Radio object](#radio-object).                                                             |
+| `button`          | object  | Styling for the hosted checkout button. See [Button object](#button-object).                                                                   |
+| `hidePlaceholder` | boolean | When `true`, the placeholder text in the input fields is hidden. Defaults to `false`.                                                          |
+
+:::info success and error inherit from default
+Properties set in `default` automatically apply to `success` and `error` too — you only need to override the keys that actually change between states (commonly `color` and `borderColor`).
+:::
+
+### Field state properties
+
+`default`, `success`, and `error` each accept the same 18 properties. All values are CSS strings; any other key is ignored.
+
+| Key                | type   | description                                                                                                                                                              |
+| ------------------ | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `color`            | string | Text color. Accepts hex (`#fff`, `#ffffff`), `rgb()` / `rgba()`, `hsl()` / `hsla()`, named colors, CSS variables (`var(--x)`), `transparent`, `inherit`.                 |
+| `fontSize`         | string | Font size. Numeric value with a unit (`px`, `em`, `rem`, `%`, `vh`, `vw`, `pt`, `pc`, `in`, `cm`, `mm`, `ex`, `ch`, `vmin`, `vmax`), or `calc(...)`, `var(...)`, `auto`. |
+| `fontFamily`       | string | Font family stack. Capped at 100 characters.                                                                                                                             |
+| `lineHeight`       | string | CSS `line-height` value.                                                                                                                                                 |
+| `padding`          | string | CSS `padding` shorthand. Same unit rules as `fontSize`.                                                                                                                  |
+| `margin`           | string | CSS `margin` shorthand. Same unit rules as `fontSize`.                                                                                                                   |
+| `textAlign`        | string | CSS `text-align` value (`left`, `right`, `center`, `justify`, `start`, `end`).                                                                                           |
+| `border`           | string | CSS `border` shorthand (e.g. `'1px solid #ccc'`).                                                                                                                        |
+| `borderColor`      | string | Border color only. Same value rules as `color`.                                                                                                                          |
+| `borderRadius`     | string | CSS `border-radius` value.                                                                                                                                               |
+| `backgroundColor`  | string | Background color. Same value rules as `color`.                                                                                                                           |
+| `boxShadow`        | string | CSS `box-shadow` value.                                                                                                                                                  |
+| `outline`          | string | CSS `outline` shorthand.                                                                                                                                                 |
+| `width`            | string | CSS `width`. Same unit rules as `fontSize`.                                                                                                                              |
+| `height`           | string | CSS `height`. Same unit rules as `fontSize`.                                                                                                                             |
+| `transition`       | string | CSS `transition` shorthand.                                                                                                                                              |
+| `opacity`          | string | CSS `opacity` (`'0'`–`'1'`).                                                                                                                                             |
+| `webkitAppearance` | string | CSS `-webkit-appearance` value.                                                                                                                                          |
+
+### Radio object
+
+Styles for the ACH account-type radio buttons. Both the flat properties and the legacy nested `text` object are supported; if both forms are set, the nested values take precedence.
+
+| Key              | type          | description                                                                                |
+| ---------------- | ------------- | ------------------------------------------------------------------------------------------ |
+| `width`          | int \| string | Width of the radio button. Bare numbers are interpreted as pixels.                         |
+| `fill`           | string        | Fill color of the selected indicator.                                                      |
+| `stroke`         | string        | Color of the radio outline.                                                                |
+| `textFontSize`   | string        | Font size for the radio label.                                                             |
+| `textColor`      | string        | Color for the radio label.                                                                 |
+| `textFontFamily` | string        | Font family for the radio label.                                                           |
+| `text`           | object        | Backwards-compatible nested form. Accepts `fontSize`, `color`, `fontFamily`, `fontWeight`. |
+
+### Button object
+
+Styles for the hosted checkout button. The button accepts a **config** form (preset color and call-to-action — the common case) or a **processed** form where you set the resolved CSS properties directly.
+
+**Config form**
+
+| Key            | type                                              | description                                                                     |
+| -------------- | ------------------------------------------------- | ------------------------------------------------------------------------------- |
+| `color`        | `'PURPLE'` \| `'WHITE'` \| `'BLACK'` \| `'GREY'`  | Preset color theme. Matching is case-insensitive. Defaults to `'PURPLE'`.       |
+| `callToAction` | `'PAY'` \| `'CHECKOUT'` \| `'DONATE'` \| `'BOOK'` | Sets the button copy (e.g. `'PAY'` → "Pay with"). Matching is case-insensitive. |
+| `pill`         | boolean                                           | When `true`, gives the button a fully rounded (pill) shape.                     |
+| `height`       | int \| string                                     | Button height. Numbers are interpreted as pixels.                               |
+
+**Processed form**
+
+| Key               | type   | description                                                       |
+| ----------------- | ------ | ----------------------------------------------------------------- |
+| `backgroundColor` | string | Button background color. Default: `#9139D2`.                      |
+| `borderRadius`    | string | Button corner radius. Default: `4px` (`100px` when `pill: true`). |
+| `fontColor`       | string | Button text color. Default: `#FFFFFF`.                            |
+| `height`          | string | Button height. Default: `48px`.                                   |
+| `border`          | string | CSS `border` shorthand (e.g. `'0.5px solid #C9C4CA'`).            |
+| `altText`         | string | Accessible label / button copy.                                   |
+
+**Defaults applied by preset `color`**
+
+| `color`  | background | text color | border                |
+| -------- | ---------- | ---------- | --------------------- |
+| `PURPLE` | `#9139D2`  | `#FFFFFF`  | none                  |
+| `BLACK`  | `#000000`  | `#FFFFFF`  | none                  |
+| `WHITE`  | `#FFFFFF`  | `#000000`  | `0.5px solid #C9C4CA` |
+| `GREY`   | `#F7F7F4`  | `#000000`  | none                  |
+
+---
+
+## Additional styling
+
+To style the input parent div, provide your own CSS for the Pay Theory containers you create. This is best used to style the height, width, and border of the container.
+
+:::danger Warning
+Individual pay-theory-credit-card-number containers should be at least 340px wide, pay-theory-credit-card combined input should be 400px
+:::
+
+```jsx title="src/custom.css"
+#pay-theory-credit-card-number,
+#pay-theory-credit-card-exp,
+#pay-theory-credit-card-cvv {
+  height: 1.75em;
+  border: solid 1px #ccc;
+  border-radius: 5px;
+  margin: 4px 0;
+}
+```
+
+---
+
+## Using the stateObserver
+
+A stateObserver lets you keep an eye on changes to the state of hosted fields and react to them. It offers a mechanism to keep a look on things like field focus, if a field is empty or if there are any validation errors with the field. Each time the state of a text input changes, the stateObserver callback method is called.
+
+```jsx title="src/paytheory.js"
+const stateHandler = state => {
+  const cardState = state['card-number'];
+  const cardField = document.getElementById('pay-theory-credit-card-number');
+  if (cardState.isDirty) {
+    cardField.classList.add('dirty');
+  } else {
+    cardField.classList.remove('dirty');
+  }
+  if (cardState.isFocused) {
+    cardField.classList.add('focused');
+  } else {
+    cardField.classList.remove('focused');
+  }
+  if (cardState.errorMessages && cardState.errorMessages.length > 0) {
+    cardField.classList.add('error');
+  } else {
+    cardField.classList.remove('error');
+  }
+};
+
+window.paytheory.stateObserver(stateHandler);
+```
+
+:::info Additional stateObserver functionality
+For more details on stateObserver functionality
+
+<a
+  href="../../sdk/javascript/event_listeners#stateobserver"
+  class="button button--primary button--md">
+  View stateObserver
+</a>
+:::
+
+---
+
+## Next steps
+
+Once your Pay Theory fields are stylized you will need to make sure Error handling is set up. Additionally you can further customize your Pay Theory fields by adding [Cash](../online_payments/cash_payments.mdx) and or [ACH](../online_payments/ach_payments) functionality.
+
+</TabItem>
+  <TabItem value="apple">
+
+# Styling Pay Theory TextFields
+
+The Pay Theory SDK provides TextFields that can be styled using SwiftUI's built-in styling capabilities. This guide will walk you through how to create and apply custom styles to our TextField components.
+
+## Basic Styling
+
+Pay Theory TextFields support all standard SwiftUI TextField modifiers. You can apply these directly to the components:
+
+```swift
+PTCardNumber()
+    .padding()
+    .background(Color.gray.opacity(0.1))
+    .cornerRadius(8)
+```
+
+## Custom TextField Style
+
+For consistent styling across your application, you can create a custom `TextFieldStyle`.
+
+Here's an example of a custom style:
+
+```swift
+struct CustomTextFieldStyle: TextFieldStyle {
+    func _body(configuration: TextField<Self._Label>) -> some View {
+        configuration
+            .padding(12)
+            .background(Color.white)
+            .cornerRadius(8)
+            .overlay(
+                RoundedRectangle(cornerRadius: 8)
+                    .stroke(Color.black, lineWidth: 1)
+            )
+    }
+}
+```
+
+## Applying Custom Styles
+
+You can apply your custom style to any Pay Theory TextField component:
+
+```swift
+VStack {
+    // Card payment fields
+    HStack(spacing: 12) {
+        PTCardNumber()
+            .textFieldStyle(CustomTextFieldStyle())
+            .frame(maxWidth: .infinity)
+
+        PTExp()
+            .textFieldStyle(CustomTextFieldStyle())
+            .frame(maxWidth: 80)
+
+        PTCvv()
+            .textFieldStyle(CustomTextFieldStyle())
+            .frame(maxWidth: 60)
+    }
+
+    // Address fields
+    PTCardLineOne()
+        .textFieldStyle(CustomTextFieldStyle())
+
+    PTCardLineTwo()
+        .textFieldStyle(CustomTextFieldStyle())
+
+    HStack(spacing: 12) {
+        PTCardCity()
+            .textFieldStyle(CustomTextFieldStyle())
+            .frame(maxWidth: .infinity)
+
+        PTCardRegion(placeholder: "State")
+            .textFieldStyle(CustomTextFieldStyle())
+            .frame(maxWidth: 80)
+
+        PTCardPostalCode(placeholder: "Zip")
+            .textFieldStyle(CustomTextFieldStyle())
+            .frame(maxWidth: 100)
+    }
+}
+```
+
+Remember that all Pay Theory TextField components support these styling options while maintaining their built-in validation and formatting functionality.
+
+  </TabItem>
+
+  <TabItem value="android">
+
+    # Documentation Coming Soon
+    Our Android SDK is fully functional. If you would like to implement our Android SDK select the link below for more information.
+    <br/>
+    <a href= "../../sdk/android/main" class="button button--primary button--md">View Android SDK Reference</a>
+
+  </TabItem>
+
+</Tabs>

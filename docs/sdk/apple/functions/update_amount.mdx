@@ -1,0 +1,108 @@
+---
+sidebar_position: 4
+sidebar_label: 'updateAmount'
+title: "updateAmount"
+---
+
+# updateAmount
+
+The `updateAmount` function in the PayTheory SDK is primarily used to update the stored transaction amount and calculate fees when using the service fee model. It's particularly useful for dynamically updating the amount and associated fees as the transaction details change.
+
+## Function Signature
+
+```swift
+public func updateAmount(newAmount: Int)
+```
+
+### Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| newAmount | `Int` | The new amount to be set for the transaction, in cents. |
+
+This function doesn't return a value.
+
+## Functionality
+
+When called, the `updateAmount` function performs the following actions:
+
+1. Checks if the new amount is different from the currently stored amount.
+2. If the amount has changed:
+- Updates the stored amount with the new value.
+- Triggers a calculation of fees based on the new amount, specifically for the service fee model.
+3. For card payments, it initiates the fee calculation process, but the actual calculation won't complete until a valid card BIN (first 6 digits of the card number) is available.
+
+## Fee Calculation Behavior
+
+*Service Fee Model*: This function is primarily used to calculate fees when using the service fee model for transactions. It helps determine what the fee will be based on the current amount.
+
+**Card Payments**:
+- The card fee will not be calculated until at least 6 digits (BIN) have been entered into the card number field.
+- If the BIN changes (i.e., the user modifies the first 6 digits of the card number), the fee will be recalculated automatically.
+
+**ACH Payments**:
+- For ACH (bank transfer) payments, the fee calculation will proceed immediately as it doesn't depend on a BIN number.
+
+## Usage
+
+You should call this function whenever you need to update the transaction amount, especially when:
+
+- The total cost of items in a cart changes
+- Applying or removing discounts
+- Switching between different services or products with varying costs
+
+### Example
+
+```swift
+class CheckoutViewModel: ObservableObject {
+    @Published var payTheory: PayTheory
+    @Published var cartTotal: Int = 0 // Amount in cents
+
+    init() {
+        payTheory = PayTheory(
+            amount: 0, // Initial amount
+            apiKey: "your-api-key-here",
+            feeMode: .serviceFee // Using service fee model
+        ) { error in
+            print("PayTheory Error: \(error.error)")
+        }
+    }
+
+    func updateCart(newTotal: Int) {
+        cartTotal = newTotal
+        payTheory.updateAmount(newAmount: newTotal)
+    }
+}
+
+struct CheckoutView: View {
+    @ObservedObject var viewModel: CheckoutViewModel
+
+    var body: some View {
+        VStack {
+            Text("Cart Total: $\(Double(viewModel.cartTotal) / 100.0, specifier: "%.2f")")
+            Text("Card Fee: $\(Double(viewModel.payTheory.cardServiceFee ?? 0) / 100.0, specifier: "%.2f")")
+            Text("ACH Fee: $\(Double(viewModel.payTheory.bankServiceFee ?? 0) / 100.0, specifier: "%.2f")")
+
+            // Payment form fields including PTCardNumber
+
+            Button("Add $10 Item") {
+                viewModel.updateCart(newTotal: viewModel.cartTotal + 1000)
+            }
+        }
+    }
+}
+```
+
+## Important Notes
+
+- The `newAmount` parameter should be provided in cents. For example, use `1000` for $10.00.
+- This function is most relevant when using the service fee model (`feeMode: .serviceFee`).
+- For card payments, the `cardServiceFee` will only be calculated and updated once a valid BIN (first 6 digits of the card number) is entered in the card number field.
+- The `bankServiceFee` for ACH payments will be calculated immediately upon calling `updateAmount`.
+- Fee calculations are asynchronous. Observe the `cardServiceFee` and `bankServiceFee` properties of your PayTheory instance for updates.
+
+:::tip Tip
+When implementing a payment form, consider calling `updateAmount` whenever the user modifies the card number, especially if they change the first 6 digits. This ensures the most accurate fee calculation based on the specific card type.
+:::
+
+By using the `updateAmount` function appropriately, you can provide users with accurate, real-time information about transaction amounts and associated fees, enhancing transparency in the payment process.

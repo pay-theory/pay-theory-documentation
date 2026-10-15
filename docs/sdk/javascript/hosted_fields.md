@@ -1,7 +1,7 @@
 ---
 sidebar_position: 3
 sidebar_label: 'Hosted Fields'
-title: "Hosted Fields"
+title: 'Hosted Fields'
 ---
 
 # Hosted Fields
@@ -20,11 +20,11 @@ These fields are used to collect the required info from the user for a valid car
 
 ```html
 <form>
-...
-<div id="pay-theory-credit-card-number"></div>
-<div id="pay-theory-credit-card-exp"></div>
-<div id="pay-theory-credit-card-cvv"></div>
-...
+  ...
+  <div id="pay-theory-credit-card-number"></div>
+  <div id="pay-theory-credit-card-exp"></div>
+  <div id="pay-theory-credit-card-cvv"></div>
+  ...
 </form>
 ```
 
@@ -34,9 +34,9 @@ These fields are used to collect the required info from the user for a valid car
 
 ```html
 <form>
-...
-<div id="pay-theory-credit-card"></div>
-...
+  ...
+  <div id="pay-theory-credit-card"></div>
+  ...
 </form>
 ```
 
@@ -110,7 +110,6 @@ This button will open a hosted checkout page that will allow the user to select 
 <div id="pay-theory-checkout-button"></div>
 ```
 
-
 ## QR Code Field
 
 This div is used to mount an iframe that will include a QR Code.
@@ -120,35 +119,25 @@ This QR Code will open a hosted checkout page that will allow the user to select
 <div id="pay-theory-checkout-qr"></div>
 ```
 
-[//]: # (## Card Present Field)
-
-[//]: # ()
-[//]: # (This div is used to mount an iframe that will allow the SDK to communicate to Pay Theory.)
-
-[//]: # ()
-[//]: # (This div is required for card present to work but is not shown and is set to `display: none` by default.)
-
-[//]: # ()
-[//]: # (```html)
-
-[//]: # (<form>)
-
-[//]: # (...)
-
-[//]: # (<div id="pay-theory-card-present"></div>)
-
-[//]: # (...)
-
-[//]: # (</form>)
-
-[//]: # (```)
-
+[//]: # '## Card Present Field'
+[//]: #
+[//]: # 'This div is used to mount an iframe that will allow the SDK to communicate to Pay Theory.'
+[//]: #
+[//]: # 'This div is required for card present to work but is not shown and is set to `display: none` by default.'
+[//]: #
+[//]: # '```html'
+[//]: # '<form>'
+[//]: # '...'
+[//]: # '<div id="pay-theory-card-present"></div>'
+[//]: # '...'
+[//]: # '</form>'
+[//]: # '```'
 
 ## Styling Hosted Fields
 
 To style the input parent div simply provide your own CSS for the pay theory containers you create. This is best used to style the height, width, and border of the container.
 
-*Individual pay-theory-credit-card-number containers should be at least 340px wide, pay-theory-credit-card combined input should be 400px*
+_Individual pay-theory-credit-card-number containers should be at least 340px wide, pay-theory-credit-card combined input should be 400px_
 
 ```css
 #pay-theory-credit-card-number,
@@ -161,61 +150,135 @@ To style the input parent div simply provide your own CSS for the pay theory con
 }
 ```
 
-## Styles Object
+### Styles Object
 
-To style the input fields you can pass in a custom style object to the create function in our SDK. This allows you to style the text inside the inputs as well as the style of the radio buttons for the ACH account type
+To style the input fields you can pass in a custom style object to the create function in our SDK. The style object accepts a fixed set of keys — any property not listed in the tables below is silently ignored.
 
 ```javascript
 const STYLES = {
   default: {
     color: 'black',
-    fontSize: '14px'
+    fontSize: '14px',
+    fontFamily: 'Helvetica, Arial, sans-serif',
+    padding: '10px',
+    border: '1px solid #ccc',
+    borderRadius: '4px',
+    backgroundColor: '#ffffff',
   },
   success: {
     color: '#5cb85c',
-    fontSize: '14px'
+    borderColor: '#5cb85c',
   },
   error: {
     color: '#d9534f',
-    fontSize: '14px'
+    borderColor: '#d9534f',
   },
   radio: {
     width: 18,
-    fill: "blue",
-    stroke: "grey",
-    text: {
-      fontSize: "18px",
-      color: "grey"
-    }
+    fill: 'blue',
+    stroke: 'grey',
+    textFontSize: '14px',
+    textColor: 'grey',
+    textFontFamily: 'Helvetica, Arial, sans-serif',
   },
-  hidePlaceholder: false
-}
+  button: {
+    color: 'PURPLE',
+    callToAction: 'PAY',
+    pill: false,
+    height: 48,
+  },
+  hidePlaceholder: false,
+};
 ```
 
-|Key                | type                          |       description                     |
-|-------------------|-------------------------------|---------------------------------------|
-|default            | CSS Style Object              |The way a text field look when it is not in state success or error.|
-|success            | CSS Style Object              |The way a text field look when it is valid. Only applies to fields that go through validation.|
-|error              | CSS Style Object              |The way a text field look when it is invalid. Only applies to fields that go through validation.|
-|radio              | [Radio Object](#radio-object) |The way radio buttons look for the ACH account type|
-|hidePlaceholder    | Boolean                       |that allows you to hide the placeholder text in the input fields|
+| Key               | type                                      | description                                                                                                                                    |
+| ----------------- | ----------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| `default`         | [Field Style Object](#field-style-object) | Styling applied to text inputs when not in `success` or `error` state.                                                                         |
+| `success`         | [Field Style Object](#field-style-object) | Styling applied to text inputs that pass validation. Merged on top of `default` — any property not set here falls back to its `default` value. |
+| `error`           | [Field Style Object](#field-style-object) | Styling applied to text inputs that fail validation. Merged on top of `default` — same fallback behavior as `success`.                         |
+| `radio`           | [Radio Object](#radio-object)             | Styling for the ACH account-type radio buttons.                                                                                                |
+| `button`          | [Button Object](#button-object)           | Styling for the hosted checkout button.                                                                                                        |
+| `hidePlaceholder` | Boolean                                   | When `true`, the placeholder text in the input fields is hidden. Defaults to `false`.                                                          |
 
-## Radio Object
+### Field Style Object
 
-This style object will be used to style the labels for the radio buttons. It contains the following keys:
+The `default`, `success`, and `error` keys each accept the same 18 properties. All values are CSS strings.
 
-|Key                | type                        |       description                     |
-|-------------------|-----------------------------|---------------------------------------|
-|width              | Int                         |The width in pixels of the radio buttons|
-|fill               | String                      |The color of the radio buttons|
-|stroke             | String                      |The color of the radio buttons border|
-|text               | [Text Object](#text-object) |This style object will be used to style the labels for the radio buttons|
+| Key                | type   | description                                                                                                                                                   |
+| ------------------ | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `color`            | String | Text color. Accepts hex, `rgb()` / `rgba()`, `hsl()` / `hsla()`, named colors, CSS variables (`var(--x)`), `transparent`, `inherit`.                          |
+| `fontSize`         | String | Font size. Numeric + unit (`px`, `em`, `rem`, `%`, `vh`, `vw`, `pt`, `pc`, `in`, `cm`, `mm`, `ex`, `ch`, `vmin`, `vmax`), or `calc(...)`, `var(...)`, `auto`. |
+| `fontFamily`       | String | Font family stack. Capped at 100 characters.                                                                                                                  |
+| `lineHeight`       | String | CSS `line-height` value.                                                                                                                                      |
+| `padding`          | String | CSS `padding` shorthand. Same unit rules as `fontSize`.                                                                                                       |
+| `margin`           | String | CSS `margin` shorthand. Same unit rules as `fontSize`.                                                                                                        |
+| `textAlign`        | String | CSS `text-align` value (`left`, `right`, `center`, `justify`, `start`, `end`).                                                                                |
+| `border`           | String | CSS `border` shorthand (e.g. `'1px solid #ccc'`).                                                                                                             |
+| `borderColor`      | String | Border color only. Same value rules as `color`.                                                                                                               |
+| `borderRadius`     | String | CSS `border-radius` value.                                                                                                                                    |
+| `backgroundColor`  | String | Background color. Same value rules as `color`.                                                                                                                |
+| `boxShadow`        | String | CSS `box-shadow` value.                                                                                                                                       |
+| `outline`          | String | CSS `outline` shorthand.                                                                                                                                      |
+| `width`            | String | CSS `width`. Same unit rules as `fontSize`.                                                                                                                   |
+| `height`           | String | CSS `height`. Same unit rules as `fontSize`.                                                                                                                  |
+| `transition`       | String | CSS `transition` shorthand.                                                                                                                                   |
+| `opacity`          | String | CSS `opacity` (`'0'`–`'1'`).                                                                                                                                  |
+| `webkitAppearance` | String | CSS `-webkit-appearance` value.                                                                                                                               |
 
-## Text Object
+### Radio Object
 
-This style object will be used to style the labels for the radio buttons. It contains the following keys:
+Styles for the ACH account-type radio buttons. Both the flat properties and the legacy nested `text` object are supported; if both forms are set, the nested values take precedence.
 
-|Key                |type         |       description                     |
-|-------------------|-------------|---------------------------------------|
-|fontSize           |String       |The font size of the radio button labels|
-|color              |String       |The color of the radio button labels|
+| Key              | type                        | description                                                        |
+| ---------------- | --------------------------- | ------------------------------------------------------------------ |
+| `width`          | Int \| String               | Width of the radio button. Bare numbers are interpreted as pixels. |
+| `fill`           | String                      | Fill color of the selected indicator.                              |
+| `stroke`         | String                      | Color of the radio outline.                                        |
+| `textFontSize`   | String                      | Font size for the radio label.                                     |
+| `textColor`      | String                      | Color for the radio label.                                         |
+| `textFontFamily` | String                      | Font family for the radio label.                                   |
+| `text`           | [Text Object](#text-object) | Backwards-compatible nested form for label styling.                |
+
+### Text Object
+
+Backwards-compatible nested form for styling the radio button labels.
+
+| Key          | type   | description                             |
+| ------------ | ------ | --------------------------------------- |
+| `fontSize`   | String | Font size of the radio button labels.   |
+| `color`      | String | Color of the radio button labels.       |
+| `fontFamily` | String | Font family of the radio button labels. |
+| `fontWeight` | String | Font weight of the radio button labels. |
+
+### Button Object
+
+Styles for the hosted checkout button. The button accepts a **config** form (preset color and call-to-action — the common case) or a **processed** form where you set the resolved CSS properties directly.
+
+**Config form**
+
+| Key            | type                                              | description                                                                     |
+| -------------- | ------------------------------------------------- | ------------------------------------------------------------------------------- |
+| `color`        | `'PURPLE'` \| `'WHITE'` \| `'BLACK'` \| `'GREY'`  | Preset color theme. Matching is case-insensitive. Defaults to `'PURPLE'`.       |
+| `callToAction` | `'PAY'` \| `'CHECKOUT'` \| `'DONATE'` \| `'BOOK'` | Sets the button copy (e.g. `'PAY'` → "Pay with"). Matching is case-insensitive. |
+| `pill`         | Boolean                                           | When `true`, gives the button a fully rounded (pill) shape.                     |
+| `height`       | Int \| String                                     | Button height. Numbers are interpreted as pixels.                               |
+
+**Processed form**
+
+| Key               | type   | description                                                       |
+| ----------------- | ------ | ----------------------------------------------------------------- |
+| `backgroundColor` | String | Button background color. Default: `#9139D2`.                      |
+| `borderRadius`    | String | Button corner radius. Default: `4px` (`100px` when `pill: true`). |
+| `fontColor`       | String | Button text color. Default: `#FFFFFF`.                            |
+| `height`          | String | Button height. Default: `48px`.                                   |
+| `border`          | String | CSS `border` shorthand (e.g. `'0.5px solid #C9C4CA'`).            |
+| `altText`         | String | Accessible label / button copy.                                   |
+
+**Defaults applied by preset `color`**
+
+| `color`  | background | text color | border                |
+| -------- | ---------- | ---------- | --------------------- |
+| `PURPLE` | `#9139D2`  | `#FFFFFF`  | none                  |
+| `BLACK`  | `#000000`  | `#FFFFFF`  | none                  |
+| `WHITE`  | `#FFFFFF`  | `#000000`  | `0.5px solid #C9C4CA` |
+| `GREY`   | `#F7F7F4`  | `#000000`  | none                  |
