@@ -28,7 +28,6 @@ When you tokenize a payment method or run a payment, the sandbox checks the card
 - The amount doesn't affect the result.
 - The sandbox checks the list when you create the payment method and again when you run a sale or authorization. So a failure number fails at tokenization, before you get a payment method token.
 - Captures, refunds, and voids always succeed.
-- Successful card payments return a postal code match for AVS and a match for CVV. You can't trigger an AVS or CVV mismatch with a ZIP code or CVV value.
 
 :::note Update your sandbox
 Some older sandboxes still run payments through a processor's test environment instead of the Pay Theory sandbox. If the test numbers or sandbox mutations on this page don't work for you, your sandbox likely needs an update. Email Pay Theory support at [support@paytheory.com](mailto:support@paytheory.com) and we'll update it for you.
