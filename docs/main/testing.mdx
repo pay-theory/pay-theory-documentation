@@ -71,14 +71,30 @@ Use any future expiration date, any CVV, and any ZIP code.
 
 These card numbers fail with the listed failure code.
 
-{/* PRD-770: rows other than 4000000600000006 must be seeded in the paytheory-payment-processor-failures table (PK = FAILURE#CARD) before publishing. */}
-
-| Failure Code       | Card Number                                                                                                |
-| ------------------ | ---------------------------------------------------------------------------------------------------------- |
-| DO_NOT_HONOR       | <span style={{whiteSpace: 'nowrap'}}>4000 0006 0000 0006 <CopyButton value="4000 0006 0000 0006" /></span> |
-| INSUFFICIENT_FUNDS | <span style={{whiteSpace: 'nowrap'}}>4000 0006 0000 0014 <CopyButton value="4000 0006 0000 0014" /></span> |
-| EXPIRED_CARD       | <span style={{whiteSpace: 'nowrap'}}>4000 0006 0000 0022 <CopyButton value="4000 0006 0000 0022" /></span> |
-| INVALID_CVV        | <span style={{whiteSpace: 'nowrap'}}>4000 0006 0000 0030 <CopyButton value="4000 0006 0000 0030" /></span> |
+| Failure Code                           | Card Number                                                                                                |
+| -------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| GENERIC_DECLINE                        | <span style={{whiteSpace: 'nowrap'}}>4000 0001 0000 0001 <CopyButton value="4000 0001 0000 0001" /></span> |
+| INSUFFICIENT_FUNDS                     | <span style={{whiteSpace: 'nowrap'}}>4000 0002 0000 0000 <CopyButton value="4000 0002 0000 0000" /></span> |
+| INVALID_ACCOUNT_NUMBER                 | <span style={{whiteSpace: 'nowrap'}}>4000 0003 0000 0009 <CopyButton value="4000 0003 0000 0009" /></span> |
+| EXPIRED_CARD                           | <span style={{whiteSpace: 'nowrap'}}>4000 0004 0000 0008 <CopyButton value="4000 0004 0000 0008" /></span> |
+| INVALID_CVV                            | <span style={{whiteSpace: 'nowrap'}}>4000 0005 0000 0007 <CopyButton value="4000 0005 0000 0007" /></span> |
+| DO_NOT_HONOR                           | <span style={{whiteSpace: 'nowrap'}}>4000 0006 0000 0006 <CopyButton value="4000 0006 0000 0006" /></span> |
+| LOST_OR_STOLEN_CARD                    | <span style={{whiteSpace: 'nowrap'}}>4000 0007 0000 0005 <CopyButton value="4000 0007 0000 0005" /></span> |
+| FRAUD_DETECTED                         | <span style={{whiteSpace: 'nowrap'}}>4000 0008 0000 0004 <CopyButton value="4000 0008 0000 0004" /></span> |
+| CARD_NOT_SUPPORTED                     | <span style={{whiteSpace: 'nowrap'}}>4000 0009 0000 0003 <CopyButton value="4000 0009 0000 0003" /></span> |
+| CALL_ISSUER                            | <span style={{whiteSpace: 'nowrap'}}>4000 0010 0000 0000 <CopyButton value="4000 0010 0000 0000" /></span> |
+| PICK_UP_CARD                           | <span style={{whiteSpace: 'nowrap'}}>4000 0011 0000 0009 <CopyButton value="4000 0011 0000 0009" /></span> |
+| RESTRICTED_CARD                        | <span style={{whiteSpace: 'nowrap'}}>4000 0012 0000 0008 <CopyButton value="4000 0012 0000 0008" /></span> |
+| EXCEEDS_APPROVAL_LIMIT                 | <span style={{whiteSpace: 'nowrap'}}>4000 0013 0000 0007 <CopyButton value="4000 0013 0000 0007" /></span> |
+| INVALID_TRANSACTION                    | <span style={{whiteSpace: 'nowrap'}}>4000 0014 0000 0006 <CopyButton value="4000 0014 0000 0006" /></span> |
+| TRANSACTION_NOT_PERMITTED              | <span style={{whiteSpace: 'nowrap'}}>4000 0015 0000 0005 <CopyButton value="4000 0015 0000 0005" /></span> |
+| INACTIVE_CARD                          | <span style={{whiteSpace: 'nowrap'}}>4000 0016 0000 0004 <CopyButton value="4000 0016 0000 0004" /></span> |
+| DUPLICATE_TRANSACTION                  | <span style={{whiteSpace: 'nowrap'}}>4000 0017 0000 0003 <CopyButton value="4000 0017 0000 0003" /></span> |
+| SYSTEM_ERROR                           | <span style={{whiteSpace: 'nowrap'}}>4000 0018 0000 0002 <CopyButton value="4000 0018 0000 0002" /></span> |
+| TIMEOUT                                | <span style={{whiteSpace: 'nowrap'}}>4000 0019 0000 0001 <CopyButton value="4000 0019 0000 0001" /></span> |
+| COMMUNICATION_ERROR                    | <span style={{whiteSpace: 'nowrap'}}>4000 0020 0000 0008 <CopyButton value="4000 0020 0000 0008" /></span> |
+| ADDRESS_VERIFICATION_FAILED_RISK_RULES | <span style={{whiteSpace: 'nowrap'}}>4000 0021 0000 0007 <CopyButton value="4000 0021 0000 0007" /></span> |
+| CVV_FAILED_RISK_RULES                  | <span style={{whiteSpace: 'nowrap'}}>4000 0022 0000 0006 <CopyButton value="4000 0022 0000 0006" /></span> |
 
 For what each failure code means, see [Failed Transactions](after_payments/failed_transactions).
 
@@ -88,14 +104,18 @@ For what each failure code means, see [Failed Transactions](after_payments/faile
 
 The sandbox ignores the routing number when it decides the outcome. Pass any valid routing number, such as `122105278`.
 
-{/* PRD-770: failure rows must be seeded in the paytheory-payment-processor-failures table (PK = FAILURE#ACH) before publishing. */}
+Any account number not listed below succeeds. These account numbers fail with the listed failure code:
 
-| Transaction Outcome | Account Number                                                                           | Routing Number                                                                         | Failure Code                |
-| ------------------- | ---------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- | --------------------------- |
-| Success             | Any number not listed below                                                              | <span style={{whiteSpace: 'nowrap'}}>122105278 <CopyButton value="122105278" /></span> |                             |
-| Failure             | <span style={{whiteSpace: 'nowrap'}}>0000000101 <CopyButton value="0000000101" /></span> | <span style={{whiteSpace: 'nowrap'}}>122105278 <CopyButton value="122105278" /></span> | NO_BANK_ACCOUNT_FOUND       |
-| Failure             | <span style={{whiteSpace: 'nowrap'}}>0000000102 <CopyButton value="0000000102" /></span> | <span style={{whiteSpace: 'nowrap'}}>122105278 <CopyButton value="122105278" /></span> | BANK_ACCOUNT_CLOSED         |
-| Failure             | <span style={{whiteSpace: 'nowrap'}}>0000000103 <CopyButton value="0000000103" /></span> | <span style={{whiteSpace: 'nowrap'}}>122105278 <CopyButton value="122105278" /></span> | INVALID_BANK_ACCOUNT_NUMBER |
+| Failure Code                | Account Number                                                                           |
+| --------------------------- | ---------------------------------------------------------------------------------------- |
+| INVALID_BANK_ACCOUNT_NUMBER | <span style={{whiteSpace: 'nowrap'}}>0000000001 <CopyButton value="0000000001" /></span> |
+| BANK_ACCOUNT_CLOSED         | <span style={{whiteSpace: 'nowrap'}}>0000000002 <CopyButton value="0000000002" /></span> |
+| NO_BANK_ACCOUNT_FOUND       | <span style={{whiteSpace: 'nowrap'}}>0000000003 <CopyButton value="0000000003" /></span> |
+| BANK_ACCOUNT_FROZEN         | <span style={{whiteSpace: 'nowrap'}}>0000000004 <CopyButton value="0000000004" /></span> |
+| GENERIC_DECLINE             | <span style={{whiteSpace: 'nowrap'}}>0000000005 <CopyButton value="0000000005" /></span> |
+| NON_TRANSACTION_ACCOUNT     | <span style={{whiteSpace: 'nowrap'}}>0000000006 <CopyButton value="0000000006" /></span> |
+| INVALID_ROUTING_NUMBER      | <span style={{whiteSpace: 'nowrap'}}>0000000007 <CopyButton value="0000000007" /></span> |
+| PAYMENT_STOPPED             | <span style={{whiteSpace: 'nowrap'}}>0000000008 <CopyButton value="0000000008" /></span> |
 
 These failures happen right away, when you submit the payment. To test an ACH payment that succeeds and is returned later, settle it first and then [create an ACH return](#triggering-ach-returns).
 
