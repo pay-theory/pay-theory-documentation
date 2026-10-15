@@ -8,89 +8,275 @@ import CopyButton from '@site/src/components/CopyButton';
 
 # Testing
 
-This guide will show you how to test card and ACH payments, card failures and disputes.
+The Pay Theory sandbox simulates payment processing end to end. Approvals and declines depend on the card or bank account number you use. Settlements, ACH returns, and disputes don't happen on their own in sandbox. You trigger each one with a sandbox-only GraphQL mutation.
 
-:::danger Before you start
-In order to test a payment method you need be set up to accept online payments.
+This guide covers:
 
-<a href="getting_started/quickstart" class="button button--primary button--md">
-  Accepting Online Payments
-</a>
+- Test card and bank account numbers, including the ones that fail
+- Settling transactions
+- Creating ACH returns
+- Creating disputes and moving them to won or lost
+
+---
+
+## How Sandbox Processing Works
+
+When you tokenize a payment method or run a payment, the sandbox checks the card number or bank account number against a list of failure triggers.
+
+- If the number is on the list, the request fails with that entry's failure code.
+- Any other valid number succeeds.
+- The amount doesn't affect the result.
+- The sandbox checks the list when you create the payment method and again when you run a sale or authorization. So a failure number fails at tokenization, before you get a payment method token.
+- Captures, refunds, and voids always succeed.
+
+:::note Update your sandbox
+Some older sandboxes still run payments through a processor's test environment instead of the Pay Theory sandbox. If the test numbers or sandbox mutations on this page don't work for you, your sandbox likely needs an update. Email Pay Theory support at [support@paytheory.com](mailto:support@paytheory.com) and we'll update it for you.
 :::
 
 ---
 
-## Testing Card Transactions
+## Testing Card Payments
 
-When testing you will be using an SDK import and API Key that contains either paytheorylab or paytheorystudy.
+### Successful Cards
 
-### Card Brands
+Use any valid card number that isn't on the failure list. These numbers approve and show the matching card brand:
 
-| Card Brand | Testing Number                                                 |
-| ---------- | -------------------------------------------------------------- |
-| Visa       | 4835 0345 9845 7895 <CopyButton value="4835 0345 9845 7895" /> |
-| Discover   | 6560 0545 6789 1235 <CopyButton value="6560 0545 6789 1235" /> |
-| MasterCard | 5560 9578 9456 1234 <CopyButton value="5560 9578 9456 1234" /> |
-| Amex       | 3479 847894 56149 <CopyButton value="3479 847894 56149" />     |
+| Card Brand | Testing Number                                                                                             |
+| ---------- | ---------------------------------------------------------------------------------------------------------- |
+| Visa       | <span style={{whiteSpace: 'nowrap'}}>4835 0345 9845 7895 <CopyButton value="4835 0345 9845 7895" /></span> |
+| Discover   | <span style={{whiteSpace: 'nowrap'}}>6560 0545 6789 1235 <CopyButton value="6560 0545 6789 1235" /></span> |
+| MasterCard | <span style={{whiteSpace: 'nowrap'}}>5560 9578 9456 1234 <CopyButton value="5560 9578 9456 1234" /></span> |
+| Amex       | <span style={{whiteSpace: 'nowrap'}}>3479 847894 56149 <CopyButton value="3479 847894 56149" /></span>     |
+
+Use any future expiration date, any CVV, and any ZIP code.
 
 ### Card Types
 
-| Card Type       | Testing Number                                                 |
-| --------------- | -------------------------------------------------------------- |
-| Business Credit | 4389 9414 7258 3697 <CopyButton value="4389 9414 7258 3697" /> |
-| Business Debit  | 4472 7136 9258 1472 <CopyButton value="4472 7136 9258 1472" /> |
-| Credit Card     | 4835 0325 8143 6793 <CopyButton value="4835 0325 8143 6793" /> |
-| Debit Card      | 4398 8445 6789 1232 <CopyButton value="4398 8445 6789 1232" /> |
-| Prepaid Card    | 4307 6415 9482 6375 <CopyButton value="4307 6415 9482 6375" /> |
+| Card Type       | Testing Number                                                                                             |
+| --------------- | ---------------------------------------------------------------------------------------------------------- |
+| Business Credit | <span style={{whiteSpace: 'nowrap'}}>4389 9414 7258 3697 <CopyButton value="4389 9414 7258 3697" /></span> |
+| Business Debit  | <span style={{whiteSpace: 'nowrap'}}>4472 7136 9258 1472 <CopyButton value="4472 7136 9258 1472" /></span> |
+| Credit Card     | <span style={{whiteSpace: 'nowrap'}}>4835 0325 8143 6793 <CopyButton value="4835 0325 8143 6793" /></span> |
+| Debit Card      | <span style={{whiteSpace: 'nowrap'}}>4398 8445 6789 1232 <CopyButton value="4398 8445 6789 1232" /></span> |
+| Prepaid Card    | <span style={{whiteSpace: 'nowrap'}}>4307 6415 9482 6375 <CopyButton value="4307 6415 9482 6375" /></span> |
 
 ### Cards By Country
 
-| Card Type | Testing Number                                                 |
-| --------- | -------------------------------------------------------------- |
-| Canada    | 4527 7111 5544 8861 <CopyButton value="4527 7111 5544 8861" /> |
-| USA       | 4835 0345 9845 7895 <CopyButton value="4835 0345 9845 7895" /> |
+| Country | Testing Number                                                                                             |
+| ------- | ---------------------------------------------------------------------------------------------------------- |
+| Canada  | <span style={{whiteSpace: 'nowrap'}}>4527 7111 5544 8861 <CopyButton value="4527 7111 5544 8861" /></span> |
+| USA     | <span style={{whiteSpace: 'nowrap'}}>4835 0345 9845 7895 <CopyButton value="4835 0345 9845 7895" /></span> |
 
 ### Card Failures
 
-To trigger certain failures process a payment using the following amounts. These failures will not work when using `service_fee` fee mode.
+These card numbers fail with the listed failure code.
 
-**_These amounts are in cents._**
+{/* PRD-770: rows other than 4000000600000006 must be seeded in the paytheory-payment-processor-failures table (PK = FAILURE#CARD) before publishing. */}
 
-| Amount | Error Type                             |
-| ------ | -------------------------------------- |
-| 102    | GENERIC_DECLINE                        |
-| 193    | INSUFFICIENT_FUNDS                     |
-| 194    | INVALID_ACCOUNT_NUMBER                 |
-| 889986 | ADDRESS_VERIFICATION_FAILED_RISK_RULES |
-| 889987 | CVV_FAILED_RISK_RULES                  |
-| 888888 | DISPUTE                                |
+| Failure Code       | Card Number                                                                                                |
+| ------------------ | ---------------------------------------------------------------------------------------------------------- |
+| DO_NOT_HONOR       | <span style={{whiteSpace: 'nowrap'}}>4000 0006 0000 0006 <CopyButton value="4000 0006 0000 0006" /></span> |
+| INSUFFICIENT_FUNDS | <span style={{whiteSpace: 'nowrap'}}>4000 0006 0000 0014 <CopyButton value="4000 0006 0000 0014" /></span> |
+| EXPIRED_CARD       | <span style={{whiteSpace: 'nowrap'}}>4000 0006 0000 0022 <CopyButton value="4000 0006 0000 0022" /></span> |
+| INVALID_CVV        | <span style={{whiteSpace: 'nowrap'}}>4000 0006 0000 0030 <CopyButton value="4000 0006 0000 0030" /></span> |
 
-For a complete list of failure codes and their descriptions, see the [Failure Codes documentation](after_payments/failed_transactions).
-
-:::note Triggering a dispute
-If you want to trigger a dispute in sandbox, run a transaction for `888888`. You will get a success back and a dispute will be generated as well from this transaction.
-:::
+For what each failure code means, see [Failed Transactions](after_payments/failed_transactions).
 
 ---
 
-## Testing ACH Transactions
+## Testing ACH Payments
 
-| Transaction Outcome | Account Number                                                                           | Routing Number                                                                         |
-| ------------------- | ---------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| Success             | <span style={{whiteSpace: 'nowrap'}}>0000000016 <CopyButton value="0000000016" /></span> | <span style={{whiteSpace: 'nowrap'}}>122105278 <CopyButton value="122105278" /></span> |
-| Failure             | <span style={{whiteSpace: 'nowrap'}}>0000000005 <CopyButton value="0000000005" /></span> | <span style={{whiteSpace: 'nowrap'}}>122105278 <CopyButton value="122105278" /></span> |
+The sandbox ignores the routing number when it decides the outcome. Pass any valid routing number, such as `122105278`.
 
-## Sandbox API Calls
+{/* PRD-770: failure rows must be seeded in the paytheory-payment-processor-failures table (PK = FAILURE#ACH) before publishing. */}
 
-These GraphQL requests are specifically for testing in sandbox environments and only work when using sandbox credentials (API keys accessing paytheorylab or paytheorystudy).
+| Transaction Outcome | Account Number                                                                           | Routing Number                                                                         | Failure Code                |
+| ------------------- | ---------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- | --------------------------- |
+| Success             | Any number not listed below                                                              | <span style={{whiteSpace: 'nowrap'}}>122105278 <CopyButton value="122105278" /></span> |                             |
+| Failure             | <span style={{whiteSpace: 'nowrap'}}>0000000101 <CopyButton value="0000000101" /></span> | <span style={{whiteSpace: 'nowrap'}}>122105278 <CopyButton value="122105278" /></span> | NO_BANK_ACCOUNT_FOUND       |
+| Failure             | <span style={{whiteSpace: 'nowrap'}}>0000000102 <CopyButton value="0000000102" /></span> | <span style={{whiteSpace: 'nowrap'}}>122105278 <CopyButton value="122105278" /></span> | BANK_ACCOUNT_CLOSED         |
+| Failure             | <span style={{whiteSpace: 'nowrap'}}>0000000103 <CopyButton value="0000000103" /></span> | <span style={{whiteSpace: 'nowrap'}}>122105278 <CopyButton value="122105278" /></span> | INVALID_BANK_ACCOUNT_NUMBER |
 
-- [Create Barcode Payment](../api/sandbox/create-barcode-payment-sandbox) - Simulate processing a barcode payment
-- [Create Batch Capture](../api/sandbox/create-batch-capture) - Trigger a settlement batch creation to test settlement flows
+These failures happen right away, when you submit the payment. To test an ACH payment that succeeds and is returned later, settle it first and then [create an ACH return](#triggering-ach-returns).
 
-You can also trigger sandbox events using the Sandbox API mutations:
+---
 
-- [Create Sandbox ACH Return](../api/sandbox/create-sandbox-ach-return) - Generate an ACH return for a completed ACH transaction
-- [Create Sandbox Dispute](../api/sandbox/create-sandbox-dispute) - Create a dispute for a card transaction
-- [Update Sandbox Dispute Status](../api/sandbox/update-sandbox-dispute-status) - Move a dispute to a new status
-- [Prepare Sandbox Settlement Batch](../api/sandbox/prepare-sandbox-settlement-batch) - Lock in line items and calculate settlement totals
-- [Create Sandbox Settlement](../api/sandbox/create-sandbox-settlement) - Create a settlement from a prepared batch
+## Settling Transactions
+
+Sandbox transactions stay unsettled until you settle them. Settling a merchant takes two mutations:
+
+1. `prepareSandboxSettlementBatch` collects everything waiting to settle and calculates the totals.
+2. `createSandboxSettlement` creates the settlement from that batch.
+
+You need settled transactions before you can create ACH returns or disputes, so you'll run these two mutations often.
+
+### 1. Prepare the Batch
+
+```graphql title="Prepare Sandbox Settlement Batch"
+mutation {
+  prepareSandboxSettlementBatch(input: { merchant_uid: "your_merchant_uid" }) {
+    prep_id
+    debit_ids
+    reversal_ids
+    ach_return_ids
+    dispute_withdrawal_ids
+    dispute_deposit_ids
+    calculated_gross_amount
+    calculated_net_amount
+  }
+}
+```
+
+The batch includes the merchant's unsettled:
+
+- `PENDING` payments
+- Refunds
+- ACH returns
+- Disputes that are open and haven't been withdrawn yet
+- Disputes that were won and haven't been deposited yet
+- Split payments
+
+Preparing the batch captures those `PENDING` payments and moves them to `SUCCEEDED`, so you don't need to capture them yourself. The batch also charges the merchant's ACH return fee for each ACH return and the chargeback fee for each dispute withdrawal, based on the merchant's fee settings.
+
+### 2. Create the Settlement
+
+```graphql title="Create Sandbox Settlement"
+mutation {
+  createSandboxSettlement(input: { merchant_uid: "your_merchant_uid" }) {
+    success
+  }
+}
+```
+
+Once the batch is prepared, create the settlement. Every item in the batch moves to `SETTLED`, and a settlement batch is created for the merchant.
+
+:::note Captures run in the background
+If the batch included `PENDING` payments, the captures may still be running when you call `createSandboxSettlement`. In that case it returns `Captures not yet complete`. Wait a few seconds and try again.
+:::
+
+A few rules to keep in mind:
+
+- A merchant can have only one prepared batch waiting at a time. If you call `prepareSandboxSettlementBatch` again before you create the settlement, it returns `Existing settlement batch prep has not been reconciled`.
+- If there is nothing to settle, `prepareSandboxSettlementBatch` returns `No settlement items found for merchant`.
+- Both mutations queue their work and return right away. Settlement records can take a few seconds to appear in queries. See [Query Settlement Data](after_payments/query_settlement_data).
+
+---
+
+## Triggering ACH Returns
+
+Use `createSandboxAchReturn` to return an ACH payment or refund. The transaction must be:
+
+- An ACH payment or an ACH refund
+- Settled. A `PENDING` or `SUCCEEDED` transaction is rejected, so [settle it](#settling-transactions) first.
+
+```graphql title="Create Sandbox ACH Return"
+mutation {
+  createSandboxAchReturn(
+    input: { transaction_id: "your_transaction_id", return_code: R01 }
+  ) {
+    success
+    ach_return_transaction_id
+    return_code
+  }
+}
+```
+
+`return_code` accepts any standard NACHA return code from `R01` to `R85`. The code you pick is recorded on the transaction. Every code behaves the same way in sandbox. See the [create sandbox ACH return reference](../api/sandbox/create-sandbox-ach-return) for the full list.
+
+When the return goes through:
+
+- The original transaction changes to `RETURNED` and its `ach_return_details` hold the return code.
+- A new `ACH_RETURN` transaction is created for the full amount, with the original transaction as its parent. Its ID is the `ach_return_transaction_id` in the response.
+- Returning a payment takes the money back from the merchant. Returning a refund gives it back to the merchant.
+- The next settlement includes the return and charges the merchant's ACH return fee.
+
+You can request one return per transaction. A second request for the same transaction returns `ACH return already requested`.
+
+---
+
+## Triggering Disputes
+
+A sandbox dispute takes three settlements to go from payment to resolution:
+
+1. Settle the card payment.
+2. Create the dispute, then settle again. This settlement withdraws the disputed amount and the chargeback fee from the merchant.
+3. Mark the dispute won or lost. If it's won, settle again to deposit the amount back to the merchant.
+
+### Create a Dispute
+
+The transaction must be a settled card payment. Refunds and ACH payments can't be disputed.
+
+```graphql title="Create Sandbox Dispute"
+mutation {
+  createSandboxDispute(
+    input: { transaction_id: "your_transaction_id", reason: FRAUD }
+  ) {
+    success
+    dispute_id
+    transaction_id
+  }
+}
+```
+
+| Key            | type          | description                                                       |
+| -------------- | ------------- | ----------------------------------------------------------------- |
+| transaction_id | String        | The settled card payment to dispute.                              |
+| reason         | DisputeReason | One of `CLERICAL`, `FRAUD`, `INQUIRY`, `QUALITY`, or `TECHNICAL`. |
+
+The dispute:
+
+- Covers the full payment amount.
+- Starts in `PENDING`, whatever `reason` you pass.
+- Has a respond-by date seven days out.
+
+A transaction can have only one open dispute at a time.
+
+### Resolve a Dispute
+
+Before you can close a dispute, a settlement has to withdraw the disputed amount. Run [both settlement mutations](#settling-transactions) after you create the dispute. The batch lists the dispute in `dispute_withdrawal_ids`.
+
+Then move the dispute to `WON` or `LOST`:
+
+```graphql title="Update Sandbox Dispute Status"
+mutation {
+  updateSandboxDisputeStatus(
+    input: { dispute_id: "your_dispute_id", status: WON }
+  ) {
+    success
+  }
+}
+```
+
+- `LOST` closes the dispute. The merchant already paid the amount in the earlier settlement, so nothing else moves.
+- `WON` closes the dispute in the merchant's favor. The next settlement deposits the amount back to the merchant and lists the dispute in `dispute_deposit_ids`.
+
+`WON` and `LOST` are final. A closed dispute can't change status again.
+
+---
+
+## Testing Barcode Payments
+
+To simulate a customer paying a cash barcode, call `createBarcodePaymentSandbox` with the barcode ID and the amount paid in cents. The amount must match the barcode's amount. See the [create sandbox barcode payment reference](../api/sandbox/create-barcode-payment-sandbox) for the full request and response.
+
+---
+
+## Common Errors
+
+### Settlements
+
+- `No settlement items found for merchant`: the merchant has nothing waiting to settle.
+- `Existing settlement batch prep has not been reconciled`: you already prepared a batch. Call `createSandboxSettlement` before you prepare another one.
+- `No pending settlement prep found`: call `prepareSandboxSettlementBatch` first.
+- `Captures not yet complete`: wait a few seconds and call `createSandboxSettlement` again.
+
+### ACH Returns and Disputes
+
+- `Transaction cannot be pending or succeeded`: the transaction hasn't settled yet. Settle it, then retry.
+- `Transaction is not ACH`: you called `createSandboxAchReturn` on a card payment.
+- `Transaction is not a card payment`: you called `createSandboxDispute` on an ACH payment.
+- `Transaction already has an active dispute`: the transaction already has an open dispute.
+- `Dispute must be part of a settlement withdrawal batch before closing`: settle the merchant after you create the dispute, then update the status.
+
+### Any Sandbox Mutation
+
+- `Merchant is not using an allowed processor`: your sandbox needs an update. Email [support@paytheory.com](mailto:support@paytheory.com) and we'll update it for you.
