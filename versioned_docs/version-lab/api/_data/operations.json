@@ -2113,11 +2113,11 @@
     "idempotencyLookup": {
       "name": "idempotencyLookup",
       "operationType": "query",
-      "description": "Looks up an idempotency record for a merchant, operation, and key.",
+      "description": "Finds a payment creation record by idempotency key.",
       "arguments": [
         {
           "name": "merchant_uid",
-          "description": "The merchant the idempotency key belongs to.",
+          "description": "The Pay Theory unique identifier for the merchant that owns the idempotency key.",
           "isRequired": true,
           "type": {
             "kind": "TYPE_REF",
@@ -2129,7 +2129,7 @@
         },
         {
           "name": "operation",
-          "description": "The operation associated with the idempotency key.",
+          "description": "The payment creation operation the key was scoped to.",
           "isRequired": true,
           "type": {
             "kind": "TYPE_REF",
@@ -2141,7 +2141,7 @@
         },
         {
           "name": "idempotency_key",
-          "description": "The key supplied with the transaction or authorization request.",
+          "description": "The caller-provided idempotency key.",
           "isRequired": true,
           "type": {
             "kind": "TYPE_REF",
@@ -2161,8 +2161,8 @@
       "directives": {
         "docGroup": {
           "name": "Idempotency",
-          "sidebarTitle": "Idempotency lookup",
-          "displayLabel": "Idempotency lookup"
+          "sidebarTitle": "Lookup Idempotency Key",
+          "displayLabel": "Lookup Idempotency Key"
         },
         "docPriority": {
           "level": 1

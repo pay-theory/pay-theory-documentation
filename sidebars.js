@@ -687,6 +687,19 @@ const __gqlDocsItems = [
   },
   {
     type: 'category',
+    label: 'Idempotency',
+    items: [
+      {
+        type: 'doc',
+        id: 'api/idempotency/idempotency-lookup',
+        label: 'Lookup Idempotency Key',
+      },
+    ],
+    collapsible: true,
+    collapsed: true,
+  },
+  {
+    type: 'category',
     label: 'Merchant',
     items: [
       {
@@ -1177,6 +1190,16 @@ const __gqlDocsItems = [
         type: 'doc',
         id: 'api/types/enums/health-expense-type',
         label: 'HealthExpenseType',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/enums/idempotency-operation',
+        label: 'IdempotencyOperation',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/enums/idempotency-status',
+        label: 'IdempotencyStatus',
       },
       {
         type: 'doc',
@@ -1813,6 +1836,11 @@ const __gqlDocsItems = [
         type: 'doc',
         id: 'api/types/types/id',
         label: 'ID',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/types/idempotency-lookup',
+        label: 'IdempotencyLookup',
       },
       {
         type: 'doc',
