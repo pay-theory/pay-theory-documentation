@@ -4,26 +4,31 @@
     "operationType": "query",
     "examples": [
       {
-        "name": "Example paymentLinks",
-        "description": "Returns payment links.",
+        "name": "List active payment links",
+        "description": "Lists a merchant's active payment links, newest first.",
         "query": "query PaymentLinks($query: SqlQuery, $limit: Int, $offset: String, $direction: MoveDirection, $offset_id: String) {\n  paymentLinks(query: $query, limit: $limit, offset: $offset, direction: $direction, offset_id: $offset_id) {\n  items {\n    link_id\n    created_date\n    accepted_payment_methods\n    account_code\n    amount\n  }\n  total_row_count\n  }\n}",
         "variables": {
           "query": {
             "query_list": [
               {
-                "conjunctive_operator": "AND_NEXT"
+                "conjunctive_operator": "AND_NEXT",
+                "key": "merchant_uid",
+                "operator": "EQUAL",
+                "value": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
+              },
+              {
+                "key": "is_active",
+                "operator": "EQUAL_TRUE"
               }
             ],
             "sort_list": [
               {
-                "direction": "ASC"
+                "direction": "DESC",
+                "key": "created_date"
               }
             ]
           },
-          "limit": 123,
-          "offset": "example",
-          "direction": "BACKWARD",
-          "offset_id": "example"
+          "limit": 2
         },
         "response": {
           "type": "success",
@@ -33,14 +38,21 @@
               "paymentLinks": {
                 "items": [
                   {
-                    "link_id": "example",
-                    "created_date": "2025-01-01T00:00:00Z",
-                    "accepted_payment_methods": "example",
-                    "account_code": "example",
-                    "amount": 123
+                    "link_id": "ptl_link_75q8DKddiczYBd1zT3YFPc",
+                    "created_date": "2026-09-05T01:19:58.0Z",
+                    "accepted_payment_methods": "ALL",
+                    "account_code": null,
+                    "amount": 5000
+                  },
+                  {
+                    "link_id": "ptl_link_KTwe02AFeOulyKcdaP567",
+                    "created_date": "2026-09-02T20:15:53.0Z",
+                    "accepted_payment_methods": "ALL",
+                    "account_code": "",
+                    "amount": 2345
                   }
                 ],
-                "total_row_count": 123
+                "total_row_count": 421
               }
             }
           }

@@ -17,8 +17,8 @@
           "body": {
             "data": {
               "users": {
-                "email": "example",
-                "full_name": "example",
+                "email": "pat@paytheory.com",
+                "full_name": "Pat Theodore",
                 "phone": "example",
                 "user_status": "example",
                 "username": "example"
@@ -40,7 +40,7 @@
         "variables": {
           "input": {
             "bypass_merchant_validation": true,
-            "email": "user@example.com",
+            "email": "pat@paytheory.com",
             "first_name": "example",
             "last_name": "example",
             "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
@@ -54,8 +54,8 @@
           "body": {
             "data": {
               "createUser": {
-                "email": "example",
-                "full_name": "example",
+                "email": "pat@paytheory.com",
+                "full_name": "Pat Theodore",
                 "phone": "example",
                 "user_status": "example",
                 "username": "example"

@@ -173,7 +173,7 @@
                 "year": "30"
               },
               "security_code": "123",
-              "full_name": "Jane Cardholder",
+              "full_name": "Pat Theodore",
               "address_line1": "123 Test Street",
               "city": "Cincinnati",
               "region": "OH",
@@ -181,8 +181,8 @@
               "country": "USA"
             },
             "payor": {
-              "full_name": "Jane Cardholder",
-              "email": "payor@example.com",
+              "full_name": "Pat Theodore",
+              "email": "pat@paytheory.com",
               "phone": "+15555550123",
               "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
             }
@@ -200,13 +200,13 @@
                 "last_four": "7895",
                 "card_brand": "VISA",
                 "exp_date": "1230",
-                "full_name": "Jane Cardholder",
+                "full_name": "Pat Theodore",
                 "is_active": true
               }
             }
           }
         },
-        "description": "Saves a card as a payment method for later transactions."
+        "description": "Saves a card as a payment method for later transactions. The response returns exp_date as MMYY (1230 means December 2030); is_active: true means the card can be used again."
       },
       {
         "name": "Save an ACH account",
@@ -217,12 +217,12 @@
             "ach": {
               "account_number": "0000000016",
               "account_type": "PERSONAL_CHECKING",
-              "name_on_account": "Jane Accountholder",
+              "name_on_account": "Pat Theodore",
               "routing_number": "122105278"
             },
             "payor": {
-              "full_name": "Jane Accountholder",
-              "email": "payor@example.com",
+              "full_name": "Pat Theodore",
+              "email": "pat@paytheory.com",
               "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
             }
           }
@@ -239,7 +239,7 @@
                 "last_four": "0016",
                 "card_brand": null,
                 "exp_date": null,
-                "full_name": "Jane Accountholder",
+                "full_name": "Pat Theodore",
                 "is_active": true
               }
             }
@@ -257,12 +257,12 @@
               "account_number": "123456789012",
               "account_type": "PERSONAL_CHECKING",
               "institution_number": "001",
-              "name_on_account": "Jane Accountholder",
+              "name_on_account": "Pat Theodore",
               "transit_number": "12345"
             },
             "payor": {
-              "full_name": "Jane Accountholder",
-              "email": "payor@example.com",
+              "full_name": "Pat Theodore",
+              "email": "pat@paytheory.com",
               "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
             }
           }
@@ -279,7 +279,7 @@
                 "last_four": "9012",
                 "card_brand": null,
                 "exp_date": null,
-                "full_name": "Jane Accountholder",
+                "full_name": "Pat Theodore",
                 "is_active": true
               }
             }
@@ -300,7 +300,7 @@
                 "year": "30"
               },
               "security_code": "123",
-              "full_name": "Bad Number",
+              "full_name": "Pat Theodore",
               "address_line1": "123 Test Street",
               "city": "Cincinnati",
               "region": "OH",
@@ -308,8 +308,8 @@
               "country": "USA"
             },
             "payor": {
-              "full_name": "Bad Number",
-              "email": "payor@example.com",
+              "full_name": "Pat Theodore",
+              "email": "pat@paytheory.com",
               "phone": "+15555550123",
               "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
             }
@@ -350,7 +350,7 @@
                 "year": "30"
               },
               "security_code": "12",
-              "full_name": "Bad CVV",
+              "full_name": "Pat Theodore",
               "address_line1": "123 Test Street",
               "city": "Cincinnati",
               "region": "OH",
@@ -358,8 +358,8 @@
               "country": "USA"
             },
             "payor": {
-              "full_name": "Bad CVV",
-              "email": "payor@example.com",
+              "full_name": "Pat Theodore",
+              "email": "pat@paytheory.com",
               "phone": "+15555550123",
               "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
             }
@@ -400,7 +400,7 @@
                 "year": "30"
               },
               "security_code": "123",
-              "full_name": "Card And Bank",
+              "full_name": "Pat Theodore",
               "address_line1": "123 Test Street",
               "city": "Cincinnati",
               "region": "OH",
@@ -408,15 +408,15 @@
               "country": "USA"
             },
             "payor": {
-              "full_name": "Card And Bank",
-              "email": "payor@example.com",
+              "full_name": "Pat Theodore",
+              "email": "pat@paytheory.com",
               "phone": "+15555550123",
               "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
             },
             "ach": {
               "account_number": "0000000016",
               "account_type": "PERSONAL_CHECKING",
-              "name_on_account": "Card And Bank",
+              "name_on_account": "Pat Theodore",
               "routing_number": "122105278"
             }
           }
@@ -450,8 +450,8 @@
           "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
           "payment_method": {
             "payor": {
-              "full_name": "No Rail",
-              "email": "payor@example.com",
+              "full_name": "Pat Theodore",
+              "email": "pat@paytheory.com",
               "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
             }
           }
@@ -491,7 +491,7 @@
                 "year": "30"
               },
               "security_code": "123",
-              "full_name": "Two Payors",
+              "full_name": "Pat Theodore",
               "address_line1": "123 Test Street",
               "city": "Cincinnati",
               "region": "OH",
@@ -499,8 +499,8 @@
               "country": "USA"
             },
             "payor": {
-              "full_name": "Two Payors",
-              "email": "payor@example.com",
+              "full_name": "Pat Theodore",
+              "email": "pat@paytheory.com",
               "phone": "+15555550123",
               "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
             },
@@ -542,7 +542,7 @@
                 "year": "30"
               },
               "security_code": "123",
-              "full_name": "Unknown Payor",
+              "full_name": "Pat Theodore",
               "address_line1": "123 Test Street",
               "city": "Cincinnati",
               "region": "OH",
@@ -596,7 +596,7 @@
             },
             "payor": {
               "full_name": "Pat Theodore",
-              "email": "payor@example.com",
+              "email": "pat@paytheory.com",
               "phone": "+15555550123",
               "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
             }

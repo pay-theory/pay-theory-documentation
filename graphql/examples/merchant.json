@@ -318,7 +318,7 @@
         "variables": {
           "merchant_uid": "id_123",
           "settings": {
-            "contact_email": "user@example.com",
+            "contact_email": "user@paytheory.com",
             "contact_phone": "+15555555555",
             "facebook": "https://example.com",
             "instagram": "https://example.com",

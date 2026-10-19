@@ -92,26 +92,20 @@
       "isDeprecated": false,
       "examples": [
         {
-          "name": "Example authorizations",
-          "description": "This query will return a list of authorizations for a merchant.",
-          "query": "query Authorizations($query: SqlQuery, $limit: Int, $offset: String, $direction: MoveDirection, $offset_id: String) {\n  authorizations(query: $query, limit: $limit, offset: $offset, direction: $direction, offset_id: $offset_id) {\n  items {\n    authorization_id\n    authorization_date\n    account_code\n    amount\n    avs_status\n  }\n  total_row_count\n  }\n}",
+          "name": "List authorizations for a merchant",
+          "description": "Lists authorizations for a merchant.",
+          "query": "query Authorizations($query: SqlQuery, $limit: Int, $offset_id: String, $direction: MoveDirection) {\n  authorizations(query: $query, limit: $limit, offset_id: $offset_id, direction: $direction) {\n    items {\n      authorization_id\n      merchant_uid\n      amount\n      currency\n      status\n      fee_mode\n      fees\n      authorization_date\n      expiration_date\n      transaction_id\n    }\n    total_row_count\n  }\n}",
           "variables": {
             "query": {
               "query_list": [
                 {
-                  "conjunctive_operator": "AND_NEXT"
-                }
-              ],
-              "sort_list": [
-                {
-                  "direction": "ASC"
+                  "key": "merchant_uid",
+                  "value": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                  "operator": "EQUAL"
                 }
               ]
             },
-            "limit": 123,
-            "offset": "example",
-            "direction": "BACKWARD",
-            "offset_id": "example"
+            "limit": 2
           },
           "response": {
             "type": "success",
@@ -121,14 +115,31 @@
                 "authorizations": {
                   "items": [
                     {
-                      "authorization_id": "example",
-                      "authorization_date": "2025-01-01T00:00:00Z",
-                      "account_code": "example",
-                      "amount": 123,
-                      "avs_status": "example"
+                      "authorization_id": "ptl_auth_10HgNbAUXPTjZpppR3Ujiw",
+                      "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                      "amount": 219,
+                      "currency": "USD",
+                      "status": "SUCCEEDED",
+                      "fee_mode": "MERCHANT_FEE",
+                      "fees": 37,
+                      "authorization_date": "2026-09-04T13:18:34.0Z",
+                      "expiration_date": "2026-09-05T13:18:34.0Z",
+                      "transaction_id": null
+                    },
+                    {
+                      "authorization_id": "ptl_auth_10ovLZc2eanlrMw4uiclOW",
+                      "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                      "amount": 595,
+                      "currency": "USD",
+                      "status": "SUCCEEDED",
+                      "fee_mode": "SERVICE_FEE",
+                      "fees": 195,
+                      "authorization_date": "2026-09-03T16:18:42.0Z",
+                      "expiration_date": "2026-09-04T16:18:42.0Z",
+                      "transaction_id": null
                     }
                   ],
-                  "total_row_count": 123
+                  "total_row_count": 514
                 }
               }
             }
@@ -191,12 +202,12 @@
       "isDeprecated": false,
       "examples": [
         {
-          "name": "Example barcode",
-          "description": "This can be used to call back a single barcode.",
-          "query": "query Barcode($merchant_uid: ID!, $barcode_id: String!) {\n  barcode(merchant_uid: $merchant_uid, barcode_id: $barcode_id) {\n  barcode_id\n  expiration_date\n  account_code\n  amount\n  barcode_url\n  }\n}",
+          "name": "Read one barcode back",
+          "description": "Reads a barcode for a merchant. The expiration date is date-only, and metadata is returned as a JSON string of key/value pairs.",
+          "query": "query Barcode($merchant_uid: ID!, $barcode_id: String!) {\n  barcode(merchant_uid: $merchant_uid, barcode_id: $barcode_id) {\n    barcode_id\n    barcode_url\n    merchant_uid\n    amount\n    fees\n    expiration_date\n    full_name\n    email_or_phone\n    sale_id\n    reference\n    account_code\n    invoice_id\n    metadata\n  }\n}",
           "variables": {
-            "merchant_uid": "id_123",
-            "barcode_id": "example"
+            "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+            "barcode_id": "ptl_barc_nFevCQ42c7PuKAZ3kQ8Zn"
           },
           "response": {
             "type": "success",
@@ -204,13 +215,67 @@
             "body": {
               "data": {
                 "barcode": {
-                  "barcode_id": "example",
-                  "expiration_date": "2025-01-01",
-                  "account_code": "example",
-                  "amount": 123,
-                  "barcode_url": "example"
+                  "barcode_id": "ptl_barc_nFevCQ42c7PuKAZ3kQ8Zn",
+                  "barcode_url": "https://innovate.paytheorylab.ptbar.codes/ptl_barc_nFevCQ42c7PuKAZ3kQ8Zn.svgz",
+                  "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                  "amount": 500,
+                  "fees": 200,
+                  "expiration_date": "2026-12-03",
+                  "full_name": "Pat Theodore",
+                  "email_or_phone": "pat@paytheory.com",
+                  "sale_id": "ptl_sale_nwxNxlENbB8VBlW7ZxZnf",
+                  "reference": "order-2026-1001",
+                  "account_code": "customer-1042",
+                  "invoice_id": null,
+                  "metadata": "[{\"metadata_key\":\"source\",\"metadata_value\":\"documentation\"},{\"metadata_key\":\"purpose\",\"metadata_value\":\"cash_payment\"}]"
                 }
               }
+            }
+          }
+        },
+        {
+          "name": "Barcode ID not found",
+          "description": "Returns null when the barcode ID does not match a barcode.",
+          "query": "query Barcode($merchant_uid: ID!, $barcode_id: String!) {\n  barcode(merchant_uid: $merchant_uid, barcode_id: $barcode_id) {\n    barcode_id\n    barcode_url\n    merchant_uid\n    amount\n    fees\n    expiration_date\n    full_name\n    email_or_phone\n    sale_id\n    reference\n    account_code\n    invoice_id\n    metadata\n  }\n}",
+          "variables": {
+            "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+            "barcode_id": "ptl_barc_does_not_exist"
+          },
+          "response": {
+            "type": "success",
+            "httpStatus": 200,
+            "body": {
+              "data": {
+                "barcode": null
+              }
+            }
+          }
+        },
+        {
+          "name": "Barcode belongs to another merchant",
+          "description": "Returns a Not Authorized error when a merchant key requests another merchant's barcode.",
+          "query": "query Barcode($merchant_uid: ID!, $barcode_id: String!) {\n  barcode(merchant_uid: $merchant_uid, barcode_id: $barcode_id) {\n    barcode_id\n    barcode_url\n    merchant_uid\n    amount\n    fees\n    expiration_date\n    full_name\n    email_or_phone\n    sale_id\n    reference\n    account_code\n    invoice_id\n    metadata\n  }\n}",
+          "variables": {
+            "merchant_uid": "6abd5fc7-5548-4165-af0d-3a16be47949a",
+            "barcode_id": "ptl_barc_nFevCQ42c7PuKAZ3kQ8Zn"
+          },
+          "response": {
+            "type": "error",
+            "httpStatus": 200,
+            "body": {
+              "data": {
+                "barcode": null
+              },
+              "errors": [
+                {
+                  "path": [
+                    "barcode"
+                  ],
+                  "data": null,
+                  "errorInfo": null,
+                  "message": "Not Authorized."
+                }
+              ]
             }
           }
         }
@@ -309,26 +374,20 @@
       "isDeprecated": false,
       "examples": [
         {
-          "name": "Example disputes",
-          "description": "Returns disputes.",
-          "query": "query Disputes($query: SqlQuery, $limit: Int, $offset: String, $direction: MoveDirection, $offset_id: String) {\n  disputes(query: $query, limit: $limit, offset: $offset, direction: $direction, offset_id: $offset_id) {\n  items {\n    dispute_id\n    dispute_date\n    amount\n    evidence_last_send_date\n    expiration_date\n  }\n  total_row_count\n  }\n}",
+          "name": "List disputes for a merchant",
+          "description": "Lists disputes associated with a merchant.",
+          "query": "query Disputes($query: SqlQuery, $limit: Int) {\n  disputes(query: $query, limit: $limit) {\n    items {\n      dispute_id\n      dispute_date\n      amount\n      evidence_last_send_date\n      expiration_date\n    }\n    total_row_count\n  }\n}",
           "variables": {
             "query": {
               "query_list": [
                 {
-                  "conjunctive_operator": "AND_NEXT"
-                }
-              ],
-              "sort_list": [
-                {
-                  "direction": "ASC"
+                  "key": "merchant_uid",
+                  "operator": "EQUAL",
+                  "value": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
                 }
               ]
             },
-            "limit": 123,
-            "offset": "example",
-            "direction": "BACKWARD",
-            "offset_id": "example"
+            "limit": 5
           },
           "response": {
             "type": "success",
@@ -338,7 +397,7 @@
                 "disputes": {
                   "items": [
                     {
-                      "dispute_id": "example",
+                      "dispute_id": "DIwtRcdG58raHXxLDkmAVddS",
                       "dispute_date": "2025-01-01T00:00:00Z",
                       "amount": 123,
                       "evidence_last_send_date": "2025-01-01T00:00:00Z",
@@ -446,26 +505,26 @@
       "isDeprecated": false,
       "examples": [
         {
-          "name": "Example invoices",
-          "description": "Returns invoices.",
-          "query": "query Invoices($query: SqlQuery, $limit: Int, $offset: String, $direction: MoveDirection, $offset_id: String) {\n  invoices(query: $query, limit: $limit, offset: $offset, direction: $direction, offset_id: $offset_id) {\n  items {\n    invoice_id\n    created_date\n    account_code\n    currency\n    due_by\n  }\n  total_row_count\n  }\n}",
+          "name": "List invoices for a merchant",
+          "description": "Lists a merchant\u2019s invoices, newest first.",
+          "query": "query Invoices($query: SqlQuery, $limit: Int) {\n  invoices(query: $query, limit: $limit) {\n    items {\n      invoice_id\n      created_date\n      account_code\n      currency\n      due_by\n    }\n    total_row_count\n  }\n}",
           "variables": {
             "query": {
               "query_list": [
                 {
-                  "conjunctive_operator": "AND_NEXT"
+                  "key": "merchant_uid",
+                  "value": "9f0acb5e-a176-404a-b735-f4caac66098e",
+                  "operator": "EQUAL"
                 }
               ],
               "sort_list": [
                 {
-                  "direction": "ASC"
+                  "direction": "DESC",
+                  "key": "created_date"
                 }
               ]
             },
-            "limit": 123,
-            "offset": "example",
-            "direction": "BACKWARD",
-            "offset_id": "example"
+            "limit": 1
           },
           "response": {
             "type": "success",
@@ -475,14 +534,14 @@
                 "invoices": {
                   "items": [
                     {
-                      "invoice_id": "example",
-                      "created_date": "2025-01-01T00:00:00Z",
-                      "account_code": "example",
-                      "currency": "example",
-                      "due_by": "2025-01-01"
+                      "invoice_id": "ptl_inv_1DzHEBH1H6B333RHheYeGR",
+                      "created_date": "2026-09-24T14:57:07.0Z",
+                      "account_code": null,
+                      "currency": "USD",
+                      "due_by": null
                     }
                   ],
-                  "total_row_count": 123
+                  "total_row_count": 434
                 }
               }
             }
@@ -861,26 +920,31 @@
       "isDeprecated": false,
       "examples": [
         {
-          "name": "Example paymentLinks",
-          "description": "Returns payment links.",
+          "name": "List active payment links",
+          "description": "Lists a merchant's active payment links, newest first.",
           "query": "query PaymentLinks($query: SqlQuery, $limit: Int, $offset: String, $direction: MoveDirection, $offset_id: String) {\n  paymentLinks(query: $query, limit: $limit, offset: $offset, direction: $direction, offset_id: $offset_id) {\n  items {\n    link_id\n    created_date\n    accepted_payment_methods\n    account_code\n    amount\n  }\n  total_row_count\n  }\n}",
           "variables": {
             "query": {
               "query_list": [
                 {
-                  "conjunctive_operator": "AND_NEXT"
+                  "conjunctive_operator": "AND_NEXT",
+                  "key": "merchant_uid",
+                  "operator": "EQUAL",
+                  "value": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
+                },
+                {
+                  "key": "is_active",
+                  "operator": "EQUAL_TRUE"
                 }
               ],
               "sort_list": [
                 {
-                  "direction": "ASC"
+                  "direction": "DESC",
+                  "key": "created_date"
                 }
               ]
             },
-            "limit": 123,
-            "offset": "example",
-            "direction": "BACKWARD",
-            "offset_id": "example"
+            "limit": 2
           },
           "response": {
             "type": "success",
@@ -890,14 +954,21 @@
                 "paymentLinks": {
                   "items": [
                     {
-                      "link_id": "example",
-                      "created_date": "2025-01-01T00:00:00Z",
-                      "accepted_payment_methods": "example",
-                      "account_code": "example",
-                      "amount": 123
+                      "link_id": "ptl_link_75q8DKddiczYBd1zT3YFPc",
+                      "created_date": "2026-09-05T01:19:58.0Z",
+                      "accepted_payment_methods": "ALL",
+                      "account_code": null,
+                      "amount": 5000
+                    },
+                    {
+                      "link_id": "ptl_link_KTwe02AFeOulyKcdaP567",
+                      "created_date": "2026-09-02T20:15:53.0Z",
+                      "accepted_payment_methods": "ALL",
+                      "account_code": "",
+                      "amount": 2345
                     }
                   ],
-                  "total_row_count": 123
+                  "total_row_count": 421
                 }
               }
             }
@@ -1366,7 +1437,7 @@
                       "payor_id": "ptl_pay_10juZtcNdkEUTxm0SaepXH",
                       "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
                       "full_name": "Pat Theodore",
-                      "email": "pat@example.com",
+                      "email": "pat@paytheory.com",
                       "phone": null,
                       "address_line1": "123 Test Street",
                       "city": "Cincinnati",
@@ -1378,7 +1449,7 @@
                       "payor_id": "ptl_pay_11Tvd4EamaiPn90XGtfqdD",
                       "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
                       "full_name": "Pat Theodore",
-                      "email": "pat@example.com",
+                      "email": "pat@paytheory.com",
                       "phone": "+15555550123",
                       "address_line1": "123 Test Street",
                       "city": "Cincinnati",
@@ -1419,8 +1490,8 @@
                     {
                       "payor_id": "ptl_pay_6tOEQ5lesXwGSGaKECSfJy",
                       "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
-                      "full_name": "Jane Payor Updated",
-                      "email": "partial@example.com",
+                      "full_name": "Pat Theodore",
+                      "email": "pat@paytheory.com",
                       "phone": "+15555550125",
                       "address_line1": "456 Updated Street",
                       "city": "Columbus",
@@ -1560,26 +1631,20 @@
       "isDeprecated": false,
       "examples": [
         {
-          "name": "Example recurringPayments",
-          "description": "Returns recurring payments.",
-          "query": "query RecurringPayments($query: SqlQuery, $limit: Int, $offset: String, $direction: MoveDirection, $offset_id: String) {\n  recurringPayments(query: $query, limit: $limit, offset: $offset, direction: $direction, offset_id: $offset_id) {\n  items {\n    recurring_id\n    created_date\n    account_code\n    amount_per_payment\n    currency\n  }\n  total_row_count\n  }\n}",
+          "name": "List recurring payments for a merchant",
+          "description": "Lists recurring payments for a merchant.",
+          "query": "query RecurringPayments($query: SqlQuery, $limit: Int) {\n  recurringPayments(query: $query, limit: $limit) {\n    items {\n      recurring_id\n      created_date\n      account_code\n      amount_per_payment\n      currency\n    }\n    total_row_count\n  }\n}",
           "variables": {
             "query": {
               "query_list": [
                 {
-                  "conjunctive_operator": "AND_NEXT"
-                }
-              ],
-              "sort_list": [
-                {
-                  "direction": "ASC"
+                  "key": "merchant_uid",
+                  "value": "9f0acb5e-a176-404a-b735-f4caac66098e",
+                  "operator": "EQUAL"
                 }
               ]
             },
-            "limit": 123,
-            "offset": "example",
-            "direction": "BACKWARD",
-            "offset_id": "example"
+            "limit": 1
           },
           "response": {
             "type": "success",
@@ -1589,14 +1654,14 @@
                 "recurringPayments": {
                   "items": [
                     {
-                      "recurring_id": "example",
-                      "created_date": "2025-01-01T00:00:00Z",
-                      "account_code": "example",
-                      "amount_per_payment": 123,
-                      "currency": "example"
+                      "recurring_id": "ptl_rec_12aTDc6Gfe9DyEZqnHmcb7",
+                      "created_date": "2026-07-17T21:04:43.0Z",
+                      "account_code": null,
+                      "amount_per_payment": 300,
+                      "currency": "USD"
                     }
                   ],
-                  "total_row_count": 123
+                  "total_row_count": 456
                 }
               }
             }
@@ -1761,26 +1826,20 @@
       "isDeprecated": false,
       "examples": [
         {
-          "name": "Example settlements",
-          "description": "Returns settlements.",
-          "query": "query Settlements($query: SqlQuery, $limit: Int, $offset: String, $direction: MoveDirection, $offset_id: String) {\n  settlements(query: $query, limit: $limit, offset: $offset, direction: $direction, offset_id: $offset_id) {\n  items {\n    merchant_uid\n    settlement_date\n    currency\n    gross_amount\n    gross_amount_64bit\n  }\n  total_row_count\n  }\n}",
+          "name": "List settlements for a merchant",
+          "description": "Lists settlements for a merchant.",
+          "query": "query Settlements($query: SqlQuery, $limit: Int) {\n  settlements(query: $query, limit: $limit) {\n    items {\n      merchant_uid\n      settlement_batch\n      settlement_date\n      currency\n      gross_amount\n      net_amount\n      total_fees\n      status\n      settlement_type\n      transaction_debit_count\n      transaction_reversal_count\n      transfer_date\n      gross_amount_64bit\n      net_amount_64bit\n    }\n    total_row_count\n  }\n}",
           "variables": {
             "query": {
               "query_list": [
                 {
-                  "conjunctive_operator": "AND_NEXT"
-                }
-              ],
-              "sort_list": [
-                {
-                  "direction": "ASC"
+                  "key": "merchant_uid",
+                  "value": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                  "operator": "EQUAL"
                 }
               ]
             },
-            "limit": 123,
-            "offset": "example",
-            "direction": "BACKWARD",
-            "offset_id": "example"
+            "limit": 2
           },
           "response": {
             "type": "success",
@@ -1791,13 +1850,110 @@
                   "items": [
                     {
                       "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
-                      "settlement_date": "2025-01-01T00:00:00Z",
-                      "currency": "example",
-                      "gross_amount": 123,
-                      "gross_amount_64bit": "example"
+                      "settlement_batch": 2,
+                      "settlement_date": "2026-08-25T00:00:00Z",
+                      "currency": "USD",
+                      "gross_amount": -400,
+                      "net_amount": -453,
+                      "total_fees": 53,
+                      "status": "SUCCEEDED",
+                      "settlement_type": "NET",
+                      "transaction_debit_count": 1,
+                      "transaction_reversal_count": 3,
+                      "transfer_date": "2026-08-25T13:31:33.0Z",
+                      "gross_amount_64bit": "-400",
+                      "net_amount_64bit": "-453"
+                    },
+                    {
+                      "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                      "settlement_batch": 3,
+                      "settlement_date": "2026-08-25T00:00:00Z",
+                      "currency": "USD",
+                      "gross_amount": 4000,
+                      "net_amount": 3669,
+                      "total_fees": 331,
+                      "status": "SUCCEEDED",
+                      "settlement_type": "NET",
+                      "transaction_debit_count": 5,
+                      "transaction_reversal_count": 0,
+                      "transfer_date": "2026-08-25T13:32:28.0Z",
+                      "gross_amount_64bit": "4000",
+                      "net_amount_64bit": "3669"
                     }
                   ],
-                  "total_row_count": 123
+                  "total_row_count": 7
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Find either of two settlement batches",
+          "description": "Finds this merchant's settlements in batch 2 or 3. Put both OR choices inside query_group so results stay limited to this merchant.",
+          "query": "query Settlements($query: SqlQuery, $limit: Int) {\n  settlements(query: $query, limit: $limit) {\n    items {\n      merchant_uid\n      settlement_batch\n      settlement_date\n      currency\n      status\n      settlement_type\n      transaction_debit_count\n      transaction_reversal_count\n      transfer_date\n      gross_amount_64bit\n      net_amount_64bit\n    }\n    total_row_count\n  }\n}",
+          "variables": {
+            "query": {
+              "query_list": [
+                {
+                  "key": "merchant_uid",
+                  "value": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                  "operator": "EQUAL",
+                  "conjunctive_operator": "AND_NEXT"
+                },
+                {
+                  "query_group": [
+                    {
+                      "key": "settlement_batch",
+                      "value": 2,
+                      "operator": "EQUAL",
+                      "conjunctive_operator": "OR_NEXT"
+                    },
+                    {
+                      "key": "settlement_batch",
+                      "value": 3,
+                      "operator": "EQUAL"
+                    }
+                  ]
+                }
+              ]
+            },
+            "limit": 10
+          },
+          "response": {
+            "type": "success",
+            "httpStatus": 200,
+            "body": {
+              "data": {
+                "settlements": {
+                  "items": [
+                    {
+                      "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                      "settlement_batch": 2,
+                      "settlement_date": "2026-08-25T00:00:00Z",
+                      "currency": "USD",
+                      "status": "SUCCEEDED",
+                      "settlement_type": "NET",
+                      "transaction_debit_count": 1,
+                      "transaction_reversal_count": 3,
+                      "transfer_date": "2026-08-25T13:31:33.0Z",
+                      "gross_amount_64bit": "-400",
+                      "net_amount_64bit": "-453"
+                    },
+                    {
+                      "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                      "settlement_batch": 3,
+                      "settlement_date": "2026-08-25T00:00:00Z",
+                      "currency": "USD",
+                      "status": "SUCCEEDED",
+                      "settlement_type": "NET",
+                      "transaction_debit_count": 5,
+                      "transaction_reversal_count": 0,
+                      "transfer_date": "2026-08-25T13:32:28.0Z",
+                      "gross_amount_64bit": "4000",
+                      "net_amount_64bit": "3669"
+                    }
+                  ],
+                  "total_row_count": 2
                 }
               }
             }
@@ -1953,6 +2109,128 @@
         }
       ],
       "returnTypeString": "FundingTransfers"
+    },
+    "idempotencyLookup": {
+      "name": "idempotencyLookup",
+      "operationType": "query",
+      "description": "Looks up an idempotency record for a merchant, operation, and key.",
+      "arguments": [
+        {
+          "name": "merchant_uid",
+          "description": "The merchant the idempotency key belongs to.",
+          "isRequired": true,
+          "type": {
+            "kind": "TYPE_REF",
+            "name": "String",
+            "link": "#string"
+          },
+          "typeString": "String!",
+          "directives": {}
+        },
+        {
+          "name": "operation",
+          "description": "The operation associated with the idempotency key.",
+          "isRequired": true,
+          "type": {
+            "kind": "TYPE_REF",
+            "name": "IdempotencyOperation",
+            "link": "#idempotency-operation"
+          },
+          "typeString": "IdempotencyOperation!",
+          "directives": {}
+        },
+        {
+          "name": "idempotency_key",
+          "description": "The key supplied with the transaction or authorization request.",
+          "isRequired": true,
+          "type": {
+            "kind": "TYPE_REF",
+            "name": "String",
+            "link": "#string"
+          },
+          "typeString": "String!",
+          "directives": {}
+        }
+      ],
+      "nestedArguments": [],
+      "returnType": {
+        "kind": "TYPE_REF",
+        "name": "IdempotencyLookup",
+        "link": "#idempotency-lookup"
+      },
+      "directives": {
+        "docGroup": {
+          "name": "Idempotency",
+          "sidebarTitle": "Idempotency lookup",
+          "displayLabel": "Idempotency lookup"
+        },
+        "docPriority": {
+          "level": 1
+        }
+      },
+      "referencedTypes": [
+        "IdempotencyLookup",
+        "IdempotencyOperation",
+        "String"
+      ],
+      "isDeprecated": false,
+      "examples": [
+        {
+          "name": "Look up a completed transaction",
+          "description": "Finds the transaction created with this merchant, operation, and idempotency key. The timestamps illustrate the response format.",
+          "query": "query IdempotencyLookup(\n  $merchant_uid: String!\n  $operation: IdempotencyOperation!\n  $idempotency_key: String!\n) {\n  idempotencyLookup(\n    merchant_uid: $merchant_uid\n    operation: $operation\n    idempotency_key: $idempotency_key\n  ) {\n    merchant_uid\n    operation\n    idempotency_status\n    transaction_id\n    authorization_id\n    locked_until\n    expires_at\n  }\n}",
+          "variables": {
+            "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+            "operation": "CREATE_TRANSACTION",
+            "idempotency_key": "order-1042-transaction"
+          },
+          "response": {
+            "type": "success",
+            "httpStatus": 200,
+            "body": {
+              "data": {
+                "idempotencyLookup": {
+                  "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                  "operation": "CREATE_TRANSACTION",
+                  "idempotency_status": "COMPLETED",
+                  "transaction_id": "ptl_txn_5mos8Z6NFWAWQRac7BAQFX",
+                  "authorization_id": null,
+                  "locked_until": "2026-09-02T21:25:54.494Z",
+                  "expires_at": "2026-09-09T20:55:54.494Z"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Look up a completed authorization",
+          "description": "Finds the authorization created with this merchant, operation, and idempotency key. The timestamps illustrate the response format.",
+          "query": "query IdempotencyLookup(\n  $merchant_uid: String!\n  $operation: IdempotencyOperation!\n  $idempotency_key: String!\n) {\n  idempotencyLookup(\n    merchant_uid: $merchant_uid\n    operation: $operation\n    idempotency_key: $idempotency_key\n  ) {\n    merchant_uid\n    operation\n    idempotency_status\n    transaction_id\n    authorization_id\n    locked_until\n    expires_at\n  }\n}",
+          "variables": {
+            "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+            "operation": "CREATE_AUTHORIZATION",
+            "idempotency_key": "order-1042-authorization"
+          },
+          "response": {
+            "type": "success",
+            "httpStatus": 200,
+            "body": {
+              "data": {
+                "idempotencyLookup": {
+                  "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                  "operation": "CREATE_AUTHORIZATION",
+                  "idempotency_status": "COMPLETED",
+                  "transaction_id": null,
+                  "authorization_id": "ptl_auth_5xhiVIdYV1XRd6At4B8Ioc",
+                  "locked_until": "2026-09-02T21:26:04.134Z",
+                  "expires_at": "2026-09-09T20:56:04.134Z"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "returnTypeString": "IdempotencyLookup"
     },
     "instruction": {
       "name": "instruction",
@@ -2128,26 +2406,20 @@
       "isDeprecated": false,
       "examples": [
         {
-          "name": "Example splits",
-          "description": "Returns splits.",
-          "query": "query Splits($query: SqlQuery, $limit: Int, $offset: String, $direction: MoveDirection, $offset_id: String) {\n  splits(query: $query, limit: $limit, offset: $offset, direction: $direction, offset_id: $offset_id) {\n  items {\n    id\n    created_at\n    account_code\n    amount\n    currency\n  }\n  total_row_count\n  }\n}",
+          "name": "List splits for a merchant",
+          "description": "Lists splits for a merchant.",
+          "query": "query Splits($query: SqlQuery, $limit: Int) {\n  splits(query: $query, limit: $limit) {\n    items {\n      id\n      transaction_id\n      amount\n      currency\n      account_code\n      reference\n      settlement_batch\n      created_at\n    }\n    total_row_count\n  }\n}",
           "variables": {
             "query": {
               "query_list": [
                 {
-                  "conjunctive_operator": "AND_NEXT"
-                }
-              ],
-              "sort_list": [
-                {
-                  "direction": "ASC"
+                  "key": "merchant_uid",
+                  "value": "9f0acb5e-a176-404a-b735-f4caac66098e",
+                  "operator": "EQUAL"
                 }
               ]
             },
-            "limit": 123,
-            "offset": "example",
-            "direction": "BACKWARD",
-            "offset_id": "example"
+            "limit": 1
           },
           "response": {
             "type": "success",
@@ -2157,14 +2429,17 @@
                 "splits": {
                   "items": [
                     {
-                      "id": "example",
-                      "created_at": "2025-01-01T00:00:00Z",
-                      "account_code": "example",
-                      "amount": 123,
-                      "currency": "example"
+                      "id": "ptl_spl_1cXbH4pqRdaaabTvqp43KP",
+                      "transaction_id": "ptl_txn_1d4QrrLvzf8qbKbn2AO6yU",
+                      "amount": 100,
+                      "currency": "USD",
+                      "account_code": null,
+                      "reference": null,
+                      "settlement_batch": null,
+                      "created_at": "2026-09-03T17:59:06.0Z"
                     }
                   ],
-                  "total_row_count": 123
+                  "total_row_count": 10
                 }
               }
             }
@@ -2386,7 +2661,7 @@
             "payorQuery": [
               {
                 "key": "email",
-                "value": "customer@example.com",
+                "value": "customer@paytheory.com",
                 "operator": "EQUAL"
               }
             ]
@@ -2403,7 +2678,7 @@
                       "payment_method": {
                         "last_four": "4242",
                         "payor": {
-                          "email": "customer@example.com"
+                          "email": "pat@paytheory.com"
                         }
                       }
                     }
@@ -2725,8 +3000,8 @@
             "body": {
               "data": {
                 "users": {
-                  "email": "example",
-                  "full_name": "example",
+                  "email": "pat@paytheory.com",
+                  "full_name": "Pat Theodore",
                   "phone": "example",
                   "user_status": "example",
                   "username": "example"
@@ -3261,10 +3536,11 @@
       "isDeprecated": false,
       "examples": [
         {
-          "name": "Create an authorization",
-          "query": "mutation CreateAuthorization(\n  $merchant_uid: String!\n  $amount: Int!\n  $payment_method: PaymentMethodInput\n  $fee_mode: FeeMode\n) {\n  createAuthorization(\n    merchant_uid: $merchant_uid\n    amount: $amount\n    payment_method: $payment_method\n    fee_mode: $fee_mode\n  ) {\n    authorization_id\n    merchant_uid\n    amount\n    currency\n    status\n    fee_mode\n    fees\n    authorization_date\n    expiration_date\n    sale_id\n  }\n}",
+          "name": "Create an authorization with an idempotency key",
+          "query": "mutation CreateAuthorization(\n  $merchant_uid: String!\n  $amount: Int!\n  $idempotency_key: String\n  $payment_method: PaymentMethodInput\n  $fee_mode: FeeMode\n) {\n  createAuthorization(\n    merchant_uid: $merchant_uid\n    amount: $amount\n    idempotency_key: $idempotency_key\n    payment_method: $payment_method\n    fee_mode: $fee_mode\n  ) {\n    authorization_id\n    merchant_uid\n    amount\n    currency\n    status\n    fee_mode\n    fees\n    authorization_date\n    expiration_date\n    sale_id\n  }\n}",
           "variables": {
             "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+            "idempotency_key": "order-1042-authorization",
             "amount": 800,
             "payment_method": {
               "card": {
@@ -3274,7 +3550,7 @@
                   "year": "30"
                 },
                 "security_code": "123",
-                "full_name": "Jane Holder",
+                "full_name": "Pat Theodore",
                 "address_line1": "123 Test Street",
                 "city": "Cincinnati",
                 "region": "OH",
@@ -3282,8 +3558,8 @@
                 "country": "USA"
               },
               "payor": {
-                "full_name": "Jane Holder",
-                "email": "payor@example.com",
+                "full_name": "Pat Theodore",
+                "email": "pat@paytheory.com",
                 "phone": "+15555550123",
                 "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
               }
@@ -3310,7 +3586,60 @@
               }
             }
           },
-          "description": "Places a hold on a card for a future capture."
+          "description": "Places a hold on a card. Reuse this key only when retrying this same request."
+        },
+        {
+          "name": "Retry an authorization with the same key",
+          "query": "mutation CreateAuthorization(\n  $merchant_uid: String!\n  $amount: Int!\n  $idempotency_key: String\n  $payment_method: PaymentMethodInput\n  $fee_mode: FeeMode\n) {\n  createAuthorization(\n    merchant_uid: $merchant_uid\n    amount: $amount\n    idempotency_key: $idempotency_key\n    payment_method: $payment_method\n    fee_mode: $fee_mode\n  ) {\n    authorization_id\n    merchant_uid\n    amount\n    currency\n    status\n    fee_mode\n    fees\n    authorization_date\n    expiration_date\n    sale_id\n  }\n}",
+          "variables": {
+            "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+            "idempotency_key": "order-1042-authorization",
+            "amount": 800,
+            "payment_method": {
+              "card": {
+                "card_number": "4835034598457895",
+                "exp_date": {
+                  "month": "12",
+                  "year": "30"
+                },
+                "security_code": "123",
+                "full_name": "Pat Theodore",
+                "address_line1": "123 Test Street",
+                "city": "Cincinnati",
+                "region": "OH",
+                "postal_code": "45209",
+                "country": "USA"
+              },
+              "payor": {
+                "full_name": "Pat Theodore",
+                "email": "pat@paytheory.com",
+                "phone": "+15555550123",
+                "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
+              }
+            },
+            "fee_mode": "MERCHANT_FEE"
+          },
+          "response": {
+            "type": "success",
+            "httpStatus": 200,
+            "body": {
+              "data": {
+                "createAuthorization": {
+                  "authorization_id": "ptl_auth_5xhiVIdYV1XRd6At4B8Ioc",
+                  "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                  "amount": 800,
+                  "currency": "USD",
+                  "status": "SUCCEEDED",
+                  "fee_mode": "MERCHANT_FEE",
+                  "fees": 46,
+                  "authorization_date": "2026-09-02T20:56:04.134Z",
+                  "expiration_date": "2026-09-03T20:56:04.134Z",
+                  "sale_id": "ptl_sale_5xBL0OK9Dzzx0QDrLTgzCM"
+                }
+              }
+            }
+          },
+          "description": "Retrying this request with the same key returns the original authorization."
         },
         {
           "name": "Create an authorization to void",
@@ -3326,7 +3655,7 @@
                   "year": "30"
                 },
                 "security_code": "123",
-                "full_name": "Jane Void",
+                "full_name": "Pat Theodore",
                 "address_line1": "123 Test Street",
                 "city": "Cincinnati",
                 "region": "OH",
@@ -3334,8 +3663,8 @@
                 "country": "USA"
               },
               "payor": {
-                "full_name": "Jane Void",
-                "email": "payor@example.com",
+                "full_name": "Pat Theodore",
+                "email": "pat@paytheory.com",
                 "phone": "+15555550123",
                 "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
               }
@@ -3378,7 +3707,7 @@
                   "year": "30"
                 },
                 "security_code": "123",
-                "full_name": "Zero Hold",
+                "full_name": "Pat Theodore",
                 "address_line1": "123 Test Street",
                 "city": "Cincinnati",
                 "region": "OH",
@@ -3386,8 +3715,8 @@
                 "country": "USA"
               },
               "payor": {
-                "full_name": "Zero Hold",
-                "email": "payor@example.com",
+                "full_name": "Pat Theodore",
+                "email": "pat@paytheory.com",
                 "phone": "+15555550123",
                 "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
               }
@@ -3412,6 +3741,56 @@
             }
           },
           "description": "Returns an error when the authorization amount is zero."
+        },
+        {
+          "name": "Amount exceeds the merchant limit",
+          "query": "mutation CreateAuthorization(\n  $merchant_uid: String!\n  $amount: Int!\n  $payment_method: PaymentMethodInput\n  $fee_mode: FeeMode\n) {\n  createAuthorization(\n    merchant_uid: $merchant_uid\n    amount: $amount\n    payment_method: $payment_method\n    fee_mode: $fee_mode\n  ) {\n    authorization_id\n    merchant_uid\n    amount\n    currency\n    status\n    fee_mode\n    fees\n    authorization_date\n    expiration_date\n    sale_id\n  }\n}",
+          "variables": {
+            "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+            "amount": 50000001,
+            "payment_method": {
+              "card": {
+                "card_number": "4835034598457895",
+                "exp_date": {
+                  "month": "12",
+                  "year": "30"
+                },
+                "security_code": "123",
+                "full_name": "Pat Theodore",
+                "address_line1": "123 Main Street",
+                "city": "Cincinnati",
+                "region": "OH",
+                "postal_code": "45209",
+                "country": "USA"
+              },
+              "payor": {
+                "full_name": "Pat Theodore",
+                "email": "pat@paytheory.com",
+                "phone": "+15555550123",
+                "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
+              }
+            },
+            "fee_mode": "MERCHANT_FEE"
+          },
+          "response": {
+            "type": "error",
+            "httpStatus": 200,
+            "body": {
+              "data": null,
+              "errors": [
+                {
+                  "path": [
+                    "createAuthorization"
+                  ],
+                  "data": null,
+                  "errorType": "VALIDATION_ERROR",
+                  "errorInfo": null,
+                  "message": "Amount 50000001 is not within the min 100 and max 50000000 amount range."
+                }
+              ]
+            }
+          },
+          "description": "Returns a validation error when the amount exceeds this merchant's configured maximum. Limits vary by merchant."
         }
       ],
       "returnTypeString": "Authorization!"
@@ -3644,73 +4023,60 @@
       "isDeprecated": false,
       "examples": [
         {
-          "name": "Example createWalletAuthorization",
-          "description": "This call is used to create an authorization for a wallet payment via Apple Pay or Google Pay. It works in conjunction with our SDKs to allow you to create an authorization via our API.",
-          "query": "mutation CreateWalletAuthorization($app_id: String, $merchant_uid: String!, $sale_id: String, $wallet_type: WalletType, $digital_wallet_payload: String!, $amount: Int, $fee: Int, $billing_address: BillingAddressInput, $payor_id: String, $payor: PayorInput, $invoice_id: String, $account_code: String, $reference: String, $metadata: AWSJSON, $health_expense_type: HealthExpenseType, $additional_purchase_data: AdditionalPurchaseDataInput) {\n  createWalletAuthorization(app_id: $app_id, merchant_uid: $merchant_uid, sale_id: $sale_id, wallet_type: $wallet_type, digital_wallet_payload: $digital_wallet_payload, amount: $amount, fee: $fee, billing_address: $billing_address, payor_id: $payor_id, payor: $payor, invoice_id: $invoice_id, account_code: $account_code, reference: $reference, metadata: $metadata, health_expense_type: $health_expense_type, additional_purchase_data: $additional_purchase_data) {\n  authorization_id\n  authorization_date\n  account_code\n  amount\n  avs_status\n  }\n}",
+          "name": "Unsupported wallet type",
+          "description": "Returns a validation error for a wallet type that this operation does not support.",
+          "query": "mutation CreateWalletAuthorization(\n  $merchant_uid: String!\n  $digital_wallet_payload: String!\n  $wallet_type: WalletType\n  $amount: Int\n) {\n  createWalletAuthorization(\n    merchant_uid: $merchant_uid\n    digital_wallet_payload: $digital_wallet_payload\n    wallet_type: $wallet_type\n    amount: $amount\n  ) {\n    authorization_id\n    amount\n    status\n  }\n}",
           "variables": {
-            "app_id": "example",
             "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
-            "sale_id": "example",
-            "wallet_type": "APPLE_PAY",
-            "digital_wallet_payload": "example",
-            "amount": 123,
-            "fee": 123,
-            "billing_address": {
-              "address_line1": "example",
-              "address_line2": "example",
-              "city": "example",
-              "country": "example",
-              "full_name": "example",
-              "postal_code": "example",
-              "region": "example"
-            },
-            "payor_id": "example",
-            "payor": {
-              "address_line1": "example",
-              "address_line2": "example",
-              "city": "example",
-              "country": "example",
-              "email": "example",
-              "full_name": "example",
-              "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
-              "metadata": {
-                "key": "value"
-              },
-              "phone": "example",
-              "postal_code": "example",
-              "region": "example"
-            },
-            "invoice_id": "example",
-            "account_code": "example",
-            "reference": "example",
-            "metadata": {
-              "key": "value"
-            },
-            "health_expense_type": "CLINICAL",
-            "additional_purchase_data": {
-              "level3_data_line_item": [
-                {
-                  "item_code": "example"
-                }
-              ],
-              "level3_data_summary": {
-                "dest_postal_code": "example"
-              }
-            }
+            "digital_wallet_payload": "not-a-token",
+            "amount": 200,
+            "wallet_type": "CLICK_TO_PAY"
           },
           "response": {
-            "type": "success",
+            "type": "error",
             "httpStatus": 200,
             "body": {
-              "data": {
-                "createWalletAuthorization": {
-                  "authorization_id": "example",
-                  "authorization_date": "2025-01-01T00:00:00Z",
-                  "account_code": "example",
-                  "amount": 123,
-                  "avs_status": "example"
+              "data": null,
+              "errors": [
+                {
+                  "path": [
+                    "createWalletAuthorization"
+                  ],
+                  "data": null,
+                  "errorType": "VALIDATION_ERROR",
+                  "errorInfo": null,
+                  "message": "Unsupported wallet type."
                 }
-              }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Wallet payload requires a session key",
+          "description": "A base64-encoded JSON payload is treated as a legacy iOS SDK payload and requires a session key, even when wallet_type is GOOGLE_PAY.",
+          "query": "mutation CreateWalletAuthorization(\n  $merchant_uid: String!\n  $digital_wallet_payload: String!\n  $wallet_type: WalletType\n  $amount: Int\n) {\n  createWalletAuthorization(\n    merchant_uid: $merchant_uid\n    digital_wallet_payload: $digital_wallet_payload\n    wallet_type: $wallet_type\n    amount: $amount\n  ) {\n    authorization_id\n    amount\n    status\n  }\n}",
+          "variables": {
+            "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+            "digital_wallet_payload": "eyJ0b2tlbiI6IngifQ==",
+            "wallet_type": "GOOGLE_PAY",
+            "amount": 200
+          },
+          "response": {
+            "type": "error",
+            "httpStatus": 200,
+            "body": {
+              "data": null,
+              "errors": [
+                {
+                  "path": [
+                    "createWalletAuthorization"
+                  ],
+                  "data": null,
+                  "errorType": "VALIDATION_ERROR",
+                  "errorInfo": null,
+                  "message": "Session key missing, invalid request."
+                }
+              ]
             }
           }
         }
@@ -3884,7 +4250,7 @@
               }
             }
           },
-          "description": "Captures the amount held by an authorization."
+          "description": "Captures the amount held by an authorization. An authorization can only be captured once, even if the capture is partial."
         },
         {
           "name": "Amount is too high",
@@ -3944,7 +4310,7 @@
         },
         {
           "name": "Capture an expired authorization",
-          "description": "Allows an expired authorization to be reauthorized before capture.",
+          "description": "With allow_reauth set to true, an expired authorization is replaced by a new authorization ID. The capture remains pending.",
           "query": "mutation CreateCapture(\n  $merchant_uid: String!\n  $authorization_id: String!\n  $amount: Int!\n  $allow_reauth: Boolean\n) {\n  createCapture(\n    merchant_uid: $merchant_uid\n    authorization_id: $authorization_id\n    amount: $amount\n    allow_reauth: $allow_reauth\n  ) {\n    transaction_id\n    merchant_uid\n    gross_amount\n    net_amount\n    status\n    fee_mode\n    authorization_id\n  }\n}",
           "variables": {
             "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
@@ -4100,6 +4466,34 @@
           "description": "Returns an error when an authorization has already been captured and cannot be voided."
         },
         {
+          "name": "Void an authorization twice",
+          "query": "mutation CreateVoidForAuthorization($authorization_id: String!) {\n    createVoidForAuthorization(authorization_id: $authorization_id)\n  }",
+          "variables": {
+            "authorization_id": "ptl_auth_2eKdi1Wgr3vkLAHDLpI8i2"
+          },
+          "response": {
+            "type": "error",
+            "httpStatus": 200,
+            "body": {
+              "data": {
+                "createVoidForAuthorization": null
+              },
+              "errors": [
+                {
+                  "path": [
+                    "createVoidForAuthorization"
+                  ],
+                  "data": null,
+                  "errorType": "VALIDATION_ERROR",
+                  "errorInfo": null,
+                  "message": "An authorization cannot be voided if a capture has already been performed, and can only be voided once."
+                }
+              ]
+            }
+          },
+          "description": "Returns an error when you try to void an authorization that has already been voided."
+        },
+        {
           "name": "Authorization not found",
           "query": "mutation CreateVoidForAuthorization($authorization_id: String!) {\n    createVoidForAuthorization(authorization_id: $authorization_id)\n  }",
           "variables": {
@@ -4171,28 +4565,18 @@
       "isDeprecated": false,
       "examples": [
         {
-          "name": "Example createBarcode",
-          "description": "This mutation will create a barcode for a payor to use to make a cash payment.",
-          "query": "mutation CreateBarcode($input: BarcodeInput!) {\n  createBarcode(input: $input) {\n  barcode_id\n  expiration_date\n  account_code\n  amount\n  barcode_url\n  }\n}",
+          "name": "Create a barcode",
+          "description": "Creates a barcode a payor can use to make a cash payment.",
+          "query": "mutation CreateBarcode($input: BarcodeInput!) {\n  createBarcode(input: $input) {\n    barcode_id\n    barcode_url\n    merchant_uid\n    amount\n    fees\n    expiration_date\n    full_name\n    email_or_phone\n    sale_id\n    reference\n    account_code\n  }\n}",
           "variables": {
             "input": {
-              "account_code": "example",
-              "amount": 123,
-              "days_until_expiration": 123,
-              "email_or_phone": "example",
-              "expiration_date": "2025-01-01",
-              "full_name": "example",
-              "invoice_id": "example",
               "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
-              "metadata": {
-                "key": "value"
-              },
-              "payor": {
-                "address_line1": "example"
-              },
-              "payor_id": "example",
-              "reference": "example",
-              "sale_id": "example"
+              "amount": 500,
+              "full_name": "Pat Theodore",
+              "email_or_phone": "pat@paytheory.com",
+              "reference": "order-2026-1001",
+              "account_code": "customer-1042",
+              "metadata": "{\"source\":\"documentation\",\"purpose\":\"cash_payment\"}"
             }
           },
           "response": {
@@ -4201,13 +4585,209 @@
             "body": {
               "data": {
                 "createBarcode": {
-                  "barcode_id": "example",
-                  "expiration_date": "2025-01-01",
-                  "account_code": "example",
-                  "amount": 123,
-                  "barcode_url": "example"
+                  "barcode_id": "ptl_barc_nFevCQ42c7PuKAZ3kQ8Zn",
+                  "barcode_url": "https://innovate.paytheorylab.ptbar.codes/ptl_barc_nFevCQ42c7PuKAZ3kQ8Zn.svgz",
+                  "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                  "amount": 500,
+                  "fees": 200,
+                  "expiration_date": "2026-12-03",
+                  "full_name": "Pat Theodore",
+                  "email_or_phone": "pat@paytheory.com",
+                  "sale_id": "ptl_sale_nwxNxlENbB8VBlW7ZxZnf",
+                  "reference": "order-2026-1001",
+                  "account_code": "customer-1042"
                 }
               }
+            }
+          }
+        },
+        {
+          "name": "Amount below the merchant minimum",
+          "description": "Returns a validation error when the amount is below the merchant's configured minimum. Amount limits vary by merchant.",
+          "query": "mutation CreateBarcode($input: BarcodeInput!) {\n  createBarcode(input: $input) {\n    barcode_id\n    barcode_url\n    merchant_uid\n    amount\n    fees\n    expiration_date\n    full_name\n    email_or_phone\n    sale_id\n    reference\n    account_code\n  }\n}",
+          "variables": {
+            "input": {
+              "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+              "amount": 50,
+              "full_name": "Pat Theodore",
+              "email_or_phone": "pat@paytheory.com"
+            }
+          },
+          "response": {
+            "type": "error",
+            "httpStatus": 200,
+            "body": {
+              "data": null,
+              "errors": [
+                {
+                  "path": [
+                    "createBarcode"
+                  ],
+                  "data": null,
+                  "errorType": "VALIDATION_ERROR",
+                  "errorInfo": null,
+                  "message": "Amount 50 is not within the min 100 and max 50000000 amount range."
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Amount above the merchant maximum",
+          "description": "Returns a validation error when the amount exceeds the merchant's configured maximum. Amount limits vary by merchant.",
+          "query": "mutation CreateBarcode($input: BarcodeInput!) {\n  createBarcode(input: $input) {\n    barcode_id\n    barcode_url\n    merchant_uid\n    amount\n    fees\n    expiration_date\n    full_name\n    email_or_phone\n    sale_id\n    reference\n    account_code\n  }\n}",
+          "variables": {
+            "input": {
+              "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+              "amount": 50000001,
+              "full_name": "Pat Theodore",
+              "email_or_phone": "pat@paytheory.com"
+            }
+          },
+          "response": {
+            "type": "error",
+            "httpStatus": 200,
+            "body": {
+              "data": null,
+              "errors": [
+                {
+                  "path": [
+                    "createBarcode"
+                  ],
+                  "data": null,
+                  "errorType": "VALIDATION_ERROR",
+                  "errorInfo": null,
+                  "message": "Amount 50000001 is not within the min 100 and max 50000000 amount range."
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Expiration exceeds 90 days",
+          "description": "Returns a validation error when days_until_expiration is greater than 90.",
+          "query": "mutation CreateBarcode($input: BarcodeInput!) {\n  createBarcode(input: $input) {\n    barcode_id\n    barcode_url\n    merchant_uid\n    amount\n    fees\n    expiration_date\n    full_name\n    email_or_phone\n    sale_id\n    reference\n    account_code\n  }\n}",
+          "variables": {
+            "input": {
+              "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+              "amount": 500,
+              "full_name": "Pat Theodore",
+              "email_or_phone": "pat@paytheory.com",
+              "days_until_expiration": 120
+            }
+          },
+          "response": {
+            "type": "error",
+            "httpStatus": 200,
+            "body": {
+              "data": null,
+              "errors": [
+                {
+                  "path": [
+                    "createBarcode"
+                  ],
+                  "data": null,
+                  "errorType": "VALIDATION_ERROR",
+                  "errorInfo": null,
+                  "message": "The maximum days until expiration must not exceed 90 days."
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Expiration date and days both provided",
+          "description": "Returns a validation error when both expiration_date and days_until_expiration are provided.",
+          "query": "mutation CreateBarcode($input: BarcodeInput!) {\n  createBarcode(input: $input) {\n    barcode_id\n    barcode_url\n    merchant_uid\n    amount\n    fees\n    expiration_date\n    full_name\n    email_or_phone\n    sale_id\n    reference\n    account_code\n  }\n}",
+          "variables": {
+            "input": {
+              "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+              "amount": 500,
+              "full_name": "Pat Theodore",
+              "email_or_phone": "pat@paytheory.com",
+              "days_until_expiration": 10,
+              "expiration_date": "2026-12-01"
+            }
+          },
+          "response": {
+            "type": "error",
+            "httpStatus": 200,
+            "body": {
+              "data": null,
+              "errors": [
+                {
+                  "path": [
+                    "createBarcode"
+                  ],
+                  "data": null,
+                  "errorType": "VALIDATION_ERROR",
+                  "errorInfo": null,
+                  "message": "Expiration date and days until expiration cannot both be specified."
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Sale ID is too long",
+          "description": "Returns a validation error when sale_id is longer than 31 characters.",
+          "query": "mutation CreateBarcode($input: BarcodeInput!) {\n  createBarcode(input: $input) {\n    barcode_id\n    barcode_url\n    merchant_uid\n    amount\n    fees\n    expiration_date\n    full_name\n    email_or_phone\n    sale_id\n    reference\n    account_code\n  }\n}",
+          "variables": {
+            "input": {
+              "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+              "amount": 500,
+              "full_name": "Pat Theodore",
+              "email_or_phone": "pat@paytheory.com",
+              "sale_id": "ssssssssssssssssssssssssssssssss"
+            }
+          },
+          "response": {
+            "type": "error",
+            "httpStatus": 200,
+            "body": {
+              "data": null,
+              "errors": [
+                {
+                  "path": [
+                    "createBarcode"
+                  ],
+                  "data": null,
+                  "errorType": "VALIDATION_ERROR",
+                  "errorInfo": null,
+                  "message": "Invalid sale ID."
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Email or phone is required",
+          "description": "Returns a validation error when email_or_phone is empty and no payor contact is provided.",
+          "query": "mutation CreateBarcode($input: BarcodeInput!) {\n  createBarcode(input: $input) {\n    barcode_id\n    barcode_url\n    merchant_uid\n    amount\n    fees\n    expiration_date\n    full_name\n    email_or_phone\n    sale_id\n    reference\n    account_code\n  }\n}",
+          "variables": {
+            "input": {
+              "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+              "amount": 500,
+              "full_name": "Pat Theodore",
+              "email_or_phone": ""
+            }
+          },
+          "response": {
+            "type": "error",
+            "httpStatus": 200,
+            "body": {
+              "data": null,
+              "errors": [
+                {
+                  "path": [
+                    "createBarcode"
+                  ],
+                  "data": null,
+                  "errorType": "VALIDATION_ERROR",
+                  "errorInfo": null,
+                  "message": "Email or phone is required."
+                }
+              ]
             }
           }
         }
@@ -4927,7 +5507,7 @@
           "variables": {
             "merchant_uid": "id_123",
             "settings": {
-              "contact_email": "user@example.com",
+              "contact_email": "user@paytheory.com",
               "contact_phone": "+15555555555",
               "facebook": "https://example.com",
               "instagram": "https://example.com",
@@ -5405,7 +5985,7 @@
                   "year": "30"
                 },
                 "security_code": "123",
-                "full_name": "Jane Cardholder",
+                "full_name": "Pat Theodore",
                 "address_line1": "123 Test Street",
                 "city": "Cincinnati",
                 "region": "OH",
@@ -5413,8 +5993,8 @@
                 "country": "USA"
               },
               "payor": {
-                "full_name": "Jane Cardholder",
-                "email": "payor@example.com",
+                "full_name": "Pat Theodore",
+                "email": "pat@paytheory.com",
                 "phone": "+15555550123",
                 "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
               }
@@ -5432,13 +6012,13 @@
                   "last_four": "7895",
                   "card_brand": "VISA",
                   "exp_date": "1230",
-                  "full_name": "Jane Cardholder",
+                  "full_name": "Pat Theodore",
                   "is_active": true
                 }
               }
             }
           },
-          "description": "Saves a card as a payment method for later transactions."
+          "description": "Saves a card as a payment method for later transactions. The response returns exp_date as MMYY (1230 means December 2030); is_active: true means the card can be used again."
         },
         {
           "name": "Save an ACH account",
@@ -5449,12 +6029,12 @@
               "ach": {
                 "account_number": "0000000016",
                 "account_type": "PERSONAL_CHECKING",
-                "name_on_account": "Jane Accountholder",
+                "name_on_account": "Pat Theodore",
                 "routing_number": "122105278"
               },
               "payor": {
-                "full_name": "Jane Accountholder",
-                "email": "payor@example.com",
+                "full_name": "Pat Theodore",
+                "email": "pat@paytheory.com",
                 "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
               }
             }
@@ -5471,7 +6051,7 @@
                   "last_four": "0016",
                   "card_brand": null,
                   "exp_date": null,
-                  "full_name": "Jane Accountholder",
+                  "full_name": "Pat Theodore",
                   "is_active": true
                 }
               }
@@ -5489,12 +6069,12 @@
                 "account_number": "123456789012",
                 "account_type": "PERSONAL_CHECKING",
                 "institution_number": "001",
-                "name_on_account": "Jane Accountholder",
+                "name_on_account": "Pat Theodore",
                 "transit_number": "12345"
               },
               "payor": {
-                "full_name": "Jane Accountholder",
-                "email": "payor@example.com",
+                "full_name": "Pat Theodore",
+                "email": "pat@paytheory.com",
                 "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
               }
             }
@@ -5511,7 +6091,7 @@
                   "last_four": "9012",
                   "card_brand": null,
                   "exp_date": null,
-                  "full_name": "Jane Accountholder",
+                  "full_name": "Pat Theodore",
                   "is_active": true
                 }
               }
@@ -5532,7 +6112,7 @@
                   "year": "30"
                 },
                 "security_code": "123",
-                "full_name": "Bad Number",
+                "full_name": "Pat Theodore",
                 "address_line1": "123 Test Street",
                 "city": "Cincinnati",
                 "region": "OH",
@@ -5540,8 +6120,8 @@
                 "country": "USA"
               },
               "payor": {
-                "full_name": "Bad Number",
-                "email": "payor@example.com",
+                "full_name": "Pat Theodore",
+                "email": "pat@paytheory.com",
                 "phone": "+15555550123",
                 "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
               }
@@ -5582,7 +6162,7 @@
                   "year": "30"
                 },
                 "security_code": "12",
-                "full_name": "Bad CVV",
+                "full_name": "Pat Theodore",
                 "address_line1": "123 Test Street",
                 "city": "Cincinnati",
                 "region": "OH",
@@ -5590,8 +6170,8 @@
                 "country": "USA"
               },
               "payor": {
-                "full_name": "Bad CVV",
-                "email": "payor@example.com",
+                "full_name": "Pat Theodore",
+                "email": "pat@paytheory.com",
                 "phone": "+15555550123",
                 "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
               }
@@ -5632,7 +6212,7 @@
                   "year": "30"
                 },
                 "security_code": "123",
-                "full_name": "Card And Bank",
+                "full_name": "Pat Theodore",
                 "address_line1": "123 Test Street",
                 "city": "Cincinnati",
                 "region": "OH",
@@ -5640,15 +6220,15 @@
                 "country": "USA"
               },
               "payor": {
-                "full_name": "Card And Bank",
-                "email": "payor@example.com",
+                "full_name": "Pat Theodore",
+                "email": "pat@paytheory.com",
                 "phone": "+15555550123",
                 "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
               },
               "ach": {
                 "account_number": "0000000016",
                 "account_type": "PERSONAL_CHECKING",
-                "name_on_account": "Card And Bank",
+                "name_on_account": "Pat Theodore",
                 "routing_number": "122105278"
               }
             }
@@ -5682,8 +6262,8 @@
             "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
             "payment_method": {
               "payor": {
-                "full_name": "No Rail",
-                "email": "payor@example.com",
+                "full_name": "Pat Theodore",
+                "email": "pat@paytheory.com",
                 "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
               }
             }
@@ -5723,7 +6303,7 @@
                   "year": "30"
                 },
                 "security_code": "123",
-                "full_name": "Two Payors",
+                "full_name": "Pat Theodore",
                 "address_line1": "123 Test Street",
                 "city": "Cincinnati",
                 "region": "OH",
@@ -5731,8 +6311,8 @@
                 "country": "USA"
               },
               "payor": {
-                "full_name": "Two Payors",
-                "email": "payor@example.com",
+                "full_name": "Pat Theodore",
+                "email": "pat@paytheory.com",
                 "phone": "+15555550123",
                 "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
               },
@@ -5774,7 +6354,7 @@
                   "year": "30"
                 },
                 "security_code": "123",
-                "full_name": "Unknown Payor",
+                "full_name": "Pat Theodore",
                 "address_line1": "123 Test Street",
                 "city": "Cincinnati",
                 "region": "OH",
@@ -5828,7 +6408,7 @@
               },
               "payor": {
                 "full_name": "Pat Theodore",
-                "email": "payor@example.com",
+                "email": "pat@paytheory.com",
                 "phone": "+15555550123",
                 "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
               }
@@ -6011,8 +6591,8 @@
           "variables": {
             "input": {
               "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
-              "full_name": "Jane Payor",
-              "email": "payor@example.com",
+              "full_name": "Pat Theodore",
+              "email": "pat@paytheory.com",
               "phone": "+15555550123",
               "address_line1": "123 Test Street",
               "address_line2": "Suite 200",
@@ -6031,8 +6611,8 @@
                 "createPayor": {
                   "payor_id": "ptl_pay_6tOEQ5lesXwGSGaKECSfJy",
                   "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
-                  "full_name": "Jane Payor",
-                  "email": "payor@example.com",
+                  "full_name": "Pat Theodore",
+                  "email": "pat@paytheory.com",
                   "phone": "+15555550123",
                   "address_line1": "123 Test Street",
                   "city": "Cincinnati",
@@ -6051,7 +6631,7 @@
           "query": "mutation CreatePayor($input: PayorInput!) {\n  createPayor(input: $input) {\n    payor_id\n    merchant_uid\n    full_name\n    email\n    phone\n    address_line1\n    city\n    region\n    postal_code\n    country\n  }\n}",
           "variables": {
             "input": {
-              "full_name": "No Merchant Payor"
+              "full_name": "Pat Theodore"
             }
           },
           "response": {
@@ -6069,8 +6649,8 @@
                   "data": {
                     "payor_id": null,
                     "merchant_uid": null,
-                    "full_name": null,
-                    "email": null,
+                    "full_name": "Pat Theodore",
+                    "email": "pat@paytheory.com",
                     "phone": null,
                     "address_line1": null,
                     "city": null,
@@ -6102,7 +6682,7 @@
           "variables": {
             "input": {
               "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
-              "full_name": "Wrong Merchant Payor"
+              "full_name": "Pat Theodore"
             }
           },
           "response": {
@@ -6120,8 +6700,8 @@
                   "data": {
                     "payor_id": null,
                     "merchant_uid": null,
-                    "full_name": null,
-                    "email": null,
+                    "full_name": "Pat Theodore",
+                    "email": "pat@paytheory.com",
                     "phone": null,
                     "address_line1": null,
                     "city": null,
@@ -6202,8 +6782,8 @@
           "variables": {
             "payor_id": "ptl_pay_6tOEQ5lesXwGSGaKECSfJy",
             "payor_data": {
-              "full_name": "Jane Payor Updated",
-              "email": "updated@example.com",
+              "full_name": "Pat Theodore",
+              "email": "pat@paytheory.com",
               "phone": "+15555550124",
               "address_line1": "456 Updated Street",
               "address_line2": "Suite 300",
@@ -6897,11 +7477,12 @@
       "isDeprecated": false,
       "examples": [
         {
-          "name": "Charge a saved payment method",
-          "description": "Creates a transaction using an existing stored payment_method_id.",
-          "query": "mutation CreateTransaction(\n  $merchant_uid: String!\n  $amount: Int!\n  $payment_method_id: String\n  $fee_mode: FeeMode\n) {\n  createTransaction(\n    merchant_uid: $merchant_uid\n    amount: $amount\n    payment_method_id: $payment_method_id\n    fee_mode: $fee_mode\n  ) {\n    transaction_id\n    merchant_uid\n    gross_amount\n    net_amount\n    currency\n    status\n    fee_mode\n    fees\n    transaction_type\n    transaction_date\n  }\n}",
+          "name": "Charge a saved payment method with an idempotency key",
+          "description": "Creates a transaction with a saved payment method. Reuse this key only when retrying this same request.",
+          "query": "mutation CreateTransaction(\n  $merchant_uid: String!\n  $amount: Int!\n  $idempotency_key: String\n  $payment_method_id: String\n  $fee_mode: FeeMode\n) {\n  createTransaction(\n    merchant_uid: $merchant_uid\n    amount: $amount\n    idempotency_key: $idempotency_key\n    payment_method_id: $payment_method_id\n    fee_mode: $fee_mode\n  ) {\n    transaction_id\n    merchant_uid\n    gross_amount\n    net_amount\n    currency\n    status\n    fee_mode\n    fees\n    transaction_type\n    transaction_date\n  }\n}",
           "variables": {
             "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+            "idempotency_key": "order-1042-transaction",
             "amount": 250,
             "payment_method_id": "ptl_pmt_54LidQwRcTs5MU9g0QYrgt",
             "fee_mode": "MERCHANT_FEE"
@@ -6928,6 +7509,33 @@
           }
         },
         {
+          "name": "Retry a transaction with the same key",
+          "description": "Retrying this request with the same key returns a CONFLICT and includes the original transaction ID in the error data. The response highlights those fields.",
+          "query": "mutation CreateTransaction(\n  $merchant_uid: String!\n  $amount: Int!\n  $idempotency_key: String\n  $payment_method_id: String\n  $fee_mode: FeeMode\n) {\n  createTransaction(\n    merchant_uid: $merchant_uid\n    amount: $amount\n    idempotency_key: $idempotency_key\n    payment_method_id: $payment_method_id\n    fee_mode: $fee_mode\n  ) {\n    transaction_id\n    merchant_uid\n    gross_amount\n    net_amount\n    currency\n    status\n    fee_mode\n    fees\n    transaction_type\n    transaction_date\n  }\n}",
+          "variables": {
+            "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+            "idempotency_key": "order-1042-transaction",
+            "amount": 250,
+            "payment_method_id": "ptl_pmt_54LidQwRcTs5MU9g0QYrgt",
+            "fee_mode": "MERCHANT_FEE"
+          },
+          "response": {
+            "type": "error",
+            "httpStatus": 200,
+            "body": {
+              "data": null,
+              "errors": [
+                {
+                  "data": {
+                    "transaction_id": "ptl_txn_5mos8Z6NFWAWQRac7BAQFX"
+                  },
+                  "errorType": "CONFLICT"
+                }
+              ]
+            }
+          }
+        },
+        {
           "name": "Charge a card",
           "description": "Creates a card transaction by passing card details directly in payment_method.",
           "query": "mutation CreateTransaction(\n  $merchant_uid: String!\n  $amount: Int!\n  $payment_method: PaymentMethodInput\n  $fee_mode: FeeMode\n  $account_code: String\n  $reference: String\n) {\n  createTransaction(\n    merchant_uid: $merchant_uid\n    amount: $amount\n    payment_method: $payment_method\n    fee_mode: $fee_mode\n    account_code: $account_code\n    reference: $reference\n  ) {\n    transaction_id\n    merchant_uid\n    gross_amount\n    net_amount\n    currency\n    status\n    fee_mode\n    fees\n    transaction_type\n    transaction_date\n  }\n}",
@@ -6942,7 +7550,7 @@
                   "year": "30"
                 },
                 "security_code": "123",
-                "full_name": "Jane Payer",
+                "full_name": "Pat Theodore",
                 "address_line1": "123 Test Street",
                 "city": "Cincinnati",
                 "region": "OH",
@@ -6950,8 +7558,8 @@
                 "country": "USA"
               },
               "payor": {
-                "full_name": "Jane Payer",
-                "email": "payor@example.com",
+                "full_name": "Pat Theodore",
+                "email": "pat@paytheory.com",
                 "phone": "+15555550123",
                 "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
               }
@@ -6992,12 +7600,12 @@
               "ach": {
                 "account_number": "0000000016",
                 "account_type": "PERSONAL_CHECKING",
-                "name_on_account": "Jane Accountholder",
+                "name_on_account": "Pat Theodore",
                 "routing_number": "122105278"
               },
               "payor": {
-                "full_name": "Jane Accountholder",
-                "email": "payor@example.com",
+                "full_name": "Pat Theodore",
+                "email": "pat@paytheory.com",
                 "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
               }
             },
@@ -7036,12 +7644,12 @@
                 "account_number": "123456789012",
                 "account_type": "PERSONAL_CHECKING",
                 "institution_number": "001",
-                "name_on_account": "Jane Accountholder",
+                "name_on_account": "Pat Theodore",
                 "transit_number": "12345"
               },
               "payor": {
-                "full_name": "Jane Accountholder",
-                "email": "payor@example.com",
+                "full_name": "Pat Theodore",
+                "email": "pat@paytheory.com",
                 "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
               }
             },
@@ -7110,7 +7718,7 @@
                   "year": "30"
                 },
                 "security_code": "123",
-                "full_name": "Both Ways",
+                "full_name": "Pat Theodore",
                 "address_line1": "123 Test Street",
                 "city": "Cincinnati",
                 "region": "OH",
@@ -7118,8 +7726,8 @@
                 "country": "USA"
               },
               "payor": {
-                "full_name": "Both Ways",
-                "email": "payor@example.com",
+                "full_name": "Pat Theodore",
+                "email": "pat@paytheory.com",
                 "phone": "+15555550123",
                 "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
               }
@@ -7190,7 +7798,7 @@
                   "year": "30"
                 },
                 "security_code": "123",
-                "full_name": "Zero Amount",
+                "full_name": "Pat Theodore",
                 "address_line1": "123 Test Street",
                 "city": "Cincinnati",
                 "region": "OH",
@@ -7198,8 +7806,8 @@
                 "country": "USA"
               },
               "payor": {
-                "full_name": "Zero Amount",
-                "email": "payor@example.com",
+                "full_name": "Pat Theodore",
+                "email": "pat@paytheory.com",
                 "phone": "+15555550123",
                 "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
               }
@@ -7525,81 +8133,60 @@
       "isDeprecated": false,
       "examples": [
         {
-          "name": "Example createWalletTransaction",
-          "description": "This call is used to create a transaction for a wallet payment via Apple Pay or Google Pay. It works in conjunction with our SDKs to allow you to create a transaction via our API.",
-          "query": "mutation CreateWalletTransaction($app_id: String, $merchant_uid: String!, $wallet_type: WalletType, $digital_wallet_payload: String!, $amount: Int, $fee: Int, $billing_address: BillingAddressInput, $payor_id: String, $payor: PayorInput, $recurring_id: String, $invoice_id: String, $account_code: String, $reference: String, $send_receipt: Boolean, $receipt_description: String, $metadata: AWSJSON, $health_expense_type: HealthExpenseType, $additional_purchase_data: AdditionalPurchaseDataInput, $split: [SplitInput]) {\n  createWalletTransaction(app_id: $app_id, merchant_uid: $merchant_uid, wallet_type: $wallet_type, digital_wallet_payload: $digital_wallet_payload, amount: $amount, fee: $fee, billing_address: $billing_address, payor_id: $payor_id, payor: $payor, recurring_id: $recurring_id, invoice_id: $invoice_id, account_code: $account_code, reference: $reference, send_receipt: $send_receipt, receipt_description: $receipt_description, metadata: $metadata, health_expense_type: $health_expense_type, additional_purchase_data: $additional_purchase_data, split: $split) {\n  transaction_id\n  transaction_date\n  account_code\n  authorization_id\n  avs_status\n  }\n}",
+          "name": "Unsupported wallet type",
+          "description": "Returns a validation error for a wallet type that this operation does not support.",
+          "query": "mutation CreateWalletTransaction(\n  $merchant_uid: String!\n  $digital_wallet_payload: String!\n  $wallet_type: WalletType\n  $amount: Int\n) {\n  createWalletTransaction(\n    merchant_uid: $merchant_uid\n    digital_wallet_payload: $digital_wallet_payload\n    wallet_type: $wallet_type\n    amount: $amount\n  ) {\n    transaction_id\n    gross_amount\n    status\n  }\n}",
           "variables": {
-            "app_id": "example",
             "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
-            "wallet_type": "APPLE_PAY",
-            "digital_wallet_payload": "example",
-            "amount": 123,
-            "fee": 123,
-            "billing_address": {
-              "address_line1": "example",
-              "address_line2": "example",
-              "city": "example",
-              "country": "example",
-              "full_name": "example",
-              "postal_code": "example",
-              "region": "example"
-            },
-            "payor_id": "example",
-            "payor": {
-              "address_line1": "example",
-              "address_line2": "example",
-              "city": "example",
-              "country": "example",
-              "email": "example",
-              "full_name": "example",
-              "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
-              "metadata": {
-                "key": "value"
-              },
-              "phone": "example",
-              "postal_code": "example",
-              "region": "example"
-            },
-            "recurring_id": "example",
-            "invoice_id": "example",
-            "account_code": "example",
-            "reference": "example",
-            "send_receipt": true,
-            "receipt_description": "example",
-            "metadata": {
-              "key": "value"
-            },
-            "health_expense_type": "CLINICAL",
-            "additional_purchase_data": {
-              "level3_data_line_item": [
-                {
-                  "item_code": "example"
-                }
-              ],
-              "level3_data_summary": {
-                "dest_postal_code": "example"
-              }
-            },
-            "split": [
-              {
-                "amount": 123,
-                "merchant_uid": "id_123"
-              }
-            ]
+            "digital_wallet_payload": "not-a-token",
+            "amount": 200,
+            "wallet_type": "CLICK_TO_PAY"
           },
           "response": {
-            "type": "success",
+            "type": "error",
             "httpStatus": 200,
             "body": {
-              "data": {
-                "createWalletTransaction": {
-                  "transaction_id": "example",
-                  "transaction_date": "2025-01-01T00:00:00Z",
-                  "account_code": "example",
-                  "authorization_id": "example",
-                  "avs_status": "example"
+              "data": null,
+              "errors": [
+                {
+                  "path": [
+                    "createWalletTransaction"
+                  ],
+                  "data": null,
+                  "errorType": "VALIDATION_ERROR",
+                  "errorInfo": null,
+                  "message": "Unsupported wallet type."
                 }
-              }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Wallet payload requires a session key",
+          "description": "A base64-encoded JSON payload is treated as a legacy iOS SDK payload and requires a session key, even when wallet_type is GOOGLE_PAY.",
+          "query": "mutation CreateWalletTransaction(\n  $merchant_uid: String!\n  $digital_wallet_payload: String!\n  $wallet_type: WalletType\n  $amount: Int\n) {\n  createWalletTransaction(\n    merchant_uid: $merchant_uid\n    digital_wallet_payload: $digital_wallet_payload\n    wallet_type: $wallet_type\n    amount: $amount\n  ) {\n    transaction_id\n    gross_amount\n    status\n  }\n}",
+          "variables": {
+            "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+            "digital_wallet_payload": "eyJ0b2tlbiI6IngifQ==",
+            "wallet_type": "GOOGLE_PAY",
+            "amount": 200
+          },
+          "response": {
+            "type": "error",
+            "httpStatus": 200,
+            "body": {
+              "data": null,
+              "errors": [
+                {
+                  "path": [
+                    "createWalletTransaction"
+                  ],
+                  "data": null,
+                  "errorType": "VALIDATION_ERROR",
+                  "errorInfo": null,
+                  "message": "Session key missing, invalid request."
+                }
+              ]
             }
           }
         }
@@ -7834,7 +8421,7 @@
           "variables": {
             "transaction_id": "example",
             "receipt_description": "example",
-            "email": "user@example.com"
+            "email": "pat@paytheory.com"
           },
           "response": {
             "type": "success",
@@ -7970,7 +8557,7 @@
           "variables": {
             "input": {
               "bypass_merchant_validation": true,
-              "email": "user@example.com",
+              "email": "pat@paytheory.com",
               "first_name": "example",
               "last_name": "example",
               "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
@@ -7984,8 +8571,8 @@
             "body": {
               "data": {
                 "createUser": {
-                  "email": "example",
-                  "full_name": "example",
+                  "email": "pat@paytheory.com",
+                  "full_name": "Pat Theodore",
                   "phone": "example",
                   "user_status": "example",
                   "username": "example"
@@ -8989,7 +9576,7 @@
                   "month": "12",
                   "year": "30"
                 },
-                "full_name": "Jane Cardholder",
+                "full_name": "Pat Theodore",
                 "postal_code": "45209",
                 "security_code": "123"
               }

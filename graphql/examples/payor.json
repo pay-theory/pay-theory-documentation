@@ -29,7 +29,7 @@
                     "payor_id": "ptl_pay_10juZtcNdkEUTxm0SaepXH",
                     "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
                     "full_name": "Pat Theodore",
-                    "email": "pat@example.com",
+                    "email": "pat@paytheory.com",
                     "phone": null,
                     "address_line1": "123 Test Street",
                     "city": "Cincinnati",
@@ -41,7 +41,7 @@
                     "payor_id": "ptl_pay_11Tvd4EamaiPn90XGtfqdD",
                     "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
                     "full_name": "Pat Theodore",
-                    "email": "pat@example.com",
+                    "email": "pat@paytheory.com",
                     "phone": "+15555550123",
                     "address_line1": "123 Test Street",
                     "city": "Cincinnati",
@@ -82,8 +82,8 @@
                   {
                     "payor_id": "ptl_pay_6tOEQ5lesXwGSGaKECSfJy",
                     "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
-                    "full_name": "Jane Payor Updated",
-                    "email": "partial@example.com",
+                    "full_name": "Pat Theodore",
+                    "email": "pat@paytheory.com",
                     "phone": "+15555550125",
                     "address_line1": "456 Updated Street",
                     "city": "Columbus",
@@ -140,8 +140,8 @@
         "variables": {
           "input": {
             "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
-            "full_name": "Jane Payor",
-            "email": "payor@example.com",
+            "full_name": "Pat Theodore",
+            "email": "pat@paytheory.com",
             "phone": "+15555550123",
             "address_line1": "123 Test Street",
             "address_line2": "Suite 200",
@@ -160,8 +160,8 @@
               "createPayor": {
                 "payor_id": "ptl_pay_6tOEQ5lesXwGSGaKECSfJy",
                 "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
-                "full_name": "Jane Payor",
-                "email": "payor@example.com",
+                "full_name": "Pat Theodore",
+                "email": "pat@paytheory.com",
                 "phone": "+15555550123",
                 "address_line1": "123 Test Street",
                 "city": "Cincinnati",
@@ -180,7 +180,7 @@
         "query": "mutation CreatePayor($input: PayorInput!) {\n  createPayor(input: $input) {\n    payor_id\n    merchant_uid\n    full_name\n    email\n    phone\n    address_line1\n    city\n    region\n    postal_code\n    country\n  }\n}",
         "variables": {
           "input": {
-            "full_name": "No Merchant Payor"
+            "full_name": "Pat Theodore"
           }
         },
         "response": {
@@ -198,8 +198,8 @@
                 "data": {
                   "payor_id": null,
                   "merchant_uid": null,
-                  "full_name": null,
-                  "email": null,
+                  "full_name": "Pat Theodore",
+                  "email": "pat@paytheory.com",
                   "phone": null,
                   "address_line1": null,
                   "city": null,
@@ -231,7 +231,7 @@
         "variables": {
           "input": {
             "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
-            "full_name": "Wrong Merchant Payor"
+            "full_name": "Pat Theodore"
           }
         },
         "response": {
@@ -249,8 +249,8 @@
                 "data": {
                   "payor_id": null,
                   "merchant_uid": null,
-                  "full_name": null,
-                  "email": null,
+                  "full_name": "Pat Theodore",
+                  "email": "pat@paytheory.com",
                   "phone": null,
                   "address_line1": null,
                   "city": null,
@@ -284,8 +284,8 @@
         "variables": {
           "payor_id": "ptl_pay_6tOEQ5lesXwGSGaKECSfJy",
           "payor_data": {
-            "full_name": "Jane Payor Updated",
-            "email": "updated@example.com",
+            "full_name": "Pat Theodore",
+            "email": "pat@paytheory.com",
             "phone": "+15555550124",
             "address_line1": "456 Updated Street",
             "address_line2": "Suite 300",
