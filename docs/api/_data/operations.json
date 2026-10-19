@@ -604,7 +604,7 @@
       "examples": [
         {
           "name": "Get a merchant",
-          "query": "query Merchant($merchant_uid: String) {\n  merchant(merchant_uid: $merchant_uid) {\n    merchant_uid\n    merchant_name\n    card_active\n    ach_active\n    cash_active\n    country_code\n    settings {\n      contact_email\n      website\n    }\n  }\n}",
+          "query": "query Merchant($merchant_uid: String) {\n  merchant(merchant_uid: $merchant_uid) {\n    merchant_uid\n    merchant_name\n    card_active\n    ach_active\n    cash_active\n    max_transaction_amount\n    country_code\n    settings {\n      contact_email\n      website\n    }\n  }\n}",
           "variables": {
             "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
           },
@@ -619,6 +619,7 @@
                   "card_active": true,
                   "ach_active": true,
                   "cash_active": true,
+                  "max_transaction_amount": 50000000,
                   "country_code": "USA",
                   "settings": {
                     "contact_email": null,
@@ -628,11 +629,11 @@
               }
             }
           },
-          "description": "Reads merchant details for the key."
+          "description": "Shows the merchant maximum for card and ACH payments in cents; service fees count toward the limit."
         },
         {
           "name": "Merchant not found",
-          "query": "query Merchant($merchant_uid: String) {\n  merchant(merchant_uid: $merchant_uid) {\n    merchant_uid\n    merchant_name\n    card_active\n    ach_active\n    cash_active\n    country_code\n    settings {\n      contact_email\n      website\n    }\n  }\n}",
+          "query": "query Merchant($merchant_uid: String) {\n  merchant(merchant_uid: $merchant_uid) {\n    merchant_uid\n    merchant_name\n    card_active\n    ach_active\n    cash_active\n    max_transaction_amount\n    country_code\n    settings {\n      contact_email\n      website\n    }\n  }\n}",
           "variables": {
             "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
           },

@@ -33500,6 +33500,19 @@
         "isDeprecated": false
       },
       {
+        "name": "max_transaction_amount",
+        "description": "Maximum card or ACH payment total in cents, including service fees. Zero or null means no merchant maximum.",
+        "type": {
+          "kind": "TYPE_REF",
+          "name": "Int",
+          "link": "#int"
+        },
+        "typeString": "Int",
+        "isRequired": false,
+        "isList": false,
+        "isDeprecated": false
+      },
+      {
         "name": "merchant_name",
         "description": "The name of the merchant.",
         "type": {
