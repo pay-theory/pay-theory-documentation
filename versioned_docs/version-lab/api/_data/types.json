@@ -33500,6 +33500,19 @@
         "isDeprecated": false
       },
       {
+        "name": "max_transaction_amount",
+        "description": "Maximum card or ACH payment total in cents, including service fees. Zero or null means no merchant maximum.",
+        "type": {
+          "kind": "TYPE_REF",
+          "name": "Int",
+          "link": "#int"
+        },
+        "typeString": "Int",
+        "isRequired": false,
+        "isList": false,
+        "isDeprecated": false
+      },
+      {
         "name": "merchant_name",
         "description": "The name of the merchant.",
         "type": {
@@ -64366,6 +64379,190 @@
       {
         "name": "CLOSED",
         "description": "The instruction window is closed.",
+        "isDeprecated": false
+      }
+    ]
+  },
+  "IdempotencyLookup": {
+    "kind": "OBJECT",
+    "name": "IdempotencyLookup",
+    "description": "Payment creation record found by idempotency key.",
+    "fields": [
+      {
+        "name": "merchant_uid",
+        "description": "The Pay Theory unique identifier for the merchant that owns the idempotency key.",
+        "type": {
+          "kind": "TYPE_REF",
+          "name": "String",
+          "link": "#string"
+        },
+        "typeString": "String!",
+        "isRequired": true,
+        "isList": false,
+        "isDeprecated": false
+      },
+      {
+        "name": "operation",
+        "description": "The payment creation operation the key was scoped to.",
+        "type": {
+          "kind": "ENUM",
+          "name": "IdempotencyOperation",
+          "description": "Operations that support idempotency lookups.",
+          "values": [
+            {
+              "name": "CREATE_AUTHORIZATION",
+              "description": "Look up an idempotency key used with createAuthorization.",
+              "isDeprecated": false
+            },
+            {
+              "name": "CREATE_TRANSACTION",
+              "description": "Look up an idempotency key used with createTransaction.",
+              "isDeprecated": false
+            }
+          ]
+        },
+        "typeString": "IdempotencyOperation!",
+        "isRequired": true,
+        "isList": false,
+        "isDeprecated": false
+      },
+      {
+        "name": "idempotency_status",
+        "description": "The status of the retained idempotency record.",
+        "type": {
+          "kind": "ENUM",
+          "name": "IdempotencyStatus",
+          "description": "Status of a retained idempotency ledger record.",
+          "values": [
+            {
+              "name": "IN_PROGRESS",
+              "description": "The original request is still being processed.",
+              "isDeprecated": false
+            },
+            {
+              "name": "COMPLETED",
+              "description": "The original request completed and has a linked payment resource.",
+              "isDeprecated": false
+            }
+          ]
+        },
+        "typeString": "IdempotencyStatus!",
+        "isRequired": true,
+        "isList": false,
+        "isDeprecated": false
+      },
+      {
+        "name": "transaction_id",
+        "description": "The Pay Theory unique identifier for the matching transaction, when the key was used with createTransaction.",
+        "type": {
+          "kind": "TYPE_REF",
+          "name": "String",
+          "link": "#string"
+        },
+        "typeString": "String",
+        "isRequired": false,
+        "isList": false,
+        "isDeprecated": false
+      },
+      {
+        "name": "transaction",
+        "description": "The matching transaction, when it has been created.",
+        "type": {
+          "kind": "TYPE_REF",
+          "name": "Transaction",
+          "link": "#transaction"
+        },
+        "typeString": "Transaction",
+        "isRequired": false,
+        "isList": false,
+        "isDeprecated": false
+      },
+      {
+        "name": "authorization_id",
+        "description": "The Pay Theory unique identifier for the matching authorization, when the key was used with createAuthorization.",
+        "type": {
+          "kind": "TYPE_REF",
+          "name": "String",
+          "link": "#string"
+        },
+        "typeString": "String",
+        "isRequired": false,
+        "isList": false,
+        "isDeprecated": false
+      },
+      {
+        "name": "authorization",
+        "description": "The matching authorization, when it has been created.",
+        "type": {
+          "kind": "TYPE_REF",
+          "name": "Authorization",
+          "link": "#authorization"
+        },
+        "typeString": "Authorization",
+        "isRequired": false,
+        "isList": false,
+        "isDeprecated": false
+      },
+      {
+        "name": "locked_until",
+        "description": "The time until which the original request may still be considered in progress.",
+        "type": {
+          "kind": "TYPE_REF",
+          "name": "AWSDateTime",
+          "link": "#awsdate-time"
+        },
+        "typeString": "AWSDateTime",
+        "isRequired": false,
+        "isList": false,
+        "isDeprecated": false
+      },
+      {
+        "name": "expires_at",
+        "description": "The time after which the idempotency record is no longer retained.",
+        "type": {
+          "kind": "TYPE_REF",
+          "name": "AWSDateTime",
+          "link": "#awsdate-time"
+        },
+        "typeString": "AWSDateTime",
+        "isRequired": false,
+        "isList": false,
+        "isDeprecated": false
+      }
+    ],
+    "interfaces": [],
+    "isCollapsible": false
+  },
+  "IdempotencyOperation": {
+    "kind": "ENUM",
+    "name": "IdempotencyOperation",
+    "description": "Operations that support idempotency lookups.",
+    "values": [
+      {
+        "name": "CREATE_AUTHORIZATION",
+        "description": "Look up an idempotency key used with createAuthorization.",
+        "isDeprecated": false
+      },
+      {
+        "name": "CREATE_TRANSACTION",
+        "description": "Look up an idempotency key used with createTransaction.",
+        "isDeprecated": false
+      }
+    ]
+  },
+  "IdempotencyStatus": {
+    "kind": "ENUM",
+    "name": "IdempotencyStatus",
+    "description": "Status of a retained idempotency ledger record.",
+    "values": [
+      {
+        "name": "IN_PROGRESS",
+        "description": "The original request is still being processed.",
+        "isDeprecated": false
+      },
+      {
+        "name": "COMPLETED",
+        "description": "The original request completed and has a linked payment resource.",
         "isDeprecated": false
       }
     ]

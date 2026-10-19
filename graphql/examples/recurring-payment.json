@@ -4,26 +4,20 @@
     "operationType": "query",
     "examples": [
       {
-        "name": "Example recurringPayments",
-        "description": "Returns recurring payments.",
-        "query": "query RecurringPayments($query: SqlQuery, $limit: Int, $offset: String, $direction: MoveDirection, $offset_id: String) {\n  recurringPayments(query: $query, limit: $limit, offset: $offset, direction: $direction, offset_id: $offset_id) {\n  items {\n    recurring_id\n    created_date\n    account_code\n    amount_per_payment\n    currency\n  }\n  total_row_count\n  }\n}",
+        "name": "List recurring payments for a merchant",
+        "description": "Lists recurring payments for a merchant.",
+        "query": "query RecurringPayments($query: SqlQuery, $limit: Int) {\n  recurringPayments(query: $query, limit: $limit) {\n    items {\n      recurring_id\n      created_date\n      account_code\n      amount_per_payment\n      currency\n    }\n    total_row_count\n  }\n}",
         "variables": {
           "query": {
             "query_list": [
               {
-                "conjunctive_operator": "AND_NEXT"
-              }
-            ],
-            "sort_list": [
-              {
-                "direction": "ASC"
+                "key": "merchant_uid",
+                "value": "9f0acb5e-a176-404a-b735-f4caac66098e",
+                "operator": "EQUAL"
               }
             ]
           },
-          "limit": 123,
-          "offset": "example",
-          "direction": "BACKWARD",
-          "offset_id": "example"
+          "limit": 1
         },
         "response": {
           "type": "success",
@@ -33,14 +27,14 @@
               "recurringPayments": {
                 "items": [
                   {
-                    "recurring_id": "example",
-                    "created_date": "2025-01-01T00:00:00Z",
-                    "account_code": "example",
-                    "amount_per_payment": 123,
-                    "currency": "example"
+                    "recurring_id": "ptl_rec_12aTDc6Gfe9DyEZqnHmcb7",
+                    "created_date": "2026-07-17T21:04:43.0Z",
+                    "account_code": null,
+                    "amount_per_payment": 300,
+                    "currency": "USD"
                   }
                 ],
-                "total_row_count": 123
+                "total_row_count": 456
               }
             }
           }

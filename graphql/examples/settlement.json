@@ -4,26 +4,20 @@
     "operationType": "query",
     "examples": [
       {
-        "name": "Example settlements",
-        "description": "Returns settlements.",
-        "query": "query Settlements($query: SqlQuery, $limit: Int, $offset: String, $direction: MoveDirection, $offset_id: String) {\n  settlements(query: $query, limit: $limit, offset: $offset, direction: $direction, offset_id: $offset_id) {\n  items {\n    merchant_uid\n    settlement_date\n    currency\n    gross_amount\n    gross_amount_64bit\n  }\n  total_row_count\n  }\n}",
+        "name": "List settlements for a merchant",
+        "description": "Lists settlements for a merchant.",
+        "query": "query Settlements($query: SqlQuery, $limit: Int) {\n  settlements(query: $query, limit: $limit) {\n    items {\n      merchant_uid\n      settlement_batch\n      settlement_date\n      currency\n      gross_amount\n      net_amount\n      total_fees\n      status\n      settlement_type\n      transaction_debit_count\n      transaction_reversal_count\n      transfer_date\n      gross_amount_64bit\n      net_amount_64bit\n    }\n    total_row_count\n  }\n}",
         "variables": {
           "query": {
             "query_list": [
               {
-                "conjunctive_operator": "AND_NEXT"
-              }
-            ],
-            "sort_list": [
-              {
-                "direction": "ASC"
+                "key": "merchant_uid",
+                "value": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                "operator": "EQUAL"
               }
             ]
           },
-          "limit": 123,
-          "offset": "example",
-          "direction": "BACKWARD",
-          "offset_id": "example"
+          "limit": 2
         },
         "response": {
           "type": "success",
@@ -34,13 +28,110 @@
                 "items": [
                   {
                     "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
-                    "settlement_date": "2025-01-01T00:00:00Z",
-                    "currency": "example",
-                    "gross_amount": 123,
-                    "gross_amount_64bit": "example"
+                    "settlement_batch": 2,
+                    "settlement_date": "2026-08-25T00:00:00Z",
+                    "currency": "USD",
+                    "status": "SUCCEEDED",
+                    "settlement_type": "NET",
+                    "transaction_debit_count": 1,
+                    "transaction_reversal_count": 3,
+                    "transfer_date": "2026-08-25T13:31:33.0Z",
+                    "gross_amount_64bit": "-400",
+                    "net_amount_64bit": "-453",
+                    "gross_amount": -400,
+                    "net_amount": -453,
+                    "total_fees": 53
+                  },
+                  {
+                    "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                    "settlement_batch": 3,
+                    "settlement_date": "2026-08-25T00:00:00Z",
+                    "currency": "USD",
+                    "status": "SUCCEEDED",
+                    "settlement_type": "NET",
+                    "transaction_debit_count": 5,
+                    "transaction_reversal_count": 0,
+                    "transfer_date": "2026-08-25T13:32:28.0Z",
+                    "gross_amount_64bit": "4000",
+                    "net_amount_64bit": "3669",
+                    "gross_amount": 4000,
+                    "net_amount": 3669,
+                    "total_fees": 331
                   }
                 ],
-                "total_row_count": 123
+                "total_row_count": 7
+              }
+            }
+          }
+        }
+      },
+      {
+        "name": "Find either of two settlement batches",
+        "description": "Finds this merchant's settlements in batch 2 or 3. Put both OR choices inside query_group so results stay limited to this merchant.",
+        "query": "query Settlements($query: SqlQuery, $limit: Int) {\n  settlements(query: $query, limit: $limit) {\n    items {\n      merchant_uid\n      settlement_batch\n      settlement_date\n      currency\n      status\n      settlement_type\n      transaction_debit_count\n      transaction_reversal_count\n      transfer_date\n      gross_amount_64bit\n      net_amount_64bit\n    }\n    total_row_count\n  }\n}",
+        "variables": {
+          "query": {
+            "query_list": [
+              {
+                "key": "merchant_uid",
+                "value": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                "operator": "EQUAL",
+                "conjunctive_operator": "AND_NEXT"
+              },
+              {
+                "query_group": [
+                  {
+                    "key": "settlement_batch",
+                    "value": 2,
+                    "operator": "EQUAL",
+                    "conjunctive_operator": "OR_NEXT"
+                  },
+                  {
+                    "key": "settlement_batch",
+                    "value": 3,
+                    "operator": "EQUAL"
+                  }
+                ]
+              }
+            ]
+          },
+          "limit": 10
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "settlements": {
+                "items": [
+                  {
+                    "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                    "settlement_batch": 2,
+                    "settlement_date": "2026-08-25T00:00:00Z",
+                    "currency": "USD",
+                    "status": "SUCCEEDED",
+                    "settlement_type": "NET",
+                    "transaction_debit_count": 1,
+                    "transaction_reversal_count": 3,
+                    "transfer_date": "2026-08-25T13:31:33.0Z",
+                    "gross_amount_64bit": "-400",
+                    "net_amount_64bit": "-453"
+                  },
+                  {
+                    "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                    "settlement_batch": 3,
+                    "settlement_date": "2026-08-25T00:00:00Z",
+                    "currency": "USD",
+                    "status": "SUCCEEDED",
+                    "settlement_type": "NET",
+                    "transaction_debit_count": 5,
+                    "transaction_reversal_count": 0,
+                    "transfer_date": "2026-08-25T13:32:28.0Z",
+                    "gross_amount_64bit": "4000",
+                    "net_amount_64bit": "3669"
+                  }
+                ],
+                "total_row_count": 2
               }
             }
           }

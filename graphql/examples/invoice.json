@@ -4,26 +4,26 @@
     "operationType": "query",
     "examples": [
       {
-        "name": "Example invoices",
-        "description": "Returns invoices.",
-        "query": "query Invoices($query: SqlQuery, $limit: Int, $offset: String, $direction: MoveDirection, $offset_id: String) {\n  invoices(query: $query, limit: $limit, offset: $offset, direction: $direction, offset_id: $offset_id) {\n  items {\n    invoice_id\n    created_date\n    account_code\n    currency\n    due_by\n  }\n  total_row_count\n  }\n}",
+        "name": "List invoices for a merchant",
+        "description": "Lists a merchant\u2019s invoices, newest first.",
+        "query": "query Invoices($query: SqlQuery, $limit: Int) {\n  invoices(query: $query, limit: $limit) {\n    items {\n      invoice_id\n      created_date\n      account_code\n      currency\n      due_by\n    }\n    total_row_count\n  }\n}",
         "variables": {
           "query": {
             "query_list": [
               {
-                "conjunctive_operator": "AND_NEXT"
+                "key": "merchant_uid",
+                "value": "9f0acb5e-a176-404a-b735-f4caac66098e",
+                "operator": "EQUAL"
               }
             ],
             "sort_list": [
               {
-                "direction": "ASC"
+                "direction": "DESC",
+                "key": "created_date"
               }
             ]
           },
-          "limit": 123,
-          "offset": "example",
-          "direction": "BACKWARD",
-          "offset_id": "example"
+          "limit": 1
         },
         "response": {
           "type": "success",
@@ -33,14 +33,14 @@
               "invoices": {
                 "items": [
                   {
-                    "invoice_id": "example",
-                    "created_date": "2025-01-01T00:00:00Z",
-                    "account_code": "example",
-                    "currency": "example",
-                    "due_by": "2025-01-01"
+                    "invoice_id": "ptl_inv_1DzHEBH1H6B333RHheYeGR",
+                    "created_date": "2026-09-24T14:57:07.0Z",
+                    "account_code": null,
+                    "currency": "USD",
+                    "due_by": null
                   }
                 ],
-                "total_row_count": 123
+                "total_row_count": 434
               }
             }
           }
