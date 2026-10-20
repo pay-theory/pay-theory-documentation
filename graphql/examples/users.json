@@ -4,25 +4,26 @@
     "operationType": "query",
     "examples": [
       {
-        "name": "Example users",
-        "description": "Returns users.",
-        "query": "query Users($user_pool: UserPool!, $merchant_uid: String) {\n  users(user_pool: $user_pool, merchant_uid: $merchant_uid) {\n  email\n  full_name\n  phone\n  user_status\n  username\n  }\n}",
+        "name": "List users in a merchant portal",
+        "description": "Lists users for a merchant. This operation requires a partner key.",
+        "query": "query Users($user_pool: UserPool!, $merchant_uid: String) {\n  users(user_pool: $user_pool, merchant_uid: $merchant_uid) {\n    email\n    full_name\n    phone\n    user_status\n  }\n}",
         "variables": {
-          "user_pool": "MERCHANT",
-          "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
+          "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+          "user_pool": "MERCHANT"
         },
         "response": {
           "type": "success",
           "httpStatus": 200,
           "body": {
             "data": {
-              "users": {
-                "email": "pat@paytheory.com",
-                "full_name": "Pat Theodore",
-                "phone": "example",
-                "user_status": "example",
-                "username": "example"
-              }
+              "users": [
+                {
+                  "email": "pat@paytheory.com",
+                  "full_name": "Pat Theodore",
+                  "phone": "+15135550134",
+                  "user_status": "FORCE_CHANGE_PASSWORD"
+                }
+              ]
             }
           }
         }
@@ -34,17 +35,16 @@
     "operationType": "mutation",
     "examples": [
       {
-        "name": "Example createUser",
-        "description": "Creates user.",
-        "query": "mutation CreateUser($input: UserInput!) {\n  createUser(input: $input) {\n  email\n  full_name\n  phone\n  user_status\n  username\n  }\n}",
+        "name": "Create a user in a merchant portal",
+        "description": "Creates a merchant portal user. Use a partner key and a valid phone number.",
+        "query": "mutation CreateUser($input: UserInput!) {\n  createUser(input: $input) {\n    email\n    full_name\n    phone\n    user_status\n  }\n}",
         "variables": {
           "input": {
-            "bypass_merchant_validation": true,
             "email": "pat@paytheory.com",
-            "first_name": "example",
-            "last_name": "example",
+            "first_name": "Pat",
+            "last_name": "Theodore",
             "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
-            "phone": "+15555555555",
+            "phone": "513.555.0134",
             "user_pool": "MERCHANT"
           }
         },
@@ -56,9 +56,8 @@
               "createUser": {
                 "email": "pat@paytheory.com",
                 "full_name": "Pat Theodore",
-                "phone": "example",
-                "user_status": "example",
-                "username": "example"
+                "phone": "+15135550134",
+                "user_status": "FORCE_CHANGE_PASSWORD"
               }
             }
           }
@@ -71,11 +70,11 @@
     "operationType": "mutation",
     "examples": [
       {
-        "name": "Example deleteUser",
-        "description": "Deletes user.",
+        "name": "Remove a user from a merchant portal",
+        "description": "Removes a merchant portal user. The username can be the user's email address. This operation requires a partner key.",
         "query": "mutation DeleteUser($username: String!, $user_pool: UserPool!) {\n  deleteUser(username: $username, user_pool: $user_pool)\n}",
         "variables": {
-          "username": "example",
+          "username": "pat@paytheory.com",
           "user_pool": "MERCHANT"
         },
         "response": {

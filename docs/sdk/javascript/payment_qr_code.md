@@ -16,7 +16,7 @@ This is a function initializes a payment session based on the `checkoutDetails` 
 const AMOUNT = 1000
 
 const PAYMENT_METADATA = {
-  "student-name": "Jane Doe"
+  "student-name": "Pat Theodore"
 };
 
 // Parameters that you will pass in to configure the checkout page that opens when the qrCode is scanned.
@@ -26,13 +26,12 @@ const CHECKOUT_DETAILS = {
         paymentDescription: "Technology Fee for the 2019-2020 school year",
         requirePhone: true,
         callToAction: paytheory.DONATE,
-        acceptedPaymentMethods: paytheory.CARD_ONLY,
-        payorId: "pt_pay_XXXXXXXXX",
+        acceptedPaymentMethods: paytheory.ONLY_CARD,
+        payorId: "ptl_pay_2NM2STwd3pWznLo1hGnUSc",
         metadata: PAYMENT_METADATA,
         feeMode: paytheory.MERCHANT_FEE,
         accountCode: "code-123456789",
-        invoiceId: "pt_inv_XXXXXXXXX",
-        recurringId: "pt_rec_XXXXXXXXX",
+        invoiceId: "ptl_inv_2O0yTY3k5AIyDc8NQ2SvhC",
 }
 
 const OPTIONS = {
@@ -46,6 +45,8 @@ const OPTIONS = {
 
 paytheory.qrCode(OPTIONS)
 ```
+
+Use either `invoiceId` or `recurringId` in `checkoutDetails`, not both.
 
 These are the values that you can pass into the `qrCode` function to customize the payment session.
 You pass a single object into the function with the following keys.
@@ -64,23 +65,12 @@ You pass a single object into the function with the following keys.
 | size             | Int         | This is the size, height and width, of the qrCode in pixels. Defaults to `128` and must be above `128` and below `300`. |
 | onReady          | Function    | A function that will be called when the qrCode is ready to be displayed.                                                |
 | onError          | Function    | A function that will be called when an error occurs. It is passed an error string.                                      |
-| onSuccess        | Function    | A function that will be called when the payment is successful. It is passed a [success](#success-response) response.    |
+| onSuccess        | Function    | A function that will be called when the payment is successful. The QR flow passes it an opaque encrypted string.         |
 
 ***
 ## Success Response
 
-| Key               | type     | description                                                       |
-|-------------------|----------|-------------------------------------------------------------------|
-| last_four         | String   | The last four digits of the card number or account number         |
-| amount            | Int      | The amount of the transaction **(service fee is included)**       |
-| service_fee       | Int      | The service fee of the transaction                                |
-| receipt_number    | String   | The unique transaction_id assigned to a transaction by Pay Theory                                     |
-| brand             | String   | The brand of the card                                             |
-| created_at        | String   | The date and time the transaction was created                     |
-| state             | String   | The status of the transaction                                     |
-| metadata          | JSON     | The metadata of the transaction                                   |
-| payor_id          | String   | The Pay Theory id for the payor that was used for the transaction |
-| payment_method_id | String   | The Pay Theory id for the payment method token                    |
+In the tested live QR flow, `onSuccess` receives an opaque encrypted string. It does not receive the transaction fields documented for the payment button.
 
 ***
 ## Checkout Details

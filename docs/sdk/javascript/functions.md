@@ -71,7 +71,7 @@ const BILLING_INFO = {
 }
 
 const PAYMENT_METADATA = {
-  "student-name": "Jane Doe"
+  "student-name": "Pat Theodore"
 };
 
 // Parameters that you will pass into the transact function. More details below.
@@ -82,19 +82,19 @@ const TRANSACTING_PARAMETERS = {
   confirmation: false, // optional
   fee: 100, // optional
   feeMode: FEE_MODE, // optional
-  invoiceId: "pt_inv_XXXXXXXXX", // optional
+  invoiceId: "ptl_inv_2O0yTY3k5AIyDc8NQ2SvhC", // optional
   metadata: PAYMENT_METADATA, // optional
   oneTimeUseToken: false, // optional
-  payorId: "pt_pay_XXXXXXXXX", // optional
-  payorInfo: PAYOR_INFO, // optional
+  payorId: "ptl_pay_2NM2STwd3pWznLo1hGnUSc", // optional
   receiptDescription: "School Technology Fees", // optional
-  recurringId: "pt_rec_XXXXXXXXX", // optional
   reference: "field-trip", // optional
   sendReceipt: true, // optional
 }
 
 paytheory.transact(TRANSACTING_PARAMETERS)
 ```
+
+Use either `invoiceId` or `recurringId`, not both. If you pass `payorId`, leave out `payorInfo`.
 
 These are the parameters that you can pass into the `transact` function to customize the payment.
 
@@ -195,7 +195,6 @@ const TOKEN_METADATA = {
 const TOKENIZE_PAYMENT_METHOD_PARAMETERS = {
   payorInfo: PAYOR_INFO, // optional
   billingInfo: BILLING_INFO, // optional
-  payorId: "pt_pay_XXXXXXXXX", // optional
   metadata: TOKEN_METADATA, // optional
   skipValidation: false // optional
 }

@@ -687,12 +687,12 @@
     "operationType": "query",
     "examples": [
       {
-        "name": "Example validatePaymentMethodOwnership",
-        "description": "This mutation validates whether a provided card or bank account number matches a specific payment method.",
+        "name": "The number matches the saved payment method",
+        "description": "Checks whether the card number matches an existing saved payment method.",
         "query": "query ValidatePaymentMethodOwnership($payment_method_id: String!, $number: String!) {\n  validatePaymentMethodOwnership(payment_method_id: $payment_method_id, number: $number)\n}",
         "variables": {
-          "payment_method_id": "example",
-          "number": "example"
+          "number": "4111111111111111",
+          "payment_method_id": "ptl_pmt_7n0C9zw9cyc9BC1yskdinx"
         },
         "response": {
           "type": "success",
@@ -701,6 +701,53 @@
             "data": {
               "validatePaymentMethodOwnership": true
             }
+          }
+        }
+      },
+      {
+        "name": "The number does not match the saved payment method",
+        "description": "Returns false when the card number does not match the saved payment method.",
+        "query": "query ValidatePaymentMethodOwnership($payment_method_id: String!, $number: String!) {\n  validatePaymentMethodOwnership(payment_method_id: $payment_method_id, number: $number)\n}",
+        "variables": {
+          "number": "4242424242424242",
+          "payment_method_id": "ptl_pmt_7n0C9zw9cyc9BC1yskdinx"
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "validatePaymentMethodOwnership": false
+            }
+          }
+        }
+      },
+      {
+        "name": "Saved payment method not found",
+        "description": "Returns an error when the payment method ID does not exist.",
+        "query": "query ValidatePaymentMethodOwnership($payment_method_id: String!, $number: String!) {\n  validatePaymentMethodOwnership(payment_method_id: $payment_method_id, number: $number)\n}",
+        "variables": {
+          "number": "4111111111111111",
+          "payment_method_id": "not-a-token"
+        },
+        "response": {
+          "type": "error",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "validatePaymentMethodOwnership": null
+            },
+            "errors": [
+              {
+                "path": [
+                  "validatePaymentMethodOwnership"
+                ],
+                "data": null,
+                "errorType": "VALIDATION_ERROR",
+                "errorInfo": null,
+                "message": "Payment method not found."
+              }
+            ]
           }
         }
       }
