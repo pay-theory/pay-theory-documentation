@@ -14,7 +14,7 @@ This is a function initializes a payment session based on the `checkoutDetails` 
 const AMOUNT = 1000
 
 const PAYMENT_METADATA = {
-  "student-name": "Jane Doe"
+  "student-name": "Pat Theodore"
 };
 
 // Parameters that you will pass in to configure the checkout page that opens when the button is clicked.
@@ -24,13 +24,12 @@ const CHECKOUT_DETAILS = {
         paymentDescription: "Technology Fee for the 2019-2020 school year",
         requirePhone: true,
         callToAction: paytheory.DONATE,
-        acceptedPaymentMethods: paytheory.CARD_ONLY,
-        payorId: "pt_pay_XXXXXXXXX",
+        acceptedPaymentMethods: paytheory.ONLY_CARD,
+        payorId: "ptl_pay_2NM2STwd3pWznLo1hGnUSc",
         metadata: PAYMENT_METADATA,
         feeMode: paytheory.MERCHANT_FEE,
         accountCode: "code-123456789",
-        invoiceId: "pt_inv_XXXXXXXXX",
-        recurringId: "pt_rec_XXXXXXXXX",
+        invoiceId: "ptl_inv_2O0yTY3k5AIyDc8NQ2SvhC",
 }
 
 // Object that will style the payment button
@@ -55,6 +54,8 @@ const OPTIONS = {
 
 paytheory.button(OPTIONS)
 ```
+
+Use either `invoiceId` or `recurringId` in `checkoutDetails`, not both.
 
 These are the parameters that you can pass into the `button` function to customize the payment session.
 You pass a single object into the function with the following keys.

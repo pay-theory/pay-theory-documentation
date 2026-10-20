@@ -792,13 +792,30 @@
     "operationType": "mutation",
     "examples": [
       {
-        "name": "Example createReceiptEmail",
-        "description": "This call will send a receipt for a transaction to the email address on file with the payor or an email passed in.",
+        "name": "Send a receipt to the payor's saved email",
+        "description": "Queues a receipt to the payor's saved email address.",
         "query": "mutation CreateReceiptEmail($transaction_id: String!, $receipt_description: String, $email: AWSEmail) {\n  createReceiptEmail(transaction_id: $transaction_id, receipt_description: $receipt_description, email: $email)\n}",
         "variables": {
-          "transaction_id": "example",
-          "receipt_description": "example",
-          "email": "pat@paytheory.com"
+          "transaction_id": "ptl_txn_4rNilJChpgcuQFgLvdZbxm"
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "createReceiptEmail": true
+            }
+          }
+        }
+      },
+      {
+        "name": "Send a receipt to another email",
+        "description": "Queues a receipt to the email address supplied.",
+        "query": "mutation CreateReceiptEmail($transaction_id: String!, $receipt_description: String, $email: AWSEmail) {\n  createReceiptEmail(transaction_id: $transaction_id, receipt_description: $receipt_description, email: $email)\n}",
+        "variables": {
+          "transaction_id": "ptl_txn_4rNilJChpgcuQFgLvdZbxm",
+          "email": "pat@paytheory.com",
+          "receipt_description": "Thanks for your business — order 4815"
         },
         "response": {
           "type": "success",
@@ -817,20 +834,48 @@
     "operationType": "mutation",
     "examples": [
       {
-        "name": "Example updateTransactionInReview",
-        "description": "This call can be used by a partner to approve or decline a transcation that is in review for reason POTEENTIAL_DUPLICATE.",
+        "name": "Merchant key cannot update transaction review",
+        "description": "This operation requires a partner key. A true response for a transaction that is not in review does not mean it changed.",
         "query": "mutation UpdateTransactionInReview($transaction_id: String!, $action: TransactionReviewAction!) {\n  updateTransactionInReview(transaction_id: $transaction_id, action: $action)\n}",
         "variables": {
-          "transaction_id": "example",
-          "action": "ACCEPT"
+          "action": "ACCEPT",
+          "transaction_id": "ptl_txn_7pCgkYFpOJIa04NlWSum0b"
         },
         "response": {
-          "type": "success",
+          "type": "error",
           "httpStatus": 200,
           "body": {
             "data": {
-              "updateTransactionInReview": true
-            }
+              "updateTransactionInReview": null
+            },
+            "errors": [
+              {
+                "path": [
+                  "updateTransactionInReview"
+                ],
+                "data": null,
+                "errorType": "VALIDATION_ERROR",
+                "errorInfo": null,
+                "message": "Transaction approvals are only available at the partner level."
+              }
+            ]
+          }
+        }
+      },
+      {
+        "name": "Transaction ID not found",
+        "description": "With a partner key, an unknown transaction ID returns this error.",
+        "query": "mutation UpdateTransactionInReview($transaction_id: String!, $action: TransactionReviewAction!) {\n  updateTransactionInReview(transaction_id: $transaction_id, action: $action)\n}",
+        "variables": {
+          "action": "REJECT",
+          "transaction_id": "not-a-transaction-id"
+        },
+        "response": {
+          "type": "error",
+          "httpStatus": 200,
+          "body": {
+            "errorType": "VALIDATION_ERROR",
+            "message": "transaction not found"
           }
         }
       }

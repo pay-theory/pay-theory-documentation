@@ -387,7 +387,7 @@
                 }
               ]
             },
-            "limit": 5
+            "limit": 1
           },
           "response": {
             "type": "success",
@@ -505,22 +505,16 @@
       "isDeprecated": false,
       "examples": [
         {
-          "name": "List invoices for a merchant",
-          "description": "Lists a merchant\u2019s invoices, newest first.",
-          "query": "query Invoices($query: SqlQuery, $limit: Int) {\n  invoices(query: $query, limit: $limit) {\n    items {\n      invoice_id\n      created_date\n      account_code\n      currency\n      due_by\n    }\n    total_row_count\n  }\n}",
+          "name": "Read invoice after an offline payment",
+          "description": "Shows the invoice marked PAID and the full offline payment attached.",
+          "query": "query Invoices($query: SqlQuery, $limit: Int, $offset_id: String, $direction: MoveDirection) {\n  invoices(query: $query, limit: $limit, offset_id: $offset_id, direction: $direction) {\n    items {\n      invoice_id\n      merchant_uid\n      invoice_name\n      invoice_description\n      invoice_amount\n      total_paid_amount\n      currency\n      status\n      fee_mode\n      due_by\n      invoice_date\n      merchant_invoice_number\n      account_code\n      reference\n      created_date\n      settings {\n        is_secure\n        security_pin\n        require_payor_address\n        accepted_payment_methods { ach card cash }\n      }\n      payor {\n        payor_id\n        full_name\n        email\n        merchant_uid\n      }\n      metadata\n      offline_transactions { instance_id amount type note transaction_date }\n    }\n    total_row_count\n  }\n}",
           "variables": {
             "query": {
               "query_list": [
                 {
-                  "key": "merchant_uid",
-                  "value": "9f0acb5e-a176-404a-b735-f4caac66098e",
+                  "key": "invoice_id",
+                  "value": "ptl_inv_3G68AxWreHdbCOWcdCKmpW",
                   "operator": "EQUAL"
-                }
-              ],
-              "sort_list": [
-                {
-                  "direction": "DESC",
-                  "key": "created_date"
                 }
               ]
             },
@@ -534,14 +528,70 @@
                 "invoices": {
                   "items": [
                     {
-                      "invoice_id": "ptl_inv_1DzHEBH1H6B333RHheYeGR",
-                      "created_date": "2026-09-24T14:57:07.0Z",
-                      "account_code": null,
+                      "invoice_id": "ptl_inv_3G68AxWreHdbCOWcdCKmpW",
+                      "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                      "invoice_name": "Spring cleaning",
+                      "invoice_description": "Two hours of deep cleaning",
+                      "invoice_amount": 2500,
+                      "total_paid_amount": 2500,
                       "currency": "USD",
-                      "due_by": null
+                      "status": "PAID",
+                      "fee_mode": "MERCHANT_FEE",
+                      "due_by": "2026-10-05",
+                      "invoice_date": "2026-09-05",
+                      "merchant_invoice_number": null,
+                      "account_code": "CLEANING-1001",
+                      "reference": "INV-1001",
+                      "created_date": "2026-09-05T00:12:25.0Z",
+                      "settings": null,
+                      "payor": {
+                        "payor_id": "ptl_pay_3FUmPZJT65KZ0MRttPfmBi",
+                        "full_name": "Pat Theodore",
+                        "email": "pat@paytheory.com",
+                        "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
+                      },
+                      "metadata": "{}",
+                      "offline_transactions": [
+                        {
+                          "instance_id": "3WIrDmgG9VloBTPg1lwsKo",
+                          "amount": 2500,
+                          "type": "CASH",
+                          "note": "Paid at the front desk",
+                          "transaction_date": "2026-09-05"
+                        }
+                      ]
                     }
                   ],
-                  "total_row_count": 434
+                  "total_row_count": 1
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Check whether a deleted invoice is gone",
+          "description": "Read the invoice back after deleteInvoice; its true response alone does not prove an invoice existed or was deleted.",
+          "query": "query Invoices($query: SqlQuery, $limit: Int, $offset_id: String, $direction: MoveDirection) {\n  invoices(query: $query, limit: $limit, offset_id: $offset_id, direction: $direction) {\n    items {\n      invoice_id\n      merchant_uid\n      invoice_name\n      invoice_description\n      invoice_amount\n      total_paid_amount\n      currency\n      status\n      fee_mode\n      due_by\n      invoice_date\n      merchant_invoice_number\n      account_code\n      reference\n      created_date\n      settings {\n        is_secure\n        security_pin\n        require_payor_address\n        accepted_payment_methods { ach card cash }\n      }\n      payor {\n        payor_id\n        full_name\n        email\n        merchant_uid\n      }\n      metadata\n      offline_transactions { instance_id amount type note transaction_date }\n    }\n    total_row_count\n  }\n}",
+          "variables": {
+            "query": {
+              "query_list": [
+                {
+                  "key": "invoice_id",
+                  "value": "ptl_inv_4VAqBS9kDpdBAOqzjqj81G",
+                  "operator": "EQUAL"
+                }
+              ]
+            },
+            "limit": 1
+          },
+          "response": {
+            "type": "success",
+            "httpStatus": 200,
+            "body": {
+              "data": {
+                "invoices": {
+                  "items": [],
+                  "total_row_count": 0
                 }
               }
             }
@@ -604,7 +654,7 @@
       "examples": [
         {
           "name": "Get a merchant",
-          "query": "query Merchant($merchant_uid: String) {\n  merchant(merchant_uid: $merchant_uid) {\n    merchant_uid\n    merchant_name\n    card_active\n    ach_active\n    cash_active\n    max_transaction_amount\n    country_code\n    settings {\n      contact_email\n      website\n    }\n  }\n}",
+          "query": "query Merchant($merchant_uid: String) {\n  merchant(merchant_uid: $merchant_uid) {\n    merchant_uid\n    merchant_name\n    card_active\n    ach_active\n    cash_active\n    country_code\n    settings {\n      contact_email\n      website\n    }\n  }\n}",
           "variables": {
             "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
           },
@@ -615,11 +665,10 @@
               "data": {
                 "merchant": {
                   "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
-                  "merchant_name": "<MERCHANT_NAME>",
+                  "merchant_name": "Northstar Books",
                   "card_active": true,
                   "ach_active": true,
                   "cash_active": true,
-                  "max_transaction_amount": 50000000,
                   "country_code": "USA",
                   "settings": {
                     "contact_email": null,
@@ -629,11 +678,11 @@
               }
             }
           },
-          "description": "Shows the merchant maximum for card and ACH payments in cents; service fees count toward the limit."
+          "description": "Reads merchant details for the key."
         },
         {
           "name": "Merchant not found",
-          "query": "query Merchant($merchant_uid: String) {\n  merchant(merchant_uid: $merchant_uid) {\n    merchant_uid\n    merchant_name\n    card_active\n    ach_active\n    cash_active\n    max_transaction_amount\n    country_code\n    settings {\n      contact_email\n      website\n    }\n  }\n}",
+          "query": "query Merchant($merchant_uid: String) {\n  merchant(merchant_uid: $merchant_uid) {\n    merchant_uid\n    merchant_name\n    card_active\n    ach_active\n    cash_active\n    country_code\n    settings {\n      contact_email\n      website\n    }\n  }\n}",
           "variables": {
             "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
           },
@@ -662,6 +711,36 @@
             }
           },
           "description": "Returns an error when the merchant_uid does not exist."
+        },
+        {
+          "name": "Read settings after the website update",
+          "description": "This is a separate merchant query. It shows the contact and social settings cleared by the update.",
+          "query": "query Merchant($merchant_uid: String) {\n  merchant(merchant_uid: $merchant_uid) {\n    merchant_uid\n    merchant_name\n    settings {\n      contact_email\n      contact_phone\n      facebook\n      instagram\n      linkedin\n      tiktok\n      twitter\n      website\n    }\n  }\n}",
+          "variables": {
+            "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
+          },
+          "response": {
+            "type": "success",
+            "httpStatus": 200,
+            "body": {
+              "data": {
+                "merchant": {
+                  "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                  "merchant_name": "Northstar Books",
+                  "settings": {
+                    "contact_email": null,
+                    "contact_phone": null,
+                    "facebook": null,
+                    "instagram": null,
+                    "linkedin": null,
+                    "tiktok": null,
+                    "twitter": null,
+                    "website": "https://paytheory.com"
+                  }
+                }
+              }
+            }
+          }
         }
       ],
       "returnTypeString": "Merchant"
@@ -772,7 +851,7 @@
                   "items": [
                     {
                       "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
-                      "merchant_name": "<MERCHANT_NAME>",
+                      "merchant_name": "Northstar Books",
                       "card_active": true,
                       "ach_active": true,
                       "cash_active": true,
@@ -795,7 +874,7 @@
               "query_list": [
                 {
                   "key": "merchant_name",
-                  "value": "<MERCHANT_NAME>",
+                  "value": "Northstar Books",
                   "operator": "EQUAL"
                 }
               ]
@@ -811,7 +890,7 @@
                   "items": [
                     {
                       "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
-                      "merchant_name": "<MERCHANT_NAME>",
+                      "merchant_name": "Northstar Books",
                       "card_active": true,
                       "ach_active": true,
                       "cash_active": true,
@@ -922,8 +1001,8 @@
       "examples": [
         {
           "name": "List active payment links",
-          "description": "Lists a merchant's active payment links, newest first.",
-          "query": "query PaymentLinks($query: SqlQuery, $limit: Int, $offset: String, $direction: MoveDirection, $offset_id: String) {\n  paymentLinks(query: $query, limit: $limit, offset: $offset, direction: $direction, offset_id: $offset_id) {\n  items {\n    link_id\n    created_date\n    accepted_payment_methods\n    account_code\n    amount\n  }\n  total_row_count\n  }\n}",
+          "description": "Lists a merchant's active links, newest first. The filters and sort use valid field keys.",
+          "query": "query PaymentLinks($query: SqlQuery, $limit: Int, $offset: String, $direction: MoveDirection, $offset_id: String) {\n  paymentLinks(query: $query, limit: $limit, offset: $offset, direction: $direction, offset_id: $offset_id) {\n    items {\n      link_id\n      link_name\n      link_url\n      merchant_uid\n      amount\n      amount_is_variable\n      min_amount\n      accepted_payment_methods\n      account_code\n      call_to_action\n      created_date\n      currency\n      custom_success_message\n      fee_mode\n      is_active\n      payment_name\n      payment_description\n      redirect_url\n      require_phone\n    }\n  }\n}",
           "variables": {
             "query": {
               "query_list": [
@@ -955,21 +1034,48 @@
                 "paymentLinks": {
                   "items": [
                     {
-                      "link_id": "ptl_link_75q8DKddiczYBd1zT3YFPc",
-                      "created_date": "2026-09-05T01:19:58.0Z",
-                      "accepted_payment_methods": "ALL",
+                      "link_id": "ptl_link_6oLR7QBSFPe1kr2NKP4A2O",
+                      "link_name": "p4 docs like fixed 7366c15e",
+                      "link_url": "https://<HOSTED_CHECKOUT_HOST>/payment_link/ptl_link_6oLR7QBSFPe1kr2NKP4A2O",
+                      "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                      "amount": 2500,
+                      "amount_is_variable": false,
+                      "min_amount": 100,
+                      "accepted_payment_methods": "ONLY_CARD",
                       "account_code": null,
-                      "amount": 5000
+                      "call_to_action": "PAY",
+                      "created_date": "2026-09-05T03:56:52.0Z",
+                      "currency": "USD",
+                      "custom_success_message": null,
+                      "fee_mode": "MERCHANT_FEE",
+                      "is_active": true,
+                      "payment_name": "Spring workshop",
+                      "payment_description": "One seat at the spring workshop",
+                      "redirect_url": null,
+                      "require_phone": false
                     },
                     {
-                      "link_id": "ptl_link_KTwe02AFeOulyKcdaP567",
-                      "created_date": "2026-09-02T20:15:53.0Z",
+                      "link_id": "ptl_link_6tLFJ4mTX7vx7Sj90kLDno",
+                      "link_name": "p4 docs like variable 7366c15e",
+                      "link_url": "https://<HOSTED_CHECKOUT_HOST>/payment_link/ptl_link_6tLFJ4mTX7vx7Sj90kLDno",
+                      "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                      "amount": 5000,
+                      "amount_is_variable": true,
+                      "min_amount": 500,
                       "accepted_payment_methods": "ALL",
-                      "account_code": "",
-                      "amount": 2345
+                      "account_code": null,
+                      "call_to_action": "DONATE",
+                      "created_date": "2026-09-05T03:56:54.0Z",
+                      "currency": "USD",
+                      "custom_success_message": null,
+                      "fee_mode": "MERCHANT_FEE",
+                      "is_active": true,
+                      "payment_name": "Annual fund",
+                      "payment_description": null,
+                      "redirect_url": "https://example.com/thank-you",
+                      "require_phone": false
                     }
-                  ],
-                  "total_row_count": 421
+                  ]
                 }
               }
             }
@@ -1301,12 +1407,12 @@
       "isDeprecated": false,
       "examples": [
         {
-          "name": "Example validatePaymentMethodOwnership",
-          "description": "This mutation validates whether a provided card or bank account number matches a specific payment method.",
+          "name": "The number matches the saved payment method",
+          "description": "Checks whether the card number matches an existing saved payment method.",
           "query": "query ValidatePaymentMethodOwnership($payment_method_id: String!, $number: String!) {\n  validatePaymentMethodOwnership(payment_method_id: $payment_method_id, number: $number)\n}",
           "variables": {
-            "payment_method_id": "example",
-            "number": "example"
+            "number": "4111111111111111",
+            "payment_method_id": "ptl_pmt_7n0C9zw9cyc9BC1yskdinx"
           },
           "response": {
             "type": "success",
@@ -1315,6 +1421,53 @@
               "data": {
                 "validatePaymentMethodOwnership": true
               }
+            }
+          }
+        },
+        {
+          "name": "The number does not match the saved payment method",
+          "description": "Returns false when the card number does not match the saved payment method.",
+          "query": "query ValidatePaymentMethodOwnership($payment_method_id: String!, $number: String!) {\n  validatePaymentMethodOwnership(payment_method_id: $payment_method_id, number: $number)\n}",
+          "variables": {
+            "number": "4242424242424242",
+            "payment_method_id": "ptl_pmt_7n0C9zw9cyc9BC1yskdinx"
+          },
+          "response": {
+            "type": "success",
+            "httpStatus": 200,
+            "body": {
+              "data": {
+                "validatePaymentMethodOwnership": false
+              }
+            }
+          }
+        },
+        {
+          "name": "Saved payment method not found",
+          "description": "Returns an error when the payment method ID does not exist.",
+          "query": "query ValidatePaymentMethodOwnership($payment_method_id: String!, $number: String!) {\n  validatePaymentMethodOwnership(payment_method_id: $payment_method_id, number: $number)\n}",
+          "variables": {
+            "number": "4111111111111111",
+            "payment_method_id": "not-a-token"
+          },
+          "response": {
+            "type": "error",
+            "httpStatus": 200,
+            "body": {
+              "data": {
+                "validatePaymentMethodOwnership": null
+              },
+              "errors": [
+                {
+                  "path": [
+                    "validatePaymentMethodOwnership"
+                  ],
+                  "data": null,
+                  "errorType": "VALIDATION_ERROR",
+                  "errorInfo": null,
+                  "message": "Payment method not found."
+                }
+              ]
             }
           }
         }
@@ -1632,15 +1785,77 @@
       "isDeprecated": false,
       "examples": [
         {
-          "name": "List recurring payments for a merchant",
-          "description": "Lists recurring payments for a merchant.",
-          "query": "query RecurringPayments($query: SqlQuery, $limit: Int) {\n  recurringPayments(query: $query, limit: $limit) {\n    items {\n      recurring_id\n      created_date\n      account_code\n      amount_per_payment\n      currency\n    }\n    total_row_count\n  }\n}",
+          "name": "List a merchant's recurring schedules",
+          "description": "Lists a merchant's recurring schedules.",
+          "query": "query RecurringPayments($query: SqlQuery, $limit: Int, $offset: String, $offset_id: String, $direction: MoveDirection) {\n  recurringPayments(query: $query, limit: $limit, offset: $offset, offset_id: $offset_id, direction: $direction) {\n    items {\n      recurring_id\n      merchant_uid\n      recurring_name\n      amount_per_payment\n      fee_per_payment\n      total_amount_per_payment\n      fee_mode\n      payment_interval\n      prev_payment_date\n      next_payment_date\n      remaining_payments\n      status\n      is_active\n      created_date\n    }\n    total_row_count\n  }\n}",
           "variables": {
             "query": {
               "query_list": [
                 {
                   "key": "merchant_uid",
-                  "value": "9f0acb5e-a176-404a-b735-f4caac66098e",
+                  "value": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                  "operator": "EQUAL"
+                }
+              ]
+            },
+            "limit": 2
+          },
+          "response": {
+            "type": "success",
+            "httpStatus": 200,
+            "body": {
+              "data": {
+                "recurringPayments": {
+                  "items": [
+                    {
+                      "recurring_id": "ptl_rec_10sEzSXMr1YAfyngLg8I75",
+                      "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                      "recurring_name": "Weekly plan",
+                      "amount_per_payment": 300,
+                      "fee_per_payment": 44,
+                      "total_amount_per_payment": 300,
+                      "fee_mode": "MERCHANT_FEE",
+                      "payment_interval": "WEEKLY",
+                      "prev_payment_date": "2026-09-04",
+                      "next_payment_date": "2026-09-11",
+                      "remaining_payments": null,
+                      "status": "SUCCESS",
+                      "is_active": true,
+                      "created_date": "2026-09-04T03:02:56.0Z"
+                    },
+                    {
+                      "recurring_id": "ptl_rec_110zy3F6tcdrI2DaFHpy0D",
+                      "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                      "recurring_name": "Second weekly plan",
+                      "amount_per_payment": 300,
+                      "fee_per_payment": 44,
+                      "total_amount_per_payment": 300,
+                      "fee_mode": "MERCHANT_FEE",
+                      "payment_interval": "WEEKLY",
+                      "prev_payment_date": "2026-09-04",
+                      "next_payment_date": "2026-09-11",
+                      "remaining_payments": 0,
+                      "status": "SUCCESS",
+                      "is_active": true,
+                      "created_date": "2026-09-04T19:37:57.0Z"
+                    }
+                  ],
+                  "total_row_count": 252
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Confirm a canceled schedule is inactive",
+          "description": "Checks the schedule after cancellation; its is_active value is false.",
+          "query": "query RecurringPayments($query: SqlQuery, $limit: Int, $offset: String, $offset_id: String, $direction: MoveDirection) {\n  recurringPayments(query: $query, limit: $limit, offset: $offset, offset_id: $offset_id, direction: $direction) {\n    items {\n      recurring_id\n      merchant_uid\n      recurring_name\n      amount_per_payment\n      fee_per_payment\n      total_amount_per_payment\n      fee_mode\n      payment_interval\n      prev_payment_date\n      next_payment_date\n      remaining_payments\n      status\n      is_active\n      created_date\n    }\n    total_row_count\n  }\n}",
+          "variables": {
+            "query": {
+              "query_list": [
+                {
+                  "key": "recurring_id",
+                  "value": "ptl_rec_64ImZH6LpufCQddDXX2OYH",
                   "operator": "EQUAL"
                 }
               ]
@@ -1655,14 +1870,23 @@
                 "recurringPayments": {
                   "items": [
                     {
-                      "recurring_id": "ptl_rec_12aTDc6Gfe9DyEZqnHmcb7",
-                      "created_date": "2026-07-17T21:04:43.0Z",
-                      "account_code": null,
-                      "amount_per_payment": 300,
-                      "currency": "USD"
+                      "recurring_id": "ptl_rec_64ImZH6LpufCQddDXX2OYH",
+                      "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                      "recurring_name": "Weekly donation",
+                      "amount_per_payment": 1000,
+                      "fee_per_payment": 195,
+                      "total_amount_per_payment": 1195,
+                      "fee_mode": "SERVICE_FEE",
+                      "payment_interval": "WEEKLY",
+                      "prev_payment_date": null,
+                      "next_payment_date": "2026-09-11",
+                      "remaining_payments": null,
+                      "status": "SUCCESS",
+                      "is_active": false,
+                      "created_date": "2026-09-04T20:25:33.0Z"
                     }
                   ],
-                  "total_row_count": 456
+                  "total_row_count": 1
                 }
               }
             }
@@ -1854,32 +2078,32 @@
                       "settlement_batch": 2,
                       "settlement_date": "2026-08-25T00:00:00Z",
                       "currency": "USD",
-                      "gross_amount": -400,
-                      "net_amount": -453,
-                      "total_fees": 53,
                       "status": "SUCCEEDED",
                       "settlement_type": "NET",
                       "transaction_debit_count": 1,
                       "transaction_reversal_count": 3,
                       "transfer_date": "2026-08-25T13:31:33.0Z",
                       "gross_amount_64bit": "-400",
-                      "net_amount_64bit": "-453"
+                      "net_amount_64bit": "-453",
+                      "gross_amount": -400,
+                      "net_amount": -453,
+                      "total_fees": 53
                     },
                     {
                       "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
                       "settlement_batch": 3,
                       "settlement_date": "2026-08-25T00:00:00Z",
                       "currency": "USD",
-                      "gross_amount": 4000,
-                      "net_amount": 3669,
-                      "total_fees": 331,
                       "status": "SUCCEEDED",
                       "settlement_type": "NET",
                       "transaction_debit_count": 5,
                       "transaction_reversal_count": 0,
                       "transfer_date": "2026-08-25T13:32:28.0Z",
                       "gross_amount_64bit": "4000",
-                      "net_amount_64bit": "3669"
+                      "net_amount_64bit": "3669",
+                      "gross_amount": 4000,
+                      "net_amount": 3669,
+                      "total_fees": 331
                     }
                   ],
                   "total_row_count": 7
@@ -2988,25 +3212,26 @@
       "isDeprecated": false,
       "examples": [
         {
-          "name": "Example users",
-          "description": "Returns users.",
-          "query": "query Users($user_pool: UserPool!, $merchant_uid: String) {\n  users(user_pool: $user_pool, merchant_uid: $merchant_uid) {\n  email\n  full_name\n  phone\n  user_status\n  username\n  }\n}",
+          "name": "List users in a merchant portal",
+          "description": "Lists users for a merchant. This operation requires a partner key.",
+          "query": "query Users($user_pool: UserPool!, $merchant_uid: String) {\n  users(user_pool: $user_pool, merchant_uid: $merchant_uid) {\n    email\n    full_name\n    phone\n    user_status\n  }\n}",
           "variables": {
-            "user_pool": "MERCHANT",
-            "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
+            "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+            "user_pool": "MERCHANT"
           },
           "response": {
             "type": "success",
             "httpStatus": 200,
             "body": {
               "data": {
-                "users": {
-                  "email": "pat@paytheory.com",
-                  "full_name": "Pat Theodore",
-                  "phone": "example",
-                  "user_status": "example",
-                  "username": "example"
-                }
+                "users": [
+                  {
+                    "email": "pat@paytheory.com",
+                    "full_name": "Pat Theodore",
+                    "phone": "+15135550134",
+                    "user_status": "FORCE_CHANGE_PASSWORD"
+                  }
+                ]
               }
             }
           }
@@ -4836,35 +5061,26 @@
       "isDeprecated": false,
       "examples": [
         {
-          "name": "Example createInvoice",
-          "description": "Creates an invoice.",
-          "query": "mutation CreateInvoice($input: InvoiceInput!) {\n  createInvoice(input: $input) {\n  invoice_id\n  created_date\n  account_code\n  currency\n  due_by\n  }\n}",
+          "name": "Create an invoice with metadata",
+          "description": "Creates an invoice for Pat Theodore. Send metadata as JSON text; the API does not reliably return metadata in the same format.",
+          "query": "mutation CreateInvoice($input: InvoiceInput!) {\n  createInvoice(input: $input) {\n    invoice_id\n    merchant_uid\n    invoice_name\n    invoice_description\n    invoice_amount\n    total_paid_amount\n    currency\n    status\n    fee_mode\n    due_by\n    invoice_date\n    merchant_invoice_number\n    account_code\n    reference\n    created_date\n    settings {\n      is_secure\n      security_pin\n      require_payor_address\n      accepted_payment_methods { ach card cash }\n    }\n    payor {\n      payor_id\n      full_name\n      email\n      merchant_uid\n    }\n  }\n}",
           "variables": {
             "input": {
-              "account_code": "example",
-              "currency": "example",
-              "due_by": "2025-01-01",
-              "fee_mode": "CUSTOM_FEE",
-              "invoice_amount": 123,
-              "invoice_date": "2025-01-01",
-              "invoice_description": "example",
-              "invoice_name": "example",
+              "currency": "USD",
+              "invoice_amount": 2500,
+              "invoice_name": "Spring cleaning",
+              "invoice_description": "Two hours of deep cleaning",
               "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
-              "merchant_invoice_number": "example",
-              "metadata": {
-                "key": "value"
-              },
-              "payor_id": "example",
+              "due_by": "2026-10-05",
+              "fee_mode": "MERCHANT_FEE",
+              "reference": "INV-1001",
+              "account_code": "CLEANING-1001",
+              "send_email": false,
               "payor": {
-                "address_line1": "example"
+                "email": "pat@paytheory.com",
+                "full_name": "Pat Theodore"
               },
-              "reference": "example",
-              "send_email": true,
-              "settings": {
-                "accepted_payment_methods": {
-                  "ach": true
-                }
-              }
+              "metadata": "{\"order_id\":\"INV-1001\"}"
             }
           },
           "response": {
@@ -4873,11 +5089,28 @@
             "body": {
               "data": {
                 "createInvoice": {
-                  "invoice_id": "example",
-                  "created_date": "2025-01-01T00:00:00Z",
-                  "account_code": "example",
-                  "currency": "example",
-                  "due_by": "2025-01-01"
+                  "invoice_id": "ptl_inv_2O0yTY3k5AIyDc8NQ2SvhC",
+                  "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                  "invoice_name": "Spring cleaning",
+                  "invoice_description": "Two hours of deep cleaning",
+                  "invoice_amount": 2500,
+                  "total_paid_amount": 0,
+                  "currency": "USD",
+                  "status": "NOT_PAID",
+                  "fee_mode": "MERCHANT_FEE",
+                  "due_by": "2026-10-05",
+                  "invoice_date": "2026-09-05",
+                  "merchant_invoice_number": null,
+                  "account_code": "CLEANING-1001",
+                  "reference": "INV-1001",
+                  "created_date": "2026-09-05T00:11:36.0Z",
+                  "settings": null,
+                  "payor": {
+                    "payor_id": "ptl_pay_2NM2STwd3pWznLo1hGnUSc",
+                    "full_name": "Pat Theodore",
+                    "email": "pat@paytheory.com",
+                    "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
+                  }
                 }
               }
             }
@@ -4940,18 +5173,16 @@
       "isDeprecated": false,
       "examples": [
         {
-          "name": "Create a barcode",
-          "description": "Creates a barcode a payor can use to make a cash payment.",
-          "query": "mutation CreateBarcode($input: BarcodeInput!) {\n  createBarcode(input: $input) {\n    barcode_id\n    barcode_url\n    merchant_uid\n    amount\n    fees\n    expiration_date\n    full_name\n    email_or_phone\n    sale_id\n    reference\n    account_code\n  }\n}",
+          "name": "Update an invoice",
+          "description": "Changes an invoice's amount, name, and due date.",
+          "query": "mutation UpdateInvoice($invoice_id: String!, $invoice_update_input: InvoiceUpdateInput!) {\n  updateInvoice(invoice_id: $invoice_id, invoice_update_input: $invoice_update_input)\n}",
           "variables": {
-            "input": {
-              "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
-              "amount": 500,
-              "full_name": "Pat Theodore",
-              "email_or_phone": "pat@paytheory.com",
-              "reference": "order-2026-1001",
-              "account_code": "customer-1042",
-              "metadata": "{\"source\":\"documentation\",\"purpose\":\"cash_payment\"}"
+            "invoice_id": "ptl_inv_33Lz4PE1amu7bfIfufo0rS",
+            "invoice_update_input": {
+              "due_by": "2026-10-20",
+              "invoice_amount": 3000,
+              "invoice_name": "Spring cleaning (revised)",
+              "send_email": false
             }
           },
           "response": {
@@ -4959,210 +5190,8 @@
             "httpStatus": 200,
             "body": {
               "data": {
-                "createBarcode": {
-                  "barcode_id": "ptl_barc_nFevCQ42c7PuKAZ3kQ8Zn",
-                  "barcode_url": "https://innovate.paytheorylab.ptbar.codes/ptl_barc_nFevCQ42c7PuKAZ3kQ8Zn.svgz",
-                  "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
-                  "amount": 500,
-                  "fees": 200,
-                  "expiration_date": "2026-12-03",
-                  "full_name": "Pat Theodore",
-                  "email_or_phone": "pat@paytheory.com",
-                  "sale_id": "ptl_sale_nwxNxlENbB8VBlW7ZxZnf",
-                  "reference": "order-2026-1001",
-                  "account_code": "customer-1042"
-                }
+                "updateInvoice": true
               }
-            }
-          }
-        },
-        {
-          "name": "Amount below the merchant minimum",
-          "description": "Returns a validation error when the amount is below the merchant's configured minimum. Amount limits vary by merchant.",
-          "query": "mutation CreateBarcode($input: BarcodeInput!) {\n  createBarcode(input: $input) {\n    barcode_id\n    barcode_url\n    merchant_uid\n    amount\n    fees\n    expiration_date\n    full_name\n    email_or_phone\n    sale_id\n    reference\n    account_code\n  }\n}",
-          "variables": {
-            "input": {
-              "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
-              "amount": 50,
-              "full_name": "Pat Theodore",
-              "email_or_phone": "pat@paytheory.com"
-            }
-          },
-          "response": {
-            "type": "error",
-            "httpStatus": 200,
-            "body": {
-              "data": null,
-              "errors": [
-                {
-                  "path": [
-                    "createBarcode"
-                  ],
-                  "data": null,
-                  "errorType": "VALIDATION_ERROR",
-                  "errorInfo": null,
-                  "message": "Amount 50 is not within the min 100 and max 50000000 amount range."
-                }
-              ]
-            }
-          }
-        },
-        {
-          "name": "Amount above the merchant maximum",
-          "description": "Returns a validation error when the amount exceeds the merchant's configured maximum. Amount limits vary by merchant.",
-          "query": "mutation CreateBarcode($input: BarcodeInput!) {\n  createBarcode(input: $input) {\n    barcode_id\n    barcode_url\n    merchant_uid\n    amount\n    fees\n    expiration_date\n    full_name\n    email_or_phone\n    sale_id\n    reference\n    account_code\n  }\n}",
-          "variables": {
-            "input": {
-              "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
-              "amount": 50000001,
-              "full_name": "Pat Theodore",
-              "email_or_phone": "pat@paytheory.com"
-            }
-          },
-          "response": {
-            "type": "error",
-            "httpStatus": 200,
-            "body": {
-              "data": null,
-              "errors": [
-                {
-                  "path": [
-                    "createBarcode"
-                  ],
-                  "data": null,
-                  "errorType": "VALIDATION_ERROR",
-                  "errorInfo": null,
-                  "message": "Amount 50000001 is not within the min 100 and max 50000000 amount range."
-                }
-              ]
-            }
-          }
-        },
-        {
-          "name": "Expiration exceeds 90 days",
-          "description": "Returns a validation error when days_until_expiration is greater than 90.",
-          "query": "mutation CreateBarcode($input: BarcodeInput!) {\n  createBarcode(input: $input) {\n    barcode_id\n    barcode_url\n    merchant_uid\n    amount\n    fees\n    expiration_date\n    full_name\n    email_or_phone\n    sale_id\n    reference\n    account_code\n  }\n}",
-          "variables": {
-            "input": {
-              "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
-              "amount": 500,
-              "full_name": "Pat Theodore",
-              "email_or_phone": "pat@paytheory.com",
-              "days_until_expiration": 120
-            }
-          },
-          "response": {
-            "type": "error",
-            "httpStatus": 200,
-            "body": {
-              "data": null,
-              "errors": [
-                {
-                  "path": [
-                    "createBarcode"
-                  ],
-                  "data": null,
-                  "errorType": "VALIDATION_ERROR",
-                  "errorInfo": null,
-                  "message": "The maximum days until expiration must not exceed 90 days."
-                }
-              ]
-            }
-          }
-        },
-        {
-          "name": "Expiration date and days both provided",
-          "description": "Returns a validation error when both expiration_date and days_until_expiration are provided.",
-          "query": "mutation CreateBarcode($input: BarcodeInput!) {\n  createBarcode(input: $input) {\n    barcode_id\n    barcode_url\n    merchant_uid\n    amount\n    fees\n    expiration_date\n    full_name\n    email_or_phone\n    sale_id\n    reference\n    account_code\n  }\n}",
-          "variables": {
-            "input": {
-              "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
-              "amount": 500,
-              "full_name": "Pat Theodore",
-              "email_or_phone": "pat@paytheory.com",
-              "days_until_expiration": 10,
-              "expiration_date": "2026-12-01"
-            }
-          },
-          "response": {
-            "type": "error",
-            "httpStatus": 200,
-            "body": {
-              "data": null,
-              "errors": [
-                {
-                  "path": [
-                    "createBarcode"
-                  ],
-                  "data": null,
-                  "errorType": "VALIDATION_ERROR",
-                  "errorInfo": null,
-                  "message": "Expiration date and days until expiration cannot both be specified."
-                }
-              ]
-            }
-          }
-        },
-        {
-          "name": "Sale ID is too long",
-          "description": "Returns a validation error when sale_id is longer than 31 characters.",
-          "query": "mutation CreateBarcode($input: BarcodeInput!) {\n  createBarcode(input: $input) {\n    barcode_id\n    barcode_url\n    merchant_uid\n    amount\n    fees\n    expiration_date\n    full_name\n    email_or_phone\n    sale_id\n    reference\n    account_code\n  }\n}",
-          "variables": {
-            "input": {
-              "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
-              "amount": 500,
-              "full_name": "Pat Theodore",
-              "email_or_phone": "pat@paytheory.com",
-              "sale_id": "ssssssssssssssssssssssssssssssss"
-            }
-          },
-          "response": {
-            "type": "error",
-            "httpStatus": 200,
-            "body": {
-              "data": null,
-              "errors": [
-                {
-                  "path": [
-                    "createBarcode"
-                  ],
-                  "data": null,
-                  "errorType": "VALIDATION_ERROR",
-                  "errorInfo": null,
-                  "message": "Invalid sale ID."
-                }
-              ]
-            }
-          }
-        },
-        {
-          "name": "Email or phone is required",
-          "description": "Returns a validation error when email_or_phone is empty and no payor contact is provided.",
-          "query": "mutation CreateBarcode($input: BarcodeInput!) {\n  createBarcode(input: $input) {\n    barcode_id\n    barcode_url\n    merchant_uid\n    amount\n    fees\n    expiration_date\n    full_name\n    email_or_phone\n    sale_id\n    reference\n    account_code\n  }\n}",
-          "variables": {
-            "input": {
-              "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
-              "amount": 500,
-              "full_name": "Pat Theodore",
-              "email_or_phone": ""
-            }
-          },
-          "response": {
-            "type": "error",
-            "httpStatus": 200,
-            "body": {
-              "data": null,
-              "errors": [
-                {
-                  "path": [
-                    "createBarcode"
-                  ],
-                  "data": null,
-                  "errorType": "VALIDATION_ERROR",
-                  "errorInfo": null,
-                  "message": "Email or phone is required."
-                }
-              ]
             }
           }
         }
@@ -5210,49 +5239,35 @@
       "isDeprecated": false,
       "examples": [
         {
-          "name": "Example createInvoice",
-          "description": "Creates an invoice.",
-          "query": "mutation CreateInvoice($input: InvoiceInput!) {\n  createInvoice(input: $input) {\n  invoice_id\n  created_date\n  account_code\n  currency\n  due_by\n  }\n}",
+          "name": "Delete an invoice",
+          "description": "Deletes an invoice; read it back with invoices to confirm it is gone.",
+          "query": "mutation DeleteInvoice($invoice_id: String!) {\n  deleteInvoice(invoice_id: $invoice_id)\n}",
           "variables": {
-            "input": {
-              "account_code": "example",
-              "currency": "example",
-              "due_by": "2025-01-01",
-              "fee_mode": "CUSTOM_FEE",
-              "invoice_amount": 123,
-              "invoice_date": "2025-01-01",
-              "invoice_description": "example",
-              "invoice_name": "example",
-              "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
-              "merchant_invoice_number": "example",
-              "metadata": {
-                "key": "value"
-              },
-              "payor_id": "example",
-              "payor": {
-                "address_line1": "example"
-              },
-              "reference": "example",
-              "send_email": true,
-              "settings": {
-                "accepted_payment_methods": {
-                  "ach": true
-                }
-              }
-            }
+            "invoice_id": "ptl_inv_4VAqBS9kDpdBAOqzjqj81G"
           },
           "response": {
             "type": "success",
             "httpStatus": 200,
             "body": {
               "data": {
-                "createInvoice": {
-                  "invoice_id": "example",
-                  "created_date": "2025-01-01T00:00:00Z",
-                  "account_code": "example",
-                  "currency": "example",
-                  "due_by": "2025-01-01"
-                }
+                "deleteInvoice": true
+              }
+            }
+          }
+        },
+        {
+          "name": "A missing invoice also returns true",
+          "description": "deleteInvoice can return true when the ID names no invoice, so check invoices afterward to confirm the result.",
+          "query": "mutation DeleteInvoice($invoice_id: String!) {\n  deleteInvoice(invoice_id: $invoice_id)\n}",
+          "variables": {
+            "invoice_id": "ptl_inv_does_not_exist"
+          },
+          "response": {
+            "type": "success",
+            "httpStatus": 200,
+            "body": {
+              "data": {
+                "deleteInvoice": true
               }
             }
           }
@@ -5301,11 +5316,11 @@
       "isDeprecated": false,
       "examples": [
         {
-          "name": "Example createInvoiceEmail",
-          "description": "This call is used to resend Invoice emails for a specific invoice.",
+          "name": "Resend an invoice email",
+          "description": "A true response means the email was queued; it does not confirm delivery.",
           "query": "mutation CreateInvoiceEmail($invoice_id: String!) {\n  createInvoiceEmail(invoice_id: $invoice_id)\n}",
           "variables": {
-            "invoice_id": "example"
+            "invoice_id": "ptl_inv_2O0yTY3k5AIyDc8NQ2SvhC"
           },
           "response": {
             "type": "success",
@@ -5361,16 +5376,16 @@
       "isDeprecated": false,
       "examples": [
         {
-          "name": "Example createOfflineTransaction",
-          "description": "This call is used to create an offline transaction for an invoice. Offline transactions are used to track payments that are made outside Pay Theory toward an Invoice.",
-          "query": "mutation CreateOfflineTransaction($input: OfflineTransactionInput!) {\n  createOfflineTransaction(input: $input) {\n  instance_id\n  transaction_date\n  amount\n  invoice_id\n  note\n  }\n}",
+          "name": "Record a cash payment for the full invoice",
+          "description": "The offline payment must equal the full invoice balance.",
+          "query": "mutation CreateOfflineTransaction($input: OfflineTransactionInput!) {\n  createOfflineTransaction(input: $input) {\n    instance_id\n    invoice_id\n    amount\n    type\n    note\n    transaction_date\n  }\n}",
           "variables": {
             "input": {
-              "amount": 123,
-              "invoice_id": "example",
-              "note": "example",
-              "transaction_date": "2025-01-01",
-              "type": "ACH"
+              "amount": 2500,
+              "invoice_id": "ptl_inv_3G68AxWreHdbCOWcdCKmpW",
+              "note": "Paid at the front desk",
+              "transaction_date": "2026-09-05",
+              "type": "CASH"
             }
           },
           "response": {
@@ -5379,13 +5394,35 @@
             "body": {
               "data": {
                 "createOfflineTransaction": {
-                  "instance_id": "example",
-                  "transaction_date": "2025-01-01",
-                  "amount": 123,
-                  "invoice_id": "example",
-                  "note": "example"
+                  "instance_id": "3WIrDmgG9VloBTPg1lwsKo",
+                  "invoice_id": "ptl_inv_3G68AxWreHdbCOWcdCKmpW",
+                  "amount": 2500,
+                  "type": "CASH",
+                  "note": "Paid at the front desk",
+                  "transaction_date": "2026-09-05"
                 }
               }
+            }
+          }
+        },
+        {
+          "name": "A partial offline payment is refused",
+          "description": "The payment amount must match the invoice's full remaining balance.",
+          "query": "mutation CreateOfflineTransaction($input: OfflineTransactionInput!) {\n  createOfflineTransaction(input: $input) {\n    instance_id\n    invoice_id\n    amount\n    type\n    note\n    transaction_date\n  }\n}",
+          "variables": {
+            "input": {
+              "amount": 1000,
+              "invoice_id": "ptl_inv_3Hfkv8bmz22tyiWJ6d22DS",
+              "transaction_date": "2026-09-05",
+              "type": "CASH"
+            }
+          },
+          "response": {
+            "type": "error",
+            "httpStatus": 200,
+            "body": {
+              "errorType": "Lambda:Unhandled",
+              "message": "Payment amount must equal invoice payoff amount: 2500."
             }
           }
         }
@@ -5483,7 +5520,7 @@
             "body": {
               "data": {
                 "createMerchant": {
-                  "merchant_uid": "<NEW_MERCHANT_UID>",
+                  "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
                   "merchant_name": "Northstar Books",
                   "parent_merchant_uid": null,
                   "ach_active": true,
@@ -5725,20 +5762,35 @@
       "isDeprecated": false,
       "examples": [
         {
-          "name": "Example updateMerchantSettings",
-          "description": "Updates merchant settings.",
+          "name": "Set contact details and website",
+          "description": "Sets a merchant's contact details and website.",
           "query": "mutation UpdateMerchantSettings($merchant_uid: ID!, $settings: MerchantSettingsInput!) {\n  updateMerchantSettings(merchant_uid: $merchant_uid, settings: $settings)\n}",
           "variables": {
-            "merchant_uid": "id_123",
+            "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
             "settings": {
-              "contact_email": "user@paytheory.com",
-              "contact_phone": "+15555555555",
-              "facebook": "https://example.com",
-              "instagram": "https://example.com",
-              "linkedin": "https://example.com",
-              "tiktok": "https://example.com",
-              "twitter": "https://example.com",
-              "website": "https://example.com"
+              "contact_email": "pat@paytheory.com",
+              "contact_phone": "+14045551234",
+              "website": "https://paytheory.com"
+            }
+          },
+          "response": {
+            "type": "success",
+            "httpStatus": 200,
+            "body": {
+              "data": {
+                "updateMerchantSettings": true
+              }
+            }
+          }
+        },
+        {
+          "name": "Update the website only",
+          "description": "Settings updates replace the old settings. Send every field you want to keep; omitted settings are cleared.",
+          "query": "mutation UpdateMerchantSettings($merchant_uid: ID!, $settings: MerchantSettingsInput!) {\n  updateMerchantSettings(merchant_uid: $merchant_uid, settings: $settings)\n}",
+          "variables": {
+            "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+            "settings": {
+              "website": "https://paytheory.com"
             }
           },
           "response": {
@@ -5833,16 +5885,14 @@
       "isDeprecated": false,
       "examples": [
         {
-          "name": "Example updateMetadata",
-          "description": "Updates metadata for an item.",
+          "name": "Attach metadata to a transaction",
+          "description": "Send metadata as JSON text. A true response does not prove the record exists in every environment; read the record back to verify it.",
           "query": "mutation UpdateMetadata($id: String!, $metadata_associate: MetadataAssociate!, $merchant_uid: String!, $metadata: AWSJSON!) {\n  updateMetadata(id: $id, metadata_associate: $metadata_associate, merchant_uid: $merchant_uid, metadata: $metadata)\n}",
           "variables": {
-            "id": "example",
-            "metadata_associate": "AUTHORIZATION",
+            "id": "ptl_txn_7pCgkYFpOJIa04NlWSum0b",
             "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
-            "metadata": {
-              "key": "value"
-            }
+            "metadata": "{\"department\":\"athletics\",\"student_id\":\"1234567\"}",
+            "metadata_associate": "TRANSACTION"
           },
           "response": {
             "type": "success",
@@ -5936,30 +5986,7 @@
         "MetadataAssociate"
       ],
       "isDeprecated": false,
-      "examples": [
-        {
-          "name": "Example deleteMetadata",
-          "description": "Deletes metadata for an item.",
-          "query": "mutation DeleteMetadata($id: String!, $metadata_associate: MetadataAssociate!, $merchant_uid: String!, $metadata_keys: [String]!) {\n  deleteMetadata(id: $id, metadata_associate: $metadata_associate, merchant_uid: $merchant_uid, metadata_keys: $metadata_keys)\n}",
-          "variables": {
-            "id": "example",
-            "metadata_associate": "AUTHORIZATION",
-            "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
-            "metadata_keys": [
-              "example"
-            ]
-          },
-          "response": {
-            "type": "success",
-            "httpStatus": 200,
-            "body": {
-              "data": {
-                "deleteMetadata": true
-              }
-            }
-          }
-        }
-      ],
+      "examples": [],
       "returnTypeString": "Boolean"
     },
     "createPaymentLink": {
@@ -6003,27 +6030,23 @@
       "isDeprecated": false,
       "examples": [
         {
-          "name": "Example createPaymentLink",
-          "description": "Creates payment link.",
-          "query": "mutation CreatePaymentLink($input: PaymentLinkInput!) {\n  createPaymentLink(input: $input) {\n  link_id\n  created_date\n  accepted_payment_methods\n  account_code\n  amount\n  }\n}",
+          "name": "Create a fixed-amount payment link",
+          "description": "Creates a card-only payment link for a workshop. Use the returned link ID for later updates.",
+          "query": "mutation CreatePaymentLink($input: PaymentLinkInput!) {\n  createPaymentLink(input: $input) {\n    link_id\n    link_name\n    link_url\n    merchant_uid\n    amount\n    amount_is_variable\n    min_amount\n    accepted_payment_methods\n    account_code\n    call_to_action\n    created_date\n    currency\n    custom_success_message\n    fee_mode\n    is_active\n    payment_name\n    payment_description\n    redirect_url\n    require_phone\n  }\n}",
           "variables": {
             "input": {
-              "accepted_payment_methods": "ALL",
-              "account_code": "example",
-              "amount": 123,
-              "amount_is_variable": true,
-              "call_to_action": "BOOK",
-              "currency": "example",
-              "custom_success_message": "example",
-              "fee_mode": "CUSTOM_FEE",
-              "link_name": "example",
-              "max_amount": 123,
+              "accepted_payment_methods": "ONLY_CARD",
+              "account_code": "docs-56f51efc",
+              "amount": 2500,
+              "call_to_action": "PAY",
+              "currency": "USD",
+              "custom_success_message": "Thank you for your payment!",
+              "fee_mode": "MERCHANT_FEE",
+              "link_name": "p4 docs fixed 56f51efc",
               "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
-              "min_amount": 123,
-              "payment_description": "example",
-              "payment_name": "example",
-              "redirect_url": "example",
-              "require_phone": true
+              "payment_description": "One seat at the spring workshop",
+              "payment_name": "Spring workshop",
+              "require_phone": false
             }
           },
           "response": {
@@ -6032,11 +6055,73 @@
             "body": {
               "data": {
                 "createPaymentLink": {
-                  "link_id": "example",
-                  "created_date": "2025-01-01T00:00:00Z",
-                  "accepted_payment_methods": "example",
-                  "account_code": "example",
-                  "amount": 123
+                  "link_id": "ptl_link_71oNnsl1KTwv505iRbdMlY",
+                  "link_name": "p4 docs fixed 56f51efc",
+                  "link_url": "https://<HOSTED_CHECKOUT_HOST>/payment_link/ptl_link_71oNnsl1KTwv505iRbdMlY",
+                  "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                  "amount": 2500,
+                  "amount_is_variable": false,
+                  "min_amount": 100,
+                  "accepted_payment_methods": "ONLY_CARD",
+                  "account_code": "docs-56f51efc",
+                  "call_to_action": "PAY",
+                  "created_date": "2026-09-05T01:19:57.0Z",
+                  "currency": "USD",
+                  "custom_success_message": "Thank you for your payment!",
+                  "fee_mode": "MERCHANT_FEE",
+                  "is_active": true,
+                  "payment_name": "Spring workshop",
+                  "payment_description": "One seat at the spring workshop",
+                  "redirect_url": null,
+                  "require_phone": false
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Create a variable-amount payment link",
+          "description": "Creates a donation link with a set minimum and maximum amount.",
+          "query": "mutation CreatePaymentLink($input: PaymentLinkInput!) {\n  createPaymentLink(input: $input) {\n    link_id\n    link_name\n    link_url\n    merchant_uid\n    amount\n    amount_is_variable\n    min_amount\n    accepted_payment_methods\n    account_code\n    call_to_action\n    created_date\n    currency\n    custom_success_message\n    fee_mode\n    is_active\n    payment_name\n    payment_description\n    redirect_url\n    require_phone\n  }\n}",
+          "variables": {
+            "input": {
+              "accepted_payment_methods": "ALL",
+              "amount": 5000,
+              "amount_is_variable": true,
+              "call_to_action": "DONATE",
+              "link_name": "p4 docs variable 56f51efc",
+              "max_amount": 25000,
+              "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+              "min_amount": 500,
+              "payment_name": "Annual fund",
+              "redirect_url": "https://paytheory.com/thank-you"
+            }
+          },
+          "response": {
+            "type": "success",
+            "httpStatus": 200,
+            "body": {
+              "data": {
+                "createPaymentLink": {
+                  "link_id": "ptl_link_75q8DKddiczYBd1zT3YFPc",
+                  "link_name": "p4 docs variable 56f51efc",
+                  "link_url": "https://<HOSTED_CHECKOUT_HOST>/payment_link/ptl_link_75q8DKddiczYBd1zT3YFPc",
+                  "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                  "amount": 5000,
+                  "amount_is_variable": true,
+                  "min_amount": 500,
+                  "accepted_payment_methods": "ALL",
+                  "account_code": null,
+                  "call_to_action": "DONATE",
+                  "created_date": "2026-09-05T01:19:58.0Z",
+                  "currency": "USD",
+                  "custom_success_message": null,
+                  "fee_mode": "MERCHANT_FEE",
+                  "is_active": true,
+                  "payment_name": "Annual fund",
+                  "payment_description": null,
+                  "redirect_url": "https://paytheory.com/thank-you",
+                  "require_phone": false
                 }
               }
             }
@@ -6086,29 +6171,15 @@
       "isDeprecated": false,
       "examples": [
         {
-          "name": "Example updatePaymentLink",
-          "description": "Updates payment link.",
-          "query": "mutation UpdatePaymentLink($input: UpdatePaymentLinkInput!) {\n  updatePaymentLink(input: $input) {\n  link_id\n  created_date\n  accepted_payment_methods\n  account_code\n  amount\n  }\n}",
+          "name": "Change the amount and description",
+          "description": "Updates the payment link returned by the create example.",
+          "query": "mutation UpdatePaymentLink($input: UpdatePaymentLinkInput!) {\n  updatePaymentLink(input: $input) {\n    link_id\n    link_name\n    link_url\n    merchant_uid\n    amount\n    amount_is_variable\n    min_amount\n    accepted_payment_methods\n    account_code\n    call_to_action\n    created_date\n    currency\n    custom_success_message\n    fee_mode\n    is_active\n    payment_name\n    payment_description\n    redirect_url\n    require_phone\n  }\n}",
           "variables": {
             "input": {
-              "accepted_payment_methods": "ALL",
-              "account_code": "example",
-              "amount": 123,
-              "amount_is_variable": true,
-              "call_to_action": "BOOK",
-              "currency": "example",
-              "custom_success_message": "example",
-              "fee_mode": "CUSTOM_FEE",
-              "is_active": true,
-              "link_id": "example",
-              "link_name": "example",
-              "max_amount": 123,
+              "amount": 3000,
+              "link_id": "ptl_link_71oNnsl1KTwv505iRbdMlY",
               "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
-              "min_amount": 123,
-              "payment_description": "example",
-              "payment_name": "example",
-              "redirect_url": "example",
-              "require_phone": true
+              "payment_description": "One seat at the spring workshop (new price)"
             }
           },
           "response": {
@@ -6117,11 +6188,66 @@
             "body": {
               "data": {
                 "updatePaymentLink": {
-                  "link_id": "example",
-                  "created_date": "2025-01-01T00:00:00Z",
-                  "accepted_payment_methods": "example",
-                  "account_code": "example",
-                  "amount": 123
+                  "link_id": "ptl_link_71oNnsl1KTwv505iRbdMlY",
+                  "link_name": "p4 docs fixed 56f51efc",
+                  "link_url": "https://<HOSTED_CHECKOUT_HOST>/payment_link/ptl_link_71oNnsl1KTwv505iRbdMlY",
+                  "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                  "amount": 3000,
+                  "amount_is_variable": false,
+                  "min_amount": 100,
+                  "accepted_payment_methods": "ONLY_CARD",
+                  "account_code": "docs-56f51efc",
+                  "call_to_action": "PAY",
+                  "created_date": "2026-09-05T01:19:57.0Z",
+                  "currency": "USD",
+                  "custom_success_message": "Thank you for your payment!",
+                  "fee_mode": "MERCHANT_FEE",
+                  "is_active": true,
+                  "payment_name": "Spring workshop",
+                  "payment_description": "One seat at the spring workshop (new price)",
+                  "redirect_url": null,
+                  "require_phone": false
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Deactivate a payment link",
+          "description": "Payment links cannot be deleted; set is_active to false to retire one.",
+          "query": "mutation UpdatePaymentLink($input: UpdatePaymentLinkInput!) {\n  updatePaymentLink(input: $input) {\n    link_id\n    link_name\n    link_url\n    merchant_uid\n    amount\n    amount_is_variable\n    min_amount\n    accepted_payment_methods\n    account_code\n    call_to_action\n    created_date\n    currency\n    custom_success_message\n    fee_mode\n    is_active\n    payment_name\n    payment_description\n    redirect_url\n    require_phone\n  }\n}",
+          "variables": {
+            "input": {
+              "is_active": false,
+              "link_id": "ptl_link_71oNnsl1KTwv505iRbdMlY",
+              "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
+            }
+          },
+          "response": {
+            "type": "success",
+            "httpStatus": 200,
+            "body": {
+              "data": {
+                "updatePaymentLink": {
+                  "link_id": "ptl_link_71oNnsl1KTwv505iRbdMlY",
+                  "link_name": "p4 docs fixed 56f51efc",
+                  "link_url": "https://<HOSTED_CHECKOUT_HOST>/payment_link/ptl_link_71oNnsl1KTwv505iRbdMlY",
+                  "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                  "amount": 3000,
+                  "amount_is_variable": false,
+                  "min_amount": 100,
+                  "accepted_payment_methods": "ONLY_CARD",
+                  "account_code": "docs-56f51efc",
+                  "call_to_action": "PAY",
+                  "created_date": "2026-09-05T01:19:57.0Z",
+                  "currency": "USD",
+                  "custom_success_message": "Thank you for your payment!",
+                  "fee_mode": "MERCHANT_FEE",
+                  "is_active": false,
+                  "payment_name": "Spring workshop",
+                  "payment_description": "One seat at the spring workshop (new price)",
+                  "redirect_url": null,
+                  "require_phone": false
                 }
               }
             }
@@ -7072,30 +7198,23 @@
       "isDeprecated": false,
       "examples": [
         {
-          "name": "Example createRecurringPayment",
-          "description": "Creates recurring payment.",
-          "query": "mutation CreateRecurringPayment($input: RecurringPaymentInput!) {\n  createRecurringPayment(input: $input) {\n  recurring_id\n  created_date\n  account_code\n  amount_per_payment\n  currency\n  }\n}",
+          "name": "Create a monthly schedule that starts in the future",
+          "description": "A future first_payment_date schedules the first charge for that date. If you omit it or set it to today's date, the first charge happens immediately.",
+          "query": "mutation CreateRecurringPayment($input: RecurringPaymentInput!) {\n  createRecurringPayment(input: $input) {\n    recurring_id\n    merchant_uid\n    recurring_name\n    recurring_description\n    amount_per_payment\n    fee_per_payment\n    total_amount_per_payment\n    fee_mode\n    payment_interval\n    prev_payment_date\n    next_payment_date\n    remaining_payments\n    status\n    is_active\n    mute_all_emails\n    account_code\n    reference\n    created_date\n    payment_method {\n      payment_method_id\n      last_four\n      payment_type\n    }\n    payor {\n      payor_id\n      full_name\n      email\n    }\n  }\n}",
           "variables": {
             "input": {
-              "account_code": "example",
-              "amount": 123,
-              "fee_mode": "CUSTOM_FEE",
-              "first_payment_date": "2025-01-01",
               "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
-              "metadata": {
-                "key": "value"
-              },
-              "mute_all_emails": true,
-              "payment_count": 123,
-              "payment_interval": "ANNUAL",
-              "payment_method_id": "example",
-              "payor": {
-                "address_line1": "example"
-              },
-              "payor_id": "example",
-              "recurring_description": "example",
-              "recurring_name": "example",
-              "reference": "example"
+              "payment_method_id": "ptl_pmt_5Q85Bcghv1Ppxfk7PGYrLd",
+              "payor_id": "ptl_pay_5Q860Z2ouH3KKLnWfNpyxd",
+              "amount": 2500,
+              "payment_interval": "MONTHLY",
+              "payment_count": 12,
+              "first_payment_date": "2026-10-27",
+              "recurring_name": "Gym membership",
+              "recurring_description": "Monthly membership fee",
+              "account_code": "MEMBERSHIP-2026",
+              "reference": "INV-2d0d8d3d",
+              "metadata": "{\"plan\":\"standard\"}"
             }
           },
           "response": {
@@ -7104,11 +7223,144 @@
             "body": {
               "data": {
                 "createRecurringPayment": {
-                  "recurring_id": "example",
-                  "created_date": "2025-01-01T00:00:00Z",
-                  "account_code": "example",
-                  "amount_per_payment": 123,
-                  "currency": "example"
+                  "recurring_id": "ptl_rec_62ArNw2Lk9mvWUaa0dNpQT",
+                  "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                  "recurring_name": "Gym membership",
+                  "recurring_description": "Monthly membership fee",
+                  "amount_per_payment": 2500,
+                  "fee_per_payment": 143,
+                  "total_amount_per_payment": 2500,
+                  "fee_mode": "MERCHANT_FEE",
+                  "payment_interval": "MONTHLY",
+                  "prev_payment_date": null,
+                  "next_payment_date": "2026-10-27",
+                  "remaining_payments": 12,
+                  "status": "SUCCESS",
+                  "is_active": true,
+                  "mute_all_emails": false,
+                  "account_code": "MEMBERSHIP-2026",
+                  "reference": "INV-2d0d8d3d",
+                  "created_date": "2026-09-04T20:25:31.0Z",
+                  "payment_method": {
+                    "payment_method_id": "ptl_pmt_5Q85Bcghv1Ppxfk7PGYrLd",
+                    "last_four": "1111",
+                    "payment_type": "CARD"
+                  },
+                  "payor": {
+                    "payor_id": "ptl_pay_5Q860Z2ouH3KKLnWfNpyxd",
+                    "full_name": "Pat Theodore",
+                    "email": "pat@paytheory.com"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Create a schedule and charge the first payment right away",
+          "description": "Leaves out first_payment_date, so the first payment is charged when the schedule is created. The remaining count drops from 3 to 2.",
+          "query": "mutation CreateRecurringPayment($input: RecurringPaymentInput!) {\n  createRecurringPayment(input: $input) {\n    recurring_id\n    merchant_uid\n    recurring_name\n    recurring_description\n    amount_per_payment\n    fee_per_payment\n    total_amount_per_payment\n    fee_mode\n    payment_interval\n    prev_payment_date\n    next_payment_date\n    remaining_payments\n    status\n    is_active\n    mute_all_emails\n    account_code\n    reference\n    created_date\n    payment_method {\n      payment_method_id\n      last_four\n      payment_type\n    }\n    payor {\n      payor_id\n      full_name\n      email\n    }\n  }\n}",
+          "variables": {
+            "input": {
+              "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+              "payment_method_id": "ptl_pmt_5Q85Bcghv1Ppxfk7PGYrLd",
+              "payor_id": "ptl_pay_5Q860Z2ouH3KKLnWfNpyxd",
+              "amount": 300,
+              "payment_interval": "WEEKLY",
+              "payment_count": 3,
+              "recurring_name": "Weekly membership",
+              "metadata": "{\"purpose\":\"weekly-membership\"}"
+            }
+          },
+          "response": {
+            "type": "success",
+            "httpStatus": 200,
+            "body": {
+              "data": {
+                "createRecurringPayment": {
+                  "recurring_id": "ptl_rec_6763Eq8t8UkhpUseTEEWtJ",
+                  "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                  "recurring_name": "Weekly membership",
+                  "recurring_description": null,
+                  "amount_per_payment": 300,
+                  "fee_per_payment": 44,
+                  "total_amount_per_payment": 300,
+                  "fee_mode": "MERCHANT_FEE",
+                  "payment_interval": "WEEKLY",
+                  "prev_payment_date": "2026-09-04",
+                  "next_payment_date": "2026-09-11",
+                  "remaining_payments": 2,
+                  "status": "SUCCESS",
+                  "is_active": true,
+                  "mute_all_emails": false,
+                  "account_code": null,
+                  "reference": null,
+                  "created_date": "2026-09-04T20:25:35.0Z",
+                  "payment_method": {
+                    "payment_method_id": "ptl_pmt_5Q85Bcghv1Ppxfk7PGYrLd",
+                    "last_four": "1111",
+                    "payment_type": "CARD"
+                  },
+                  "payor": {
+                    "payor_id": "ptl_pay_5Q860Z2ouH3KKLnWfNpyxd",
+                    "full_name": "Pat Theodore",
+                    "email": "pat@paytheory.com"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Create an open-ended schedule with the saved payment method's payor",
+          "description": "Leaves out payment_count, so the schedule is indefinite and remaining_payments returns null.",
+          "query": "mutation CreateRecurringPayment($input: RecurringPaymentInput!) {\n  createRecurringPayment(input: $input) {\n    recurring_id\n    merchant_uid\n    recurring_name\n    recurring_description\n    amount_per_payment\n    fee_per_payment\n    total_amount_per_payment\n    fee_mode\n    payment_interval\n    prev_payment_date\n    next_payment_date\n    remaining_payments\n    status\n    is_active\n    mute_all_emails\n    account_code\n    reference\n    created_date\n    payment_method {\n      payment_method_id\n      last_four\n      payment_type\n    }\n    payor {\n      payor_id\n      full_name\n      email\n    }\n  }\n}",
+          "variables": {
+            "input": {
+              "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+              "payment_method_id": "ptl_pmt_5Q85Bcghv1Ppxfk7PGYrLd",
+              "payor_id": "ptl_pay_5Q860Z2ouH3KKLnWfNpyxd",
+              "amount": 1000,
+              "fee_mode": "SERVICE_FEE",
+              "payment_interval": "WEEKLY",
+              "first_payment_date": "2026-10-27",
+              "recurring_name": "Weekly donation"
+            }
+          },
+          "response": {
+            "type": "success",
+            "httpStatus": 200,
+            "body": {
+              "data": {
+                "createRecurringPayment": {
+                  "recurring_id": "ptl_rec_64ImZH6LpufCQddDXX2OYH",
+                  "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                  "recurring_name": "Weekly donation",
+                  "recurring_description": null,
+                  "amount_per_payment": 1000,
+                  "fee_per_payment": 195,
+                  "total_amount_per_payment": 1195,
+                  "fee_mode": "SERVICE_FEE",
+                  "payment_interval": "WEEKLY",
+                  "prev_payment_date": null,
+                  "next_payment_date": "2026-10-27",
+                  "remaining_payments": null,
+                  "status": "SUCCESS",
+                  "is_active": true,
+                  "mute_all_emails": false,
+                  "account_code": null,
+                  "reference": null,
+                  "created_date": "2026-09-04T20:25:33.0Z",
+                  "payment_method": {
+                    "payment_method_id": "ptl_pmt_5Q85Bcghv1Ppxfk7PGYrLd",
+                    "last_four": "1111",
+                    "payment_type": "CARD"
+                  },
+                  "payor": {
+                    "payor_id": "ptl_pay_5Q860Z2ouH3KKLnWfNpyxd",
+                    "full_name": "Pat Theodore",
+                    "email": "pat@paytheory.com"
+                  }
                 }
               }
             }
@@ -7158,15 +7410,14 @@
       "isDeprecated": false,
       "examples": [
         {
-          "name": "Example updateRecurringPayment",
-          "description": "Updates recurring payment.",
-          "query": "mutation UpdateRecurringPayment($input: UpdateRecurringPaymentInput!) {\n  updateRecurringPayment(input: $input) {\n  recurring_id\n  created_date\n  account_code\n  amount_per_payment\n  currency\n  }\n}",
+          "name": "Mute emails for a recurring schedule",
+          "description": "Turns off schedule emails. Include payment_method_id with mute_all_emails for the change to take effect.",
+          "query": "mutation UpdateRecurringPayment($input: UpdateRecurringPaymentInput!) {\n  updateRecurringPayment(input: $input) {\n    recurring_id\n    mute_all_emails\n    fee_per_payment\n    total_amount_per_payment\n    next_payment_date\n    remaining_payments\n    status\n    is_active\n    payment_method {\n      payment_method_id\n      last_four\n    }\n  }\n}",
           "variables": {
             "input": {
-              "mute_all_emails": true,
-              "pay_all_missed_payments": true,
-              "payment_method_id": "example",
-              "recurring_id": "example"
+              "recurring_id": "ptl_rec_62ArNw2Lk9mvWUaa0dNpQT",
+              "payment_method_id": "ptl_pmt_5UMEF8ojehU4IIxRTNzZYs",
+              "mute_all_emails": true
             }
           },
           "response": {
@@ -7175,11 +7426,18 @@
             "body": {
               "data": {
                 "updateRecurringPayment": {
-                  "recurring_id": "example",
-                  "created_date": "2025-01-01T00:00:00Z",
-                  "account_code": "example",
-                  "amount_per_payment": 123,
-                  "currency": "example"
+                  "recurring_id": "ptl_rec_62ArNw2Lk9mvWUaa0dNpQT",
+                  "mute_all_emails": true,
+                  "fee_per_payment": 143,
+                  "total_amount_per_payment": 2500,
+                  "next_payment_date": "2026-10-27",
+                  "remaining_payments": 12,
+                  "status": "SUCCESS",
+                  "is_active": true,
+                  "payment_method": {
+                    "payment_method_id": "ptl_pmt_5UMEF8ojehU4IIxRTNzZYs",
+                    "last_four": "1111"
+                  }
                 }
               }
             }
@@ -7229,11 +7487,11 @@
       "isDeprecated": false,
       "examples": [
         {
-          "name": "Example cancelRecurringPayment",
-          "description": "Once a recurring payment is cancelled, it cannot be reactivated.",
+          "name": "Cancel a recurring schedule",
+          "description": "Cancels a schedule. Check it with recurringPayments to confirm is_active is false, since this operation can also return true for an unknown ID.",
           "query": "mutation CancelRecurringPayment($recurring_id: String!) {\n  cancelRecurringPayment(recurring_id: $recurring_id)\n}",
           "variables": {
-            "recurring_id": "example"
+            "recurring_id": "ptl_rec_64ImZH6LpufCQddDXX2OYH"
           },
           "response": {
             "type": "success",
@@ -8639,13 +8897,30 @@
       "isDeprecated": false,
       "examples": [
         {
-          "name": "Example createReceiptEmail",
-          "description": "This call will send a receipt for a transaction to the email address on file with the payor or an email passed in.",
+          "name": "Send a receipt to the payor's saved email",
+          "description": "Queues a receipt to the payor's saved email address.",
           "query": "mutation CreateReceiptEmail($transaction_id: String!, $receipt_description: String, $email: AWSEmail) {\n  createReceiptEmail(transaction_id: $transaction_id, receipt_description: $receipt_description, email: $email)\n}",
           "variables": {
-            "transaction_id": "example",
-            "receipt_description": "example",
-            "email": "pat@paytheory.com"
+            "transaction_id": "ptl_txn_4rNilJChpgcuQFgLvdZbxm"
+          },
+          "response": {
+            "type": "success",
+            "httpStatus": 200,
+            "body": {
+              "data": {
+                "createReceiptEmail": true
+              }
+            }
+          }
+        },
+        {
+          "name": "Send a receipt to another email",
+          "description": "Queues a receipt to the email address supplied.",
+          "query": "mutation CreateReceiptEmail($transaction_id: String!, $receipt_description: String, $email: AWSEmail) {\n  createReceiptEmail(transaction_id: $transaction_id, receipt_description: $receipt_description, email: $email)\n}",
+          "variables": {
+            "transaction_id": "ptl_txn_4rNilJChpgcuQFgLvdZbxm",
+            "email": "pat@paytheory.com",
+            "receipt_description": "Thanks for your business — order 4815"
           },
           "response": {
             "type": "success",
@@ -8714,20 +8989,48 @@
       "isDeprecated": false,
       "examples": [
         {
-          "name": "Example updateTransactionInReview",
-          "description": "This call can be used by a partner to approve or decline a transcation that is in review for reason POTEENTIAL_DUPLICATE.",
+          "name": "Merchant key cannot update transaction review",
+          "description": "This operation requires a partner key. A true response for a transaction that is not in review does not mean it changed.",
           "query": "mutation UpdateTransactionInReview($transaction_id: String!, $action: TransactionReviewAction!) {\n  updateTransactionInReview(transaction_id: $transaction_id, action: $action)\n}",
           "variables": {
-            "transaction_id": "example",
-            "action": "ACCEPT"
+            "action": "ACCEPT",
+            "transaction_id": "ptl_txn_7pCgkYFpOJIa04NlWSum0b"
           },
           "response": {
-            "type": "success",
+            "type": "error",
             "httpStatus": 200,
             "body": {
               "data": {
-                "updateTransactionInReview": true
-              }
+                "updateTransactionInReview": null
+              },
+              "errors": [
+                {
+                  "path": [
+                    "updateTransactionInReview"
+                  ],
+                  "data": null,
+                  "errorType": "VALIDATION_ERROR",
+                  "errorInfo": null,
+                  "message": "Transaction approvals are only available at the partner level."
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Transaction ID not found",
+          "description": "With a partner key, an unknown transaction ID returns this error.",
+          "query": "mutation UpdateTransactionInReview($transaction_id: String!, $action: TransactionReviewAction!) {\n  updateTransactionInReview(transaction_id: $transaction_id, action: $action)\n}",
+          "variables": {
+            "action": "REJECT",
+            "transaction_id": "not-a-transaction-id"
+          },
+          "response": {
+            "type": "error",
+            "httpStatus": 200,
+            "body": {
+              "errorType": "VALIDATION_ERROR",
+              "message": "transaction not found"
             }
           }
         }
@@ -8775,17 +9078,16 @@
       "isDeprecated": false,
       "examples": [
         {
-          "name": "Example createUser",
-          "description": "Creates user.",
-          "query": "mutation CreateUser($input: UserInput!) {\n  createUser(input: $input) {\n  email\n  full_name\n  phone\n  user_status\n  username\n  }\n}",
+          "name": "Create a user in a merchant portal",
+          "description": "Creates a merchant portal user. Use a partner key and a valid phone number.",
+          "query": "mutation CreateUser($input: UserInput!) {\n  createUser(input: $input) {\n    email\n    full_name\n    phone\n    user_status\n  }\n}",
           "variables": {
             "input": {
-              "bypass_merchant_validation": true,
               "email": "pat@paytheory.com",
-              "first_name": "example",
-              "last_name": "example",
+              "first_name": "Pat",
+              "last_name": "Theodore",
               "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
-              "phone": "+15555555555",
+              "phone": "513.555.0134",
               "user_pool": "MERCHANT"
             }
           },
@@ -8797,9 +9099,8 @@
                 "createUser": {
                   "email": "pat@paytheory.com",
                   "full_name": "Pat Theodore",
-                  "phone": "example",
-                  "user_status": "example",
-                  "username": "example"
+                  "phone": "+15135550134",
+                  "user_status": "FORCE_CHANGE_PASSWORD"
                 }
               }
             }
@@ -8862,11 +9163,11 @@
       "isDeprecated": false,
       "examples": [
         {
-          "name": "Example deleteUser",
-          "description": "Deletes user.",
+          "name": "Remove a user from a merchant portal",
+          "description": "Removes a merchant portal user. The username can be the user's email address. This operation requires a partner key.",
           "query": "mutation DeleteUser($username: String!, $user_pool: UserPool!) {\n  deleteUser(username: $username, user_pool: $user_pool)\n}",
           "variables": {
-            "username": "example",
+            "username": "pat@paytheory.com",
             "user_pool": "MERCHANT"
           },
           "response": {

@@ -38,20 +38,21 @@ You will need to put together the details of the checkout. This includes the amo
 const AMOUNT = 1000
 
 const PAYMENT_METADATA = {
-  "student-name": "Jane Doe"
+  "student-name": "Pat Theodore"
 };
 
 // Parameters that you will pass in to configure the checkout page that opens when the button is clicked.
 const CHECKOUT_DETAILS = {
   amount: AMOUNT,
-  paymentName: “user-name”
+  paymentName: "School Technology Fees",
 
-  acceptedPaymentMethods: paytheory.CARD_ONLY,
-  payorId: "pt_pay_XXXXXXXXX",
+  acceptedPaymentMethods: paytheory.ONLY_CARD,
+  payorId: "ptl_pay_5Q860Z2ouH3KKLnWfNpyxd",
   metadata: PAYMENT_METADATA,
-  recurringId: "pt_rec_XXXXXXXXX",
+  recurringId: "ptl_rec_64ImZH6LpufCQddDXX2OYH",
 }
 ```
+Use either `invoiceId` or `recurringId` in `checkoutDetails`, not both.
 These are the parameters that you can pass into the `checkoutDetails` object to customize the checkout page that opens when the button is clicked.
 
 ### Required parameters:
