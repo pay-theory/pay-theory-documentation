@@ -171,22 +171,38 @@ Resources:
         isStandard, 
         !Sub "docs.${Stage}.com", 
         !Sub "docs.${Stage}.com" ]
-        CustomErrorResponses:
+        # With the edge Lambda, pretty URLs are rewritten to their index.html
+        # object, so an S3 miss (403 under OAC) means the page does not exist.
+        # Without it, keep the SPA fallback that pretty URLs depend on.
+        CustomErrorResponses: !If
+          - hasMarkdownEdgeLambda
           -
-            ErrorCachingMinTTL: 10
-            ErrorCode: 400
-            ResponseCode: 200
-            ResponsePagePath: /index.html
+            -
+              ErrorCachingMinTTL: 10
+              ErrorCode: 403
+              ResponseCode: 404
+              ResponsePagePath: /404.html
+            -
+              ErrorCachingMinTTL: 10
+              ErrorCode: 404
+              ResponseCode: 404
+              ResponsePagePath: /404.html
           -
-            ErrorCachingMinTTL: 10
-            ErrorCode: 403
-            ResponseCode: 200
-            ResponsePagePath: /index.html
-          -
-            ErrorCachingMinTTL: 10
-            ErrorCode: 404
-            ResponseCode: 200
-            ResponsePagePath: /index.html
+            -
+              ErrorCachingMinTTL: 10
+              ErrorCode: 400
+              ResponseCode: 200
+              ResponsePagePath: /index.html
+            -
+              ErrorCachingMinTTL: 10
+              ErrorCode: 403
+              ResponseCode: 200
+              ResponsePagePath: /index.html
+            -
+              ErrorCachingMinTTL: 10
+              ErrorCode: 404
+              ResponseCode: 200
+              ResponsePagePath: /index.html
         DefaultCacheBehavior:
           AllowedMethods:
             - GET
@@ -202,6 +218,9 @@ Resources:
               - EventType: viewer-request
                 LambdaFunctionARN: !Ref MarkdownEdgeLambdaVersionArn
                 IncludeBody: false
+              # Same function version; adds Vary: Accept to HTML and Markdown.
+              - EventType: origin-response
+                LambdaFunctionARN: !Ref MarkdownEdgeLambdaVersionArn
             - !Ref AWS::NoValue
         HttpVersion: http2
         DefaultRootObject: index.html
