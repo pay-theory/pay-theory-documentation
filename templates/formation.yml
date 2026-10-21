@@ -25,8 +25,13 @@ Parameters:
   CertificateArn:
     Type: String
     Description: v2 certificate arn
+  MarkdownEdgeLambdaVersionArn:
+    Type: String
+    Description: Published Lambda@Edge version ARN for Markdown negotiation.
+    Default: ''
 Conditions:
     isStandard: !Equals [ !Ref TargetMode, standard]
+    hasMarkdownEdgeLambda: !Not [!Equals [!Ref MarkdownEdgeLambdaVersionArn, '']]
 Resources:
 
   S3Bucket:
@@ -191,6 +196,13 @@ Resources:
           CachePolicyId: '{{resolve:ssm:pt-global-books-cache}}'
           OriginRequestPolicyId: '{{resolve:ssm:pt-global-books-origin}}'
           ViewerProtocolPolicy: redirect-to-https
+          LambdaFunctionAssociations: !If
+            - hasMarkdownEdgeLambda
+            -
+              - EventType: viewer-request
+                LambdaFunctionARN: !Ref MarkdownEdgeLambdaVersionArn
+                IncludeBody: false
+            - !Ref AWS::NoValue
         HttpVersion: http2
         DefaultRootObject: index.html
         IPV6Enabled: true

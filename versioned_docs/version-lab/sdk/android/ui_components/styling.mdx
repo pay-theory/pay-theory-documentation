@@ -1,0 +1,221 @@
+---
+sidebar_position: 3
+sidebar_label: 'Styling Components'
+title: "Styling Components"
+---
+
+# Styling Components
+
+The Pay Theory SDK uses Material Design components for its UI elements. Both input fields (`PayTheoryEditText`) and buttons (`PayTheoryButton`) can be styled using Material Design themes and attributes.
+
+## Material Design Theme Setup
+
+First, ensure your application theme extends from a Material Design theme:
+
+```xml
+<!-- themes.xml -->
+<style name="Theme.YourApp" parent="Theme.MaterialComponents.Light">
+    <!-- Primary brand color -->
+    <item name="colorPrimary">@color/primary</item>
+    <item name="colorPrimaryVariant">@color/primary_dark</item>
+    <item name="colorOnPrimary">@color/white</item>
+    
+    <!-- Secondary brand color -->
+    <item name="colorSecondary">@color/secondary</item>
+    <item name="colorSecondaryVariant">@color/secondary_dark</item>
+    <item name="colorOnSecondary">@color/black</item>
+    
+    <!-- Error colors -->
+    <item name="colorError">@color/error</item>
+    <item name="colorOnError">@color/white</item>
+</style>
+```
+
+## Color Resources
+
+Define your colors in the colors.xml file:
+
+```xml
+<!-- colors.xml -->
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="primary">#2196F3</color>
+    <color name="primary_dark">#1976D2</color>
+    <color name="secondary">#03DAC6</color>
+    <color name="secondary_dark">#018786</color>
+    <color name="error">#F44336</color>
+    <color name="black">#000000</color>
+    <color name="white">#FFFFFF</color>
+</resources>
+```
+
+## Input Field Styling
+
+PayTheoryEditText uses Material's TextInputLayout styling. Create a custom style:
+
+```xml
+<!-- themes.xml -->
+<style name="Widget.App.TextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+    <item name="boxStrokeColor">@color/primary</item>
+    <item name="boxStrokeWidth">2dp</item>
+    <item name="boxCornerRadiusTopStart">8dp</item>
+    <item name="boxCornerRadiusTopEnd">8dp</item>
+    <item name="boxCornerRadiusBottomStart">8dp</item>
+    <item name="boxCornerRadiusBottomEnd">8dp</item>
+    <item name="errorTextColor">@color/error</item>
+    <item name="hintTextColor">?attr/colorPrimary</item>
+</style>
+```
+
+Apply the style in your layout:
+
+```xml
+<com.google.android.material.textfield.TextInputLayout
+    style="@style/Widget.App.TextInputLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <com.paytheory.android.sdk.view.PayTheoryEditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/black"
+        android:textSize="16sp" />
+
+</com.google.android.material.textfield.TextInputLayout>
+```
+
+## Button Styling
+
+PayTheoryButton extends MaterialButton. Create a custom button style:
+
+```xml
+<!-- themes.xml -->
+<style name="Widget.App.Button" parent="Widget.MaterialComponents.Button">
+    <item name="android:textColor">@color/white</item>
+    <item name="backgroundTint">?attr/colorPrimary</item>
+    <item name="cornerRadius">8dp</item>
+    <item name="android:paddingLeft">24dp</item>
+    <item name="android:paddingRight">24dp</item>
+    <item name="android:paddingTop">12dp</item>
+    <item name="android:paddingBottom">12dp</item>
+    <item name="android:textSize">16sp</item>
+</style>
+```
+
+Apply the style in your layout:
+
+```xml
+<com.paytheory.android.sdk.view.PayTheoryButton
+    style="@style/Widget.App.Button"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="Pay Now" />
+```
+
+## Theme Application
+
+Apply your theme in AndroidManifest.xml:
+
+```xml
+<application
+    android:theme="@style/Theme.YourApp"
+    ...>
+```
+
+Or for a specific activity:
+
+```xml
+<activity
+    android:name=".PaymentActivity"
+    android:theme="@style/Theme.YourApp">
+</activity>
+```
+
+## Important Notes
+
+- All Pay Theory components use Material Design 3 components internally
+- Input fields are wrapped in TextInputLayout for consistent Material Design styling
+- The button component extends MaterialButton and follows Material Design guidelines
+- Use Material Design theme attributes (e.g., `?attr/colorPrimary`) for consistent theming
+- Disabled states are handled automatically by Material Design components
+- Error states use the `colorError` theme attribute by default
+- For custom color states, use color state lists in your drawable resources 
+
+## Complete Style Files
+
+Here are the complete style files you can copy directly into your project:
+
+### colors.xml
+```xml
+<resources>
+    <!-- Brand Colors -->
+    <color name="primary">#2196F3</color>
+    <color name="primary_dark">#1976D2</color>
+    <color name="secondary">#03DAC6</color>
+    <color name="secondary_dark">#018786</color>
+    
+    <!-- Utility Colors -->
+    <color name="error">#F44336</color>
+    <color name="black">#000000</color>
+    <color name="white">#FFFFFF</color>
+</resources>
+```
+
+### themes.xml
+```xml
+<resources>
+    <!-- Base Application Theme -->
+    <style name="Theme.YourApp" parent="Theme.MaterialComponents.Light">
+        <!-- Primary brand color -->
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryVariant">@color/primary_dark</item>
+        <item name="colorOnPrimary">@color/white</item>
+        
+        <!-- Secondary brand color -->
+        <item name="colorSecondary">@color/secondary</item>
+        <item name="colorSecondaryVariant">@color/secondary_dark</item>
+        <item name="colorOnSecondary">@color/black</item>
+        
+        <!-- Error colors -->
+        <item name="colorError">@color/error</item>
+        <item name="colorOnError">@color/white</item>
+
+        <!-- Default TextInputLayout style -->
+        <item name="textInputStyle">@style/Widget.App.TextInputLayout</item>
+
+        <!-- Default Button style -->
+        <item name="materialButtonStyle">@style/Widget.App.Button</item>
+    </style>
+
+    <!-- Custom TextInputLayout Style -->
+    <style name="Widget.App.TextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="boxStrokeColor">@color/primary</item>
+        <item name="boxStrokeWidth">2dp</item>
+        <item name="boxCornerRadiusTopStart">8dp</item>
+        <item name="boxCornerRadiusTopEnd">8dp</item>
+        <item name="boxCornerRadiusBottomStart">8dp</item>
+        <item name="boxCornerRadiusBottomEnd">8dp</item>
+        <item name="errorTextColor">@color/error</item>
+        <item name="hintTextColor">?attr/colorPrimary</item>
+    </style>
+
+    <!-- Custom Button Style -->
+    <style name="Widget.App.Button" parent="Widget.MaterialComponents.Button">
+        <item name="android:textColor">@color/white</item>
+        <item name="backgroundTint">?attr/colorPrimary</item>
+        <item name="cornerRadius">8dp</item>
+        <item name="android:paddingLeft">24dp</item>
+        <item name="android:paddingRight">24dp</item>
+        <item name="android:paddingTop">12dp</item>
+        <item name="android:paddingBottom">12dp</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+</resources>
+```
+
+### Important Note About Resource Files
+- Do not include the XML declaration (`<?xml version="1.0" encoding="utf-8"?>`) in your resource files
+- Resource files should start directly with the `<resources>` tag
+- Make sure to place these files in the correct directories:
+  - `colors.xml` in `res/values/`
+  - `themes.xml` in `res/values/`

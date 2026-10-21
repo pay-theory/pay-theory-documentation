@@ -1,0 +1,89 @@
+---
+sidebar_position: 5
+sidebar_label: 'on'
+title: "on"
+---
+
+# on
+
+Registers an event listener for messenger events.
+
+***
+## Function
+
+```javascript
+const unsubscribe = messenger.on(event, callback)
+```
+
+***
+## Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| event | String | Yes | Event name to listen for |
+| callback | Function | Yes | Function to call when event occurs |
+
+***
+## Available Events
+
+| Event | Description |
+|-------|-------------|
+| 'ready' | Fired when messenger is initialized and ready |
+| 'transaction_complete' | Fired when a transaction completes successfully |
+| 'transaction_error' | Fired when a transaction fails |
+| 'iframe_unloaded' | Fired when the messenger iframe is unloaded |
+
+***
+## Returns
+
+Returns a function that removes the event listener when called.
+
+***
+## Usage
+
+```javascript
+// Register event listener
+const unsubscribe = messenger.on('transaction_complete', (data) => {
+  console.log('Transaction completed:', data.transaction);
+});
+
+// Remove event listener later
+unsubscribe();
+```
+
+***
+## Event Data
+
+### ready Event
+```javascript
+{
+  success: Boolean
+}
+```
+
+### transaction_complete Event
+```javascript
+{
+  transaction: {
+    transaction_id: String,
+    status: String,
+    amount: Number,
+    // ... additional transaction fields
+  }
+}
+```
+
+### transaction_error Event
+```javascript
+{
+  error: String,
+  transaction: Object  // Optional, included if transaction was attempted
+}
+```
+
+### iframe_unloaded Event
+```javascript
+{
+  timestamp: Number
+}
+```

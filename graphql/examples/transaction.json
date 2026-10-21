@@ -1,0 +1,348 @@
+[
+  {
+    "operation": "transactions",
+    "operationType": "query",
+    "examples": [
+      {
+        "name": "Example transactions",
+        "description": "Returns transactions.",
+        "query": "query Transactions($query: SqlQuery, $limit: Int, $offset: String, $direction: MoveDirection, $offset_id: String) {\n  transactions(query: $query, limit: $limit, offset: $offset, direction: $direction, offset_id: $offset_id) {\n  items {\n    transaction_id\n    transaction_date\n    account_code\n    authorization_id\n    avs_status\n  }\n  total_row_count\n  }\n}",
+        "variables": {
+          "query": {
+            "query_list": [
+              {
+                "conjunctive_operator": "AND_NEXT"
+              }
+            ],
+            "sort_list": [
+              {
+                "direction": "ASC"
+              }
+            ]
+          },
+          "limit": 123,
+          "offset": "example",
+          "direction": "BACKWARD",
+          "offset_id": "example"
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "transactions": {
+                "items": [
+                  {
+                    "transaction_id": "example",
+                    "transaction_date": "2025-01-01T00:00:00Z",
+                    "account_code": "example",
+                    "authorization_id": "example",
+                    "avs_status": "example"
+                  }
+                ],
+                "total_row_count": 123
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "operation": "createTransaction",
+    "operationType": "mutation",
+    "examples": [
+      {
+        "name": "Example createTransaction",
+        "description": "Creates transaction.",
+        "query": "mutation CreateTransaction($merchant_uid: String!, $amount: Int!, $payment_method_id: String, $payment_method: PaymentMethodInput, $recurring_id: String, $invoice_id: String, $fee: Int, $fee_mode: FeeMode, $account_code: String, $reference: String, $send_receipt: Boolean, $receipt_description: String, $metadata: AWSJSON, $health_expense_type: HealthExpenseType, $digital_wallet: DigitalWalletInput, $additional_purchase_data: AdditionalPurchaseDataInput, $one_time_use_token: Boolean, $split: [SplitInput]) {\n  createTransaction(merchant_uid: $merchant_uid, amount: $amount, payment_method_id: $payment_method_id, payment_method: $payment_method, recurring_id: $recurring_id, invoice_id: $invoice_id, fee: $fee, fee_mode: $fee_mode, account_code: $account_code, reference: $reference, send_receipt: $send_receipt, receipt_description: $receipt_description, metadata: $metadata, health_expense_type: $health_expense_type, digital_wallet: $digital_wallet, additional_purchase_data: $additional_purchase_data, one_time_use_token: $one_time_use_token, split: $split) {\n  transaction_id\n  transaction_date\n  account_code\n  authorization_id\n  avs_status\n  }\n}",
+        "variables": {
+          "merchant_uid": "example",
+          "amount": 123,
+          "payment_method_id": "example",
+          "payment_method": {
+            "ach": {
+              "account_number": "example",
+              "account_type": "BUSINESS_CHECKING",
+              "name_on_account": "example",
+              "routing_number": "example"
+            },
+            "canadian_eft": {
+              "account_number": "example",
+              "account_type": "BUSINESS_CHECKING",
+              "institution_number": "example",
+              "name_on_account": "example",
+              "transit_number": "example"
+            },
+            "card": {
+              "card_number": "example",
+              "exp_date": {
+                "month": "example",
+                "year": "example"
+              },
+              "postal_code": "example",
+              "security_code": "example"
+            },
+            "metadata": {
+              "key": "value"
+            },
+            "payor": {
+              "address_line1": "example"
+            },
+            "payor_id": "example"
+          },
+          "recurring_id": "example",
+          "invoice_id": "example",
+          "fee": 123,
+          "fee_mode": "CUSTOM_FEE",
+          "account_code": "example",
+          "reference": "example",
+          "send_receipt": true,
+          "receipt_description": "example",
+          "metadata": {
+            "key": "value"
+          },
+          "health_expense_type": "CLINICAL",
+          "digital_wallet": {
+            "address_line1": "example",
+            "dpan": "example",
+            "exp_date": "example",
+            "postal_code": "example",
+            "wallet_type": "APPLE_PAY"
+          },
+          "additional_purchase_data": {
+            "level3_data_line_item": [
+              {
+                "item_code": "example"
+              }
+            ],
+            "level3_data_summary": {
+              "dest_postal_code": "example"
+            }
+          },
+          "one_time_use_token": true,
+          "split": [
+            {
+              "amount": 123,
+              "merchant_uid": "id_123"
+            }
+          ]
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "createTransaction": {
+                "transaction_id": "example",
+                "transaction_date": "2025-01-01T00:00:00Z",
+                "account_code": "example",
+                "authorization_id": "example",
+                "avs_status": "example"
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "operation": "createWalletTransaction",
+    "operationType": "mutation",
+    "examples": [
+      {
+        "name": "Example createWalletTransaction",
+        "description": "This call is used to create a transaction for a wallet payment via Apple Pay or Google Pay. It works in conjunction with our SDKs to allow you to create a transaction via our API.",
+        "query": "mutation CreateWalletTransaction($app_id: String, $merchant_uid: String!, $wallet_type: WalletType, $digital_wallet_payload: String!, $amount: Int, $fee: Int, $billing_address: BillingAddressInput, $payor_id: String, $payor: PayorInput, $recurring_id: String, $invoice_id: String, $account_code: String, $reference: String, $send_receipt: Boolean, $receipt_description: String, $metadata: AWSJSON, $health_expense_type: HealthExpenseType, $additional_purchase_data: AdditionalPurchaseDataInput, $split: [SplitInput]) {\n  createWalletTransaction(app_id: $app_id, merchant_uid: $merchant_uid, wallet_type: $wallet_type, digital_wallet_payload: $digital_wallet_payload, amount: $amount, fee: $fee, billing_address: $billing_address, payor_id: $payor_id, payor: $payor, recurring_id: $recurring_id, invoice_id: $invoice_id, account_code: $account_code, reference: $reference, send_receipt: $send_receipt, receipt_description: $receipt_description, metadata: $metadata, health_expense_type: $health_expense_type, additional_purchase_data: $additional_purchase_data, split: $split) {\n  transaction_id\n  transaction_date\n  account_code\n  authorization_id\n  avs_status\n  }\n}",
+        "variables": {
+          "app_id": "example",
+          "merchant_uid": "example",
+          "wallet_type": "APPLE_PAY",
+          "digital_wallet_payload": "example",
+          "amount": 123,
+          "fee": 123,
+          "billing_address": {
+            "address_line1": "example",
+            "address_line2": "example",
+            "city": "example",
+            "country": "example",
+            "full_name": "example",
+            "postal_code": "example",
+            "region": "example"
+          },
+          "payor_id": "example",
+          "payor": {
+            "address_line1": "example",
+            "address_line2": "example",
+            "city": "example",
+            "country": "example",
+            "email": "example",
+            "full_name": "example",
+            "merchant_uid": "example",
+            "metadata": {
+              "key": "value"
+            },
+            "phone": "example",
+            "postal_code": "example",
+            "region": "example"
+          },
+          "recurring_id": "example",
+          "invoice_id": "example",
+          "account_code": "example",
+          "reference": "example",
+          "send_receipt": true,
+          "receipt_description": "example",
+          "metadata": {
+            "key": "value"
+          },
+          "health_expense_type": "CLINICAL",
+          "additional_purchase_data": {
+            "level3_data_line_item": [
+              {
+                "item_code": "example"
+              }
+            ],
+            "level3_data_summary": {
+              "dest_postal_code": "example"
+            }
+          },
+          "split": [
+            {
+              "amount": 123,
+              "merchant_uid": "id_123"
+            }
+          ]
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "createWalletTransaction": {
+                "transaction_id": "example",
+                "transaction_date": "2025-01-01T00:00:00Z",
+                "account_code": "example",
+                "authorization_id": "example",
+                "avs_status": "example"
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "operation": "createReversal",
+    "operationType": "mutation",
+    "examples": [
+      {
+        "name": "Example createReversal",
+        "description": "This call will create a refund or a void for a transaction.",
+        "query": "mutation CreateReversal($transaction_id: String!, $amount: Int!, $refund_reason: RefundReasonInput!, $refund_email: String) {\n  createReversal(transaction_id: $transaction_id, amount: $amount, refund_reason: $refund_reason, refund_email: $refund_email) {\n  is_void\n  transaction_id\n  }\n}",
+        "variables": {
+          "transaction_id": "example",
+          "amount": 123,
+          "refund_reason": {
+            "reason_code": "DUPLICATE",
+            "reason_details": "example"
+          },
+          "refund_email": "example"
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "createReversal": {
+                "is_void": true,
+                "transaction_id": "example"
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "operation": "serviceFee",
+    "operationType": "query",
+    "examples": [
+      {
+        "name": "Example serviceFee",
+        "description": "This call will allow you to calculate what the fee amount should be if using SERVICE_FEE for a transaction.",
+        "query": "query ServiceFee($merchant_uid: String!, $amount: Int!, $bank_id: String, $payment_type: String, $is_ach: Boolean, $payment_method_id: String) {\n  serviceFee(merchant_uid: $merchant_uid, amount: $amount, bank_id: $bank_id, payment_type: $payment_type, is_ach: $is_ach, payment_method_id: $payment_method_id) {\n  adjusted_total\n  fee\n  fee_limit_reached\n  total\n  }\n}",
+        "variables": {
+          "merchant_uid": "example",
+          "amount": 123,
+          "bank_id": "example",
+          "payment_type": "example",
+          "is_ach": true,
+          "payment_method_id": "example"
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "serviceFee": {
+                "adjusted_total": 123,
+                "fee": 123,
+                "fee_limit_reached": true,
+                "total": 123
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "operation": "createReceiptEmail",
+    "operationType": "mutation",
+    "examples": [
+      {
+        "name": "Example createReceiptEmail",
+        "description": "This call will send a receipt for a transaction to the email address on file with the payor or an email passed in.",
+        "query": "mutation CreateReceiptEmail($transaction_id: String!, $receipt_description: String, $email: AWSEmail) {\n  createReceiptEmail(transaction_id: $transaction_id, receipt_description: $receipt_description, email: $email)\n}",
+        "variables": {
+          "transaction_id": "example",
+          "receipt_description": "example",
+          "email": "user@example.com"
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "createReceiptEmail": true
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "operation": "updateTransactionInReview",
+    "operationType": "mutation",
+    "examples": [
+      {
+        "name": "Example updateTransactionInReview",
+        "description": "This call can be used by a partner to approve or decline a transcation that is in review for reason POTEENTIAL_DUPLICATE.",
+        "query": "mutation UpdateTransactionInReview($transaction_id: String!, $action: TransactionReviewAction!) {\n  updateTransactionInReview(transaction_id: $transaction_id, action: $action)\n}",
+        "variables": {
+          "transaction_id": "example",
+          "action": "ACCEPT"
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "updateTransactionInReview": true
+            }
+          }
+        }
+      }
+    ]
+  }
+]

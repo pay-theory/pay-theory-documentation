@@ -1,0 +1,160 @@
+[
+  {
+    "operation": "paymentMethodTokens",
+    "operationType": "query",
+    "examples": [
+      {
+        "name": "Example paymentMethodTokens",
+        "description": "Returns payment method tokens.",
+        "query": "query PaymentMethodTokens($query: SqlQuery, $limit: Int, $offset: String, $direction: MoveDirection, $offset_id: String) {\n  paymentMethodTokens(query: $query, limit: $limit, offset: $offset, direction: $direction, offset_id: $offset_id) {\n  items {\n    barcode_id\n    exp_date\n    address_line1\n    address_line2\n    bank_account_type\n  }\n  total_row_count\n  }\n}",
+        "variables": {
+          "query": {
+            "query_list": [
+              {
+                "conjunctive_operator": "AND_NEXT"
+              }
+            ],
+            "sort_list": [
+              {
+                "direction": "ASC"
+              }
+            ]
+          },
+          "limit": 123,
+          "offset": "example",
+          "direction": "BACKWARD",
+          "offset_id": "example"
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "paymentMethodTokens": {
+                "items": [
+                  {
+                    "barcode_id": "example",
+                    "exp_date": "example",
+                    "address_line1": "example",
+                    "address_line2": "example",
+                    "bank_account_type": "example"
+                  }
+                ],
+                "total_row_count": 123
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "operation": "createPaymentMethod",
+    "operationType": "mutation",
+    "examples": [
+      {
+        "name": "Example createPaymentMethod",
+        "description": "This mutation will create a payment method token for a payor. The payment method token can be used to create a payment method for a merchant.",
+        "query": "mutation CreatePaymentMethod($payment_method: PaymentMethodInput!, $merchant_uid: String!, $skip_validation: Boolean) {\n  createPaymentMethod(payment_method: $payment_method, merchant_uid: $merchant_uid, skip_validation: $skip_validation) {\n  barcode_id\n  exp_date\n  address_line1\n  address_line2\n  bank_account_type\n  }\n}",
+        "variables": {
+          "payment_method": {
+            "ach": {
+              "account_number": "example",
+              "account_type": "BUSINESS_CHECKING",
+              "name_on_account": "example",
+              "routing_number": "example"
+            },
+            "canadian_eft": {
+              "account_number": "example",
+              "account_type": "BUSINESS_CHECKING",
+              "institution_number": "example",
+              "name_on_account": "example",
+              "transit_number": "example"
+            },
+            "card": {
+              "card_number": "example",
+              "exp_date": {
+                "month": "example",
+                "year": "example"
+              },
+              "postal_code": "example",
+              "security_code": "example"
+            },
+            "metadata": {
+              "key": "value"
+            },
+            "payor": {
+              "address_line1": "example"
+            },
+            "payor_id": "example"
+          },
+          "merchant_uid": "example",
+          "skip_validation": true
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "createPaymentMethod": {
+                "barcode_id": "example",
+                "exp_date": "example",
+                "address_line1": "example",
+                "address_line2": "example",
+                "bank_account_type": "example"
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "operation": "updatePaymentMethodToDisabled",
+    "operationType": "mutation",
+    "examples": [
+      {
+        "name": "Example updatePaymentMethodToDisabled",
+        "description": "This mutation can be used to disable a payment method token. This will prevent the payment method token from being used to create a payment. Once a payment method token is disabled, it cannot be re-enabled.",
+        "query": "mutation UpdatePaymentMethodToDisabled($merchant_uid: ID!, $payment_method_id: String!) {\n  updatePaymentMethodToDisabled(merchant_uid: $merchant_uid, payment_method_id: $payment_method_id)\n}",
+        "variables": {
+          "merchant_uid": "id_123",
+          "payment_method_id": "example"
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "updatePaymentMethodToDisabled": true
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "operation": "validatePaymentMethodOwnership",
+    "operationType": "query",
+    "examples": [
+      {
+        "name": "Example validatePaymentMethodOwnership",
+        "description": "This mutation validates whether a provided card or bank account number matches a specific payment method.",
+        "query": "query ValidatePaymentMethodOwnership($payment_method_id: String!, $number: String!) {\n  validatePaymentMethodOwnership(payment_method_id: $payment_method_id, number: $number)\n}",
+        "variables": {
+          "payment_method_id": "example",
+          "number": "example"
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "validatePaymentMethodOwnership": true
+            }
+          }
+        }
+      }
+    ]
+  }
+]

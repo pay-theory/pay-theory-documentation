@@ -1,0 +1,10 @@
+{
+  "label": "Paze",
+  "position": 4,
+  "link": {
+    "type": "generated-index",
+    "title": "Paze Integration",
+    "description": "Guide to implementing Paze with Pay Theory",
+    "slug": "/main/online_payments/wallet_transactions/paze"
+  }
+}

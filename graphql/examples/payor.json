@@ -1,0 +1,128 @@
+[
+  {
+    "operation": "payors",
+    "operationType": "query",
+    "examples": [
+      {
+        "name": "Example payors",
+        "description": "Returns payors.",
+        "query": "query Payors($query: SqlQuery, $limit: Int, $offset: String, $direction: MoveDirection, $offset_id: String) {\n  payors(query: $query, limit: $limit, offset: $offset, direction: $direction, offset_id: $offset_id) {\n  items {\n    payor_id\n    address_line1\n    address_line2\n    city\n    country\n  }\n  total_row_count\n  }\n}",
+        "variables": {
+          "query": {
+            "query_list": [
+              {
+                "conjunctive_operator": "AND_NEXT"
+              }
+            ],
+            "sort_list": [
+              {
+                "direction": "ASC"
+              }
+            ]
+          },
+          "limit": 123,
+          "offset": "example",
+          "direction": "BACKWARD",
+          "offset_id": "example"
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "payors": {
+                "items": [
+                  {
+                    "payor_id": "example",
+                    "address_line1": "example",
+                    "address_line2": "example",
+                    "city": "example",
+                    "country": "example"
+                  }
+                ],
+                "total_row_count": 123
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "operation": "createPayor",
+    "operationType": "mutation",
+    "examples": [
+      {
+        "name": "Example createPayor",
+        "description": "Creates payor.",
+        "query": "mutation CreatePayor($input: PayorInput!) {\n  createPayor(input: $input) {\n  payor_id\n  address_line1\n  address_line2\n  city\n  country\n  }\n}",
+        "variables": {
+          "input": {
+            "address_line1": "example",
+            "address_line2": "example",
+            "city": "example",
+            "country": "example",
+            "email": "example",
+            "full_name": "example",
+            "merchant_uid": "example",
+            "metadata": {
+              "key": "value"
+            },
+            "phone": "example",
+            "postal_code": "example",
+            "region": "example"
+          }
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "createPayor": {
+                "payor_id": "example",
+                "address_line1": "example",
+                "address_line2": "example",
+                "city": "example",
+                "country": "example"
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "operation": "updatePayor",
+    "operationType": "mutation",
+    "examples": [
+      {
+        "name": "Example updatePayor",
+        "description": "Updates payor.",
+        "query": "mutation UpdatePayor($payor_id: String!, $payor_data: PayorData!) {\n  updatePayor(payor_id: $payor_id, payor_data: $payor_data)\n}",
+        "variables": {
+          "payor_id": "example",
+          "payor_data": {
+            "address_line1": "example",
+            "address_line2": "example",
+            "city": "example",
+            "country": "example",
+            "email": "example",
+            "full_name": "example",
+            "phone": "example",
+            "postal_code": "example",
+            "region": "example"
+          }
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "updatePayor": true
+            }
+          }
+        }
+      }
+    ]
+  }
+]

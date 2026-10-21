@@ -1,0 +1,95 @@
+---
+sidebar_position: 3
+sidebar_label: 'Level3SummaryData'
+title: "Level3SummaryData"
+---
+
+# Level3DataSummary Class
+
+The `Level3DataSummary` structure in the Pay Theory SDK represents detailed information about a transaction, typically used in business-to-business or government purchases. It encapsulates various aspects of the transaction such as tax information, purchase identifiers, and shipping details.
+
+## Overview
+
+`Level3DataSummary` is a Swift structure that conforms to the `Encodable` protocol. It provides a standardized way to handle Level 3 data across the Pay Theory SDK.
+
+## Properties
+
+| Property | Type | Description |
+|----------|------|-------------|
+| taxAmt | Int? | The tax amount for the transaction in cents. |
+| taxInd | TaxIndicatorType? | The tax indicator type for the transaction. |
+| purchIdfr | String? | A unique identifier for the purchase. |
+| orderNum | String? | The order number associated with the transaction. |
+| discntAmt | Int? | The discount amount applied to the transaction in cents. |
+| frghtAmt | Int? | The freight amount for the transaction in cents. |
+| dutyAmt | Int? | The duty amount for the transaction in cents, if applicable. |
+| destPostalCode | String? | The destination postal code for the shipment. |
+| prodDesc | [String]? | An array of product descriptions related to the transaction. |
+
+## TaxIndicatorType Enum
+
+```swift
+public enum TaxIndicatorType: String, Encodable {
+    case taxAmountProvided = "TAX_AMOUNT_PROVIDED"
+    case notTaxable = "NOT_TAXABLE"
+    case noTaxInfoProvided = "NO_TAX_INFO_PROVIDED"
+}
+```
+
+## Initializer
+
+```swift
+public init(taxAmt: Int? = nil,
+            taxInd: TaxIndicatorType? = nil,
+            purchIdfr: String? = nil,
+            orderNum: String? = nil,
+            discntAmt: Int? = nil,
+            frghtAmt: Int? = nil,
+            dutyAmt: Int? = nil,
+            destPostalCode: String? = nil,
+            prodDesc: [String]? = nil)
+```
+
+Creates a new `Level3DataSummary` instance.
+
+## Usage Example
+
+```swift
+let level3Data = Level3DataSummary(
+    taxAmt: 1050, // $10.50 in cents
+    taxInd: .taxAmountProvided,
+    purchIdfr: "PUR-12345",
+    orderNum: "ORD-6789",
+    discntAmt: 500, // $5.00 in cents
+    frghtAmt: 1500, // $15.00 in cents
+    destPostalCode: "12345",
+    prodDesc: ["Widget A", "Gadget B"]
+)
+
+// Accessing properties
+print(level3Data.taxAmt ?? 0) // Outputs: 1050
+print(level3Data.taxInd?.rawValue ?? "") // Outputs: "TAX_AMOUNT_PROVIDED"
+```
+
+## Integration with Pay Theory SDK
+
+The `Level3DataSummary` structure is typically used when processing card transactions, especially for business-to-business or government purchases:
+
+```swift
+let level3Data = Level3DataSummary(
+    taxAmt: 1050, // $10.50 in cents
+    taxInd: .taxAmountProvided,
+    purchIdfr: "PUR-12345",
+    orderNum: "ORD-6789"
+)
+
+payTheory.transact(
+    amount: 100000, // $1000.00 in cents
+    paymentMethod: .CARD,
+    level3DataSummary: level3Data
+) { response in
+    // Handle transaction response
+}
+```
+
+By providing Level 3 data, you may qualify for better interchange rates and provide more detailed transaction information, which can be beneficial for reporting and reconciliation purposes.

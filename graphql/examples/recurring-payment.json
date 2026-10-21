@@ -1,0 +1,207 @@
+[
+  {
+    "operation": "recurringPayments",
+    "operationType": "query",
+    "examples": [
+      {
+        "name": "Example recurringPayments",
+        "description": "Returns recurring payments.",
+        "query": "query RecurringPayments($query: SqlQuery, $limit: Int, $offset: String, $direction: MoveDirection, $offset_id: String) {\n  recurringPayments(query: $query, limit: $limit, offset: $offset, direction: $direction, offset_id: $offset_id) {\n  items {\n    recurring_id\n    created_date\n    account_code\n    amount_per_payment\n    currency\n  }\n  total_row_count\n  }\n}",
+        "variables": {
+          "query": {
+            "query_list": [
+              {
+                "conjunctive_operator": "AND_NEXT"
+              }
+            ],
+            "sort_list": [
+              {
+                "direction": "ASC"
+              }
+            ]
+          },
+          "limit": 123,
+          "offset": "example",
+          "direction": "BACKWARD",
+          "offset_id": "example"
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "recurringPayments": {
+                "items": [
+                  {
+                    "recurring_id": "example",
+                    "created_date": "2025-01-01T00:00:00Z",
+                    "account_code": "example",
+                    "amount_per_payment": 123,
+                    "currency": "example"
+                  }
+                ],
+                "total_row_count": 123
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "operation": "createRecurringPayment",
+    "operationType": "mutation",
+    "examples": [
+      {
+        "name": "Example createRecurringPayment",
+        "description": "Creates recurring payment.",
+        "query": "mutation CreateRecurringPayment($input: RecurringPaymentInput!) {\n  createRecurringPayment(input: $input) {\n  recurring_id\n  created_date\n  account_code\n  amount_per_payment\n  currency\n  }\n}",
+        "variables": {
+          "input": {
+            "account_code": "example",
+            "amount": 123,
+            "fee_mode": "CUSTOM_FEE",
+            "first_payment_date": "2025-01-01",
+            "merchant_uid": "example",
+            "metadata": {
+              "key": "value"
+            },
+            "mute_all_emails": true,
+            "payment_count": 123,
+            "payment_interval": "ANNUAL",
+            "payment_method_id": "example",
+            "payor": {
+              "address_line1": "example"
+            },
+            "payor_id": "example",
+            "recurring_description": "example",
+            "recurring_name": "example",
+            "reference": "example"
+          }
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "createRecurringPayment": {
+                "recurring_id": "example",
+                "created_date": "2025-01-01T00:00:00Z",
+                "account_code": "example",
+                "amount_per_payment": 123,
+                "currency": "example"
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "operation": "updateRecurringPayment",
+    "operationType": "mutation",
+    "examples": [
+      {
+        "name": "Example updateRecurringPayment",
+        "description": "Updates recurring payment.",
+        "query": "mutation UpdateRecurringPayment($input: UpdateRecurringPaymentInput!) {\n  updateRecurringPayment(input: $input) {\n  recurring_id\n  created_date\n  account_code\n  amount_per_payment\n  currency\n  }\n}",
+        "variables": {
+          "input": {
+            "mute_all_emails": true,
+            "pay_all_missed_payments": true,
+            "payment_method_id": "example",
+            "recurring_id": "example"
+          }
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "updateRecurringPayment": {
+                "recurring_id": "example",
+                "created_date": "2025-01-01T00:00:00Z",
+                "account_code": "example",
+                "amount_per_payment": 123,
+                "currency": "example"
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "operation": "cancelRecurringPayment",
+    "operationType": "mutation",
+    "examples": [
+      {
+        "name": "Example cancelRecurringPayment",
+        "description": "Once a recurring payment is cancelled, it cannot be reactivated.",
+        "query": "mutation CancelRecurringPayment($recurring_id: String!) {\n  cancelRecurringPayment(recurring_id: $recurring_id)\n}",
+        "variables": {
+          "recurring_id": "example"
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "cancelRecurringPayment": true
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "operation": "missedRecurringPaymentData",
+    "operationType": "query",
+    "examples": [
+      {
+        "name": "Example missedRecurringPaymentData",
+        "description": "This call will return details you need to display the proper amount to the customer to catch up on missed payments for a recurring payment.",
+        "query": "query MissedRecurringPaymentData($recurring_id: String!) {\n  missedRecurringPaymentData(recurring_id: $recurring_id) {\n  fee\n  number_of_payments_missed\n  total_amount_owed\n  }\n}",
+        "variables": {
+          "recurring_id": "example"
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "missedRecurringPaymentData": {
+                "fee": 123,
+                "number_of_payments_missed": 123,
+                "total_amount_owed": 123
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "operation": "createRetryForFailedRecurringPayment",
+    "operationType": "mutation",
+    "examples": [
+      {
+        "name": "Example createRetryForFailedRecurringPayment",
+        "description": "This call will allow you to retry a payment for a recurring payment that is in a Failed state. This should be used when the state is INSTRUMENT_FAILURE and the issue with the payment method has been addressed. EX: Payment failed for insufficient funds on the card, but the customer has since made a payment on the balance to resolve the issue.",
+        "query": "mutation CreateRetryForFailedRecurringPayment($recurring_id: String!) {\n  createRetryForFailedRecurringPayment(recurring_id: $recurring_id)\n}",
+        "variables": {
+          "recurring_id": "example"
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "createRetryForFailedRecurringPayment": true
+            }
+          }
+        }
+      }
+    ]
+  }
+]

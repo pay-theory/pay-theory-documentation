@@ -1,0 +1,58 @@
+[
+  {
+    "operation": "updateMetadata",
+    "operationType": "mutation",
+    "examples": [
+      {
+        "name": "Example updateMetadata",
+        "description": "Updates metadata for an item.",
+        "query": "mutation UpdateMetadata($id: String!, $metadata_associate: MetadataAssociate!, $merchant_uid: String!, $metadata: AWSJSON!) {\n  updateMetadata(id: $id, metadata_associate: $metadata_associate, merchant_uid: $merchant_uid, metadata: $metadata)\n}",
+        "variables": {
+          "id": "example",
+          "metadata_associate": "AUTHORIZATION",
+          "merchant_uid": "example",
+          "metadata": {
+            "key": "value"
+          }
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "updateMetadata": true
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "operation": "deleteMetadata",
+    "operationType": "mutation",
+    "examples": [
+      {
+        "name": "Example deleteMetadata",
+        "description": "Deletes metadata for an item.",
+        "query": "mutation DeleteMetadata($id: String!, $metadata_associate: MetadataAssociate!, $merchant_uid: String!, $metadata_keys: [String]!) {\n  deleteMetadata(id: $id, metadata_associate: $metadata_associate, merchant_uid: $merchant_uid, metadata_keys: $metadata_keys)\n}",
+        "variables": {
+          "id": "example",
+          "metadata_associate": "AUTHORIZATION",
+          "merchant_uid": "example",
+          "metadata_keys": [
+            "example"
+          ]
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "deleteMetadata": true
+            }
+          }
+        }
+      }
+    ]
+  }
+]

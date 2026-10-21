@@ -47,13 +47,14 @@ const config = {
           lastVersion: 'current',
           versions: {
             current: {
-              label: '2.23.0 (Labs)',
+              label: 'Live',
               path: '',
+              banner: 'none',
             },
-            '2.22.0': {
-              label: '2.22.0',
-              path: '2.22.0',
-              banner: 'none', // show banner for this version
+            lab: {
+              label: 'Lab (preview)',
+              path: 'lab',
+              banner: 'none',
             },
           },
           //routeBasePath: '/',
@@ -75,7 +76,48 @@ const config = {
       }),
     ],
   ],
+
+  themes: ['@docusaurus/theme-mermaid'],
+
+  markdown: {
+    mermaid: true,
+  },
+
   plugins: [
+    [
+      require.resolve('@lewl/graphql-doc/docusaurus-plugin'),
+      {
+        configPath: './graphql-docs.config.js',
+        allTargets: true,
+        markdownRedirect: {
+          enabled: true,
+          docsBasePath: '/docs/api',
+          llmDocsPath: '/llm-docs',
+          docsSourceFallback: {
+            enabled: true,
+            docsBasePaths: ['/docs'],
+            metadataBaseDir: '.docusaurus/docusaurus-plugin-content-docs',
+            docsPluginIds: ['default'],
+            cacheTtlMs: 2000,
+          },
+        },
+      },
+    ],
+    [
+      '@docusaurus/plugin-client-redirects',
+      {
+        redirects: [
+          {
+            from: '/docs/sdk/javascript/failed_transactions',
+            to: '/docs/main/after_payments/failed_transactions',
+          },
+          {
+            from: '/docs/lab/sdk/javascript/failed_transactions',
+            to: '/docs/lab/main/after_payments/failed_transactions',
+          },
+        ],
+      },
+    ],
     // [
     //   'docusaurus-plugin-typedoc',
     //
@@ -127,6 +169,21 @@ const config = {
       },
       // Replace with your project's social card
       image: 'img/logo.svg',
+      mermaid: {
+        theme: { light: 'default', dark: 'dark' },
+        options: {
+          maxTextSize: 50000,
+          fontFamily:
+            'halyard-text, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+          flowchart: {
+            htmlLabels: true,
+            curve: 'basis',
+            rankSpacing: 60,
+            nodeSpacing: 30,
+            padding: 15,
+          },
+        },
+      },
       algolia: {
         apiKey: 'fa68347e5d228c27e710aa15ccda53de',
         indexName: 'paytheory',

@@ -1,0 +1,139 @@
+[
+  {
+    "operation": "createWebhook",
+    "operationType": "mutation",
+    "examples": [
+      {
+        "name": "Example createWebhook",
+        "description": "To create a webhook, you need to provide the endpoint and a name for the webhook using the following mutation:",
+        "query": "mutation CreateWebhook($endpoint: String!, $name: String!) {\n  createWebhook(endpoint: $endpoint, name: $name)\n}",
+        "variables": {
+          "endpoint": "example",
+          "name": "example"
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "createWebhook": true
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "operation": "webhooks",
+    "operationType": "query",
+    "examples": [
+      {
+        "name": "Example webhooks",
+        "description": "Returns webhooks.",
+        "query": "query Webhooks($endpoint: String) {\n  webhooks(endpoint: $endpoint) {\n  endpoint\n  is_active\n  name\n  }\n}",
+        "variables": {
+          "endpoint": "example"
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "webhooks": {
+                "endpoint": "example",
+                "is_active": true,
+                "name": "example"
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "operation": "updateWebhook",
+    "operationType": "mutation",
+    "examples": [
+      {
+        "name": "Example updateWebhook",
+        "description": "To update a webhook, you can use a mutation like the following:",
+        "query": "mutation UpdateWebhook($endpoint: String!, $name: String, $is_active: Boolean) {\n  updateWebhook(endpoint: $endpoint, name: $name, is_active: $is_active)\n}",
+        "variables": {
+          "endpoint": "example",
+          "name": "example",
+          "is_active": true
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "updateWebhook": true
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "operation": "deleteWebhook",
+    "operationType": "mutation",
+    "examples": [
+      {
+        "name": "Example deleteWebhook",
+        "description": "To delete a webhook, you can use the following mutation:",
+        "query": "mutation DeleteWebhook($endpoint: String!) {\n  deleteWebhook(endpoint: $endpoint)\n}",
+        "variables": {
+          "endpoint": "example"
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "deleteWebhook": true
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "operation": "webhookEvents",
+    "operationType": "query",
+    "examples": [
+      {
+        "name": "Example webhookEvents",
+        "description": "Returns webhook events.",
+        "query": "query WebhookEvents($id: ID, $endpoint: String, $result: WebhookNotificationResult, $last_evaluated_key: String, $limit: Int) {\n  webhookEvents(id: $id, endpoint: $endpoint, result: $result, last_evaluated_key: $last_evaluated_key, limit: $limit) {\n  last_evaluated_key\n  events {\n    id\n    endpoint\n    error\n    event\n    finished_at\n  }\n  }\n}",
+        "variables": {
+          "id": "id_123",
+          "endpoint": "example",
+          "result": "FAILURE",
+          "last_evaluated_key": "example",
+          "limit": 123
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "webhookEvents": {
+                "last_evaluated_key": "example",
+                "events": [
+                  {
+                    "id": "id_123",
+                    "endpoint": "example",
+                    "error": "example",
+                    "event": "example",
+                    "finished_at": "example"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    ]
+  }
+]

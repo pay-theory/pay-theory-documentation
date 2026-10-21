@@ -1,0 +1,152 @@
+[
+  {
+    "operation": "createSandboxAchReturn",
+    "operationType": "mutation",
+    "examples": [
+      {
+        "name": "Example createSandboxAchReturn",
+        "description": "Use this mutation to create an ACH return for a completed ACH transaction.",
+        "query": "mutation CreateSandboxAchReturn($input: CreateSandboxAchReturnInput!) {\n  createSandboxAchReturn(input: $input) {\n  ach_return_transaction_id\n  return_code\n  success\n  }\n}",
+        "variables": {
+          "input": {
+            "transaction_id": "example",
+            "return_code": "R01"
+          }
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "createSandboxAchReturn": {
+                "ach_return_transaction_id": "example",
+                "return_code": "example",
+                "success": true
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "operation": "createSandboxDispute",
+    "operationType": "mutation",
+    "examples": [
+      {
+        "name": "Example createSandboxDispute",
+        "description": "Use this mutation to create a dispute for a card transaction.",
+        "query": "mutation CreateSandboxDispute($input: CreateSandboxDisputeInput!) {\n  createSandboxDispute(input: $input) {\n  dispute_id\n  success\n  transaction_id\n  }\n}",
+        "variables": {
+          "input": {
+            "transaction_id": "example",
+            "reason": "CLERICAL"
+          }
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "createSandboxDispute": {
+                "dispute_id": "example",
+                "success": true,
+                "transaction_id": "example"
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "operation": "createSandboxSettlement",
+    "operationType": "mutation",
+    "examples": [
+      {
+        "name": "Example createSandboxSettlement",
+        "description": "Create a settlement from a prepared sandbox batch.",
+        "query": "mutation CreateSandboxSettlement($input: CreateSandboxSettlementInput!) {\n  createSandboxSettlement(input: $input) {\n  success\n  }\n}",
+        "variables": {
+          "input": {
+            "merchant_uid": "id_123"
+          }
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "createSandboxSettlement": {
+                "success": true
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "operation": "prepareSandboxSettlementBatch",
+    "operationType": "mutation",
+    "examples": [
+      {
+        "name": "Example prepareSandboxSettlementBatch",
+        "description": "Prepare a settlement batch to lock in line items and calculate totals for a merchant.",
+        "query": "mutation PrepareSandboxSettlementBatch($input: PrepareSandboxSettlementBatchInput!) {\n  prepareSandboxSettlementBatch(input: $input) {\n  prep_id\n  ach_return_ids\n  calculated_gross_amount\n  calculated_net_amount\n  debit_ids\n  }\n}",
+        "variables": {
+          "input": {
+            "merchant_uid": "id_123"
+          }
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "prepareSandboxSettlementBatch": {
+                "prep_id": "id_123",
+                "ach_return_ids": [
+                  "example"
+                ],
+                "calculated_gross_amount": 123,
+                "calculated_net_amount": 123,
+                "debit_ids": [
+                  "example"
+                ]
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "operation": "updateSandboxDisputeStatus",
+    "operationType": "mutation",
+    "examples": [
+      {
+        "name": "Example updateSandboxDisputeStatus",
+        "description": "Use this mutation to move a dispute through its lifecycle.",
+        "query": "mutation UpdateSandboxDisputeStatus($input: UpdateSandboxDisputeStatusInput!) {\n  updateSandboxDisputeStatus(input: $input) {\n  success\n  }\n}",
+        "variables": {
+          "input": {
+            "dispute_id": "example",
+            "status": "INQUIRY"
+          }
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "updateSandboxDisputeStatus": {
+                "success": true
+              }
+            }
+          }
+        }
+      }
+    ]
+  }
+]
