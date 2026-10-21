@@ -1,7 +1,7 @@
 # Repo Mechanics: Sidebars, Versioning, Categories, API Pages
 
 Read this when a task touches navigation, the lab version, directory metadata, or the
-auto-generated GraphQL API reference. For everyday prose/style, the SKILL.md is enough.
+auto-generated GraphQL API reference. For wording see voice.md; for page layout see page-style.md. API examples come from `graphql/examples/` (see operation-examples.md).
 
 ## Table of contents
 1. Versioning model (current vs lab)
@@ -33,7 +33,7 @@ versions: {
 - Live docs serve at `/docs/*`; lab docs serve at `/docs/lab/*`.
 - The two trees are **mostly mirrored but not identical** (~370+ files each). Lab can
   carry preview-only pages (e.g. features not yet live) and newer changelog entries.
-- Because of that, mirroring is a deliberate choice — ask the user before syncing a
+- Because of that, mirroring is a deliberate choice. Ask the user before syncing a
   change into lab, and don't overwrite a lab file that intentionally differs.
 
 ## 2. Sidebar files and entry format
@@ -48,7 +48,7 @@ Two files, two formats:
 The named sidebars are `homeSidebar`, `apiSidebar`, `javascriptSidebar`,
 `appleSidebar`, `androidSidebar`.
 
-A doc entry — the `id` is the path under `docs/` with **no** `docs/` prefix and **no**
+A doc entry. The `id` is the path under `docs/` with **no** `docs/` prefix and **no**
 file extension:
 
 ```js
@@ -60,7 +60,7 @@ file extension:
 ```
 
 ```json
-// version-lab-sidebars.json (lab) — same entry, JSON syntax
+// version-lab-sidebars.json (lab): same entry, JSON syntax
 {
   "type": "doc",
   "id": "main/online_payments/custom_fees"
@@ -140,7 +140,7 @@ export const operation = operationsByType["mutation"]["createTransaction"];
 Their frontmatter differs from guides: `id`, `hide_title: true`, `api: true`.
 
 If you're documenting API behavior in a **guide** (not the generated reference), write
-GraphQL examples by hand in ` ```graphql title="Example Mutation" ` blocks — that's the
+GraphQL examples by hand in ` ```graphql title="Example mutation" ` blocks. That's the
 normal pattern for guides like the Custom Fees doc.
 
 ## 5. The GraphQL sidebar merge helper in `sidebars.js`
@@ -148,5 +148,5 @@ normal pattern for guides like the Custom Fees doc.
 The bottom of `sidebars.js` defines `__gqlDocsMerge(items, insert, opts)`, which
 injects the generated GraphQL API sidebar items into a target sidebar
 (`apiSidebar`) programmatically with modes `replace`/`append`/`prepend`/`before`.
-You generally don't edit this by hand — it's driven by the API-doc generation step.
+You generally don't edit this by hand. It's driven by the API-doc generation step.
 Just be aware it exists so you don't manually duplicate API operation entries.

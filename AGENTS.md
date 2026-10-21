@@ -21,3 +21,6 @@ There is no automated test suite configured. Validate changes by running `npm ru
 
 ## Commit & Pull Request Guidelines
 Recent history follows conventional commits with emoji prefixes, e.g., `✨ feat(docs): add ...` or `🐛 fix(docs): ...`. Reviewpad enforces conventional commit titles, requires a linked issue and non-empty PR description, expects a clean linear history (rebase), and flags missing approvals. Include a concise summary and testing notes; add screenshots for visual doc/UI changes.
+
+## Writing and Reviewing Docs
+Before writing, editing or reviewing any doc, read `.claude/skills/pay-theory-docs/SKILL.md` and follow it. It covers voice, page style, GraphQL operation examples (`graphql/examples/`) and the docs PR review workflow, with lint and review-page scripts under `.claude/skills/pay-theory-docs/scripts/`.
