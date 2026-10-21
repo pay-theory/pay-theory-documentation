@@ -135,6 +135,16 @@ const requiredFiles = [
     label: 'agent-index.json',
     fix: 'npm run build (or npm run agent-docs:build after a prior build)',
   },
+  {
+    rel: path.join('llm-docs', 'home.md'),
+    label: 'homepage Markdown (llm-docs/home.md)',
+    fix: 'npm run build (or npm run agent-docs:build after a prior build)',
+  },
+  {
+    rel: path.join('llm-docs', 'schema.graphql'),
+    label: 'public GraphQL schema (llm-docs/schema.graphql)',
+    fix: 'npm run build (postbuild runs scripts/build-public-schema-artifact.js)',
+  },
 ];
 
 for (const { rel, label, fix } of requiredFiles) {
@@ -400,6 +410,138 @@ for (const relPath of linkFiles) {
       `${relPath} has ${unresolved.length} unresolved same-site link(s)`,
       'Check agent-docs.config.js and re-run npm run build',
     );
+  }
+}
+
+// ── 10. Edge manifest can tell real pages from 404s ───────────────────────
+
+if (fs.existsSync(manifestPath)) {
+  const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+  const htmlRoutes = Array.isArray(manifest.htmlRoutes)
+    ? manifest.htmlRoutes
+    : [];
+  if (htmlRoutes.includes('/') && htmlRoutes.length > 100) {
+    pass(`manifest lists ${htmlRoutes.length} HTML routes`);
+  } else {
+    fail(
+      'markdown-routes-manifest.json htmlRoutes is missing or too small; the edge would serve 404s for real pages',
+      'npm run build',
+    );
+  }
+  if (manifest.routes?.['/'] === '/llm-docs/home.md') {
+    pass('manifest maps / to the homepage Markdown');
+  } else {
+    fail('manifest does not map / to /llm-docs/home.md', 'npm run build');
+  }
+}
+
+// ── 11. Homepage metadata, structured data, and no-JS content ─────────────
+
+const homepagePath = buildPath('index.html');
+if (fs.existsSync(homepagePath)) {
+  const html = fs.readFileSync(homepagePath, 'utf8');
+  const hasTag = (label, pattern) => {
+    if (pattern.test(html)) {
+      pass(`homepage has ${label}`);
+    } else {
+      fail(`homepage is missing ${label}`, 'Check docusaurus.config.js');
+    }
+  };
+  hasTag('<html lang>', /<html[^>]* lang="en"/);
+  hasTag('canonical link', /<link[^>]* rel="canonical"/);
+  hasTag('og:type', /<meta[^>]* property="og:type" content="website"/);
+  hasTag(
+    'raster og:image',
+    /<meta[^>]* property="og:image" content="[^"]+\.png"/,
+  );
+  hasTag(
+    'a real meta description',
+    /<meta[^>]* name="description" content="Developer documentation for Pay Theory/,
+  );
+
+  const jsonLdBlocks = [
+    ...html.matchAll(
+      /<script type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/g,
+    ),
+  ];
+  const graph = jsonLdBlocks.flatMap(block => {
+    try {
+      const data = JSON.parse(block[1]);
+      return data['@graph'] || [data];
+    } catch {
+      return [];
+    }
+  });
+  const organization = graph.find(node => node['@type'] === 'Organization');
+  const contactPoints = [organization?.contactPoint || []].flat();
+  if (
+    organization?.name === 'Pay Theory' &&
+    contactPoints.some(point => point.email && point.contactType)
+  ) {
+    pass('homepage JSON-LD has an Organization with a contactPoint');
+  } else {
+    fail(
+      'homepage JSON-LD is missing a Pay Theory Organization with contactPoint',
+      'Check structuredData in docusaurus.config.js',
+    );
+  }
+  if (graph.some(node => node['@type'] === 'WebSite')) {
+    pass('homepage JSON-LD has a WebSite');
+  } else {
+    fail('homepage JSON-LD is missing a WebSite', 'Check structuredData');
+  }
+
+  const headingLevels = [...html.matchAll(/<h([1-6])[\s>]/g)].map(match =>
+    Number(match[1]),
+  );
+  const skips = headingLevels.filter(
+    (level, index) => index > 0 && level > headingLevels[index - 1] + 1,
+  );
+  if (headingLevels[0] === 1 && skips.length === 0) {
+    pass(`homepage headings start at H1 and never skip a level`);
+  } else {
+    fail(
+      `homepage heading levels skip: ${headingLevels.join(',')}`,
+      'Check src/components/HomepageFeatures/index.js',
+    );
+  }
+
+  const text = html
+    .replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/g, ' ')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+  if (text.length >= 500) {
+    pass(`homepage serves ${text.length} characters without JavaScript`);
+  } else {
+    fail(`homepage serves only ${text.length} characters without JavaScript`);
+  }
+}
+
+// ── 12. 404 page points agents at the indexes ─────────────────────────────
+
+const notFoundPath = buildPath('404.html');
+if (fs.existsSync(notFoundPath)) {
+  const notFoundHtml = fs.readFileSync(notFoundPath, 'utf8');
+  if (notFoundHtml.includes('href="/llms.txt"')) {
+    pass('404.html links llms.txt');
+  } else {
+    fail('404.html does not link llms.txt', 'Check src/theme/NotFound/Content');
+  }
+}
+
+// ── 13. Public schema hides internal details ──────────────────────────────
+
+const schemaPath = buildPath('llm-docs', 'schema.graphql');
+if (fs.existsSync(schemaPath)) {
+  const schemaSdl = fs.readFileSync(schemaPath, 'utf8');
+  if (/@aws_|@docIgnore/.test(schemaSdl)) {
+    fail(
+      'llm-docs/schema.graphql exposes @aws_* or @docIgnore',
+      'Check scripts/lib/public-schema.js',
+    );
+  } else {
+    pass('llm-docs/schema.graphql has no internal directives');
   }
 }
 

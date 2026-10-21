@@ -13,7 +13,7 @@
     "start:open": "docusaurus start",
     "prebuild": "npm run graphql:generate",
     "build": "docusaurus build",
-    "postbuild": "node scripts/build-markdown-redirect-artifacts.js && node scripts/build-agent-docs-artifacts.js",
+    "postbuild": "node scripts/build-markdown-redirect-artifacts.js && node scripts/build-public-schema-artifact.js && node scripts/build-agent-docs-artifacts.js",
     "agent-docs:build": "node scripts/build-agent-docs-artifacts.js",
     "agent-docs:check": "node scripts/validate-agent-docs-artifacts.js",
     "swizzle": "docusaurus swizzle",
@@ -27,7 +27,8 @@
     "check-ts": "tsc --noEmit -p ./tsconfig.json",
     "prettier": "npx prettier -c './src/**/*.{ts,tsx,js,jsx}'",
     "prettier:fix": "npx prettier --write './src/**/*.{ts,tsx,js,jsx}'",
-    "prepare": "husky"
+    "prepare": "husky",
+    "test": "node --test tests/*.test.js"
   },
   "dependencies": {
     "@algolia/autocomplete-js": "^1.19.2",
@@ -61,6 +62,7 @@
     "eslint-plugin-prettier": "^5.5.0",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^5.2.0",
+    "graphql": "^16.13.1",
     "husky": "^9.1.7",
     "lint-staged": "^16.1.2",
     "prettier": "^3.6.0",

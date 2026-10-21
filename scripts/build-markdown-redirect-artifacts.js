@@ -3,6 +3,8 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { execFileSync } = require('node:child_process');
 const {
+  HOMEPAGE_MARKDOWN_FILENAME,
+  HOMEPAGE_MARKDOWN_PUBLIC_PATH,
   LLM_DOCS_DIRNAME,
   LLM_DOCS_PUBLIC_PREFIX,
   LLMS_TXT_PATH,
@@ -180,7 +182,10 @@ const buildApiRoutes = () => {
     const relativePath = toPosixPath(path.relative(LLM_DOCS_DIR, filePath));
     if (
       relativePath === LLMS_TXT_PATH.slice(1) ||
-      relativePath.startsWith(`${SOURCE_DOCS_DIRNAME}/`)
+      relativePath === HOMEPAGE_MARKDOWN_FILENAME ||
+      relativePath.startsWith(`${SOURCE_DOCS_DIRNAME}/`) ||
+      // Topic indexes come from build-agent-docs-artifacts.js on re-runs.
+      relativePath.startsWith('indexes/')
     ) {
       continue;
     }
@@ -260,7 +265,18 @@ const buildSourceDocRoutes = () => {
   return routes;
 };
 
-const writeManifest = routes => {
+// Every route Docusaurus rendered to `<route>/index.html`. The edge uses this
+// list to answer unknown routes with a real 404.
+const buildHtmlRoutes = () =>
+  listFiles(BUILD_DIR, filePath => path.basename(filePath) === 'index.html')
+    .map(filePath =>
+      normalizeRoute(
+        toPosixPath(path.relative(BUILD_DIR, path.dirname(filePath))),
+      ),
+    )
+    .sort((left, right) => left.localeCompare(right));
+
+const writeManifest = (routes, htmlRoutes) => {
   fs.mkdirSync(LLM_DOCS_DIR, { recursive: true });
   const sortedRoutes = Object.fromEntries(
     Object.entries(routes).sort(([left], [right]) => left.localeCompare(right)),
@@ -269,6 +285,7 @@ const writeManifest = routes => {
     version: 1,
     generatedBy: 'scripts/build-markdown-redirect-artifacts.js',
     routes: sortedRoutes,
+    htmlRoutes,
   };
   fs.writeFileSync(MANIFEST_PATH, `${JSON.stringify(manifest, null, 2)}\n`);
   return Object.keys(sortedRoutes).length;
@@ -328,7 +345,13 @@ const formatGeneratedSidebar = () => {
 
 const apiRoutes = buildApiRoutes();
 const sourceDocRoutes = buildSourceDocRoutes();
-const routeCount = writeManifest({ ...apiRoutes, ...sourceDocRoutes });
+// build-agent-docs-artifacts.js writes the homepage Markdown from llms.txt.
+const homepageRoutes = { '/': HOMEPAGE_MARKDOWN_PUBLIC_PATH };
+const htmlRoutes = buildHtmlRoutes();
+const routeCount = writeManifest(
+  { ...homepageRoutes, ...apiRoutes, ...sourceDocRoutes },
+  htmlRoutes,
+);
 const sidebarPatched = patchGeneratedSidebarTypes();
 formatGeneratedSidebar();
 
@@ -339,6 +362,7 @@ console.log(
     )}`,
     `[markdown-artifacts] API routes: ${Object.keys(apiRoutes).length}`,
     `[markdown-artifacts] Source doc routes: ${Object.keys(sourceDocRoutes).length}`,
+    `[markdown-artifacts] HTML routes: ${htmlRoutes.length}`,
     sidebarPatched
       ? '[markdown-artifacts] Restored generated sidebar JSDoc annotations'
       : '[markdown-artifacts] Generated sidebar JSDoc annotations already present',
