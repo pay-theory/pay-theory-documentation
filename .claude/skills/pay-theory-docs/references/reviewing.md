@@ -27,6 +27,7 @@ The first covers names, descriptions, variables, error shape, sample data and ch
 
 - **Captured or written?** Filler values (dates of 2025-01-01, amounts of 123), every object sharing one URL, a created object returning an existing ID, error `data` filled with values the request never sent.
 - **Does the data agree?** The filter matches the rows, the created object matches the input, and the read matches the write.
+- **Backend error or schema error?** Check each error example's input against `graphql/api.graphql`. A schema-level error (bad enum value, wrong type, missing required argument) gets dropped.
 - **Is the behavior confirmed?** Anything that looks like a bug, or that you'd want backend to sign off on, goes in the comment as a question.
 - **Stands alone, common path first, one idea each.**
 - **Wording.** Run each name and description through voice.md and write a suggested rewrite where it falls short.

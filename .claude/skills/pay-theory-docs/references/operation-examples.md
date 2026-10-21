@@ -48,6 +48,14 @@ A reader lands on one example, copies it, and runs it. It can't rely on an examp
 - Each optional feature (idempotency key, metadata, a future start date) gets its own example. Don't fold idempotency into the plain saved-payment-method charge.
 - Keep the success path plus the errors people actually hit. Drop edge cases nobody reaches (an unsupported wallet type, a below-minimum amount next to an above-maximum one) and examples that exist only to show a backend quirk.
 
+### Error examples come from Pay Theory, not the schema
+
+Document errors that Pay Theory's backend returns for a request that is valid GraphQL: a declined card, an amount over the merchant maximum, a payor that doesn't exist, a merchant key calling a partner-only operation. Those are the errors an integration hits in production and needs to handle.
+
+Leave out errors the GraphQL layer raises before the request reaches Pay Theory *(lint)*: a value that isn't in an enum, a wrong type, a missing non-null argument, malformed `AWSJSON`, an unknown field. The schema and the developer's tooling already report these, and they never make it out of a sandbox. They usually come back with no `errorType`, a `null` path and messages like "Variable 'metadata' has an invalid value."
+
+Before keeping an error example, check the request against `graphql/api.graphql`. If the input is valid there, the error came from the backend and may be worth documenting.
+
 ### Variables match the query
 
 - Every variable the operation declares appears in `variables`, and nothing extra *(lint)*. A missing required variable fails the request. An unused optional one (`offset_id`, `direction` on a first-page list) is noise. Remove it from the query or send a value.

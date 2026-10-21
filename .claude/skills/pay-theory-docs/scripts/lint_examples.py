@@ -44,6 +44,7 @@ RULES = {
     'malformed':         ('Not a GraphQL response', 'high'),
     'locations':         ('Error has locations', 'low'),
     'no-error-type':     ('Error has no errorType', 'med'),
+    'schema-error':      ('GraphQL schema error', 'high'),
     'lambda':            ('Lambda:Unhandled', 'med'),
     'leak':              ('Backend internals', 'high'),
     'crlf':              ('CRLF or tabs in query', 'low'),
@@ -66,6 +67,7 @@ TEST_DATA = re.compile(
 ENV_HOST = re.compile(r'https?://[^"\s]*(paytheorylab|paytheorystudy|ptbar\.codes|amazonaws\.com|innovate)[^"\s]*', re.I)
 EMAIL = re.compile(r'[\w.+-]+@([\w-]+\.[\w.-]+)')
 UUID = re.compile(r'\b[0-9a-z]{8}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{12}\b', re.I)
+SCHEMA_ERROR = re.compile(r"^(Variable '|Validation error|Field '|Unknown type|Unknown argument|Argument '|Expected type)|coerced Null value|is not a valid|WrongType|FieldUndefined|NonNull", re.I)
 SMALL_WORDS = {'a', 'an', 'the', 'and', 'or', 'of', 'to', 'for', 'in', 'on', 'by', 'with', 'is', 'not', 'no'}
 
 
@@ -135,6 +137,10 @@ def lint_example(file, op, ex, seen_requests):
             add('malformed', 'Error body has no errors array. Recapture through the GraphQL endpoint.')
         else:
             for e in errors:
+                msg = e.get('message') or ''
+                if SCHEMA_ERROR.search(msg) or (e.get('path') is None and not e.get('errorType')):
+                    add('schema-error', f'"{msg}" comes from GraphQL validation, not Pay Theory. Drop it and document backend errors only.')
+                    continue
                 if 'locations' in e:
                     add('locations', 'Strip "locations"; it points at the capture query, not this one.')
                 if not e.get('errorType'):
