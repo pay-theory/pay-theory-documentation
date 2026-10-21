@@ -108,7 +108,7 @@ module.exports = {
         enabled: true,
         outputDir: './static/llm-docs',
         baseUrl: 'https://docs.paytheory.com',
-        apiName: 'PayTheory',
+        apiName: 'Pay Theory',
       },
     },
     {
@@ -133,7 +133,7 @@ module.exports = {
         enabled: true,
         outputDir: `./static/llm-docs/${labVersion}`,
         baseUrl: 'https://docs.paytheory.com',
-        apiName: 'PayTheory Lab',
+        apiName: 'Pay Theory Lab',
       },
       agentSkill: {
         // Keep the lab skill package/name distinct from main.

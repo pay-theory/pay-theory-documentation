@@ -17,7 +17,7 @@ This repo is a Docusaurus 3 documentation site. Primary content lives in `docs/`
 ESLint + Prettier are required; Husky/lint-staged run formatting and linting on staged files. Use 2-space indentation (Prettier defaults). Docs use MDX for guides and `.md` for API reference. Keep file and directory names lowercase with underscores (e.g., `getting_started/quickstart.mdx`), and include a `_category_.json` in each docs folder. Use H1 only for the page title, and specify languages on code fences (e.g., ` ```graphql `).
 
 ## Testing Guidelines
-There is no automated test suite configured. Validate changes by running `npm run lint`, `npm run check-ts`, and `npm run build`. For docs-heavy edits, also check rendering via `npm start`.
+`npm test` runs the `node:test` suites in `tests/` (edge routing, public GraphQL schema, llms.txt). Validate changes by running `npm test`, `npm run lint`, `npm run check-ts`, `npm run build`, and `npm run agent-docs:check`. After a deploy, run `bash shell/verify_agentic.sh <docs URL>`. For docs-heavy edits, also check rendering via `npm start`.
 
 ## Commit & Pull Request Guidelines
 Recent history follows conventional commits with emoji prefixes, e.g., `✨ feat(docs): add ...` or `🐛 fix(docs): ...`. Reviewpad enforces conventional commit titles, requires a linked issue and non-empty PR description, expects a clean linear history (rebase), and flags missing approvals. Include a concise summary and testing notes; add screenshots for visual doc/UI changes.

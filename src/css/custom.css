@@ -1320,12 +1320,12 @@ code{
   transition: var(--ifm-transition-fast);
 }
 
-.home .col--3 .row h3{
+.home .col--3 .row h3, .home .col--3 .row .col > h2{
   font-family: 'halyard-display';
   margin: 0;
   font-size: 2rem !important;
   font-weight: var(--ifm-font-weight-medium) !important;
-  line-height: 2.25rem;
+  line-height: 2.25rem !important;
   padding-bottom: 8px;
 }
 .home .col--3 .row a , .home .col--3 .row p{
@@ -1364,7 +1364,8 @@ code{
   gap: 20px;
 }
 
-.home .features h4 {
+.home .features h3 {
+  font-family: var(--ifm-font-family-base) !important;
   margin-top: 0;
   margin-bottom: 0;
   font-size: 1.125rem !important;
@@ -1491,7 +1492,7 @@ code{
   .section-header h2{
     font-size: 3rem !important;
   }
-  .home .col--3 .row h3{
+  .home .col--3 .row h3, .home .col--3 .row .col > h2{
     font-size: 1.75rem !important;
     padding-bottom: 0;
   }
@@ -1546,7 +1547,7 @@ code{
     font-size: 2.5rem !important;
     line-height: 2.5rem !important;
   }
-  .home .col--3 .row h3{
+  .home .col--3 .row h3, .home .col--3 .row .col > h2{
     font-size: 1.5rem !important;
   }
   .hero .button-row .button{
