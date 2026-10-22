@@ -11,14 +11,9 @@ Pay Theory publishes a TypeScript declaration file, `paytheory-sdk.d.ts`, next t
 ***
 ## Download the declaration file
 
-The file is on the same host as your SDK Import URL. Replace `index.js` with `paytheory-sdk.d.ts`:
+Download it from your SDK host. Take the SDK Import URL from the settings tab of the Pay Theory portal and replace `index.js` with `paytheory-sdk.d.ts`. For example, `https://pt.sdk.paytheory.com/index.js` becomes `https://pt.sdk.paytheory.com/paytheory-sdk.d.ts`.
 
-| File | URL |
-|------|-----|
-| SDK | `https://pt.sdk.paytheory.com/index.js` |
-| Declarations | `https://pt.sdk.paytheory.com/paytheory-sdk.d.ts` |
-
-Your SDK Import URL is in the Pay Theory portal under the settings tab. Save the file in your project:
+Save the file in your project. Use your own SDK host in place of `pt.sdk.paytheory.com`:
 
 ```bash title="terminal"
 curl --create-dirs -o src/types/paytheory-sdk.d.ts https://pt.sdk.paytheory.com/paytheory-sdk.d.ts
