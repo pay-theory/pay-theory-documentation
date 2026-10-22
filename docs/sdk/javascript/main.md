@@ -90,4 +90,4 @@ if (result.type === 'SUCCESS') {
 }
 ```
 
-With `idempotencyKey`, a retry can't charge the payor twice. Pay Theory creates one payment per key. See [Idempotency](../../main/online_payments/idempotency).
+With `idempotencyKey`, a retry can't charge the payor twice. Pay Theory returns the first response for a repeated key. See [Idempotency](../../main/online_payments/idempotency).

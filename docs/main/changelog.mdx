@@ -10,7 +10,7 @@ Additions and updates to Pay Theory's API and SDKs
 
 ## October 22, 2026
 #### Added to JS SDK
-* `transact` accepts `idempotencyKey`. Pay Theory rejects a second payment with the same key, so a retry or double click can't charge twice. See [Idempotency](online_payments/idempotency).
+* `transact` accepts `idempotencyKey`. A retry with the same key returns the first response instead of charging twice. See [Idempotency](online_payments/idempotency).
 * Each hosted field's state in `stateObserver` has `iframeLoaded`. It turns `true` once that field's iframe loads, so you can show fields before the SDK is ready.
 * `tokenizePaymentMethod` with `expandedResponse: true` returns `FAILED` with `failure_code` and `failure_text` when the processor rejects the payment method. Before, this was an `ERROR` string. Without `expandedResponse`, nothing changes.
 * The SDK publishes TypeScript declarations, `paytheory-sdk.d.ts`, on the same host as the SDK. See [TypeScript](../sdk/javascript/typescript).
@@ -19,7 +19,7 @@ Additions and updates to Pay Theory's API and SDKs
 * The confirmation flow: `transact` with `confirmation: true`, `confirm`, `cancel`, `tokenizeObserver` and `captureObserver`. To show the service fee before charging, read it from `stateObserver` and pass it as `fee`. See [Deprecations](../sdk/javascript/deprecated#confirmation-flow).
 
 #### Added to API
-* `createTransaction` and `createAuthorization` accept `idempotency_key`. Reusing a key for the same merchant and operation returns the original payment's ID instead of creating a second payment.
+* `createTransaction` and `createAuthorization` accept `idempotency_key`. Retrying the same request with the same key returns the first response, including a decline, instead of creating a second payment. A changed request returns `IDEMPOTENCY_KEY_PAYLOAD_MISMATCH`.
 * The `idempotencyLookup` query returns a key's status (`IN_PROGRESS` or `COMPLETED`), the linked transaction or authorization, and when the record expires.
 * Merchants have `max_transaction_amount`, one limit in cents for card and ACH payments, including service fees. Pay Theory rejects a payment above it before processing, and marks a recurring payment above it `MERCHANT_MAX_AMOUNT_EXCEEDED`.
 

@@ -105,7 +105,7 @@ if (result.type === 'SUCCESS' && 'transaction_id' in result.body) {
 | `TransactResult` | Every response `transact` can return. |
 | `TokenizeProps` | Input to [`tokenizePaymentMethod`](functions#tokenizepaymentmethod). |
 | `TokenizeResult` | Every response `tokenizePaymentMethod` can return. |
-| `StateObject` | Payload of [`stateObserver`](event_listeners#stateobserver). Each mounted field is a `FieldState`. |
+| `StateObject` | Payload of [`stateObserver`](event_listeners#stateobserver). Has a `FieldState` for every field key, mounted or not. |
 | `Transaction` | Full transaction returned with `expandedResponse: true`. |
 | `PaymentMethod` | Full payment method returned with `expandedResponse: true`. |
 | `PayTheoryButtonInput` | Input to [`button`](payment_button). |

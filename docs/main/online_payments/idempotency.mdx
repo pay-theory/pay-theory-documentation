@@ -6,7 +6,7 @@ title: 'Idempotency'
 
 # Idempotency
 
-An idempotency key lets you retry a payment without charging twice. Send a key with the payment, and Pay Theory creates at most one transaction or authorization for that key. If you're not sure the first request went through, look the key up and get the original payment back.
+An idempotency key makes a payment safe to retry. Send a key with a payment, and Pay Theory processes it once. If the same request arrives again with the same key, Pay Theory returns the first response instead of charging again, whether that was a transaction, a decline or an error.
 
 Keys work the same way from the JS SDK and the API.
 
@@ -20,7 +20,7 @@ Some failures leave you unsure whether a payment happened:
 - The payor's connection drops before your page gets the response.
 - The payor clicks Pay twice, or your code retries automatically.
 
-Without a key, a retry creates a second payment. With a key, Pay Theory rejects the retry and you can look up the payment the first request created.
+Without a key, a retry creates a second payment. With a key, the retry gets back the result of the first payment.
 
 ***
 
@@ -28,19 +28,22 @@ Without a key, a retry creates a second payment. With a key, Pay Theory rejects 
 
 Pay Theory tracks each key per merchant and operation. The operation is `CREATE_TRANSACTION` or `CREATE_AUTHORIZATION`, so one merchant can use the same key once for a transaction and once for an authorization. Two merchants never share a key's record.
 
-| Stage | What Pay Theory does |
-|-------|----------------------|
-| First request | Reserves the key with status `IN_PROGRESS`, then runs the payment. |
-| Payment created | Sets the status to `COMPLETED` and links the transaction or authorization. This happens for a declined payment too. |
-| Request with a used key | Returns the original payment's ID instead of creating a new one. |
-| 7 days after the first request | Deletes the record. A lookup returns `null`, and the key can create a new payment. |
+| Request | What Pay Theory returns |
+|---------|-------------------------|
+| First request with a key | Runs the payment and saves the response. |
+| Same request, same key | The saved response from the first request. No new payment is created. |
+| Changed request, same key | An `IDEMPOTENCY_KEY_PAYLOAD_MISMATCH` error with the original `transaction_id` or `authorization_id`. |
+| Same key while the first request is still running | An `IDEMPOTENCY_KEY_ALREADY_USED` error. |
+| Any request 7 days after the first | Pay Theory has deleted the record, so the key creates a new payment. |
+
+A changed request is any difference in what you send, such as the amount, payment method, payor, metadata or reference.
 
 A key is any string that isn't empty or only spaces. Pay Theory trims spaces from the ends. Use one key per payment attempt, such as your order ID, and send the same key on every retry of that attempt.
 
-A declined payment uses up its key. To retry a declined card, or to let the payor try another card, send a new key.
+A declined payment is a saved response too. Retrying it with the same key returns the same decline. To let the payor try another card, send a new key.
 
-:::note Same key, different request
-If you reuse a key with any change to the request, such as a different amount, payment method, payor or metadata, Pay Theory rejects it with `IDEMPOTENCY_KEY_PAYLOAD_MISMATCH`. For 7 days, a key belongs to the first request that used it.
+:::note Retry from where you started
+The JS SDK and the API fingerprint requests differently. A key first used from the SDK returns `IDEMPOTENCY_KEY_PAYLOAD_MISMATCH` when you send it from the API, and the reverse. Retry from the same place you made the first request.
 :::
 
 ***
@@ -91,47 +94,37 @@ Store the key with your order before you send the request. If the request fails,
 
 ***
 
-## 2. Handle a used key
+## 2. Retry with the same key
 
-When a key has already created a transaction, Pay Theory doesn't create another one.
+Send the same request with the same key. You get the first response back.
 
-The API returns a `CONFLICT` error, and its `data` has the `transaction_id` of the original transaction:
+From the API, a retried `createTransaction` or `createAuthorization` returns the original transaction or authorization, exactly as the first request did.
 
-```json title="Response"
-{
-  "data": null,
-  "errors": [
-    {
-      "errorType": "CONFLICT",
-      "data": {
-        "transaction_id": "ptl_txn_5mos8Z6NFWAWQRac7BAQFX"
-      }
-    }
-  ]
-}
+From the JS SDK, `transact` resolves to the original `SUCCESS`, `FAILED` or `ERROR` response. After a page reload, the payor needs to enter the same card or bank details, and you need to pass the same amount and payor details. Otherwise the retry counts as a changed request.
+
+If the request changed, or the first request is still running, `transact` returns an `ERROR`. The message includes the error code and the original `transaction_id`:
+
+```text title="Error message"
+SOCKET_ERROR: CONFLICT: Idempotency key was already used with a different request payload., {'error_code': 'IDEMPOTENCY_KEY_PAYLOAD_MISMATCH', 'idempotency_status': 'COMPLETED', 'operation': 'CREATE_TRANSACTION', 'transaction_id': 'ptl_txn_5mos8Z6NFWAWQRac7BAQFX', ...}
 ```
-
-A retried `createAuthorization` returns the original authorization instead of an error.
-
-The JS SDK returns an `ERROR` response. Its message includes the error code and the original `transaction_id`:
 
 ```javascript title="javascript"
 if (result.type === 'ERROR') {
-  if (result.error.includes('IDEMPOTENCY_KEY_ALREADY_USED')) {
-    // This attempt already ran. Look up the payment instead of charging again.
-  } else if (result.error.includes('IDEMPOTENCY_KEY_PAYLOAD_MISMATCH')) {
-    // The key was used for a different request. Send a new key.
+  if (result.error.includes('IDEMPOTENCY_KEY_PAYLOAD_MISMATCH')) {
+    // This key belongs to a different request. Send a new key for a new payment.
+  } else if (result.error.includes('IDEMPOTENCY_KEY_ALREADY_USED')) {
+    // The first attempt is still running. Look the key up before you retry.
   }
 }
 ```
 
-In both cases the payor isn't charged again. Use the original payment, or look it up as in the next step.
+The API returns the same conflicts as a `CONFLICT` error.
 
 ***
 
 ## 3. Look up a key after a timeout
 
-If you never got a response, call [`idempotencyLookup`](../../api/idempotency/idempotency-lookup) with the merchant, the operation and the key. It's an API query, so a JS SDK integration calls it from your server.
+To check on a payment without retrying it, call [`idempotencyLookup`](../../api/idempotency/idempotency-lookup) with the merchant, the operation and the key. It's an API query, so a JS SDK integration calls it from your server.
 
 ```graphql title="Example query"
 query IdempotencyLookup(
@@ -177,12 +170,10 @@ query IdempotencyLookup(
 
 To get the whole transaction or authorization in the same request, add the `transaction` or `authorization` field to the query.
 
-Act on the result:
-
 | Result | What it means | What to do |
 |--------|---------------|------------|
-| `COMPLETED` | The payment was created. It may have succeeded or been declined. | Use `transaction_id` or `authorization_id` and check its status. Retry a decline with a new key. |
-| `IN_PROGRESS` | Pay Theory started the payment and hasn't finished it. | Look the key up again after a short wait. The key stays reserved until `expires_at`, so a retry with the same key can't create a second payment. |
+| `COMPLETED` | The payment ran. It may have succeeded or been declined. | Use `transaction_id` or `authorization_id` and check its status. A retry with the same key returns the same result. |
+| `IN_PROGRESS` | Pay Theory started the payment and hasn't saved a response yet. | Look the key up again after a short wait. Until it completes, a retry returns `IDEMPOTENCY_KEY_ALREADY_USED`. |
 | `null` | Pay Theory has no record of the key, or the record expired after 7 days. | If the request was in the last 7 days, no payment was created. Retry with the same key. |
 
 ***
@@ -195,16 +186,14 @@ sequenceDiagram
     participant PT as Pay Theory
     App->>PT: createTransaction (idempotency_key: order-1042)
     PT--xApp: Timeout, no response
-    App->>PT: idempotencyLookup (order-1042)
-    alt COMPLETED
-        PT-->>App: transaction_id
-        Note over App: Use the original transaction
-    else IN_PROGRESS
-        PT-->>App: Still running
-        Note over App: Look up again after a short wait
-    else null
-        PT-->>App: No record
-        App->>PT: createTransaction (same key)
+    App->>PT: createTransaction (same request, same key)
+    alt First request finished
+        PT-->>App: The original response
+        Note over App: Use it. No second payment.
+    else First request still running
+        PT-->>App: IDEMPOTENCY_KEY_ALREADY_USED
+        App->>PT: idempotencyLookup (order-1042)
+        Note over App: Look up again until COMPLETED
     end
 ```
 

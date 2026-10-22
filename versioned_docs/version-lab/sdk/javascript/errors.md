@@ -33,5 +33,5 @@ Errors from Pay Theory's servers start with `SOCKET_ERROR`, followed by the serv
 | NOT_READY | The SDK isn't connected yet. Wait for [`readyObserver`](event_listeners#readyobserver). |
 | NOT_VALID | The transacting fields aren't valid. The payor needs to fix them. |
 | SESSION_EXPIRED | The SDK's connection session expired. |
-| SOCKET_ERROR | Pay Theory's servers returned an error, such as a reused idempotency key or a processor rejection. |
+| SOCKET_ERROR | Pay Theory's servers returned an error, such as an idempotency key reused with a different request, or a processor rejection. |
 | TRANSACTING_FIELD_ERROR | The SDK found more than one set of transacting fields visible on the page, or none. |
