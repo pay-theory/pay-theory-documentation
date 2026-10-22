@@ -203,6 +203,18 @@ const stateHandler = state => {
 window.paytheory.stateObserver(stateHandler);
 ```
 
+### Show fields as they load
+
+Each field's state also has `iframeLoaded`. It's `false` while the field loads and turns `true` once that field's iframe has loaded. Use it to swap a placeholder for the field as soon as it renders, instead of waiting for the `readyObserver`.
+
+```jsx title="src/paytheory.js"
+window.paytheory.stateObserver(state => {
+  const loaded = state['card-number'].iframeLoaded;
+  document.getElementById('card-number-skeleton').hidden = loaded;
+  document.getElementById('pay-theory-credit-card-number').hidden = !loaded;
+});
+```
+
 :::info Additional stateObserver functionality
 For more details on stateObserver functionality
 

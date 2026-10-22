@@ -56,6 +56,7 @@ These are the parameters that you can pass into the tokenizePaymentMethod functi
 | billingInfo       |object             |see the Billing Info object below for details. This is required if you are not using the zip hosted field.|
 | metadata          |object             |An object that will be stored with the token and can be used to track the token.|
 |  payorId          |string             |<ul><li>The Pay Theory payor ID to use for the payment. Allows for user to manage identities.</li><li>This cannot be used if also using the payorInfo parameter.</li></ul>|
+| expandedResponse  |boolean            |Defaults to `false`. With `true`, a successful response returns the full payment method, and a processor rejection returns `FAILED` with the reason.|
 
 The function returns a Promise that will contain an object with a key of `type`. You can expect the following values for type.
 
@@ -63,6 +64,7 @@ The function returns a Promise that will contain an object with a key of `type`.
 |Type               |Description                                            |
 --------------------|-------------------------------------------------------|
 | TOKENIZED         |The payment method was tokenized successfully and the token will be in the body key.|
+| FAILED            |The processor rejected the payment method. The reason is in the body key. Only returned with `expandedResponse: true`.|
 |  ERROR            |The transact call had an error while processing and the error details will be in the error key.|
 
 After the payment is successful you can see the token has been generated and this is how the body looks.
@@ -82,12 +84,18 @@ This is the value of the body key in the response if the type is TOKENIZED:
 |  metadata            |JSON               | The metadata that was passed in when tokenizing the payment method.|
 
 
-### Error Response
-This is the value of the error key in the response if the type is ERROR:
+### Failed response
+This is the value of the body key in the response if the type is FAILED:
 
 |Key                   |type               |description                                               |
------------------------|-------------------|----------------------------------------------------------|
-| message              |string             |The error message.|
+|-----------------------|-------------------|----------------------------------------------------------|
+| failure_code         |string             |The failure code. See [Failure codes](../../after_payments/failed_transactions).|
+| failure_text         |string             |The failure message.|
+
+Without `expandedResponse`, the same rejection comes back as an `ERROR` that starts with `SOCKET_ERROR: Token validation failed:`.
+
+### Error Response
+If the type is ERROR, the response has an `error` key with a string. The string starts with one of the [SDK error codes](../../../sdk/javascript/errors).
 
 ***
 

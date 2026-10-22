@@ -68,7 +68,7 @@ The link below provides list of all event listeners available in the below link.
 :::
 
 ```jsx title="javascript"
-paytheory.errorobserver(error => {
+paytheory.errorObserver(error => {
   //Logic to respond to errors
 })
 ```
@@ -110,7 +110,7 @@ let result = await paytheory.transact(TRANSACTING_PARAMETERS)
 
 if (result.type === "SUCCESS") {
 // Logic to respond to successful transaction
-} else if (result.type === "FAILURE") {
+} else if (result.type === "FAILED") {
 // Logic to respond to failed transaction
 } else if (result.type === "ERROR") {
 // Logic to respond to error
