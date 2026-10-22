@@ -144,6 +144,10 @@ module.exports = {
           id: 'main/online_payments/custom_fees',
         },
         {
+          type: 'doc',
+          id: 'main/online_payments/idempotency',
+        },
+        {
           type: 'category',
           label: 'Tokenizing Payments',
           items: [
@@ -511,6 +515,10 @@ module.exports = {
     {
       type: 'doc',
       id: 'sdk/javascript/main',
+    },
+    {
+      type: 'doc',
+      id: 'sdk/javascript/typescript',
     },
     {
       type: 'doc',
