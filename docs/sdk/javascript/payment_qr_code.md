@@ -6,123 +6,131 @@ title: "Payment QR Code"
 
 # Payment QR Code
 
-This is a function initializes a payment session based on the `checkoutDetails` you pass in. It then generates a QR Code that can be scanned to open a checkout page and accept a payment.
+`qrCode` starts a payment session from the `checkoutDetails` you pass and mounts a QR code in the `pay-theory-checkout-qr` [hosted field](hosted_fields#qr-code-field). When the payor scans it, a Pay Theory checkout page opens on their phone where they pick a payment method and pay.
 
 ***
 ## qrCode
 
 ```javascript
-//Amount passed in is in cents
+// Amount in cents
 const AMOUNT = 1000
 
 const PAYMENT_METADATA = {
-  "student-name": "Jane Doe"
+  "student-name": "Pat Theodore"
 };
 
-// Parameters that you will pass in to configure the checkout page that opens when the qrCode is scanned.
+// Configures the checkout page that opens when the payor scans the code
 const CHECKOUT_DETAILS = {
-        amount: AMOUNT,
-        paymentName: "School Technology Fees",
-        paymentDescription: "Technology Fee for the 2019-2020 school year",
-        requirePhone: true,
-        callToAction: paytheory.DONATE,
-        acceptedPaymentMethods: paytheory.CARD_ONLY,
-        payorId: "pt_pay_XXXXXXXXX",
-        metadata: PAYMENT_METADATA,
-        feeMode: paytheory.MERCHANT_FEE,
-        accountCode: "code-123456789",
-        invoiceId: "pt_inv_XXXXXXXXX",
-        recurringId: "pt_rec_XXXXXXXXX",
+  amount: AMOUNT,
+  paymentName: "School Technology Fees",
+  paymentDescription: "Technology fee for the 2026-2027 school year",
+  requirePhone: true,
+  callToAction: paytheory.DONATE,
+  acceptedPaymentMethods: paytheory.ONLY_CARD,
+  payorId: "ptl_pay_2NM2STwd3pWznLo1hGnUSc",
+  metadata: PAYMENT_METADATA,
+  feeMode: paytheory.MERCHANT_FEE,
+  accountCode: "code-123456789",
+  invoiceId: "ptl_inv_2O0yTY3k5AIyDc8NQ2SvhC",
 }
 
 const OPTIONS = {
-  apiKey: "PT_API_KEY",
+  apiKey: "YOUR_API_KEY",
   checkoutDetails: CHECKOUT_DETAILS,
   size: 150,
   onReady: () => {},
-  onError: () => {},
-  onSuccess: () => {}
+  onError: error => {},
+  onSuccess: result => {}
 }
 
 paytheory.qrCode(OPTIONS)
 ```
 
-These are the values that you can pass into the `qrCode` function to customize the payment session.
-You pass a single object into the function with the following keys.
+Pass `qrCode` one object with these keys.
 
-**Required Values**
+**Required**
 
-| Key             | type   | description                                                                                               |
-|-----------------|--------|-----------------------------------------------------------------------------------------------------------|
-| apiKey          | String | The API key for your Pay Theory account. You can find this in your Pay Theory Portal.                     |
-| checkoutDetails | Object | The details for the checkout page that opens when the qrCode is scanned. Details [Below](#checkout-details). |
+| Key | type | description |
+|-----|------|-------------|
+| apiKey | String | Your Pay Theory API Key, from the Pay Theory portal. |
+| checkoutDetails | [Checkout details](#checkout-details) | What the checkout page charges and shows. |
 
-**Optional Values**
+**Optional**
 
-| Key              | type        | description                                                                                                             |
-|------------------|-------------|-------------------------------------------------------------------------------------------------------------------------|
-| size             | Int         | This is the size, height and width, of the qrCode in pixels. Defaults to `128` and must be above `128` and below `300`. |
-| onReady          | Function    | A function that will be called when the qrCode is ready to be displayed.                                                |
-| onError          | Function    | A function that will be called when an error occurs. It is passed an error string.                                      |
-| onSuccess        | Function    | A function that will be called when the payment is successful. It is passed a [success](#success-response) response.    |
+| Key | type | description |
+|-----|------|-------------|
+| size | Int | Width and height of the QR code, in pixels. Defaults to `128`. Values below `128` become `128` and values above `300` become `300`. |
+| onReady | Function | Called with `true` when the QR code is ready to scan. |
+| onError | Function | Called with an error string. The string starts with one of the [error codes](errors). |
+| onSuccess | Function | Called with the [success response](#success-response) when the payment succeeds. |
 
-***
-## Success Response
-
-| Key               | type     | description                                                       |
-|-------------------|----------|-------------------------------------------------------------------|
-| last_four         | String   | The last four digits of the card number or account number         |
-| amount            | Int      | The amount of the transaction **(service fee is included)**       |
-| service_fee       | Int      | The service fee of the transaction                                |
-| receipt_number    | String   | The unique transaction_id assigned to a transaction by Pay Theory                                     |
-| brand             | String   | The brand of the card                                             |
-| created_at        | String   | The date and time the transaction was created                     |
-| state             | String   | The status of the transaction                                     |
-| metadata          | JSON     | The metadata of the transaction                                   |
-| payor_id          | String   | The Pay Theory id for the payor that was used for the transaction |
-| payment_method_id | String   | The Pay Theory id for the payment method token                    |
+`qrCode` returns a Promise. If a parameter is invalid, it resolves to `false` and sends the error to `onError`.
 
 ***
-## Checkout Details
+## Checkout details
 
-These are the values that you can pass into the `checkoutDetails` object to customize the checkout page that opens when the qrCode is scanned.
+`qrCode` takes the same `checkoutDetails` as [`button`](payment_button#checkout-details).
 
-**Required Values**
+**Required**
 
-| Key         | type   | description                                                                                                                              |
-|-------------|--------|------------------------------------------------------------------------------------------------------------------------------------------|
-| amount      | Int    | The amount of the payment in cents.                                                                                                      |
-| paymentName | String | The name of the payment that will be displayed on the checkout page. Will also be passed in to the `reference` field of the transaction. |
+| Key | type | description |
+|-----|------|-------------|
+| amount | Int | Amount of the payment, in cents. |
+| paymentName | String | Name shown on the checkout page. It's also saved as the transaction's `reference`. |
 
-**Optional Values**
+**Optional**
 
-| Key                    | type    | description                                                                                                                                                                                                                              |
-|------------------------|---------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| paymentDescription     | String  | The description of the payment that will be displayed on the checkout page.                                                                                                                                                              |
-| requirePhone           | Boolean | Pass `true` to require the user to enter a phone number on the checkout page.                                                                                                                                                            |
-| callToAction           | String  | The call to action that will be displayed on the payment button. Defaults to `paytheory.PAY`. All Options [Here](#call-to-action)                                                                                                        |
-| acceptedPaymentMethods | String  | The payment methods that will be accepted for the payment. Defaults to `paytheory.ALL`.   All Options [Here](#accepted-payment-methods)                                                                                                  |
-| payorId                | String  | The Pay Theory id for the payor that will be used for the payment. If this is not passed in a new payor will be created.                                                                                                                 |
-| metadata               | JSON    | The metadata that will be passed in to the transaction.                                                                                                                                                                                  |
-| feeMode                | String  | The fee mode that will be used for the payment. Defaults to `paytheory.MERCHANT_FEE`. Constants are available from the SDK. Available options are `paytheory.SERVICE_FEE` and `paytheory.MERCHANT_FEE`                                   |
-| accountCode            | String  | The account code that will be used for the payment.                                                                                                                                                                                      |
-| invoiceId              | String  | The Pay Theory invoice ID to use for the payment. Allows for user to assign a payment to an invoice.                                                                                                                                     |
-| recurringId            | String  | The Pay Theory recurring ID to use for the payment. Allows for user to assign a payment to a recurring payment. If you pass in a recurring ID, the transactions amount must be an interval of the recurring payments amount per payment. |
-
-***
-## Call To Action
-
-- `DONATE` - The call to action will be `Donate`. Constant is available from the SDK as `paytheory.DONATE`.
-- `PAY` - The call to action will be `Pay`. Constant is available from the SDK as `paytheory.PAY`.
-- `BOOK` - The call to action will be `Book`. Constant is available from the SDK as `paytheory.BOOK`.
+| Key | type | description |
+|-----|------|-------------|
+| paymentDescription | String | Description shown on the checkout page. |
+| requirePhone | Boolean | Pass `true` to make the payor enter a phone number. |
+| callToAction | String | Call to action for the checkout. Defaults to `paytheory.PAY`. See [call to action](#call-to-action). |
+| acceptedPaymentMethods | String | Payment methods the page offers. Defaults to `paytheory.ALL`. See [accepted payment methods](#accepted-payment-methods). |
+| payorId | String | ID of an existing payor. If you leave it out, Pay Theory creates a new payor. |
+| metadata | Object | Key-value data stored with the transaction. |
+| feeMode | String | `paytheory.MERCHANT_FEE` (default) or `paytheory.SERVICE_FEE`. |
+| accountCode | String | Code for tracking a payment or group of payments. |
+| invoiceId | String | ID of the invoice this payment pays. Don't combine with `recurringId`. |
+| recurringId | String | ID of the recurring payment this payment pays. The amount must be a multiple of the recurring amount per payment. |
+| healthExpenseType | String | Healthcare category: `HEALTHCARE`, `RX`, `VISION`, `CLINICAL`, `COPAY`, `DENTAL` or `TRANSIT`. |
+| level3DataSummary | [Level 3 data summary](functions#level-3-data-summary-object) | Level 3 summary data for the transaction. |
 
 ***
-## Accepted Payment Methods
+## Success response
 
-- `ONLY_CARD` - Only card payments will be accepted. Constant is available from the SDK as `paytheory.ONLY_CARD`.
-- `ONLY_ACH` - Only ACH payments will be accepted. Constant is available from the SDK as `paytheory.ONLY_ACH`.
-- `ONLY_CASH` - Only cash payments will be accepted. Constant is available from the SDK as `paytheory.ONLY_CASH`.
-- `NOT_CARD` - Card payments will not be accepted. Constant is available from the SDK as `paytheory.NOT_CARD`.
-- `NOT_ACH` - ACH payments will not be accepted. Constant is available from the SDK as `paytheory.NOT_ACH`.
-- `NOT_CASH` - Cash payments will not be accepted. Constant is available from the SDK as `paytheory.NOT_CASH`.
-- `ALL` - All payment methods will be accepted. Constant is available from the SDK as `paytheory.ALL`.
+`onSuccess` receives this object.
+
+| Key | type | description |
+|-----|------|-------------|
+| receipt_number | String | The transaction ID. |
+| amount | Int | Amount charged, in cents. Includes the service fee. |
+| service_fee | Int | Service fee, in cents. |
+| last_four | String | Last four digits of the card or account number. |
+| brand | String | Card brand. |
+| created_at | String | When the transaction was created. |
+| state | String | Status of the transaction. |
+| metadata | Object | The metadata you passed. |
+| payor_id | String | ID of the payor. |
+| payment_method_id | String | ID of the payment method token. |
+
+***
+## Call to action
+
+| Value | Button text on the checkout page | Constant |
+|-------|------|----------|
+| `PAY` | Pay with | `paytheory.PAY` |
+| `DONATE` | Donate with | `paytheory.DONATE` |
+| `BOOK` | Book with | `paytheory.BOOK` |
+
+***
+## Accepted payment methods
+
+| Value | The page accepts | Constant |
+|-------|------------------|----------|
+| `ALL` | Card, ACH and cash | `paytheory.ALL` |
+| `ONLY_CARD` | Card | `paytheory.ONLY_CARD` |
+| `ONLY_ACH` | ACH | `paytheory.ONLY_ACH` |
+| `ONLY_CASH` | Cash | `paytheory.ONLY_CASH` |
+| `NOT_CARD` | ACH and cash | `paytheory.NOT_CARD` |
+| `NOT_ACH` | Card and cash | `paytheory.NOT_ACH` |
+| `NOT_CASH` | Card and ACH | `paytheory.NOT_CASH` |

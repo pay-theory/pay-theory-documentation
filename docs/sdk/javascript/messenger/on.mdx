@@ -6,7 +6,7 @@ title: "on"
 
 # on
 
-Registers an event listener for messenger events.
+Registers a listener for a Messenger event.
 
 ***
 ## Function
@@ -18,20 +18,20 @@ const unsubscribe = messenger.on(event, callback)
 ***
 ## Parameters
 
-| Parameter | Type | Required | Description |
+| Parameter | type | required | description |
 |-----------|------|----------|-------------|
-| event | String | Yes | Event name to listen for |
-| callback | Function | Yes | Function to call when event occurs |
+| event | String | Yes | Name of the event. One of the events below. |
+| callback | Function | Yes | Called with the event's payload each time the event fires. |
 
 ***
-## Available Events
+## Available events
 
-| Event | Description |
+| Event | description |
 |-------|-------------|
-| 'ready' | Fired when messenger is initialized and ready |
-| 'transaction_complete' | Fired when a transaction completes successfully |
-| 'transaction_error' | Fired when a transaction fails |
-| 'iframe_unloaded' | Fired when the messenger iframe is unloaded |
+| `ready` | Fires when [`initialize`](./initialize) connects the Messenger. |
+| `transaction_complete` | Fires when [`processWalletTransaction`](./processWalletTransaction) processes a payment, including a declined one. The payload has the [Transaction](../../../api/types/types/transaction). Check its `status`. |
+| `transaction_error` | Fires when `processWalletTransaction` can't run the payment. The payload has the error message. |
+| `iframe_unloaded` | Fires when the Messenger's hidden iframe unloads. |
 
 ***
 ## Returns
@@ -52,36 +52,35 @@ unsubscribe();
 ```
 
 ***
-## Event Data
+## Event data
 
-### ready Event
+### ready event
 ```javascript
 {
   success: Boolean
 }
 ```
 
-### transaction_complete Event
+### transaction_complete event
 ```javascript
 {
   transaction: {
     transaction_id: String,
     status: String,
-    amount: Number,
-    // ... additional transaction fields
+    gross_amount: Number,
+    // ...the rest of the Transaction fields
   }
 }
 ```
 
-### transaction_error Event
+### transaction_error event
 ```javascript
 {
-  error: String,
-  transaction: Object  // Optional, included if transaction was attempted
+  error: String
 }
 ```
 
-### iframe_unloaded Event
+### iframe_unloaded event
 ```javascript
 {
   timestamp: Number

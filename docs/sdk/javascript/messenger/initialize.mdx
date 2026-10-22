@@ -6,7 +6,7 @@ title: "initialize"
 
 # initialize
 
-Initializes the messenger connection. This method must be called before any other operations can be performed.
+Connects the Messenger to Pay Theory. Call it before any other Messenger function.
 
 ***
 ## Function
@@ -30,10 +30,10 @@ This function takes no parameters.
 }
 ```
 
-| Key | Type | Description |
+| Key | type | description |
 |-----|------|-------------|
-| success | Boolean | Indicates whether initialization was successful |
-| error | String | Error message if initialization failed |
+| success | Boolean | `true` when the Messenger connected. |
+| error | String | Why the connection failed, when `success` is `false`. |
 
 ***
 ## Usage
@@ -55,7 +55,7 @@ if (result.success) {
 ***
 ## Notes
 
-- This method creates a secure iframe connection to Pay Theory's servers
-- It establishes a communication channel for processing wallet transactions
-- The method is idempotent - calling it multiple times on an already initialized messenger will return success
-- If initialization fails, you can retry by calling the method again
+- `initialize` adds a hidden iframe to the page and opens a secure channel to Pay Theory through it.
+- Calling it again on a connected Messenger returns `success: true` without reconnecting.
+- If it fails, call it again to retry.
+- The [`ready`](./on) event fires when the connection opens.

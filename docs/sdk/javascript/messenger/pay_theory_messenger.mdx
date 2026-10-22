@@ -6,7 +6,7 @@ title: "Pay Theory Messenger"
 
 # Pay Theory Messenger
 
-The Pay Theory Messenger class enables secure processing of digital wallet transactions including Apple Pay, Google Pay, and Paze.
+`PayTheoryMessenger` processes digital wallet payments from Apple Pay, Google Pay and Paze. It opens a hidden iframe to Pay Theory and sends each wallet payload through it.
 
 ***
 ## Constructor
@@ -17,24 +17,24 @@ const messenger = new paytheory.PayTheoryMessenger(options)
 
 ### Parameters
 
-| Parameter | Type | Required | Description |
+| Parameter | type | required | description |
 |-----------|------|----------|-------------|
-| options | Object | Yes | Configuration object |
+| options | Object | Yes | Configuration for the Messenger. |
 
-#### Options Attributes
+#### Options
 
-| Attribute | Type | Required | Description |
-|-----------|------|----------|-------------|
-| apiKey | String | Yes | Your Pay Theory API key |
+| Key | type | required | description |
+|-----|------|----------|-------------|
+| apiKey | String | Yes | Your Pay Theory API Key. |
 
 ### Returns
 
-Returns a new instance of the PayTheoryMessenger class.
+A new `PayTheoryMessenger`. Call [`initialize`](./initialize) on it before anything else.
 
 ***
-## Static Properties
+## Static properties
 
-### Wallet Type Constants
+### Wallet type constants
 
 ```javascript
 PayTheoryMessenger.applePay   // 'APPLE_PAY'
@@ -45,10 +45,12 @@ PayTheoryMessenger.paze       // 'PAZE'
 ***
 ## Functions
 
-The PayTheoryMessenger instance provides the following functions:
+Each `PayTheoryMessenger` has these functions:
 
-- **[initialize()](./initialize)** - Initializes the messenger connection
-- **[getApplePaySession()](./getApplePaySession)** - Validates merchant identity with Apple Pay
-- **[processWalletTransaction()](./processWalletTransaction)** - Processes a digital wallet transaction
-- **[on()](./on)** - Registers an event listener
-- **[destroy()](./destroy)** - Cleans up resources and disconnects
+- [`initialize()`](./initialize) connects the Messenger.
+- [`getApplePaySession()`](./getApplePaySession) gets an Apple Pay merchant session.
+- [`processWalletTransaction()`](./processWalletTransaction) charges a wallet payload.
+- [`on()`](./on) subscribes to a Messenger event.
+- [`destroy()`](./destroy) removes the iframe and listeners.
+
+The SDK also exposes the class as `window.PayTheoryMessenger`, so older integrations that call `new PayTheoryMessenger(...)` keep working.
