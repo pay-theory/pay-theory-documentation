@@ -18,7 +18,6 @@ paytheory.payTheoryFields({
   apiKey: 'YOUR_API_KEY',
   amount: 1000,
   country: 'USA',
-  feeMode: paytheory.MERCHANT_FEE,
   placeholders: PLACEHOLDERS,
   styles: STYLES,
 })
@@ -29,10 +28,8 @@ paytheory.payTheoryFields({
 | apiKey | String | Required. Your Pay Theory API Key. |
 | amount | Int | Amount of the payment, in cents. Pass it to have the SDK calculate the service fee and report it to the [state observer](event_listeners#stateobserver). Change it later with [`updateAmount`](#updateamount). |
 | country | String | `USA` or `CAN`. Match the merchant's `country_code` on the [merchant](../../api/types/types/merchant) object. Defaults to `USA`. |
-| feeMode | String | Fee mode `transact` uses when you don't pass one. `paytheory.MERCHANT_FEE` (default) or `paytheory.SERVICE_FEE`. |
 | placeholders | Object | Placeholder text, keyed by field name such as `card-number` or `billing-zip`. |
 | styles | [Styles object](hosted_fields#styles-object) | How the hosted fields look. |
-| elementIds | Object | Your own IDs for the field containers, in place of the [default IDs](hosted_fields). It replaces the whole default map, so include a key for every field. |
 
 `payTheoryFields` returns a Promise. It resolves to `{ type: 'READY', body: true }` when the fields are connected, or an [error response](#error-response).
 

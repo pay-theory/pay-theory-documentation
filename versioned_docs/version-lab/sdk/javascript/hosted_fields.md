@@ -8,7 +8,7 @@ title: 'Hosted Fields'
 
 Hosted fields collect card, bank and cash details in Pay Theory iframes, so the payment data never touches your page. Add an empty `div` with the field's ID where the field goes, then call [`payTheoryFields`](functions#paytheoryfields) to mount them.
 
-To use your own IDs, pass `elementIds` to `payTheoryFields`. To show each field as soon as it renders, watch [`iframeLoaded`](event_listeners#field-state) in the state observer.
+To show each field as soon as it renders, watch [`iframeLoaded`](event_listeners#field-state) in the state observer.
 
 ***
 ## Card fields
