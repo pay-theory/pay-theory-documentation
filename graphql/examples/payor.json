@@ -59,6 +59,7 @@
       },
       {
         "name": "Get a payor by ID",
+        "description": "Filters on payor_id to get one payor.",
         "query": "query Payors($query: SqlQuery, $limit: Int) {\n  payors(query: $query, limit: $limit) {\n    items {\n      payor_id\n      merchant_uid\n      full_name\n      email\n      phone\n      address_line1\n      city\n      region\n      postal_code\n      country\n    }\n    total_row_count\n  }\n}",
         "variables": {
           "query": {
@@ -85,10 +86,10 @@
                     "full_name": "Pat Theodore",
                     "email": "pat@paytheory.com",
                     "phone": "+15555550125",
-                    "address_line1": "456 Updated Street",
-                    "city": "Columbus",
+                    "address_line1": "549 Reading Rd",
+                    "city": "Evendale",
                     "region": "OH",
-                    "postal_code": "43004",
+                    "postal_code": "45241-2524",
                     "country": "USA"
                   }
                 ],
@@ -96,8 +97,7 @@
               }
             }
           }
-        },
-        "description": "Reads one payor by payor_id."
+        }
       },
       {
         "name": "No payors found",
@@ -107,7 +107,7 @@
             "query_list": [
               {
                 "key": "email",
-                "value": "nobody@example.invalid",
+                "value": "nobody@paytheory.com",
                 "operator": "EQUAL"
               }
             ]
@@ -176,7 +176,7 @@
         "description": "Creates a payor with contact information and metadata."
       },
       {
-        "name": "Missing merchant id",
+        "name": "Missing merchant ID",
         "query": "mutation CreatePayor($input: PayorInput!) {\n  createPayor(input: $input) {\n    payor_id\n    merchant_uid\n    full_name\n    email\n    phone\n    address_line1\n    city\n    region\n    postal_code\n    country\n  }\n}",
         "variables": {
           "input": {
@@ -224,53 +224,6 @@
           }
         },
         "description": "Returns an error when merchant_uid is empty."
-      },
-      {
-        "name": "Unauthorized merchant",
-        "query": "mutation CreatePayor($input: PayorInput!) {\n  createPayor(input: $input) {\n    payor_id\n    merchant_uid\n    full_name\n    email\n    phone\n    address_line1\n    city\n    region\n    postal_code\n    country\n  }\n}",
-        "variables": {
-          "input": {
-            "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
-            "full_name": "Pat Theodore"
-          }
-        },
-        "response": {
-          "type": "error",
-          "httpStatus": 200,
-          "body": {
-            "data": {
-              "createPayor": null
-            },
-            "errors": [
-              {
-                "path": [
-                  "createPayor"
-                ],
-                "data": {
-                  "payor_id": null,
-                  "merchant_uid": null,
-                  "full_name": "Pat Theodore",
-                  "email": "pat@paytheory.com",
-                  "phone": null,
-                  "address_line1": null,
-                  "city": null,
-                  "region": null,
-                  "postal_code": null,
-                  "country": null
-                },
-                "errorType": "CLIENT_ERROR",
-                "errorInfo": {
-                  "code": "VALIDATION_ERROR",
-                  "method": "POST",
-                  "path": "/createPayor",
-                  "trigger_type": "appsync"
-                },
-                "message": "merchant_uid is not authorized"
-              }
-            ]
-          }
-        },
-        "description": "Returns an error when the key cannot access the merchant_uid."
       }
     ]
   },
@@ -279,7 +232,7 @@
     "operationType": "mutation",
     "examples": [
       {
-        "name": "Update a full payor",
+        "name": "Update every payor field",
         "query": "mutation UpdatePayor($payor_id: String!, $payor_data: PayorData!) {\n  updatePayor(payor_id: $payor_id, payor_data: $payor_data)\n}",
         "variables": {
           "payor_id": "ptl_pay_6tOEQ5lesXwGSGaKECSfJy",
@@ -287,11 +240,10 @@
             "full_name": "Pat Theodore",
             "email": "pat@paytheory.com",
             "phone": "+15555550124",
-            "address_line1": "456 Updated Street",
-            "address_line2": "Suite 300",
-            "city": "Columbus",
+            "address_line1": "549 Reading Rd",
+            "city": "Evendale",
             "region": "OH",
-            "postal_code": "43004",
+            "postal_code": "45241-2524",
             "country": "USA"
           }
         },
@@ -304,7 +256,7 @@
             }
           }
         },
-        "description": "Updates all common fields on an existing payor."
+        "description": "Updates the name, email, phone and full address on an existing payor."
       }
     ]
   }

@@ -5,14 +5,14 @@
     "examples": [
       {
         "name": "List splits for a merchant",
-        "description": "Lists splits for a merchant.",
+        "description": "Lists splits for a merchant. Filters on merchant_uid.",
         "query": "query Splits($query: SqlQuery, $limit: Int) {\n  splits(query: $query, limit: $limit) {\n    items {\n      id\n      transaction_id\n      amount\n      currency\n      account_code\n      reference\n      settlement_batch\n      created_at\n    }\n    total_row_count\n  }\n}",
         "variables": {
           "query": {
             "query_list": [
               {
                 "key": "merchant_uid",
-                "value": "9f0acb5e-a176-404a-b735-f4caac66098e",
+                "value": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
                 "operator": "EQUAL"
               }
             ]

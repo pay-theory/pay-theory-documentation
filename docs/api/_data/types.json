@@ -48440,6 +48440,11 @@
         "name": "SYSTEM_FAILURE",
         "description": "Recurring payment failed due to system failure.",
         "isDeprecated": false
+      },
+      {
+        "name": "MERCHANT_MAX_AMOUNT_EXCEEDED",
+        "description": "Recurring payment exceeded the merchant's maximum transaction amount.",
+        "isDeprecated": false
       }
     ]
   },

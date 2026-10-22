@@ -5,8 +5,8 @@
     "examples": [
       {
         "name": "List disputes for a merchant",
-        "description": "Lists disputes associated with a merchant.",
-        "query": "query Disputes($query: SqlQuery, $limit: Int) {\n  disputes(query: $query, limit: $limit) {\n    items {\n      dispute_id\n      dispute_date\n      amount\n      evidence_last_send_date\n      expiration_date\n    }\n    total_row_count\n  }\n}",
+        "description": "Filters disputes by merchant_uid.",
+        "query": "query Disputes($query: SqlQuery, $limit: Int) {\n  disputes(query: $query, limit: $limit) {\n    items {\n      dispute_id\n    }\n  }\n}",
         "variables": {
           "query": {
             "query_list": [
@@ -27,14 +27,9 @@
               "disputes": {
                 "items": [
                   {
-                    "dispute_id": "DIwtRcdG58raHXxLDkmAVddS",
-                    "dispute_date": "2025-01-01T00:00:00Z",
-                    "amount": 123,
-                    "evidence_last_send_date": "2025-01-01T00:00:00Z",
-                    "expiration_date": "2025-01-01T00:00:00Z"
+                    "dispute_id": "DIwtRcdG58raHXxLDkmAVddS"
                   }
-                ],
-                "total_row_count": 123
+                ]
               }
             }
           }

@@ -4,8 +4,8 @@
     "operationType": "mutation",
     "examples": [
       {
-        "name": "Attach metadata to a transaction",
-        "description": "Send metadata as JSON text. A true response does not prove the record exists in every environment; read the record back to verify it.",
+        "name": "Add metadata to a transaction",
+        "description": "Adds metadata to a transaction. Send metadata as a JSON string.",
         "query": "mutation UpdateMetadata($id: String!, $metadata_associate: MetadataAssociate!, $merchant_uid: String!, $metadata: AWSJSON!) {\n  updateMetadata(id: $id, metadata_associate: $metadata_associate, merchant_uid: $merchant_uid, metadata: $metadata)\n}",
         "variables": {
           "id": "ptl_txn_7pCgkYFpOJIa04NlWSum0b",
@@ -28,6 +28,29 @@
   {
     "operation": "deleteMetadata",
     "operationType": "mutation",
-    "examples": []
+    "examples": [
+      {
+        "name": "Example deleteMetadata",
+        "description": "Deletes metadata for an item.",
+        "query": "mutation DeleteMetadata($id: String!, $metadata_associate: MetadataAssociate!, $merchant_uid: String!, $metadata_keys: [String]!) {\n  deleteMetadata(id: $id, metadata_associate: $metadata_associate, merchant_uid: $merchant_uid, metadata_keys: $metadata_keys)\n}",
+        "variables": {
+          "id": "example",
+          "metadata_associate": "AUTHORIZATION",
+          "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+          "metadata_keys": [
+            "example"
+          ]
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "deleteMetadata": true
+            }
+          }
+        }
+      }
+    ]
   }
 ]
