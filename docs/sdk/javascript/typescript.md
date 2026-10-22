@@ -21,7 +21,7 @@ The file is on the same host as your SDK Import URL. Replace `index.js` with `pa
 Your SDK Import URL is in the Pay Theory portal under the settings tab. Save the file in your project:
 
 ```bash title="terminal"
-curl -o src/types/paytheory-sdk.d.ts https://pt.sdk.paytheory.com/paytheory-sdk.d.ts
+curl --create-dirs -o src/types/paytheory-sdk.d.ts https://pt.sdk.paytheory.com/paytheory-sdk.d.ts
 ```
 
 Download it again when the [changelog](../../main/changelog) lists SDK changes, so new parameters and responses show up in your types.
@@ -33,10 +33,15 @@ The file declares `window.paytheory` globally and also exports each type. You ca
 
 ### Use the global types
 
-Add the file to `include` in your `tsconfig.json`:
+Add the file to `include` in your `tsconfig.json`. The declarations use `Promise`, so your project needs a `target` or `lib` of ES2015 or later. A minimal config:
 
 ```json title="tsconfig.json"
 {
+  "compilerOptions": {
+    "target": "ES2020",
+    "lib": ["DOM", "ES2020"],
+    "strict": true
+  },
   "include": ["src/**/*", "src/types/paytheory-sdk.d.ts"]
 }
 ```
@@ -59,31 +64,33 @@ Every response has a `type`. Check it and TypeScript narrows `body` to the match
 ```typescript title="checkout.ts"
 import type { TransactProps, TransactResult } from './types/paytheory-sdk';
 
-const props: TransactProps = {
-  amount: 1000,
-  payorInfo: {
-    first_name: 'Pat',
-    last_name: 'Theodore',
-    email: 'pat@example.com',
-  },
-};
+export async function pay(): Promise<void> {
+  const props: TransactProps = {
+    amount: 1000,
+    payorInfo: {
+      first_name: 'Pat',
+      last_name: 'Theodore',
+      email: 'pat@example.com',
+    },
+  };
 
-const result: TransactResult = await window.paytheory.transact(props);
+  const result: TransactResult = await window.paytheory.transact(props);
 
-switch (result.type) {
-  case 'SUCCESS':
-    console.log('Paid', result.body.payment_method_id);
-    break;
-  case 'FAILED':
-    // The compact body has `reason`. The full body has `failure_reasons`.
-    console.log('Declined', 'reason' in result.body ? result.body.reason.failure_text : result.body.failure_reasons);
-    break;
-  case 'CASH':
-    console.log('Barcode', result.body.barcodeUrl);
-    break;
-  case 'ERROR':
-    console.error(result.error);
-    break;
+  switch (result.type) {
+    case 'SUCCESS':
+      console.log('Paid', result.body.payment_method_id);
+      break;
+    case 'FAILED':
+      // The compact body has `reason`. The full body has `failure_reasons`.
+      console.log('Declined', 'reason' in result.body ? result.body.reason.failure_text : result.body.failure_reasons);
+      break;
+    case 'CASH':
+      console.log('Barcode', result.body.barcodeUrl);
+      break;
+    case 'ERROR':
+      console.error(result.error);
+      break;
+  }
 }
 ```
 
