@@ -4,26 +4,20 @@
     "operationType": "query",
     "examples": [
       {
-        "name": "Example invoices",
-        "description": "Returns invoices.",
-        "query": "query Invoices($query: SqlQuery, $limit: Int, $offset: String, $direction: MoveDirection, $offset_id: String) {\n  invoices(query: $query, limit: $limit, offset: $offset, direction: $direction, offset_id: $offset_id) {\n  items {\n    invoice_id\n    created_date\n    account_code\n    currency\n    due_by\n  }\n  total_row_count\n  }\n}",
+        "name": "Get a paid invoice",
+        "description": "status is PAID and total_paid_amount equals invoice_amount.",
+        "query": "query Invoices($query: SqlQuery, $limit: Int) {\n  invoices(query: $query, limit: $limit) {\n    items {\n      invoice_id\n      merchant_uid\n      invoice_name\n      invoice_description\n      invoice_amount\n      total_paid_amount\n      currency\n      status\n      fee_mode\n      due_by\n      invoice_date\n      merchant_invoice_number\n      account_code\n      reference\n      created_date\n      settings {\n        is_secure\n        security_pin\n        require_payor_address\n        accepted_payment_methods { ach card cash }\n      }\n      payor {\n        payor_id\n        full_name\n        email\n        merchant_uid\n      }\n      metadata\n      offline_transactions { instance_id amount type note transaction_date }\n    }\n    total_row_count\n  }\n}",
         "variables": {
           "query": {
             "query_list": [
               {
-                "conjunctive_operator": "AND_NEXT"
-              }
-            ],
-            "sort_list": [
-              {
-                "direction": "ASC"
+                "key": "invoice_id",
+                "value": "ptl_inv_3G68AxWreHdbCOWcdCKmpW",
+                "operator": "EQUAL"
               }
             ]
           },
-          "limit": 123,
-          "offset": "example",
-          "direction": "BACKWARD",
-          "offset_id": "example"
+          "limit": 1
         },
         "response": {
           "type": "success",
@@ -33,14 +27,41 @@
               "invoices": {
                 "items": [
                   {
-                    "invoice_id": "example",
-                    "created_date": "2025-01-01T00:00:00Z",
-                    "account_code": "example",
-                    "currency": "example",
-                    "due_by": "2025-01-01"
+                    "invoice_id": "ptl_inv_3G68AxWreHdbCOWcdCKmpW",
+                    "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                    "invoice_name": "Spring cleaning",
+                    "invoice_description": "Two hours of deep cleaning",
+                    "invoice_amount": 2500,
+                    "total_paid_amount": 2500,
+                    "currency": "USD",
+                    "status": "PAID",
+                    "fee_mode": "MERCHANT_FEE",
+                    "due_by": "2026-10-05",
+                    "invoice_date": "2026-09-05",
+                    "merchant_invoice_number": null,
+                    "account_code": "CLEANING-1001",
+                    "reference": "INV-1001",
+                    "created_date": "2026-09-05T00:12:25.0Z",
+                    "settings": null,
+                    "payor": {
+                      "payor_id": "ptl_pay_3FUmPZJT65KZ0MRttPfmBi",
+                      "full_name": "Pat Theodore",
+                      "email": "pat@paytheory.com",
+                      "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
+                    },
+                    "metadata": "{}",
+                    "offline_transactions": [
+                      {
+                        "instance_id": "3WIrDmgG9VloBTPg1lwsKo",
+                        "amount": 2500,
+                        "type": "CASH",
+                        "note": "Paid at the front desk",
+                        "transaction_date": "2026-09-05"
+                      }
+                    ]
                   }
                 ],
-                "total_row_count": 123
+                "total_row_count": 1
               }
             }
           }
@@ -53,35 +74,26 @@
     "operationType": "mutation",
     "examples": [
       {
-        "name": "Example createInvoice",
-        "description": "Creates an invoice.",
-        "query": "mutation CreateInvoice($input: InvoiceInput!) {\n  createInvoice(input: $input) {\n  invoice_id\n  created_date\n  account_code\n  currency\n  due_by\n  }\n}",
+        "name": "Create an invoice with metadata",
+        "description": "Creates a $25.00 invoice and a new payor in one call. Send metadata as a JSON string.",
+        "query": "mutation CreateInvoice($input: InvoiceInput!) {\n  createInvoice(input: $input) {\n    invoice_id\n    merchant_uid\n    invoice_name\n    invoice_description\n    invoice_amount\n    total_paid_amount\n    currency\n    status\n    fee_mode\n    due_by\n    invoice_date\n    merchant_invoice_number\n    account_code\n    reference\n    created_date\n    settings {\n      is_secure\n      security_pin\n      require_payor_address\n      accepted_payment_methods { ach card cash }\n    }\n    payor {\n      payor_id\n      full_name\n      email\n      merchant_uid\n    }\n  }\n}",
         "variables": {
           "input": {
-            "account_code": "example",
-            "currency": "example",
-            "due_by": "2025-01-01",
-            "fee_mode": "CUSTOM_FEE",
-            "invoice_amount": 123,
-            "invoice_date": "2025-01-01",
-            "invoice_description": "example",
-            "invoice_name": "example",
-            "merchant_uid": "example",
-            "merchant_invoice_number": "example",
-            "metadata": {
-              "key": "value"
-            },
-            "payor_id": "example",
+            "currency": "USD",
+            "invoice_amount": 2500,
+            "invoice_name": "Spring cleaning",
+            "invoice_description": "Two hours of deep cleaning",
+            "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+            "due_by": "2026-10-05",
+            "fee_mode": "MERCHANT_FEE",
+            "reference": "INV-1001",
+            "account_code": "CLEANING-1001",
+            "send_email": false,
             "payor": {
-              "address_line1": "example"
+              "email": "pat@paytheory.com",
+              "full_name": "Pat Theodore"
             },
-            "reference": "example",
-            "send_email": true,
-            "settings": {
-              "accepted_payment_methods": {
-                "ach": true
-              }
-            }
+            "metadata": "{\"order_id\":\"INV-1001\"}"
           }
         },
         "response": {
@@ -90,11 +102,28 @@
           "body": {
             "data": {
               "createInvoice": {
-                "invoice_id": "example",
-                "created_date": "2025-01-01T00:00:00Z",
-                "account_code": "example",
-                "currency": "example",
-                "due_by": "2025-01-01"
+                "invoice_id": "ptl_inv_2O0yTY3k5AIyDc8NQ2SvhC",
+                "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                "invoice_name": "Spring cleaning",
+                "invoice_description": "Two hours of deep cleaning",
+                "invoice_amount": 2500,
+                "total_paid_amount": 0,
+                "currency": "USD",
+                "status": "NOT_PAID",
+                "fee_mode": "MERCHANT_FEE",
+                "due_by": "2026-10-05",
+                "invoice_date": "2026-09-05",
+                "merchant_invoice_number": null,
+                "account_code": "CLEANING-1001",
+                "reference": "INV-1001",
+                "created_date": "2026-09-05T00:11:36.0Z",
+                "settings": null,
+                "payor": {
+                  "payor_id": "ptl_pay_2NM2STwd3pWznLo1hGnUSc",
+                  "full_name": "Pat Theodore",
+                  "email": "pat@paytheory.com",
+                  "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
+                }
               }
             }
           }
@@ -107,28 +136,16 @@
     "operationType": "mutation",
     "examples": [
       {
-        "name": "Example updateInvoice",
-        "description": "Updates an invoice.",
+        "name": "Update an invoice",
+        "description": "Changes an invoice's amount, name, and due date.",
         "query": "mutation UpdateInvoice($invoice_id: String!, $invoice_update_input: InvoiceUpdateInput!) {\n  updateInvoice(invoice_id: $invoice_id, invoice_update_input: $invoice_update_input)\n}",
         "variables": {
-          "invoice_id": "example",
+          "invoice_id": "ptl_inv_33Lz4PE1amu7bfIfufo0rS",
           "invoice_update_input": {
-            "account_code": "example",
-            "currency": "example",
-            "due_by": "2025-01-01",
-            "fee_mode": "CUSTOM_FEE",
-            "invoice_amount": 123,
-            "invoice_date": "2025-01-01",
-            "invoice_name": "example",
-            "invoice_description": "example",
-            "merchant_invoice_number": "example",
-            "reference": "example",
-            "send_email": true,
-            "settings": {
-              "accepted_payment_methods": {
-                "ach": true
-              }
-            }
+            "due_by": "2026-10-20",
+            "invoice_amount": 3000,
+            "invoice_name": "Spring cleaning (revised)",
+            "send_email": false
           }
         },
         "response": {
@@ -148,11 +165,28 @@
     "operationType": "mutation",
     "examples": [
       {
-        "name": "Example deleteInvoice",
-        "description": "Deletes an invoice.",
+        "name": "Delete an invoice",
+        "description": "Deletes the invoice identified by invoice_id.",
         "query": "mutation DeleteInvoice($invoice_id: String!) {\n  deleteInvoice(invoice_id: $invoice_id)\n}",
         "variables": {
-          "invoice_id": "example"
+          "invoice_id": "ptl_inv_4VAqBS9kDpdBAOqzjqj81G"
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "deleteInvoice": true
+            }
+          }
+        }
+      },
+      {
+        "name": "Unknown invoice ID",
+        "description": "Attempts to delete the invoice identified by invoice_id.",
+        "query": "mutation DeleteInvoice($invoice_id: String!) {\n  deleteInvoice(invoice_id: $invoice_id)\n}",
+        "variables": {
+          "invoice_id": "ptl_inv_does_not_exist"
         },
         "response": {
           "type": "success",
@@ -171,11 +205,11 @@
     "operationType": "mutation",
     "examples": [
       {
-        "name": "Example createInvoiceEmail",
-        "description": "This call is used to resend Invoice emails for a specific invoice.",
+        "name": "Resend an invoice email",
+        "description": "Sends the invoice email again. true means the email is queued, not delivered.",
         "query": "mutation CreateInvoiceEmail($invoice_id: String!) {\n  createInvoiceEmail(invoice_id: $invoice_id)\n}",
         "variables": {
-          "invoice_id": "example"
+          "invoice_id": "ptl_inv_2O0yTY3k5AIyDc8NQ2SvhC"
         },
         "response": {
           "type": "success",
@@ -194,16 +228,16 @@
     "operationType": "mutation",
     "examples": [
       {
-        "name": "Example createOfflineTransaction",
-        "description": "This call is used to create an offline transaction for an invoice. Offline transactions are used to track payments that are made outside Pay Theory toward an Invoice.",
-        "query": "mutation CreateOfflineTransaction($input: OfflineTransactionInput!) {\n  createOfflineTransaction(input: $input) {\n  instance_id\n  transaction_date\n  amount\n  invoice_id\n  note\n  }\n}",
+        "name": "Record a cash payment",
+        "description": "Records a cash payment against an invoice. The amount must equal the remaining balance.",
+        "query": "mutation CreateOfflineTransaction($input: OfflineTransactionInput!) {\n  createOfflineTransaction(input: $input) {\n    instance_id\n    invoice_id\n    amount\n    type\n    note\n    transaction_date\n  }\n}",
         "variables": {
           "input": {
-            "amount": 123,
-            "invoice_id": "example",
-            "note": "example",
-            "transaction_date": "2025-01-01",
-            "type": "ACH"
+            "amount": 2500,
+            "invoice_id": "ptl_inv_3G68AxWreHdbCOWcdCKmpW",
+            "note": "Paid at the front desk",
+            "transaction_date": "2026-09-05",
+            "type": "CASH"
           }
         },
         "response": {
@@ -212,11 +246,12 @@
           "body": {
             "data": {
               "createOfflineTransaction": {
-                "instance_id": "example",
-                "transaction_date": "2025-01-01",
-                "amount": 123,
-                "invoice_id": "example",
-                "note": "example"
+                "instance_id": "3WIrDmgG9VloBTPg1lwsKo",
+                "invoice_id": "ptl_inv_3G68AxWreHdbCOWcdCKmpW",
+                "amount": 2500,
+                "type": "CASH",
+                "note": "Paid at the front desk",
+                "transaction_date": "2026-09-05"
               }
             }
           }

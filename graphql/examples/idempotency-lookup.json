@@ -1,0 +1,7 @@
+[
+  {
+    "operation": "idempotencyLookup",
+    "operationType": "query",
+    "examples": []
+  }
+]

@@ -5,11 +5,11 @@
     "examples": [
       {
         "name": "Example users",
-        "description": "Returns users.",
+        "description": "Requires a partner key.",
         "query": "query Users($user_pool: UserPool!, $merchant_uid: String) {\n  users(user_pool: $user_pool, merchant_uid: $merchant_uid) {\n  email\n  full_name\n  phone\n  user_status\n  username\n  }\n}",
         "variables": {
           "user_pool": "MERCHANT",
-          "merchant_uid": "example"
+          "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
         },
         "response": {
           "type": "success",
@@ -35,16 +35,15 @@
     "examples": [
       {
         "name": "Example createUser",
-        "description": "Creates user.",
+        "description": "Requires a partner key.",
         "query": "mutation CreateUser($input: UserInput!) {\n  createUser(input: $input) {\n  email\n  full_name\n  phone\n  user_status\n  username\n  }\n}",
         "variables": {
           "input": {
-            "bypass_merchant_validation": true,
-            "email": "user@example.com",
+            "email": "user@paytheory.com",
             "first_name": "example",
             "last_name": "example",
-            "merchant_uid": "example",
-            "phone": "+15555555555",
+            "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+            "phone": "+14045551234",
             "user_pool": "MERCHANT"
           }
         },
@@ -72,7 +71,7 @@
     "examples": [
       {
         "name": "Example deleteUser",
-        "description": "Deletes user.",
+        "description": "Requires a partner key.",
         "query": "mutation DeleteUser($username: String!, $user_pool: UserPool!) {\n  deleteUser(username: $username, user_pool: $user_pool)\n}",
         "variables": {
           "username": "example",

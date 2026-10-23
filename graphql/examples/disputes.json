@@ -4,26 +4,20 @@
     "operationType": "query",
     "examples": [
       {
-        "name": "Example disputes",
-        "description": "Returns disputes.",
-        "query": "query Disputes($query: SqlQuery, $limit: Int, $offset: String, $direction: MoveDirection, $offset_id: String) {\n  disputes(query: $query, limit: $limit, offset: $offset, direction: $direction, offset_id: $offset_id) {\n  items {\n    dispute_id\n    dispute_date\n    amount\n    evidence_last_send_date\n    expiration_date\n  }\n  total_row_count\n  }\n}",
+        "name": "List disputes for a merchant",
+        "description": "Filters disputes by merchant_uid.",
+        "query": "query Disputes($query: SqlQuery, $limit: Int) {\n  disputes(query: $query, limit: $limit) {\n    items {\n      dispute_id\n    }\n  }\n}",
         "variables": {
           "query": {
             "query_list": [
               {
-                "conjunctive_operator": "AND_NEXT"
-              }
-            ],
-            "sort_list": [
-              {
-                "direction": "ASC"
+                "key": "merchant_uid",
+                "operator": "EQUAL",
+                "value": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
               }
             ]
           },
-          "limit": 123,
-          "offset": "example",
-          "direction": "BACKWARD",
-          "offset_id": "example"
+          "limit": 1
         },
         "response": {
           "type": "success",
@@ -33,14 +27,9 @@
               "disputes": {
                 "items": [
                   {
-                    "dispute_id": "example",
-                    "dispute_date": "2025-01-01T00:00:00Z",
-                    "amount": 123,
-                    "evidence_last_send_date": "2025-01-01T00:00:00Z",
-                    "expiration_date": "2025-01-01T00:00:00Z"
+                    "dispute_id": "DIwtRcdG58raHXxLDkmAVddS"
                   }
-                ],
-                "total_row_count": 123
+                ]
               }
             }
           }
