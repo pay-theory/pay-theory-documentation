@@ -5,8 +5,8 @@
     "examples": [
       {
         "name": "List settlements for a merchant",
-        "description": "Lists settlements for a merchant.",
-        "query": "query Settlements($query: SqlQuery, $limit: Int) {\n  settlements(query: $query, limit: $limit) {\n    items {\n      merchant_uid\n      settlement_batch\n      settlement_date\n      currency\n      gross_amount\n      net_amount\n      total_fees\n      status\n      settlement_type\n      transaction_debit_count\n      transaction_reversal_count\n      transfer_date\n      gross_amount_64bit\n      net_amount_64bit\n    }\n    total_row_count\n  }\n}",
+        "description": "Shows the status, settlement date, transfer date, and net amount for each batch.",
+        "query": "query Settlements($query: SqlQuery, $limit: Int) {\n  settlements(query: $query, limit: $limit) {\n    items {\n      merchant_uid\n      settlement_batch\n      settlement_date\n      currency\n      status\n      settlement_type\n      transaction_debit_count\n      transaction_reversal_count\n      transfer_date\n      gross_amount_64bit\n      net_amount_64bit\n    }\n    total_row_count\n  }\n}",
         "variables": {
           "query": {
             "query_list": [
@@ -37,10 +37,7 @@
                     "transaction_reversal_count": 3,
                     "transfer_date": "2026-08-25T13:31:33.0Z",
                     "gross_amount_64bit": "-400",
-                    "net_amount_64bit": "-453",
-                    "gross_amount": -400,
-                    "net_amount": -453,
-                    "total_fees": 53
+                    "net_amount_64bit": "-453"
                   },
                   {
                     "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
@@ -53,10 +50,7 @@
                     "transaction_reversal_count": 0,
                     "transfer_date": "2026-08-25T13:32:28.0Z",
                     "gross_amount_64bit": "4000",
-                    "net_amount_64bit": "3669",
-                    "gross_amount": 4000,
-                    "net_amount": 3669,
-                    "total_fees": 331
+                    "net_amount_64bit": "3669"
                   }
                 ],
                 "total_row_count": 7
@@ -66,8 +60,8 @@
         }
       },
       {
-        "name": "Find either of two settlement batches",
-        "description": "Finds this merchant's settlements in batch 2 or 3. Put both OR choices inside query_group so results stay limited to this merchant.",
+        "name": "Get two settlement batches",
+        "description": "Wraps the two settlement_batch filters in query_group, so OR applies only to them and the merchant_uid filter still holds.",
         "query": "query Settlements($query: SqlQuery, $limit: Int) {\n  settlements(query: $query, limit: $limit) {\n    items {\n      merchant_uid\n      settlement_batch\n      settlement_date\n      currency\n      status\n      settlement_type\n      transaction_debit_count\n      transaction_reversal_count\n      transfer_date\n      gross_amount_64bit\n      net_amount_64bit\n    }\n    total_row_count\n  }\n}",
         "variables": {
           "query": {
@@ -145,7 +139,7 @@
     "examples": [
       {
         "name": "Example createBatchCapture",
-        "description": "This mutation will capture all PENDING transactions for a merchant in a batch and shortly after create a settlement for the merchant.",
+        "description": "Captures a merchant's pending transactions in one batch and creates a settlement for them.",
         "query": "mutation CreateBatchCapture($merchant_uid: String!) {\n  createBatchCapture(merchant_uid: $merchant_uid)\n}",
         "variables": {
           "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
@@ -171,7 +165,7 @@
         "description": "This query returns the instructional hold and reserve balances for a merchant, along with the instruction window status.",
         "query": "query AvailableFundsBalance($merchant_uid: ID!) {\n  availableFundsBalance(merchant_uid: $merchant_uid) {\n  instructional_hold_balance_updated\n  instruction_window_status\n  instructional_hold_balance\n  reserve_balance\n  }\n}",
         "variables": {
-          "merchant_uid": "id_123"
+          "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
         },
         "response": {
           "type": "success",
@@ -199,7 +193,7 @@
         "description": "Returns funding transfers.",
         "query": "query FundingTransfers($merchant_uid: ID!, $settlement_batch: Int!) {\n  fundingTransfers(merchant_uid: $merchant_uid, settlement_batch: $settlement_batch) {\n  transfers {\n    id\n    transfer_date\n    ach_return\n    amount\n    created_at\n  }\n  }\n}",
         "variables": {
-          "merchant_uid": "id_123",
+          "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
           "settlement_batch": 123
         },
         "response": {
@@ -232,10 +226,10 @@
     "examples": [
       {
         "name": "Example instruction",
-        "description": "Returns instruction.",
+        "description": "Returns a merchant's settlement instruction for the specified date.",
         "query": "query Instruction($merchant_uid: ID!, $date: AWSDate!) {\n  instruction(merchant_uid: $merchant_uid, date: $date) {\n  id\n  date\n  amount\n  merchant_uid\n  metadata\n  }\n}",
         "variables": {
-          "merchant_uid": "id_123",
+          "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
           "date": "2025-01-01"
         },
         "response": {
@@ -247,7 +241,7 @@
                 "id": "id_123",
                 "date": "2025-01-01",
                 "amount": "example",
-                "merchant_uid": "id_123",
+                "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
                 "metadata": {
                   "key": "value"
                 }

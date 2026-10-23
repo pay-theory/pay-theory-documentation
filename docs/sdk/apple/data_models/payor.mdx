@@ -51,7 +51,7 @@ let payorAddress = Address(line1: "123 Main St", city: "Anytown", region: "CA", 
 let payor = Payor(
     firstName: "John",
     lastName: "Doe",
-    email: "john.doe@example.com",
+    email: "john.doe@paytheory.com",
     phone: "1234567890",
     personalAddress: payorAddress
 )
@@ -62,7 +62,7 @@ print(payor.personalAddress.city ?? "") // Outputs: Anytown
 
 // Updating properties
 var mutablePayor = payor
-mutablePayor.email = "newemail@example.com"
+mutablePayor.email = "newemail@paytheory.com"
 ```
 
 ## Methods

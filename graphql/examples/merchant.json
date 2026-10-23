@@ -5,7 +5,8 @@
     "examples": [
       {
         "name": "Get a merchant",
-        "query": "query Merchant($merchant_uid: String) {\n  merchant(merchant_uid: $merchant_uid) {\n    merchant_uid\n    merchant_name\n    card_active\n    ach_active\n    cash_active\n    country_code\n    settings {\n      contact_email\n      website\n    }\n  }\n}",
+        "description": "Shows the merchant maximum for card and ACH payments in cents. Service fees count toward the limit.",
+        "query": "query Merchant($merchant_uid: String) {\n  merchant(merchant_uid: $merchant_uid) {\n    merchant_uid\n    merchant_name\n    card_active\n    ach_active\n    cash_active\n    max_transaction_amount\n    country_code\n    settings {\n      contact_email\n      website\n    }\n  }\n}",
         "variables": {
           "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
         },
@@ -20,6 +21,7 @@
                 "card_active": true,
                 "ach_active": true,
                 "cash_active": true,
+                "max_transaction_amount": 50000000,
                 "country_code": "USA",
                 "settings": {
                   "contact_email": null,
@@ -28,14 +30,13 @@
               }
             }
           }
-        },
-        "description": "Reads merchant details for the key."
+        }
       },
       {
         "name": "Merchant not found",
         "query": "query Merchant($merchant_uid: String) {\n  merchant(merchant_uid: $merchant_uid) {\n    merchant_uid\n    merchant_name\n    card_active\n    ach_active\n    cash_active\n    country_code\n    settings {\n      contact_email\n      website\n    }\n  }\n}",
         "variables": {
-          "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
+          "merchant_uid": "6b0c1e4d-2f7a-4c9e-z1y2-8d3f5a7b9c10"
         },
         "response": {
           "type": "error",
@@ -53,7 +54,7 @@
                 "errorType": "NOT_FOUND",
                 "errorInfo": {
                   "arguments": {
-                    "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
+                    "merchant_uid": "6b0c1e4d-2f7a-4c9e-z1y2-8d3f5a7b9c10"
                   }
                 },
                 "message": "Merchant not found."
@@ -62,36 +63,6 @@
           }
         },
         "description": "Returns an error when the merchant_uid does not exist."
-      },
-      {
-        "name": "Read settings after the website update",
-        "description": "This is a separate merchant query. It shows the contact and social settings cleared by the update.",
-        "query": "query Merchant($merchant_uid: String) {\n  merchant(merchant_uid: $merchant_uid) {\n    merchant_uid\n    merchant_name\n    settings {\n      contact_email\n      contact_phone\n      facebook\n      instagram\n      linkedin\n      tiktok\n      twitter\n      website\n    }\n  }\n}",
-        "variables": {
-          "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
-        },
-        "response": {
-          "type": "success",
-          "httpStatus": 200,
-          "body": {
-            "data": {
-              "merchant": {
-                "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
-                "merchant_name": "Northstar Books",
-                "settings": {
-                  "contact_email": null,
-                  "contact_phone": null,
-                  "facebook": null,
-                  "instagram": null,
-                  "linkedin": null,
-                  "tiktok": null,
-                  "twitter": null,
-                  "website": "https://paytheory.com"
-                }
-              }
-            }
-          }
-        }
       }
     ]
   },
@@ -100,7 +71,8 @@
     "operationType": "query",
     "examples": [
       {
-        "name": "Get merchants",
+        "name": "List merchants",
+        "description": "Lists the merchants scoped to your access.",
         "query": "query Merchants($limit: Int) {\n  merchants(limit: $limit) {\n    items {\n      merchant_uid\n      merchant_name\n      card_active\n      ach_active\n      cash_active\n      country_code\n      parent_merchant_uid\n    }\n    total_row_count\n  }\n}",
         "variables": {
           "limit": 2
@@ -126,11 +98,11 @@
               }
             }
           }
-        },
-        "description": "Lists merchants visible to the key."
+        }
       },
       {
         "name": "Filter by merchant name",
+        "description": "Filters the merchants your API key can see by merchant_name.",
         "query": "query Merchants($query: SqlQuery, $limit: Int) {\n  merchants(query: $query, limit: $limit) {\n    items {\n      merchant_uid\n      merchant_name\n      card_active\n      ach_active\n      cash_active\n      country_code\n      parent_merchant_uid\n    }\n    total_row_count\n  }\n}",
         "variables": {
           "query": {
@@ -165,8 +137,7 @@
               }
             }
           }
-        },
-        "description": "Filters visible merchants by merchant_name."
+        }
       }
     ]
   },
@@ -187,7 +158,7 @@
           "body": {
             "data": {
               "createMerchant": {
-                "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                "merchant_uid": "6b0c1e4d-2f7a-4c9e-z1y2-8d3f5a7b9c10",
                 "merchant_name": "Northstar Books",
                 "parent_merchant_uid": null,
                 "ach_active": true,
@@ -365,7 +336,7 @@
       },
       {
         "name": "Update the website only",
-        "description": "Settings updates replace the old settings. Send every field you want to keep; omitted settings are cleared.",
+        "description": "Settings updates replace the old settings. Send every field you want to keep. Omitted settings are cleared.",
         "query": "mutation UpdateMerchantSettings($merchant_uid: ID!, $settings: MerchantSettingsInput!) {\n  updateMerchantSettings(merchant_uid: $merchant_uid, settings: $settings)\n}",
         "variables": {
           "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",

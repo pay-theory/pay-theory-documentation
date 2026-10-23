@@ -4,9 +4,9 @@
     "operationType": "query",
     "examples": [
       {
-        "name": "Read invoice after an offline payment",
-        "description": "Shows the invoice marked PAID and the full offline payment attached.",
-        "query": "query Invoices($query: SqlQuery, $limit: Int, $offset_id: String, $direction: MoveDirection) {\n  invoices(query: $query, limit: $limit, offset_id: $offset_id, direction: $direction) {\n    items {\n      invoice_id\n      merchant_uid\n      invoice_name\n      invoice_description\n      invoice_amount\n      total_paid_amount\n      currency\n      status\n      fee_mode\n      due_by\n      invoice_date\n      merchant_invoice_number\n      account_code\n      reference\n      created_date\n      settings {\n        is_secure\n        security_pin\n        require_payor_address\n        accepted_payment_methods { ach card cash }\n      }\n      payor {\n        payor_id\n        full_name\n        email\n        merchant_uid\n      }\n      metadata\n      offline_transactions { instance_id amount type note transaction_date }\n    }\n    total_row_count\n  }\n}",
+        "name": "Get a paid invoice",
+        "description": "status is PAID and total_paid_amount equals invoice_amount.",
+        "query": "query Invoices($query: SqlQuery, $limit: Int) {\n  invoices(query: $query, limit: $limit) {\n    items {\n      invoice_id\n      merchant_uid\n      invoice_name\n      invoice_description\n      invoice_amount\n      total_paid_amount\n      currency\n      status\n      fee_mode\n      due_by\n      invoice_date\n      merchant_invoice_number\n      account_code\n      reference\n      created_date\n      settings {\n        is_secure\n        security_pin\n        require_payor_address\n        accepted_payment_methods { ach card cash }\n      }\n      payor {\n        payor_id\n        full_name\n        email\n        merchant_uid\n      }\n      metadata\n      offline_transactions { instance_id amount type note transaction_date }\n    }\n    total_row_count\n  }\n}",
         "variables": {
           "query": {
             "query_list": [
@@ -66,35 +66,6 @@
             }
           }
         }
-      },
-      {
-        "name": "Check whether a deleted invoice is gone",
-        "description": "Read the invoice back after deleteInvoice; its true response alone does not prove an invoice existed or was deleted.",
-        "query": "query Invoices($query: SqlQuery, $limit: Int, $offset_id: String, $direction: MoveDirection) {\n  invoices(query: $query, limit: $limit, offset_id: $offset_id, direction: $direction) {\n    items {\n      invoice_id\n      merchant_uid\n      invoice_name\n      invoice_description\n      invoice_amount\n      total_paid_amount\n      currency\n      status\n      fee_mode\n      due_by\n      invoice_date\n      merchant_invoice_number\n      account_code\n      reference\n      created_date\n      settings {\n        is_secure\n        security_pin\n        require_payor_address\n        accepted_payment_methods { ach card cash }\n      }\n      payor {\n        payor_id\n        full_name\n        email\n        merchant_uid\n      }\n      metadata\n      offline_transactions { instance_id amount type note transaction_date }\n    }\n    total_row_count\n  }\n}",
-        "variables": {
-          "query": {
-            "query_list": [
-              {
-                "key": "invoice_id",
-                "value": "ptl_inv_4VAqBS9kDpdBAOqzjqj81G",
-                "operator": "EQUAL"
-              }
-            ]
-          },
-          "limit": 1
-        },
-        "response": {
-          "type": "success",
-          "httpStatus": 200,
-          "body": {
-            "data": {
-              "invoices": {
-                "items": [],
-                "total_row_count": 0
-              }
-            }
-          }
-        }
       }
     ]
   },
@@ -104,7 +75,7 @@
     "examples": [
       {
         "name": "Create an invoice with metadata",
-        "description": "Creates an invoice for Pat Theodore. Send metadata as JSON text; the API does not reliably return metadata in the same format.",
+        "description": "Creates a $25.00 invoice and a new payor in one call. Send metadata as a JSON string.",
         "query": "mutation CreateInvoice($input: InvoiceInput!) {\n  createInvoice(input: $input) {\n    invoice_id\n    merchant_uid\n    invoice_name\n    invoice_description\n    invoice_amount\n    total_paid_amount\n    currency\n    status\n    fee_mode\n    due_by\n    invoice_date\n    merchant_invoice_number\n    account_code\n    reference\n    created_date\n    settings {\n      is_secure\n      security_pin\n      require_payor_address\n      accepted_payment_methods { ach card cash }\n    }\n    payor {\n      payor_id\n      full_name\n      email\n      merchant_uid\n    }\n  }\n}",
         "variables": {
           "input": {
@@ -195,7 +166,7 @@
     "examples": [
       {
         "name": "Delete an invoice",
-        "description": "Deletes an invoice; read it back with invoices to confirm it is gone.",
+        "description": "Deletes the invoice identified by invoice_id.",
         "query": "mutation DeleteInvoice($invoice_id: String!) {\n  deleteInvoice(invoice_id: $invoice_id)\n}",
         "variables": {
           "invoice_id": "ptl_inv_4VAqBS9kDpdBAOqzjqj81G"
@@ -211,8 +182,8 @@
         }
       },
       {
-        "name": "A missing invoice also returns true",
-        "description": "deleteInvoice can return true when the ID names no invoice, so check invoices afterward to confirm the result.",
+        "name": "Unknown invoice ID",
+        "description": "Attempts to delete the invoice identified by invoice_id.",
         "query": "mutation DeleteInvoice($invoice_id: String!) {\n  deleteInvoice(invoice_id: $invoice_id)\n}",
         "variables": {
           "invoice_id": "ptl_inv_does_not_exist"
@@ -235,7 +206,7 @@
     "examples": [
       {
         "name": "Resend an invoice email",
-        "description": "A true response means the email was queued; it does not confirm delivery.",
+        "description": "Sends the invoice email again. true means the email is queued, not delivered.",
         "query": "mutation CreateInvoiceEmail($invoice_id: String!) {\n  createInvoiceEmail(invoice_id: $invoice_id)\n}",
         "variables": {
           "invoice_id": "ptl_inv_2O0yTY3k5AIyDc8NQ2SvhC"
@@ -257,8 +228,8 @@
     "operationType": "mutation",
     "examples": [
       {
-        "name": "Record a cash payment for the full invoice",
-        "description": "The offline payment must equal the full invoice balance.",
+        "name": "Record a cash payment",
+        "description": "Records a cash payment against an invoice. The amount must equal the remaining balance.",
         "query": "mutation CreateOfflineTransaction($input: OfflineTransactionInput!) {\n  createOfflineTransaction(input: $input) {\n    instance_id\n    invoice_id\n    amount\n    type\n    note\n    transaction_date\n  }\n}",
         "variables": {
           "input": {
@@ -283,27 +254,6 @@
                 "transaction_date": "2026-09-05"
               }
             }
-          }
-        }
-      },
-      {
-        "name": "A partial offline payment is refused",
-        "description": "The payment amount must match the invoice's full remaining balance.",
-        "query": "mutation CreateOfflineTransaction($input: OfflineTransactionInput!) {\n  createOfflineTransaction(input: $input) {\n    instance_id\n    invoice_id\n    amount\n    type\n    note\n    transaction_date\n  }\n}",
-        "variables": {
-          "input": {
-            "amount": 1000,
-            "invoice_id": "ptl_inv_3Hfkv8bmz22tyiWJ6d22DS",
-            "transaction_date": "2026-09-05",
-            "type": "CASH"
-          }
-        },
-        "response": {
-          "type": "error",
-          "httpStatus": 200,
-          "body": {
-            "errorType": "Lambda:Unhandled",
-            "message": "Payment amount must equal invoice payoff amount: 2500."
           }
         }
       }

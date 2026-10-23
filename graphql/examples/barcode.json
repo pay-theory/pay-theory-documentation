@@ -4,9 +4,9 @@
     "operationType": "query",
     "examples": [
       {
-        "name": "Read one barcode back",
-        "description": "Reads a barcode for a merchant. The expiration date is date-only, and metadata is returned as a JSON string of key/value pairs.",
-        "query": "query Barcode($merchant_uid: ID!, $barcode_id: String!) {\n  barcode(merchant_uid: $merchant_uid, barcode_id: $barcode_id) {\n    barcode_id\n    barcode_url\n    merchant_uid\n    amount\n    fees\n    expiration_date\n    full_name\n    email_or_phone\n    sale_id\n    reference\n    account_code\n    invoice_id\n    metadata\n  }\n}",
+        "name": "Get a barcode",
+        "description": "expiration_date has no time. metadata is returned as a JSON string of key/value pairs.",
+        "query": "query Barcode($merchant_uid: ID!, $barcode_id: String!) {\n  barcode(merchant_uid: $merchant_uid, barcode_id: $barcode_id) {\n    barcode_id\n    merchant_uid\n    amount\n    fees\n    expiration_date\n    full_name\n    email_or_phone\n    sale_id\n    reference\n    account_code\n    invoice_id\n    metadata\n  }\n}",
         "variables": {
           "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
           "barcode_id": "ptl_barc_nFevCQ42c7PuKAZ3kQ8Zn"
@@ -18,7 +18,6 @@
             "data": {
               "barcode": {
                 "barcode_id": "ptl_barc_nFevCQ42c7PuKAZ3kQ8Zn",
-                "barcode_url": "https://innovate.paytheorylab.ptbar.codes/ptl_barc_nFevCQ42c7PuKAZ3kQ8Zn.svgz",
                 "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
                 "amount": 500,
                 "fees": 200,
@@ -38,7 +37,7 @@
       {
         "name": "Barcode ID not found",
         "description": "Returns null when the barcode ID does not match a barcode.",
-        "query": "query Barcode($merchant_uid: ID!, $barcode_id: String!) {\n  barcode(merchant_uid: $merchant_uid, barcode_id: $barcode_id) {\n    barcode_id\n    barcode_url\n    merchant_uid\n    amount\n    fees\n    expiration_date\n    full_name\n    email_or_phone\n    sale_id\n    reference\n    account_code\n    invoice_id\n    metadata\n  }\n}",
+        "query": "query Barcode($merchant_uid: ID!, $barcode_id: String!) {\n  barcode(merchant_uid: $merchant_uid, barcode_id: $barcode_id) {\n    barcode_id\n    merchant_uid\n    amount\n    fees\n    expiration_date\n    full_name\n    email_or_phone\n    sale_id\n    reference\n    account_code\n    invoice_id\n    metadata\n  }\n}",
         "variables": {
           "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
           "barcode_id": "ptl_barc_does_not_exist"
@@ -52,34 +51,6 @@
             }
           }
         }
-      },
-      {
-        "name": "Barcode belongs to another merchant",
-        "description": "Returns a Not Authorized error when a merchant key requests another merchant's barcode.",
-        "query": "query Barcode($merchant_uid: ID!, $barcode_id: String!) {\n  barcode(merchant_uid: $merchant_uid, barcode_id: $barcode_id) {\n    barcode_id\n    barcode_url\n    merchant_uid\n    amount\n    fees\n    expiration_date\n    full_name\n    email_or_phone\n    sale_id\n    reference\n    account_code\n    invoice_id\n    metadata\n  }\n}",
-        "variables": {
-          "merchant_uid": "6abd5fc7-5548-4165-af0d-3a16be47949a",
-          "barcode_id": "ptl_barc_nFevCQ42c7PuKAZ3kQ8Zn"
-        },
-        "response": {
-          "type": "error",
-          "httpStatus": 200,
-          "body": {
-            "data": {
-              "barcode": null
-            },
-            "errors": [
-              {
-                "path": [
-                  "barcode"
-                ],
-                "data": null,
-                "errorInfo": null,
-                "message": "Not Authorized."
-              }
-            ]
-          }
-        }
       }
     ]
   },
@@ -90,7 +61,7 @@
       {
         "name": "Create a barcode",
         "description": "Creates a barcode a payor can use to make a cash payment.",
-        "query": "mutation CreateBarcode($input: BarcodeInput!) {\n  createBarcode(input: $input) {\n    barcode_id\n    barcode_url\n    merchant_uid\n    amount\n    fees\n    expiration_date\n    full_name\n    email_or_phone\n    sale_id\n    reference\n    account_code\n  }\n}",
+        "query": "mutation CreateBarcode($input: BarcodeInput!) {\n  createBarcode(input: $input) {\n    barcode_id\n    merchant_uid\n    amount\n    fees\n    expiration_date\n    full_name\n    email_or_phone\n    sale_id\n    reference\n    account_code\n  }\n}",
         "variables": {
           "input": {
             "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
@@ -109,7 +80,6 @@
             "data": {
               "createBarcode": {
                 "barcode_id": "ptl_barc_nFevCQ42c7PuKAZ3kQ8Zn",
-                "barcode_url": "https://innovate.paytheorylab.ptbar.codes/ptl_barc_nFevCQ42c7PuKAZ3kQ8Zn.svgz",
                 "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
                 "amount": 500,
                 "fees": 200,
@@ -125,71 +95,9 @@
         }
       },
       {
-        "name": "Amount below the merchant minimum",
-        "description": "Returns a validation error when the amount is below the merchant's configured minimum. Amount limits vary by merchant.",
-        "query": "mutation CreateBarcode($input: BarcodeInput!) {\n  createBarcode(input: $input) {\n    barcode_id\n    barcode_url\n    merchant_uid\n    amount\n    fees\n    expiration_date\n    full_name\n    email_or_phone\n    sale_id\n    reference\n    account_code\n  }\n}",
-        "variables": {
-          "input": {
-            "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
-            "amount": 50,
-            "full_name": "Pat Theodore",
-            "email_or_phone": "pat@paytheory.com"
-          }
-        },
-        "response": {
-          "type": "error",
-          "httpStatus": 200,
-          "body": {
-            "data": null,
-            "errors": [
-              {
-                "path": [
-                  "createBarcode"
-                ],
-                "data": null,
-                "errorType": "VALIDATION_ERROR",
-                "errorInfo": null,
-                "message": "Amount 50 is not within the min 100 and max 50000000 amount range."
-              }
-            ]
-          }
-        }
-      },
-      {
-        "name": "Amount above the merchant maximum",
-        "description": "Returns a validation error when the amount exceeds the merchant's configured maximum. Amount limits vary by merchant.",
-        "query": "mutation CreateBarcode($input: BarcodeInput!) {\n  createBarcode(input: $input) {\n    barcode_id\n    barcode_url\n    merchant_uid\n    amount\n    fees\n    expiration_date\n    full_name\n    email_or_phone\n    sale_id\n    reference\n    account_code\n  }\n}",
-        "variables": {
-          "input": {
-            "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
-            "amount": 50000001,
-            "full_name": "Pat Theodore",
-            "email_or_phone": "pat@paytheory.com"
-          }
-        },
-        "response": {
-          "type": "error",
-          "httpStatus": 200,
-          "body": {
-            "data": null,
-            "errors": [
-              {
-                "path": [
-                  "createBarcode"
-                ],
-                "data": null,
-                "errorType": "VALIDATION_ERROR",
-                "errorInfo": null,
-                "message": "Amount 50000001 is not within the min 100 and max 50000000 amount range."
-              }
-            ]
-          }
-        }
-      },
-      {
-        "name": "Expiration exceeds 90 days",
+        "name": "Expiration over 90 days",
         "description": "Returns a validation error when days_until_expiration is greater than 90.",
-        "query": "mutation CreateBarcode($input: BarcodeInput!) {\n  createBarcode(input: $input) {\n    barcode_id\n    barcode_url\n    merchant_uid\n    amount\n    fees\n    expiration_date\n    full_name\n    email_or_phone\n    sale_id\n    reference\n    account_code\n  }\n}",
+        "query": "mutation CreateBarcode($input: BarcodeInput!) {\n  createBarcode(input: $input) {\n    barcode_id\n    merchant_uid\n    amount\n    fees\n    expiration_date\n    full_name\n    email_or_phone\n    sale_id\n    reference\n    account_code\n  }\n}",
         "variables": {
           "input": {
             "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
@@ -221,7 +129,7 @@
       {
         "name": "Expiration date and days both provided",
         "description": "Returns a validation error when both expiration_date and days_until_expiration are provided.",
-        "query": "mutation CreateBarcode($input: BarcodeInput!) {\n  createBarcode(input: $input) {\n    barcode_id\n    barcode_url\n    merchant_uid\n    amount\n    fees\n    expiration_date\n    full_name\n    email_or_phone\n    sale_id\n    reference\n    account_code\n  }\n}",
+        "query": "mutation CreateBarcode($input: BarcodeInput!) {\n  createBarcode(input: $input) {\n    barcode_id\n    merchant_uid\n    amount\n    fees\n    expiration_date\n    full_name\n    email_or_phone\n    sale_id\n    reference\n    account_code\n  }\n}",
         "variables": {
           "input": {
             "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
@@ -254,14 +162,14 @@
       {
         "name": "Sale ID is too long",
         "description": "Returns a validation error when sale_id is longer than 31 characters.",
-        "query": "mutation CreateBarcode($input: BarcodeInput!) {\n  createBarcode(input: $input) {\n    barcode_id\n    barcode_url\n    merchant_uid\n    amount\n    fees\n    expiration_date\n    full_name\n    email_or_phone\n    sale_id\n    reference\n    account_code\n  }\n}",
+        "query": "mutation CreateBarcode($input: BarcodeInput!) {\n  createBarcode(input: $input) {\n    barcode_id\n    merchant_uid\n    amount\n    fees\n    expiration_date\n    full_name\n    email_or_phone\n    sale_id\n    reference\n    account_code\n  }\n}",
         "variables": {
           "input": {
             "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
             "amount": 500,
             "full_name": "Pat Theodore",
             "email_or_phone": "pat@paytheory.com",
-            "sale_id": "ssssssssssssssssssssssssssssssss"
+            "sale_id": "northstar-order-2026-10-22-00001"
           }
         },
         "response": {
@@ -284,9 +192,9 @@
         }
       },
       {
-        "name": "Email or phone is required",
+        "name": "Missing email or phone",
         "description": "Returns a validation error when email_or_phone is empty and no payor contact is provided.",
-        "query": "mutation CreateBarcode($input: BarcodeInput!) {\n  createBarcode(input: $input) {\n    barcode_id\n    barcode_url\n    merchant_uid\n    amount\n    fees\n    expiration_date\n    full_name\n    email_or_phone\n    sale_id\n    reference\n    account_code\n  }\n}",
+        "query": "mutation CreateBarcode($input: BarcodeInput!) {\n  createBarcode(input: $input) {\n    barcode_id\n    merchant_uid\n    amount\n    fees\n    expiration_date\n    full_name\n    email_or_phone\n    sale_id\n    reference\n    account_code\n  }\n}",
         "variables": {
           "input": {
             "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
