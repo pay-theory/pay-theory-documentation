@@ -2,6 +2,72 @@
   {
     "operation": "idempotencyLookup",
     "operationType": "query",
-    "examples": []
+    "examples": [
+      {
+        "name": "Look up a completed transaction",
+        "description": "Shows the completed record for a transaction key, including its transaction ID and timestamps.",
+        "query": "query IdempotencyLookup(\n  $merchant_uid: String!\n  $operation: IdempotencyOperation!\n  $idempotency_key: String!\n) {\n  idempotencyLookup(\n    merchant_uid: $merchant_uid\n    operation: $operation\n    idempotency_key: $idempotency_key\n  ) {\n    merchant_uid\n    operation\n    idempotency_status\n    transaction_id\n    authorization_id\n    locked_until\n    expires_at\n  }\n}",
+        "variables": {
+          "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+          "operation": "CREATE_TRANSACTION",
+          "idempotency_key": "order-1042-transaction"
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "idempotencyLookup": {
+                "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                "operation": "CREATE_TRANSACTION",
+                "idempotency_status": "COMPLETED",
+                "transaction_id": "ptl_txn_5mos8Z6NFWAWQRac7BAQFX",
+                "authorization_id": null,
+                "locked_until": "2026-09-02T21:25:54.494Z",
+                "expires_at": "2026-09-09T20:55:54.494Z"
+              }
+            }
+          }
+        }
+      },
+      {
+        "name": "Look up a key that has not been used",
+        "description": "Returns null when this merchant has not used the key for the selected operation.",
+        "query": "query IdempotencyLookup(\n  $merchant_uid: String!\n  $operation: IdempotencyOperation!\n  $idempotency_key: String!\n) {\n  idempotencyLookup(\n    merchant_uid: $merchant_uid\n    operation: $operation\n    idempotency_key: $idempotency_key\n  ) {\n    merchant_uid\n    operation\n    idempotency_status\n    transaction_id\n    authorization_id\n    locked_until\n    expires_at\n  }\n}",
+        "variables": {
+          "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+          "operation": "CREATE_TRANSACTION",
+          "idempotency_key": "order-1042-unused"
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "idempotencyLookup": null
+            }
+          }
+        }
+      },
+      {
+        "name": "Look up a transaction key under authorizations",
+        "description": "Returns null because this key was used with createTransaction, not createAuthorization.",
+        "query": "query IdempotencyLookup(\n  $merchant_uid: String!\n  $operation: IdempotencyOperation!\n  $idempotency_key: String!\n) {\n  idempotencyLookup(\n    merchant_uid: $merchant_uid\n    operation: $operation\n    idempotency_key: $idempotency_key\n  ) {\n    merchant_uid\n    operation\n    idempotency_status\n    transaction_id\n    authorization_id\n    locked_until\n    expires_at\n  }\n}",
+        "variables": {
+          "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+          "operation": "CREATE_AUTHORIZATION",
+          "idempotency_key": "order-1042-transaction"
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "idempotencyLookup": null
+            }
+          }
+        }
+      }
+    ]
   }
 ]
