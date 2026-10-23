@@ -66,7 +66,6 @@
           "directives": {}
         }
       ],
-      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "Authorizations",
@@ -178,7 +177,6 @@
           "directives": {}
         }
       ],
-      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "Barcode",
@@ -319,7 +317,6 @@
           "directives": {}
         }
       ],
-      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "Disputes",
@@ -378,6 +375,127 @@
         }
       ],
       "returnTypeString": "Disputes"
+    },
+    "idempotencyLookup": {
+      "name": "idempotencyLookup",
+      "operationType": "query",
+      "description": "Finds a payment creation record by idempotency key.",
+      "arguments": [
+        {
+          "name": "merchant_uid",
+          "description": "The Pay Theory unique identifier for the merchant that owns the idempotency key.",
+          "isRequired": true,
+          "type": {
+            "kind": "TYPE_REF",
+            "name": "String",
+            "link": "#string"
+          },
+          "typeString": "String!",
+          "directives": {}
+        },
+        {
+          "name": "operation",
+          "description": "The payment creation operation the key was scoped to.",
+          "isRequired": true,
+          "type": {
+            "kind": "TYPE_REF",
+            "name": "IdempotencyOperation",
+            "link": "#idempotency-operation"
+          },
+          "typeString": "IdempotencyOperation!",
+          "directives": {}
+        },
+        {
+          "name": "idempotency_key",
+          "description": "The caller-provided idempotency key.",
+          "isRequired": true,
+          "type": {
+            "kind": "TYPE_REF",
+            "name": "String",
+            "link": "#string"
+          },
+          "typeString": "String!",
+          "directives": {}
+        }
+      ],
+      "returnType": {
+        "kind": "TYPE_REF",
+        "name": "IdempotencyLookup",
+        "link": "#idempotency-lookup"
+      },
+      "directives": {
+        "docGroup": {
+          "name": "Idempotency",
+          "sidebarTitle": "Lookup Idempotency Key",
+          "displayLabel": "Lookup Idempotency Key"
+        },
+        "docPriority": {
+          "level": 1
+        }
+      },
+      "referencedTypes": [
+        "IdempotencyLookup",
+        "String",
+        "IdempotencyOperation"
+      ],
+      "isDeprecated": false,
+      "examples": [
+        {
+          "name": "Look up a completed transaction",
+          "description": "Returns the transaction created with this merchant, operation and key. The record expires 7 days after the first request.",
+          "query": "query IdempotencyLookup(\n  $merchant_uid: String!\n  $operation: IdempotencyOperation!\n  $idempotency_key: String!\n) {\n  idempotencyLookup(\n    merchant_uid: $merchant_uid\n    operation: $operation\n    idempotency_key: $idempotency_key\n  ) {\n    merchant_uid\n    operation\n    idempotency_status\n    transaction_id\n    authorization_id\n    locked_until\n    expires_at\n  }\n}",
+          "variables": {
+            "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+            "operation": "CREATE_TRANSACTION",
+            "idempotency_key": "order-1042-transaction"
+          },
+          "response": {
+            "type": "success",
+            "httpStatus": 200,
+            "body": {
+              "data": {
+                "idempotencyLookup": {
+                  "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                  "operation": "CREATE_TRANSACTION",
+                  "idempotency_status": "COMPLETED",
+                  "transaction_id": "ptl_txn_5mos8Z6NFWAWQRac7BAQFX",
+                  "authorization_id": null,
+                  "locked_until": "2026-09-02T21:25:54.494Z",
+                  "expires_at": "2026-09-09T20:55:54.494Z"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Look up a completed authorization",
+          "description": "Returns the authorization created with this merchant, operation and key. The record expires 7 days after the first request.",
+          "query": "query IdempotencyLookup(\n  $merchant_uid: String!\n  $operation: IdempotencyOperation!\n  $idempotency_key: String!\n) {\n  idempotencyLookup(\n    merchant_uid: $merchant_uid\n    operation: $operation\n    idempotency_key: $idempotency_key\n  ) {\n    merchant_uid\n    operation\n    idempotency_status\n    transaction_id\n    authorization_id\n    locked_until\n    expires_at\n  }\n}",
+          "variables": {
+            "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+            "operation": "CREATE_AUTHORIZATION",
+            "idempotency_key": "order-1042-authorization"
+          },
+          "response": {
+            "type": "success",
+            "httpStatus": 200,
+            "body": {
+              "data": {
+                "idempotencyLookup": {
+                  "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                  "operation": "CREATE_AUTHORIZATION",
+                  "idempotency_status": "COMPLETED",
+                  "transaction_id": null,
+                  "authorization_id": "ptl_auth_5xhiVIdYV1XRd6At4B8Ioc",
+                  "locked_until": "2026-09-02T21:26:04.134Z",
+                  "expires_at": "2026-09-09T20:56:04.134Z"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "returnTypeString": "IdempotencyLookup"
     },
     "invoices": {
       "name": "invoices",
@@ -445,7 +563,6 @@
           "directives": {}
         }
       ],
-      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "Invoices",
@@ -567,7 +684,6 @@
           "directives": {}
         }
       ],
-      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "Merchant",
@@ -620,6 +736,7 @@
         },
         {
           "name": "Merchant not found",
+          "description": "Returns an error when the merchant_uid does not exist.",
           "query": "query Merchant($merchant_uid: String) {\n  merchant(merchant_uid: $merchant_uid) {\n    merchant_uid\n    merchant_name\n    card_active\n    ach_active\n    cash_active\n    country_code\n    settings {\n      contact_email\n      website\n    }\n  }\n}",
           "variables": {
             "merchant_uid": "6b0c1e4d-2f7a-4c9e-z1y2-8d3f5a7b9c10"
@@ -647,8 +764,7 @@
                 }
               ]
             }
-          },
-          "description": "Returns an error when the merchant_uid does not exist."
+          }
         }
       ],
       "returnTypeString": "Merchant"
@@ -719,7 +835,6 @@
           "directives": {}
         }
       ],
-      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "Merchants",
@@ -882,7 +997,6 @@
           "directives": {}
         }
       ],
-      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "PaymentLinks",
@@ -1058,23 +1172,6 @@
           "directives": {}
         }
       ],
-      "nestedArguments": [
-        {
-          "name": "items.payor.query_list",
-          "description": "When selected, filters payment method token rows by payor fields such as email.",
-          "isRequired": false,
-          "type": {
-            "kind": "LIST",
-            "ofType": {
-              "kind": "TYPE_REF",
-              "name": "QueryPair",
-              "link": "#query-pair"
-            }
-          },
-          "typeString": "[QueryPair]",
-          "directives": {}
-        }
-      ],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "PaymentMethodTokens",
@@ -1088,14 +1185,6 @@
         },
         "docPriority": {
           "level": 1
-        },
-        "docNestedArgs": {
-          "args": [
-            {
-              "path": "items.payor.query_list",
-              "description": "When selected, filters payment method token rows by payor fields such as email."
-            }
-          ]
         }
       },
       "referencedTypes": [
@@ -1103,13 +1192,13 @@
         "SqlQuery",
         "Int",
         "String",
-        "MoveDirection",
-        "QueryPair"
+        "MoveDirection"
       ],
       "isDeprecated": false,
       "examples": [
         {
           "name": "List saved payment methods",
+          "description": "Filters by merchant and returns up to two matching methods with their brand, last four digits, and active status.",
           "query": "query PaymentMethodTokens($query: SqlQuery, $limit: Int) {\n    paymentMethodTokens(query: $query, limit: $limit) {\n      items {\n        payment_method_id\n        merchant_uid\n        payment_type\n        last_four\n        card_brand\n        card_type\n        exp_date\n        full_name\n        is_active\n        wallet_type\n      }\n      total_row_count\n    }\n  }",
           "variables": {
             "query": {
@@ -1159,11 +1248,11 @@
                 }
               }
             }
-          },
-          "description": "Filters by merchant and returns up to two matching methods with their brand, last four digits, and active status."
+          }
         },
         {
           "name": "List active saved methods",
+          "description": "Lists active saved payment methods for the merchant.",
           "query": "query PaymentMethodTokens($query: SqlQuery, $limit: Int) {\n    paymentMethodTokens(query: $query, limit: $limit) {\n      items {\n        payment_method_id\n        merchant_uid\n        payment_type\n        last_four\n        card_brand\n        card_type\n        exp_date\n        full_name\n        is_active\n        wallet_type\n      }\n      total_row_count\n    }\n  }",
           "variables": {
             "query": {
@@ -1219,11 +1308,11 @@
                 }
               }
             }
-          },
-          "description": "Lists active saved payment methods for the merchant."
+          }
         },
         {
           "name": "Invalid column",
+          "description": "Returns an error when the filter contains an unsupported field.",
           "query": "query PaymentMethodTokens($query: SqlQuery, $limit: Int) {\n    paymentMethodTokens(query: $query, limit: $limit) {\n      items {\n        payment_method_id\n        merchant_uid\n        payment_type\n        last_four\n        card_brand\n        card_type\n        exp_date\n        full_name\n        is_active\n        wallet_type\n      }\n      total_row_count\n    }\n  }",
           "variables": {
             "query": {
@@ -1256,8 +1345,7 @@
                 }
               ]
             }
-          },
-          "description": "Returns an error when the filter contains an unsupported field."
+          }
         }
       ],
       "returnTypeString": "PaymentMethodTokens"
@@ -1292,7 +1380,6 @@
           "directives": {}
         }
       ],
-      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "Boolean",
@@ -1448,7 +1535,6 @@
           "directives": {}
         }
       ],
-      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "Payors",
@@ -1475,6 +1561,7 @@
       "examples": [
         {
           "name": "List payors",
+          "description": "Lists payors for a merchant with a SqlQuery filter.",
           "query": "query Payors($query: SqlQuery, $limit: Int) {\n  payors(query: $query, limit: $limit) {\n    items {\n      payor_id\n      merchant_uid\n      full_name\n      email\n      phone\n      address_line1\n      city\n      region\n      postal_code\n      country\n    }\n    total_row_count\n  }\n}",
           "variables": {
             "query": {
@@ -1524,8 +1611,7 @@
                 }
               }
             }
-          },
-          "description": "Lists payors for a merchant with a SqlQuery filter."
+          }
         },
         {
           "name": "Get a payor by ID",
@@ -1571,6 +1657,7 @@
         },
         {
           "name": "No payors found",
+          "description": "Returns an empty list when the filter matches nothing.",
           "query": "query Payors($query: SqlQuery, $limit: Int) {\n  payors(query: $query, limit: $limit) {\n    items {\n      payor_id\n      merchant_uid\n      full_name\n      email\n      phone\n      address_line1\n      city\n      region\n      postal_code\n      country\n    }\n    total_row_count\n  }\n}",
           "variables": {
             "query": {
@@ -1595,8 +1682,7 @@
                 }
               }
             }
-          },
-          "description": "Returns an empty list when the filter matches nothing."
+          }
         }
       ],
       "returnTypeString": "Payors"
@@ -1667,7 +1753,6 @@
           "directives": {}
         }
       ],
-      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "RecurringPayments",
@@ -1775,7 +1860,6 @@
           "directives": {}
         }
       ],
-      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "MissedRecurringPaymentData",
@@ -1887,7 +1971,6 @@
           "directives": {}
         }
       ],
-      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "Settlements",
@@ -2061,7 +2144,6 @@
           "directives": {}
         }
       ],
-      "nestedArguments": [],
       "returnType": {
         "kind": "LIST",
         "ofType": {
@@ -2138,7 +2220,6 @@
           "directives": {}
         }
       ],
-      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "FundingTransfers",
@@ -2191,73 +2272,6 @@
       ],
       "returnTypeString": "FundingTransfers"
     },
-    "idempotencyLookup": {
-      "name": "idempotencyLookup",
-      "operationType": "query",
-      "description": "Finds a payment creation record by idempotency key.",
-      "arguments": [
-        {
-          "name": "merchant_uid",
-          "description": "The Pay Theory unique identifier for the merchant that owns the idempotency key.",
-          "isRequired": true,
-          "type": {
-            "kind": "TYPE_REF",
-            "name": "String",
-            "link": "#string"
-          },
-          "typeString": "String!",
-          "directives": {}
-        },
-        {
-          "name": "operation",
-          "description": "The payment creation operation the key was scoped to.",
-          "isRequired": true,
-          "type": {
-            "kind": "TYPE_REF",
-            "name": "IdempotencyOperation",
-            "link": "#idempotency-operation"
-          },
-          "typeString": "IdempotencyOperation!",
-          "directives": {}
-        },
-        {
-          "name": "idempotency_key",
-          "description": "The caller-provided idempotency key.",
-          "isRequired": true,
-          "type": {
-            "kind": "TYPE_REF",
-            "name": "String",
-            "link": "#string"
-          },
-          "typeString": "String!",
-          "directives": {}
-        }
-      ],
-      "nestedArguments": [],
-      "returnType": {
-        "kind": "TYPE_REF",
-        "name": "IdempotencyLookup",
-        "link": "#idempotency-lookup"
-      },
-      "directives": {
-        "docGroup": {
-          "name": "Idempotency",
-          "sidebarTitle": "Lookup Idempotency Key",
-          "displayLabel": "Lookup Idempotency Key"
-        },
-        "docPriority": {
-          "level": 1
-        }
-      },
-      "referencedTypes": [
-        "IdempotencyLookup",
-        "IdempotencyOperation",
-        "String"
-      ],
-      "isDeprecated": false,
-      "examples": [],
-      "returnTypeString": "IdempotencyLookup"
-    },
     "instruction": {
       "name": "instruction",
       "operationType": "query",
@@ -2288,7 +2302,6 @@
           "directives": {}
         }
       ],
-      "nestedArguments": [],
       "returnType": {
         "kind": "LIST",
         "ofType": {
@@ -2406,7 +2419,6 @@
           "directives": {}
         }
       ],
-      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "Splits",
@@ -2540,38 +2552,6 @@
           "directives": {}
         }
       ],
-      "nestedArguments": [
-        {
-          "name": "items.payment_method.query_list",
-          "description": "When selected, filters transaction rows by payment method fields such as last_four.",
-          "isRequired": false,
-          "type": {
-            "kind": "LIST",
-            "ofType": {
-              "kind": "TYPE_REF",
-              "name": "QueryPair",
-              "link": "#query-pair"
-            }
-          },
-          "typeString": "[QueryPair]",
-          "directives": {}
-        },
-        {
-          "name": "items.payment_method.payor.query_list",
-          "description": "When selected, filters transaction rows by payor fields such as email.",
-          "isRequired": false,
-          "type": {
-            "kind": "LIST",
-            "ofType": {
-              "kind": "TYPE_REF",
-              "name": "QueryPair",
-              "link": "#query-pair"
-            }
-          },
-          "typeString": "[QueryPair]",
-          "directives": {}
-        }
-      ],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "Transactions",
@@ -2585,18 +2565,6 @@
         },
         "docPriority": {
           "level": 1
-        },
-        "docNestedArgs": {
-          "args": [
-            {
-              "path": "items.payment_method.query_list",
-              "description": "When selected, filters transaction rows by payment method fields such as last_four."
-            },
-            {
-              "path": "items.payment_method.payor.query_list",
-              "description": "When selected, filters transaction rows by payor fields such as email."
-            }
-          ]
         }
       },
       "referencedTypes": [
@@ -2604,13 +2572,13 @@
         "SqlQuery",
         "Int",
         "String",
-        "MoveDirection",
-        "QueryPair"
+        "MoveDirection"
       ],
       "isDeprecated": false,
       "examples": [
         {
           "name": "List transactions for a merchant",
+          "description": "Filters by merchant and returns up to two transactions with gross and net amounts, status, and transaction date.",
           "query": "query Transactions($query: SqlQuery, $limit: Int) {\n    transactions(query: $query, limit: $limit) {\n      items {\n        transaction_id\n        merchant_uid\n        gross_amount\n        net_amount\n        currency\n        status\n        transaction_date\n        settlement_batch\n        transaction_type\n        fee_mode\n      }\n      total_row_count\n    }\n  }",
           "variables": {
             "query": {
@@ -2660,8 +2628,7 @@
                 }
               }
             }
-          },
-          "description": "Filters by merchant and returns up to two transactions with gross and net amounts, status, and transaction date."
+          }
         },
         {
           "name": "Filter transactions by card and payor",
@@ -2717,6 +2684,7 @@
         },
         {
           "name": "Invalid column",
+          "description": "Returns an error when the filter contains an unsupported field.",
           "query": "query Transactions($query: SqlQuery, $limit: Int) {\n    transactions(query: $query, limit: $limit) {\n      items {\n        transaction_id\n        merchant_uid\n        gross_amount\n        net_amount\n        currency\n        status\n        transaction_date\n        settlement_batch\n        transaction_type\n        fee_mode\n      }\n      total_row_count\n    }\n  }",
           "variables": {
             "query": {
@@ -2749,8 +2717,7 @@
                 }
               ]
             }
-          },
-          "description": "Returns an error when the filter contains an unsupported field."
+          }
         }
       ],
       "returnTypeString": "Transactions"
@@ -2832,7 +2799,6 @@
           "directives": {}
         }
       ],
-      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "ServiceFeeCalculation",
@@ -2858,6 +2824,7 @@
       "examples": [
         {
           "name": "Read the service fee for a card",
+          "description": "Calculates the service fee for a card using its BIN.",
           "query": "query ServiceFee($merchant_uid: String!, $amount: Int!, $bank_id: String) {\n  serviceFee(merchant_uid: $merchant_uid, amount: $amount, bank_id: $bank_id) {\n    fee\n    total\n    adjusted_total\n  }\n}",
           "variables": {
             "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
@@ -2876,11 +2843,11 @@
                 }
               }
             }
-          },
-          "description": "Calculates the service fee for a card using its BIN."
+          }
         },
         {
           "name": "Read the service fee for a bank account",
+          "description": "Calculates the service fee for an ACH payment.",
           "query": "query ServiceFee($merchant_uid: String!, $amount: Int!, $is_ach: Boolean) {\n  serviceFee(merchant_uid: $merchant_uid, amount: $amount, is_ach: $is_ach) {\n    fee\n    total\n    adjusted_total\n  }\n}",
           "variables": {
             "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
@@ -2899,11 +2866,11 @@
                 }
               }
             }
-          },
-          "description": "Calculates the service fee for an ACH payment."
+          }
         },
         {
           "name": "Bank_id is not a 6-8 digit BIN",
+          "description": "Returns an error when bank_id is not a 6- to 8-digit BIN.",
           "query": "query ServiceFee($merchant_uid: String!, $amount: Int!, $bank_id: String) {\n  serviceFee(merchant_uid: $merchant_uid, amount: $amount, bank_id: $bank_id) {\n    fee\n    total\n    adjusted_total\n  }\n}",
           "variables": {
             "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
@@ -2927,8 +2894,7 @@
                 }
               ]
             }
-          },
-          "description": "Returns an error when bank_id is not a 6- to 8-digit BIN."
+          }
         },
         {
           "name": "Read the service fee for a saved card",
@@ -2986,7 +2952,6 @@
           "directives": {}
         }
       ],
-      "nestedArguments": [],
       "returnType": {
         "kind": "LIST",
         "ofType": {
@@ -3057,7 +3022,6 @@
           "directives": {}
         }
       ],
-      "nestedArguments": [],
       "returnType": {
         "kind": "LIST",
         "ofType": {
@@ -3172,7 +3136,6 @@
           "directives": {}
         }
       ],
-      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "WebhookEvents",
@@ -3259,7 +3222,6 @@
           "directives": {}
         }
       ],
-      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "ServiceFeeAmount",
@@ -3285,6 +3247,7 @@
       "examples": [
         {
           "name": "Read both service fees",
+          "description": "Reads the deprecated ACH and card fee quote shape in one call.",
           "query": "query ServiceFeeAmount($merchant_uid: String!, $amount: Int!) {\n  serviceFeeAmount(merchant_uid: $merchant_uid, amount: $amount) {\n    ach {\n      fee\n      total\n      adjusted_total\n    }\n    card {\n      fee\n      total\n      adjusted_total\n    }\n  }\n}",
           "variables": {
             "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
@@ -3309,11 +3272,11 @@
                 }
               }
             }
-          },
-          "description": "Reads the deprecated ACH and card fee quote shape in one call."
+          }
         },
         {
           "name": "Missing merchant ID",
+          "description": "Returns an error when merchant_uid is empty.",
           "query": "query ServiceFeeAmount($merchant_uid: String!, $amount: Int!) {\n  serviceFeeAmount(merchant_uid: $merchant_uid, amount: $amount) {\n    ach {\n      fee\n      total\n      adjusted_total\n    }\n    card {\n      fee\n      total\n      adjusted_total\n    }\n  }\n}",
           "variables": {
             "merchant_uid": "",
@@ -3338,8 +3301,7 @@
                 }
               ]
             }
-          },
-          "description": "Returns an error when merchant_uid is empty."
+          }
         }
       ],
       "returnTypeString": "ServiceFeeAmount"
@@ -3361,6 +3323,18 @@
             "link": "#string"
           },
           "typeString": "String!",
+          "directives": {}
+        },
+        {
+          "name": "idempotency_key",
+          "description": "Caller-provided key used to prevent duplicate authorization creation for the same merchant and operation.",
+          "isRequired": false,
+          "type": {
+            "kind": "TYPE_REF",
+            "name": "String",
+            "link": "#string"
+          },
+          "typeString": "String",
           "directives": {}
         },
         {
@@ -3531,7 +3505,6 @@
           "directives": {}
         }
       ],
-      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "Authorization",
@@ -3562,7 +3535,174 @@
       "isDeprecated": false,
       "examples": [
         {
+          "name": "Create an authorization with an idempotency key",
+          "description": "Places a hold on a card. Use a new key for each new authorization, and reuse it only to retry this request.",
+          "query": "mutation CreateAuthorization(\n  $merchant_uid: String!\n  $amount: Int!\n  $idempotency_key: String\n  $payment_method: PaymentMethodInput\n  $fee_mode: FeeMode\n) {\n  createAuthorization(\n    merchant_uid: $merchant_uid\n    amount: $amount\n    idempotency_key: $idempotency_key\n    payment_method: $payment_method\n    fee_mode: $fee_mode\n  ) {\n    authorization_id\n    merchant_uid\n    amount\n    currency\n    status\n    fee_mode\n    fees\n    authorization_date\n    expiration_date\n    sale_id\n  }\n}",
+          "variables": {
+            "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+            "idempotency_key": "order-1042-authorization",
+            "amount": 800,
+            "payment_method": {
+              "card": {
+                "card_number": "4835034598457895",
+                "exp_date": {
+                  "month": "12",
+                  "year": "30"
+                },
+                "security_code": "123",
+                "full_name": "Pat Theodore",
+                "address_line1": "123 Test Street",
+                "city": "Cincinnati",
+                "region": "OH",
+                "postal_code": "45209",
+                "country": "USA"
+              },
+              "payor": {
+                "full_name": "Pat Theodore",
+                "email": "pat@paytheory.com",
+                "phone": "+15555550123",
+                "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
+              }
+            },
+            "fee_mode": "MERCHANT_FEE"
+          },
+          "response": {
+            "type": "success",
+            "httpStatus": 200,
+            "body": {
+              "data": {
+                "createAuthorization": {
+                  "authorization_id": "ptl_auth_5xhiVIdYV1XRd6At4B8Ioc",
+                  "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                  "amount": 800,
+                  "currency": "USD",
+                  "status": "SUCCEEDED",
+                  "fee_mode": "MERCHANT_FEE",
+                  "fees": 46,
+                  "authorization_date": "2026-09-02T20:56:04.134Z",
+                  "expiration_date": "2026-09-03T20:56:04.134Z",
+                  "sale_id": "ptl_sale_5xBL0OK9Dzzx0QDrLTgzCM"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Retry an authorization with the same key",
+          "description": "Sending the same request with the same key returns the original authorization. No second hold is placed.",
+          "query": "mutation CreateAuthorization(\n  $merchant_uid: String!\n  $amount: Int!\n  $idempotency_key: String\n  $payment_method: PaymentMethodInput\n  $fee_mode: FeeMode\n) {\n  createAuthorization(\n    merchant_uid: $merchant_uid\n    amount: $amount\n    idempotency_key: $idempotency_key\n    payment_method: $payment_method\n    fee_mode: $fee_mode\n  ) {\n    authorization_id\n    merchant_uid\n    amount\n    currency\n    status\n    fee_mode\n    fees\n    authorization_date\n    expiration_date\n    sale_id\n  }\n}",
+          "variables": {
+            "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+            "idempotency_key": "order-1042-authorization",
+            "amount": 800,
+            "payment_method": {
+              "card": {
+                "card_number": "4835034598457895",
+                "exp_date": {
+                  "month": "12",
+                  "year": "30"
+                },
+                "security_code": "123",
+                "full_name": "Pat Theodore",
+                "address_line1": "123 Test Street",
+                "city": "Cincinnati",
+                "region": "OH",
+                "postal_code": "45209",
+                "country": "USA"
+              },
+              "payor": {
+                "full_name": "Pat Theodore",
+                "email": "pat@paytheory.com",
+                "phone": "+15555550123",
+                "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
+              }
+            },
+            "fee_mode": "MERCHANT_FEE"
+          },
+          "response": {
+            "type": "success",
+            "httpStatus": 200,
+            "body": {
+              "data": {
+                "createAuthorization": {
+                  "authorization_id": "ptl_auth_5xhiVIdYV1XRd6At4B8Ioc",
+                  "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                  "amount": 800,
+                  "currency": "USD",
+                  "status": "SUCCEEDED",
+                  "fee_mode": "MERCHANT_FEE",
+                  "fees": 46,
+                  "authorization_date": "2026-09-02T20:56:04.134Z",
+                  "expiration_date": "2026-09-03T20:56:04.134Z",
+                  "sale_id": "ptl_sale_5xBL0OK9Dzzx0QDrLTgzCM"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Key reused with a different request",
+          "description": "Returns a CONFLICT error when the key was already used with a different request, such as another amount. errorInfo.details.authorization_id holds the original authorization.",
+          "query": "mutation CreateAuthorization(\n  $merchant_uid: String!\n  $amount: Int!\n  $idempotency_key: String\n  $payment_method: PaymentMethodInput\n  $fee_mode: FeeMode\n) {\n  createAuthorization(\n    merchant_uid: $merchant_uid\n    amount: $amount\n    idempotency_key: $idempotency_key\n    payment_method: $payment_method\n    fee_mode: $fee_mode\n  ) {\n    authorization_id\n    merchant_uid\n    amount\n    currency\n    status\n    fee_mode\n    fees\n    authorization_date\n    expiration_date\n    sale_id\n  }\n}",
+          "variables": {
+            "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+            "idempotency_key": "order-1042-authorization",
+            "amount": 900,
+            "payment_method": {
+              "card": {
+                "card_number": "4835034598457895",
+                "exp_date": {
+                  "month": "12",
+                  "year": "30"
+                },
+                "security_code": "123",
+                "full_name": "Pat Theodore",
+                "address_line1": "123 Test Street",
+                "city": "Cincinnati",
+                "region": "OH",
+                "postal_code": "45209",
+                "country": "USA"
+              },
+              "payor": {
+                "full_name": "Pat Theodore",
+                "email": "pat@paytheory.com",
+                "phone": "+15555550123",
+                "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
+              }
+            },
+            "fee_mode": "MERCHANT_FEE"
+          },
+          "response": {
+            "type": "error",
+            "httpStatus": 200,
+            "body": {
+              "data": null,
+              "errors": [
+                {
+                  "path": [
+                    "createAuthorization"
+                  ],
+                  "data": null,
+                  "errorType": "CONFLICT",
+                  "errorInfo": {
+                    "code": "CONFLICT",
+                    "details": {
+                      "authorization_id": "ptl_auth_5xhiVIdYV1XRd6At4B8Ioc",
+                      "error_code": "IDEMPOTENCY_KEY_PAYLOAD_MISMATCH",
+                      "idempotency_status": "COMPLETED",
+                      "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                      "operation": "CREATE_AUTHORIZATION"
+                    }
+                  },
+                  "message": "Idempotency key was already used with a different request payload."
+                }
+              ]
+            }
+          }
+        },
+        {
           "name": "Amount is zero",
+          "description": "Returns an error when the authorization amount is zero.",
           "query": "mutation CreateAuthorization(\n  $merchant_uid: String!\n  $amount: Int!\n  $payment_method: PaymentMethodInput\n) {\n  createAuthorization(\n    merchant_uid: $merchant_uid\n    amount: $amount\n    payment_method: $payment_method\n  ) {\n    authorization_id\n    merchant_uid\n    amount\n    currency\n    status\n    fee_mode\n    fees\n    authorization_date\n    expiration_date\n    sale_id\n  }\n}",
           "variables": {
             "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
@@ -3607,11 +3747,11 @@
                 }
               ]
             }
-          },
-          "description": "Returns an error when the authorization amount is zero."
+          }
         },
         {
           "name": "Amount is over the merchant maximum",
+          "description": "Returns an error when the amount is above this merchant’s maximum. Each merchant has its own limits.",
           "query": "mutation CreateAuthorization(\n  $merchant_uid: String!\n  $amount: Int!\n  $payment_method: PaymentMethodInput\n  $fee_mode: FeeMode\n) {\n  createAuthorization(\n    merchant_uid: $merchant_uid\n    amount: $amount\n    payment_method: $payment_method\n    fee_mode: $fee_mode\n  ) {\n    authorization_id\n    merchant_uid\n    amount\n    currency\n    status\n    fee_mode\n    fees\n    authorization_date\n    expiration_date\n    sale_id\n  }\n}",
           "variables": {
             "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
@@ -3659,8 +3799,7 @@
                 }
               ]
             }
-          },
-          "description": "Returns an error when the amount is above this merchant’s maximum. Each merchant has its own limits."
+          }
         }
       ],
       "returnTypeString": "Authorization!"
@@ -3863,7 +4002,6 @@
           "directives": {}
         }
       ],
-      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "Authorization",
@@ -4112,7 +4250,6 @@
           "directives": {}
         }
       ],
-      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "Transaction",
@@ -4139,6 +4276,7 @@
       "examples": [
         {
           "name": "Capture an authorization",
+          "description": "Captures the amount held by an authorization.",
           "query": "mutation CreateCapture(\n  $merchant_uid: String!\n  $authorization_id: String!\n  $amount: Int!\n) {\n  createCapture(\n    merchant_uid: $merchant_uid\n    authorization_id: $authorization_id\n    amount: $amount\n  ) {\n    transaction_id\n    merchant_uid\n    gross_amount\n    net_amount\n    status\n    fee_mode\n    authorization_id\n  }\n}",
           "variables": {
             "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
@@ -4161,11 +4299,11 @@
                 }
               }
             }
-          },
-          "description": "Captures the amount held by an authorization."
+          }
         },
         {
           "name": "Amount is too high",
+          "description": "Returns an error when the capture amount exceeds the authorization and reauthorization is not allowed.",
           "query": "mutation CreateCapture(\n  $merchant_uid: String!\n  $authorization_id: String!\n  $amount: Int!\n) {\n  createCapture(\n    merchant_uid: $merchant_uid\n    authorization_id: $authorization_id\n    amount: $amount\n  ) {\n    transaction_id\n    merchant_uid\n    gross_amount\n    net_amount\n    status\n    fee_mode\n    authorization_id\n  }\n}",
           "variables": {
             "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
@@ -4189,8 +4327,7 @@
                 }
               ]
             }
-          },
-          "description": "Returns an error when the capture amount exceeds the authorization and reauthorization is not allowed."
+          }
         },
         {
           "name": "Capture above the authorization amount",
@@ -4309,7 +4446,6 @@
           "directives": {}
         }
       ],
-      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "Boolean",
@@ -4334,6 +4470,7 @@
       "examples": [
         {
           "name": "Void an authorization",
+          "description": "Releases the funds held by an authorization.",
           "query": "mutation CreateVoidForAuthorization($authorization_id: String!) {\n    createVoidForAuthorization(authorization_id: $authorization_id)\n  }",
           "variables": {
             "authorization_id": "ptl_auth_5zisQDsW7qPhRy7YFHJZvH"
@@ -4346,11 +4483,11 @@
                 "createVoidForAuthorization": true
               }
             }
-          },
-          "description": "Releases the funds held by an authorization."
+          }
         },
         {
           "name": "authorization was already captured",
+          "description": "Returns an error when an authorization has already been captured and cannot be voided.",
           "query": "mutation CreateVoidForAuthorization($authorization_id: String!) {\n    createVoidForAuthorization(authorization_id: $authorization_id)\n  }",
           "variables": {
             "authorization_id": "ptl_auth_5xhiVIdYV1XRd6At4B8Ioc"
@@ -4374,11 +4511,11 @@
                 }
               ]
             }
-          },
-          "description": "Returns an error when an authorization has already been captured and cannot be voided."
+          }
         },
         {
           "name": "authorization already voided",
+          "description": "Returns an error when the authorization was already voided.",
           "query": "mutation CreateVoidForAuthorization($authorization_id: String!) {\n    createVoidForAuthorization(authorization_id: $authorization_id)\n  }",
           "variables": {
             "authorization_id": "ptl_auth_2eKdi1Wgr3vkLAHDLpI8i2"
@@ -4402,11 +4539,11 @@
                 }
               ]
             }
-          },
-          "description": "Returns an error when the authorization was already voided."
+          }
         },
         {
           "name": "Authorization not found",
+          "description": "Returns an error when the authorization ID does not exist.",
           "query": "mutation CreateVoidForAuthorization($authorization_id: String!) {\n    createVoidForAuthorization(authorization_id: $authorization_id)\n  }",
           "variables": {
             "authorization_id": "ptl_auth_not_a_real_authorization"
@@ -4430,8 +4567,7 @@
                 }
               ]
             }
-          },
-          "description": "Returns an error when the authorization ID does not exist."
+          }
         }
       ],
       "returnTypeString": "Boolean"
@@ -4454,7 +4590,6 @@
           "directives": {}
         }
       ],
-      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "Barcode",
@@ -4661,7 +4796,6 @@
           "directives": {}
         }
       ],
-      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "Invoice",
@@ -4772,7 +4906,6 @@
           "directives": {}
         }
       ],
-      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "Boolean",
@@ -4839,7 +4972,6 @@
           "directives": {}
         }
       ],
-      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "Boolean",
@@ -4916,7 +5048,6 @@
           "directives": {}
         }
       ],
-      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "Boolean",
@@ -4976,7 +5107,6 @@
           "directives": {}
         }
       ],
-      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "OfflineTransaction",
@@ -5085,7 +5215,6 @@
           "directives": {}
         }
       ],
-      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "ListMerchant",
@@ -5111,6 +5240,7 @@
       "examples": [
         {
           "name": "Create a merchant",
+          "description": "Creates a merchant in Pay Theory to start the underwriting process.",
           "query": "mutation CreateMerchant(\n  $merchant_name: String!\n  $metadata: AWSJSON\n) {\n  createMerchant(\n    merchant_name: $merchant_name\n    metadata: $metadata\n  ) {\n    merchant_uid\n    merchant_name\n    parent_merchant_uid\n    ach_active\n    card_active\n    cash_active\n    country_code\n    is_system\n    submitted_onboarding\n    metadata\n  }\n}",
           "variables": {
             "merchant_name": "Northstar Books",
@@ -5135,8 +5265,7 @@
                 }
               }
             }
-          },
-          "description": "Creates a merchant in Pay Theory to start the underwriting process."
+          }
         }
       ],
       "returnTypeString": "ListMerchant"
@@ -5159,7 +5288,6 @@
           "directives": {}
         }
       ],
-      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "FeeMatrix",
@@ -5340,7 +5468,6 @@
           "directives": {}
         }
       ],
-      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "Boolean",
@@ -5462,7 +5589,6 @@
           "directives": {}
         }
       ],
-      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "Boolean",
@@ -5566,7 +5692,6 @@
           "directives": {}
         }
       ],
-      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "Boolean",
@@ -5632,7 +5757,6 @@
           "directives": {}
         }
       ],
-      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "PaymentLink",
@@ -5773,7 +5897,6 @@
           "directives": {}
         }
       ],
-      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "PaymentLink",
@@ -5923,7 +6046,6 @@
           "directives": {}
         }
       ],
-      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "PaymentMethodToken",
@@ -5949,6 +6071,7 @@
       "examples": [
         {
           "name": "Save a card",
+          "description": "Saves a card as a payment method for later transactions. The response formats exp_date as MMYY (1230 means December 2030). An is_active value of true means the card can be used again.",
           "query": "mutation CreatePaymentMethod(\n  $merchant_uid: String!\n  $payment_method: PaymentMethodInput!\n) {\n  createPaymentMethod(\n    merchant_uid: $merchant_uid\n    payment_method: $payment_method\n  ) {\n    payment_method_id\n    merchant_uid\n    payment_type\n    last_four\n    card_brand\n    exp_date\n    full_name\n    is_active\n  }\n}",
           "variables": {
             "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
@@ -5992,11 +6115,11 @@
                 }
               }
             }
-          },
-          "description": "Saves a card as a payment method for later transactions. The response formats exp_date as MMYY (1230 means December 2030). An is_active value of true means the card can be used again."
+          }
         },
         {
           "name": "Save an ACH account",
+          "description": "Saves a bank account as a payment method for later ACH transactions.",
           "query": "mutation CreatePaymentMethod(\n  $merchant_uid: String!\n  $payment_method: PaymentMethodInput!\n) {\n  createPaymentMethod(\n    merchant_uid: $merchant_uid\n    payment_method: $payment_method\n  ) {\n    payment_method_id\n    merchant_uid\n    payment_type\n    last_four\n    card_brand\n    exp_date\n    full_name\n    is_active\n  }\n}",
           "variables": {
             "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
@@ -6031,11 +6154,11 @@
                 }
               }
             }
-          },
-          "description": "Saves a bank account as a payment method for later ACH transactions."
+          }
         },
         {
           "name": "Save an EFT account",
+          "description": "Saves a Canadian bank account as a payment method for later EFT transactions.",
           "query": "mutation CreatePaymentMethod(\n  $merchant_uid: String!\n  $payment_method: PaymentMethodInput!\n) {\n  createPaymentMethod(\n    merchant_uid: $merchant_uid\n    payment_method: $payment_method\n  ) {\n    payment_method_id\n    merchant_uid\n    payment_type\n    last_four\n    card_brand\n    exp_date\n    full_name\n    is_active\n  }\n}",
           "variables": {
             "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
@@ -6071,11 +6194,11 @@
                 }
               }
             }
-          },
-          "description": "Saves a Canadian bank account as a payment method for later EFT transactions."
+          }
         },
         {
           "name": "Invalid card number",
+          "description": "Returns an error when the card number is invalid.",
           "query": "mutation CreatePaymentMethod(\n  $merchant_uid: String!\n  $payment_method: PaymentMethodInput!\n) {\n  createPaymentMethod(\n    merchant_uid: $merchant_uid\n    payment_method: $payment_method\n  ) {\n    payment_method_id\n    merchant_uid\n    payment_type\n    last_four\n    card_brand\n    exp_date\n    full_name\n    is_active\n  }\n}",
           "variables": {
             "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
@@ -6121,11 +6244,11 @@
                 }
               ]
             }
-          },
-          "description": "Returns an error when the card number is invalid."
+          }
         },
         {
           "name": "Invalid security code",
+          "description": "Returns an error when the card security code is invalid.",
           "query": "mutation CreatePaymentMethod(\n  $merchant_uid: String!\n  $payment_method: PaymentMethodInput!\n) {\n  createPaymentMethod(\n    merchant_uid: $merchant_uid\n    payment_method: $payment_method\n  ) {\n    payment_method_id\n    merchant_uid\n    payment_type\n    last_four\n    card_brand\n    exp_date\n    full_name\n    is_active\n  }\n}",
           "variables": {
             "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
@@ -6171,11 +6294,11 @@
                 }
               ]
             }
-          },
-          "description": "Returns an error when the card security code is invalid."
+          }
         },
         {
           "name": "Card and bank both provided",
+          "description": "Returns an error when card and bank details are supplied together.",
           "query": "mutation CreatePaymentMethod(\n  $merchant_uid: String!\n  $payment_method: PaymentMethodInput!\n) {\n  createPaymentMethod(\n    merchant_uid: $merchant_uid\n    payment_method: $payment_method\n  ) {\n    payment_method_id\n    merchant_uid\n    payment_type\n    last_four\n    card_brand\n    exp_date\n    full_name\n    is_active\n  }\n}",
           "variables": {
             "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
@@ -6227,11 +6350,11 @@
                 }
               ]
             }
-          },
-          "description": "Returns an error when card and bank details are supplied together."
+          }
         },
         {
           "name": "No card or bank provided",
+          "description": "Returns an error when no card or bank details are supplied.",
           "query": "mutation CreatePaymentMethod(\n  $merchant_uid: String!\n  $payment_method: PaymentMethodInput!\n) {\n  createPaymentMethod(\n    merchant_uid: $merchant_uid\n    payment_method: $payment_method\n  ) {\n    payment_method_id\n    merchant_uid\n    payment_type\n    last_four\n    card_brand\n    exp_date\n    full_name\n    is_active\n  }\n}",
           "variables": {
             "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
@@ -6262,8 +6385,7 @@
                 }
               ]
             }
-          },
-          "description": "Returns an error when no card or bank details are supplied."
+          }
         },
         {
           "name": "Payor and payor_id both provided",
@@ -6318,6 +6440,7 @@
         },
         {
           "name": "Payor not found",
+          "description": "Returns an error when the payor ID does not exist.",
           "query": "mutation CreatePaymentMethod(\n  $merchant_uid: String!\n  $payment_method: PaymentMethodInput!\n) {\n  createPaymentMethod(\n    merchant_uid: $merchant_uid\n    payment_method: $payment_method\n  ) {\n    payment_method_id\n    merchant_uid\n    payment_type\n    last_four\n    card_brand\n    exp_date\n    full_name\n    is_active\n  }\n}",
           "variables": {
             "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
@@ -6358,11 +6481,11 @@
                 }
               ]
             }
-          },
-          "description": "Returns an error when the payor ID does not exist."
+          }
         },
         {
           "name": "Missing merchant ID",
+          "description": "Returns an error when merchant_uid is missing.",
           "query": "mutation CreatePaymentMethod(\n  $merchant_uid: String!\n  $payment_method: PaymentMethodInput!\n) {\n  createPaymentMethod(\n    merchant_uid: $merchant_uid\n    payment_method: $payment_method\n  ) {\n    payment_method_id\n    merchant_uid\n    payment_type\n    last_four\n    card_brand\n    exp_date\n    full_name\n    is_active\n  }\n}",
           "variables": {
             "merchant_uid": "",
@@ -6408,8 +6531,7 @@
                 }
               ]
             }
-          },
-          "description": "Returns an error when merchant_uid is missing."
+          }
         }
       ],
       "returnTypeString": "PaymentMethodToken"
@@ -6444,7 +6566,6 @@
           "directives": {}
         }
       ],
-      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "Boolean",
@@ -6469,6 +6590,7 @@
       "examples": [
         {
           "name": "Disable a payment method",
+          "description": "Disables a stored payment method so it cannot be used for future transactions.",
           "query": "mutation UpdatePaymentMethodToDisabled($merchant_uid: ID!, $payment_method_id: String!) {\n  updatePaymentMethodToDisabled(merchant_uid: $merchant_uid, payment_method_id: $payment_method_id)\n}",
           "variables": {
             "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
@@ -6482,11 +6604,11 @@
                 "updatePaymentMethodToDisabled": true
               }
             }
-          },
-          "description": "Disables a stored payment method so it cannot be used for future transactions."
+          }
         },
         {
           "name": "Invalid payment method",
+          "description": "Returns an error when the stored payment method does not exist.",
           "query": "mutation UpdatePaymentMethodToDisabled($merchant_uid: ID!, $payment_method_id: String!) {\n  updatePaymentMethodToDisabled(merchant_uid: $merchant_uid, payment_method_id: $payment_method_id)\n}",
           "variables": {
             "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
@@ -6514,8 +6636,7 @@
                 }
               ]
             }
-          },
-          "description": "Returns an error when the stored payment method does not exist."
+          }
         }
       ],
       "returnTypeString": "Boolean!"
@@ -6538,7 +6659,6 @@
           "directives": {}
         }
       ],
-      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "Payor",
@@ -6562,6 +6682,7 @@
       "examples": [
         {
           "name": "Create a payor",
+          "description": "Creates a payor with contact information and metadata.",
           "query": "mutation CreatePayor($input: PayorInput!) {\n  createPayor(input: $input) {\n    payor_id\n    merchant_uid\n    full_name\n    email\n    phone\n    address_line1\n    city\n    region\n    postal_code\n    country\n    metadata\n  }\n}",
           "variables": {
             "input": {
@@ -6598,11 +6719,11 @@
                 }
               }
             }
-          },
-          "description": "Creates a payor with contact information and metadata."
+          }
         },
         {
           "name": "Missing merchant ID",
+          "description": "Returns an error when merchant_uid is empty.",
           "query": "mutation CreatePayor($input: PayorInput!) {\n  createPayor(input: $input) {\n    payor_id\n    merchant_uid\n    full_name\n    email\n    phone\n    address_line1\n    city\n    region\n    postal_code\n    country\n  }\n}",
           "variables": {
             "input": {
@@ -6648,8 +6769,7 @@
                 }
               ]
             }
-          },
-          "description": "Returns an error when merchant_uid is empty."
+          }
         }
       ],
       "returnTypeString": "Payor"
@@ -6684,7 +6804,6 @@
           "directives": {}
         }
       ],
-      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "Boolean",
@@ -6706,6 +6825,7 @@
       "examples": [
         {
           "name": "Update every payor field",
+          "description": "Updates the name, email, phone and full address on an existing payor.",
           "query": "mutation UpdatePayor($payor_id: String!, $payor_data: PayorData!) {\n  updatePayor(payor_id: $payor_id, payor_data: $payor_data)\n}",
           "variables": {
             "payor_id": "ptl_pay_6tOEQ5lesXwGSGaKECSfJy",
@@ -6728,8 +6848,7 @@
                 "updatePayor": true
               }
             }
-          },
-          "description": "Updates the name, email, phone and full address on an existing payor."
+          }
         }
       ],
       "returnTypeString": "Boolean"
@@ -6752,7 +6871,6 @@
           "directives": {}
         }
       ],
-      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "RecurringPayment",
@@ -6964,7 +7082,6 @@
           "directives": {}
         }
       ],
-      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "RecurringPayment",
@@ -7041,7 +7158,6 @@
           "directives": {}
         }
       ],
-      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "Boolean",
@@ -7101,7 +7217,6 @@
           "directives": {}
         }
       ],
-      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "Boolean",
@@ -7161,7 +7276,6 @@
           "directives": {}
         }
       ],
-      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "Instruction",
@@ -7226,7 +7340,6 @@
           "directives": {}
         }
       ],
-      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "CreateSettlementInstructionResponse",
@@ -7294,6 +7407,18 @@
             "link": "#string"
           },
           "typeString": "String!",
+          "directives": {}
+        },
+        {
+          "name": "idempotency_key",
+          "description": "Caller-provided key used to prevent duplicate transaction creation for the same merchant and operation.",
+          "isRequired": false,
+          "type": {
+            "kind": "TYPE_REF",
+            "name": "String",
+            "link": "#string"
+          },
+          "typeString": "String",
           "directives": {}
         },
         {
@@ -7504,7 +7629,6 @@
           "directives": {}
         }
       ],
-      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "Transaction",
@@ -7563,6 +7687,148 @@
                   "transaction_date": "2026-09-02T20:55:54.494Z"
                 }
               }
+            }
+          }
+        },
+        {
+          "name": "Charge with an idempotency key",
+          "description": "Charges a saved payment method. Use a new key for each new charge, and reuse it only to retry this request.",
+          "query": "mutation CreateTransaction(\n  $merchant_uid: String!\n  $amount: Int!\n  $idempotency_key: String\n  $payment_method_id: String\n  $fee_mode: FeeMode\n) {\n  createTransaction(\n    merchant_uid: $merchant_uid\n    amount: $amount\n    idempotency_key: $idempotency_key\n    payment_method_id: $payment_method_id\n    fee_mode: $fee_mode\n  ) {\n    transaction_id\n    merchant_uid\n    gross_amount\n    net_amount\n    currency\n    status\n    fee_mode\n    fees\n    transaction_type\n    transaction_date\n  }\n}",
+          "variables": {
+            "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+            "idempotency_key": "order-1042-transaction",
+            "amount": 250,
+            "payment_method_id": "ptl_pmt_54LidQwRcTs5MU9g0QYrgt",
+            "fee_mode": "MERCHANT_FEE"
+          },
+          "response": {
+            "type": "success",
+            "httpStatus": 200,
+            "body": {
+              "data": {
+                "createTransaction": {
+                  "transaction_id": "ptl_txn_5mos8Z6NFWAWQRac7BAQFX",
+                  "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                  "gross_amount": 250,
+                  "net_amount": 218,
+                  "currency": "USD",
+                  "status": "PENDING",
+                  "fee_mode": "MERCHANT_FEE",
+                  "fees": 32,
+                  "transaction_type": "DEBIT",
+                  "transaction_date": "2026-09-02T20:55:54.494Z"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Retry with the same key",
+          "description": "Sending the same request with the same key returns the original transaction. No second charge is made.",
+          "query": "mutation CreateTransaction(\n  $merchant_uid: String!\n  $amount: Int!\n  $idempotency_key: String\n  $payment_method_id: String\n  $fee_mode: FeeMode\n) {\n  createTransaction(\n    merchant_uid: $merchant_uid\n    amount: $amount\n    idempotency_key: $idempotency_key\n    payment_method_id: $payment_method_id\n    fee_mode: $fee_mode\n  ) {\n    transaction_id\n    merchant_uid\n    gross_amount\n    net_amount\n    currency\n    status\n    fee_mode\n    fees\n    transaction_type\n    transaction_date\n  }\n}",
+          "variables": {
+            "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+            "idempotency_key": "order-1042-transaction",
+            "amount": 250,
+            "payment_method_id": "ptl_pmt_54LidQwRcTs5MU9g0QYrgt",
+            "fee_mode": "MERCHANT_FEE"
+          },
+          "response": {
+            "type": "success",
+            "httpStatus": 200,
+            "body": {
+              "data": {
+                "createTransaction": {
+                  "transaction_id": "ptl_txn_5mos8Z6NFWAWQRac7BAQFX",
+                  "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                  "gross_amount": 250,
+                  "net_amount": 218,
+                  "currency": "USD",
+                  "status": "PENDING",
+                  "fee_mode": "MERCHANT_FEE",
+                  "fees": 32,
+                  "transaction_type": "DEBIT",
+                  "transaction_date": "2026-09-02T20:55:54.494Z"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Key reused with a different request",
+          "description": "Returns a CONFLICT error when the key was already used with a different request, such as another amount. errorInfo.details.transaction_id holds the original transaction.",
+          "query": "mutation CreateTransaction(\n  $merchant_uid: String!\n  $amount: Int!\n  $idempotency_key: String\n  $payment_method_id: String\n  $fee_mode: FeeMode\n) {\n  createTransaction(\n    merchant_uid: $merchant_uid\n    amount: $amount\n    idempotency_key: $idempotency_key\n    payment_method_id: $payment_method_id\n    fee_mode: $fee_mode\n  ) {\n    transaction_id\n    merchant_uid\n    gross_amount\n    net_amount\n    currency\n    status\n    fee_mode\n    fees\n    transaction_type\n    transaction_date\n  }\n}",
+          "variables": {
+            "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+            "idempotency_key": "order-1042-transaction",
+            "amount": 300,
+            "payment_method_id": "ptl_pmt_54LidQwRcTs5MU9g0QYrgt",
+            "fee_mode": "MERCHANT_FEE"
+          },
+          "response": {
+            "type": "error",
+            "httpStatus": 200,
+            "body": {
+              "data": null,
+              "errors": [
+                {
+                  "path": [
+                    "createTransaction"
+                  ],
+                  "data": null,
+                  "errorType": "CONFLICT",
+                  "errorInfo": {
+                    "code": "CONFLICT",
+                    "details": {
+                      "error_code": "IDEMPOTENCY_KEY_PAYLOAD_MISMATCH",
+                      "idempotency_status": "COMPLETED",
+                      "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                      "operation": "CREATE_TRANSACTION",
+                      "transaction_id": "ptl_txn_5mos8Z6NFWAWQRac7BAQFX"
+                    }
+                  },
+                  "message": "Idempotency key was already used with a different request payload."
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Key reused while the first request is running",
+          "description": "Returns a CONFLICT error when a request with this key hasn't finished. errorInfo.details.transaction_id holds that request's transaction. Look the key up with idempotencyLookup before you retry.",
+          "query": "mutation CreateTransaction(\n  $merchant_uid: String!\n  $amount: Int!\n  $idempotency_key: String\n  $payment_method_id: String\n  $fee_mode: FeeMode\n) {\n  createTransaction(\n    merchant_uid: $merchant_uid\n    amount: $amount\n    idempotency_key: $idempotency_key\n    payment_method_id: $payment_method_id\n    fee_mode: $fee_mode\n  ) {\n    transaction_id\n    merchant_uid\n    gross_amount\n    net_amount\n    currency\n    status\n    fee_mode\n    fees\n    transaction_type\n    transaction_date\n  }\n}",
+          "variables": {
+            "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+            "idempotency_key": "order-1042-transaction",
+            "amount": 250,
+            "payment_method_id": "ptl_pmt_54LidQwRcTs5MU9g0QYrgt",
+            "fee_mode": "MERCHANT_FEE"
+          },
+          "response": {
+            "type": "error",
+            "httpStatus": 200,
+            "body": {
+              "data": null,
+              "errors": [
+                {
+                  "path": [
+                    "createTransaction"
+                  ],
+                  "data": null,
+                  "errorType": "CONFLICT",
+                  "errorInfo": {
+                    "code": "CONFLICT",
+                    "details": {
+                      "error_code": "IDEMPOTENCY_KEY_ALREADY_USED",
+                      "idempotency_status": "IN_PROGRESS",
+                      "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                      "operation": "CREATE_TRANSACTION",
+                      "transaction_id": "ptl_txn_5mos8Z6NFWAWQRac7BAQFX"
+                    }
+                  },
+                  "message": "Idempotency key has already been used for this operation."
+                }
+              ]
             }
           }
         },
@@ -8132,7 +8398,6 @@
           "directives": {}
         }
       ],
-      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "Transaction",
@@ -8328,7 +8593,6 @@
           "directives": {}
         }
       ],
-      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "ReversalResponse",
@@ -8472,7 +8736,6 @@
           "directives": {}
         }
       ],
-      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "Boolean",
@@ -8564,7 +8827,6 @@
           "directives": {}
         }
       ],
-      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "Boolean",
@@ -8666,7 +8928,6 @@
           "directives": {}
         }
       ],
-      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "User",
@@ -8751,7 +9012,6 @@
           "directives": {}
         }
       ],
-      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "Boolean",
@@ -8825,7 +9085,6 @@
           "directives": {}
         }
       ],
-      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "Boolean",
@@ -8910,7 +9169,6 @@
           "directives": {}
         }
       ],
-      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "Boolean",
@@ -8972,7 +9230,6 @@
           "directives": {}
         }
       ],
-      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "Boolean",
@@ -9044,7 +9301,6 @@
           "directives": {}
         }
       ],
-      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "BarcodePaymentResponse",
@@ -9110,7 +9366,6 @@
           "directives": {}
         }
       ],
-      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "Boolean",
@@ -9170,7 +9425,6 @@
           "directives": {}
         }
       ],
-      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "SandboxAchReturnResult",
@@ -9234,7 +9488,6 @@
           "directives": {}
         }
       ],
-      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "SandboxDisputeResult",
@@ -9298,7 +9551,6 @@
           "directives": {}
         }
       ],
-      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "SandboxSettlementResult",
@@ -9359,7 +9611,6 @@
           "directives": {}
         }
       ],
-      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "SandboxSettlementBatchPrepResult",
@@ -9428,7 +9679,6 @@
           "directives": {}
         }
       ],
-      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "SandboxDisputeUpdateResult",
@@ -9669,7 +9919,6 @@
           "directives": {}
         }
       ],
-      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "OneTimePayment",
@@ -9701,6 +9950,7 @@
       "examples": [
         {
           "name": "Missing payment method",
+          "description": "Returns an error when neither payment_method nor payment_method_id is supplied.",
           "query": "mutation CreateOneTimePayment(\n  $merchant_uid: String!\n  $amount: Int!\n  $fee_mode: FeeMode\n) {\n  createOneTimePayment(\n    merchant_uid: $merchant_uid\n    amount: $amount\n    fee_mode: $fee_mode\n  ) {\n    transaction_id\n    status\n    amount\n    service_fee\n    card_brand\n    last_four\n    currency\n    failure_reason\n    created_at\n  }\n}",
           "variables": {
             "amount": 200,
@@ -9724,8 +9974,7 @@
                 }
               ]
             }
-          },
-          "description": "Returns an error when neither payment_method nor payment_method_id is supplied."
+          }
         },
         {
           "name": "Example createOneTimePayment",
@@ -9863,7 +10112,6 @@
           "directives": {}
         }
       ],
-      "nestedArguments": [],
       "returnType": {
         "kind": "TYPE_REF",
         "name": "Boolean",
@@ -9890,6 +10138,7 @@
       "examples": [
         {
           "name": "Refund a settled charge",
+          "description": "Creates a deprecated refund for a settled charge.",
           "query": "mutation CreateRefund(\n  $transaction_id: String!\n  $amount: Int!\n  $refund_reason: RefundReasonInput!\n) {\n  createRefund(\n    transaction_id: $transaction_id\n    amount: $amount\n    refund_reason: $refund_reason\n  )\n}",
           "variables": {
             "amount": 1,
@@ -9907,11 +10156,11 @@
                 "createRefund": true
               }
             }
-          },
-          "description": "Creates a deprecated refund for a settled charge."
+          }
         },
         {
           "name": "Refund amount is too high",
+          "description": "Returns an error when the refund amount is greater than the remaining balance.",
           "query": "mutation CreateRefund(\n  $transaction_id: String!\n  $amount: Int!\n  $refund_reason: RefundReasonInput!\n) {\n  createRefund(\n    transaction_id: $transaction_id\n    amount: $amount\n    refund_reason: $refund_reason\n  )\n}",
           "variables": {
             "amount": 26010,
@@ -9938,8 +10187,7 @@
                 }
               ]
             }
-          },
-          "description": "Returns an error when the refund amount is greater than the remaining balance."
+          }
         }
       ],
       "returnTypeString": "Boolean"

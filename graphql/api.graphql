@@ -1529,6 +1529,44 @@ enum HealthExpenseType {
   VISION
 }
 
+"Payment creation record found by idempotency key."
+type IdempotencyLookup @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "The Pay Theory unique identifier for the merchant that owns the idempotency key."
+  merchant_uid: String!
+  "The payment creation operation the key was scoped to."
+  operation: IdempotencyOperation!
+  "The status of the retained idempotency record."
+  idempotency_status: IdempotencyStatus!
+  "The Pay Theory unique identifier for the matching transaction, when the key was used with createTransaction."
+  transaction_id: String
+  "The matching transaction, when it has been created."
+  transaction: Transaction
+  "The Pay Theory unique identifier for the matching authorization, when the key was used with createAuthorization."
+  authorization_id: String
+  "The matching authorization, when it has been created."
+  authorization: Authorization
+  "The time until which the original request may still be considered in progress."
+  locked_until: AWSDateTime
+  "The time after which the idempotency record is no longer retained."
+  expires_at: AWSDateTime
+}
+
+"Operations that support idempotency lookups."
+enum IdempotencyOperation {
+  "Lookup an idempotency key used with createAuthorization."
+  CREATE_AUTHORIZATION
+  "Lookup an idempotency key used with createTransaction."
+  CREATE_TRANSACTION
+}
+
+"Status of a retained idempotency ledger record."
+enum IdempotencyStatus {
+  "The original request is still being processed."
+  IN_PROGRESS
+  "The original request completed and has a linked payment resource."
+  COMPLETED
+}
+
 "Instruction object."
 type Instruction @aws_lambda @aws_iam @aws_cognito_user_pools {
   "The unique instruction identifier."
@@ -2057,6 +2095,8 @@ type Mutation @aws_lambda @aws_iam @aws_cognito_user_pools {
   createAuthorization(
     "The Pay Theory unique identifier assigned to the merchant that the authorization belongs to."
     merchant_uid: String!
+    "Caller-provided key used to prevent duplicate authorization creation for the same merchant and operation."
+    idempotency_key: String
     "The Pay Theory unique identifier assigned to the sale that the authorization belongs to. Sales can be used to tie together multiple auths and captures."
     sale_id: String
     "The amount of the authorization in cents."
@@ -2280,6 +2320,8 @@ type Mutation @aws_lambda @aws_iam @aws_cognito_user_pools {
   createTransaction(
     "The Pay Theory unique identifier for the merchant the transaction is for."
     merchant_uid: String!
+    "Caller-provided key used to prevent duplicate transaction creation for the same merchant and operation."
+    idempotency_key: String
     "The amount of the transaction. If the FeeMode is SERVICE_FEE, this is the amount of the transaction before fees."
     amount: Int!
     "The Pay Theory unique identifier for the payment method the transaction will be charged to."
@@ -3034,6 +3076,15 @@ type Query @aws_lambda @aws_iam @aws_cognito_user_pools {
     "The settlement batch number to fetch funding transfers for."
     settlement_batch: Int!
   ): FundingTransfers @docGroup(name: "Settlement", sidebarTitle: "List Funding Transfers")
+  "Finds a payment creation record by idempotency key."
+  idempotencyLookup(
+    "The Pay Theory unique identifier for the merchant that owns the idempotency key."
+    merchant_uid: String!
+    "The payment creation operation the key was scoped to."
+    operation: IdempotencyOperation!
+    "The caller-provided idempotency key."
+    idempotency_key: String!
+  ): IdempotencyLookup @docGroup(name: "Idempotency", sidebarTitle: "Lookup Idempotency Key") @docPriority(level: 1)
   "Returns instruction."
   instruction(
     "The Pay Theory unique identifier assigned to the merchant."

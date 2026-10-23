@@ -33,7 +33,7 @@ Pay Theory tracks each key per merchant and operation. The operation is `CREATE_
 | First request with a key | Runs the payment and saves the response. |
 | Same request, same key | The saved response from the first request. No new payment is created. |
 | Changed request, same key | An `IDEMPOTENCY_KEY_PAYLOAD_MISMATCH` error with the original `transaction_id` or `authorization_id`. |
-| Same key while the first request is still running | An `IDEMPOTENCY_KEY_ALREADY_USED` error. |
+| Same key while the first request is still running | An `IDEMPOTENCY_KEY_ALREADY_USED` error with the first request's `transaction_id` or `authorization_id`. |
 | Any request 7 days after the first | Pay Theory has deleted the record, so the key creates a new payment. |
 
 A changed request is any difference in what you send, such as the amount, payment method, payor, metadata or reference.
@@ -118,7 +118,33 @@ if (result.type === 'ERROR') {
 }
 ```
 
-The API returns the same conflicts as a `CONFLICT` error.
+The API returns the same conflicts as a `CONFLICT` error. `errorInfo.details` holds the error code, the status of the first request and its `transaction_id` or `authorization_id`:
+
+```json title="Response"
+{
+  "data": null,
+  "errors": [
+    {
+      "path": ["createTransaction"],
+      "data": null,
+      "errorType": "CONFLICT",
+      "errorInfo": {
+        "code": "CONFLICT",
+        "details": {
+          "error_code": "IDEMPOTENCY_KEY_PAYLOAD_MISMATCH",
+          "idempotency_status": "COMPLETED",
+          "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+          "operation": "CREATE_TRANSACTION",
+          "transaction_id": "ptl_txn_5mos8Z6NFWAWQRac7BAQFX"
+        }
+      },
+      "message": "Idempotency key was already used with a different request payload."
+    }
+  ]
+}
+```
+
+An `IDEMPOTENCY_KEY_ALREADY_USED` error can have an `idempotency_status` of `COMPLETED` when the first request finished while yours was being checked. Retry with the same key to get its response.
 
 ***
 

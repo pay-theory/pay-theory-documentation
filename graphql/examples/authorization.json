@@ -64,6 +64,172 @@
     "operationType": "mutation",
     "examples": [
       {
+        "name": "Create an authorization with an idempotency key",
+        "description": "Places a hold on a card. Use a new key for each new authorization, and reuse it only to retry this request.",
+        "query": "mutation CreateAuthorization(\n  $merchant_uid: String!\n  $amount: Int!\n  $idempotency_key: String\n  $payment_method: PaymentMethodInput\n  $fee_mode: FeeMode\n) {\n  createAuthorization(\n    merchant_uid: $merchant_uid\n    amount: $amount\n    idempotency_key: $idempotency_key\n    payment_method: $payment_method\n    fee_mode: $fee_mode\n  ) {\n    authorization_id\n    merchant_uid\n    amount\n    currency\n    status\n    fee_mode\n    fees\n    authorization_date\n    expiration_date\n    sale_id\n  }\n}",
+        "variables": {
+          "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+          "idempotency_key": "order-1042-authorization",
+          "amount": 800,
+          "payment_method": {
+            "card": {
+              "card_number": "4835034598457895",
+              "exp_date": {
+                "month": "12",
+                "year": "30"
+              },
+              "security_code": "123",
+              "full_name": "Pat Theodore",
+              "address_line1": "123 Test Street",
+              "city": "Cincinnati",
+              "region": "OH",
+              "postal_code": "45209",
+              "country": "USA"
+            },
+            "payor": {
+              "full_name": "Pat Theodore",
+              "email": "pat@paytheory.com",
+              "phone": "+15555550123",
+              "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
+            }
+          },
+          "fee_mode": "MERCHANT_FEE"
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "createAuthorization": {
+                "authorization_id": "ptl_auth_5xhiVIdYV1XRd6At4B8Ioc",
+                "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                "amount": 800,
+                "currency": "USD",
+                "status": "SUCCEEDED",
+                "fee_mode": "MERCHANT_FEE",
+                "fees": 46,
+                "authorization_date": "2026-09-02T20:56:04.134Z",
+                "expiration_date": "2026-09-03T20:56:04.134Z",
+                "sale_id": "ptl_sale_5xBL0OK9Dzzx0QDrLTgzCM"
+              }
+            }
+          }
+        }
+      },
+      {
+        "name": "Retry an authorization with the same key",
+        "description": "Sending the same request with the same key returns the original authorization. No second hold is placed.",
+        "query": "mutation CreateAuthorization(\n  $merchant_uid: String!\n  $amount: Int!\n  $idempotency_key: String\n  $payment_method: PaymentMethodInput\n  $fee_mode: FeeMode\n) {\n  createAuthorization(\n    merchant_uid: $merchant_uid\n    amount: $amount\n    idempotency_key: $idempotency_key\n    payment_method: $payment_method\n    fee_mode: $fee_mode\n  ) {\n    authorization_id\n    merchant_uid\n    amount\n    currency\n    status\n    fee_mode\n    fees\n    authorization_date\n    expiration_date\n    sale_id\n  }\n}",
+        "variables": {
+          "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+          "idempotency_key": "order-1042-authorization",
+          "amount": 800,
+          "payment_method": {
+            "card": {
+              "card_number": "4835034598457895",
+              "exp_date": {
+                "month": "12",
+                "year": "30"
+              },
+              "security_code": "123",
+              "full_name": "Pat Theodore",
+              "address_line1": "123 Test Street",
+              "city": "Cincinnati",
+              "region": "OH",
+              "postal_code": "45209",
+              "country": "USA"
+            },
+            "payor": {
+              "full_name": "Pat Theodore",
+              "email": "pat@paytheory.com",
+              "phone": "+15555550123",
+              "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
+            }
+          },
+          "fee_mode": "MERCHANT_FEE"
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "createAuthorization": {
+                "authorization_id": "ptl_auth_5xhiVIdYV1XRd6At4B8Ioc",
+                "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                "amount": 800,
+                "currency": "USD",
+                "status": "SUCCEEDED",
+                "fee_mode": "MERCHANT_FEE",
+                "fees": 46,
+                "authorization_date": "2026-09-02T20:56:04.134Z",
+                "expiration_date": "2026-09-03T20:56:04.134Z",
+                "sale_id": "ptl_sale_5xBL0OK9Dzzx0QDrLTgzCM"
+              }
+            }
+          }
+        }
+      },
+      {
+        "name": "Key reused with a different request",
+        "description": "Returns a CONFLICT error when the key was already used with a different request, such as another amount. errorInfo.details.authorization_id holds the original authorization.",
+        "query": "mutation CreateAuthorization(\n  $merchant_uid: String!\n  $amount: Int!\n  $idempotency_key: String\n  $payment_method: PaymentMethodInput\n  $fee_mode: FeeMode\n) {\n  createAuthorization(\n    merchant_uid: $merchant_uid\n    amount: $amount\n    idempotency_key: $idempotency_key\n    payment_method: $payment_method\n    fee_mode: $fee_mode\n  ) {\n    authorization_id\n    merchant_uid\n    amount\n    currency\n    status\n    fee_mode\n    fees\n    authorization_date\n    expiration_date\n    sale_id\n  }\n}",
+        "variables": {
+          "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+          "idempotency_key": "order-1042-authorization",
+          "amount": 900,
+          "payment_method": {
+            "card": {
+              "card_number": "4835034598457895",
+              "exp_date": {
+                "month": "12",
+                "year": "30"
+              },
+              "security_code": "123",
+              "full_name": "Pat Theodore",
+              "address_line1": "123 Test Street",
+              "city": "Cincinnati",
+              "region": "OH",
+              "postal_code": "45209",
+              "country": "USA"
+            },
+            "payor": {
+              "full_name": "Pat Theodore",
+              "email": "pat@paytheory.com",
+              "phone": "+15555550123",
+              "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
+            }
+          },
+          "fee_mode": "MERCHANT_FEE"
+        },
+        "response": {
+          "type": "error",
+          "httpStatus": 200,
+          "body": {
+            "data": null,
+            "errors": [
+              {
+                "path": [
+                  "createAuthorization"
+                ],
+                "data": null,
+                "errorType": "CONFLICT",
+                "errorInfo": {
+                  "code": "CONFLICT",
+                  "details": {
+                    "authorization_id": "ptl_auth_5xhiVIdYV1XRd6At4B8Ioc",
+                    "error_code": "IDEMPOTENCY_KEY_PAYLOAD_MISMATCH",
+                    "idempotency_status": "COMPLETED",
+                    "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                    "operation": "CREATE_AUTHORIZATION"
+                  }
+                },
+                "message": "Idempotency key was already used with a different request payload."
+              }
+            ]
+          }
+        }
+      },
+      {
         "name": "Amount is zero",
         "query": "mutation CreateAuthorization(\n  $merchant_uid: String!\n  $amount: Int!\n  $payment_method: PaymentMethodInput\n) {\n  createAuthorization(\n    merchant_uid: $merchant_uid\n    amount: $amount\n    payment_method: $payment_method\n  ) {\n    authorization_id\n    merchant_uid\n    amount\n    currency\n    status\n    fee_mode\n    fees\n    authorization_date\n    expiration_date\n    sale_id\n  }\n}",
         "variables": {

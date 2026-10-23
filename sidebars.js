@@ -657,6 +657,19 @@ const __gqlDocsItems = [
   },
   {
     type: 'category',
+    label: 'Idempotency',
+    items: [
+      {
+        type: 'doc',
+        id: 'api/idempotency/idempotency-lookup',
+        label: 'Lookup Idempotency Key',
+      },
+    ],
+    collapsible: true,
+    collapsed: true,
+  },
+  {
+    type: 'category',
     label: 'Invoice',
     items: [
       {
@@ -688,19 +701,6 @@ const __gqlDocsItems = [
         type: 'doc',
         id: 'api/invoice/create-offline-transaction',
         label: 'Create Offline Transaction',
-      },
-    ],
-    collapsible: true,
-    collapsed: true,
-  },
-  {
-    type: 'category',
-    label: 'Idempotency',
-    items: [
-      {
-        type: 'doc',
-        id: 'api/idempotency/idempotency-lookup',
-        label: 'Lookup Idempotency Key',
       },
     ],
     collapsible: true,

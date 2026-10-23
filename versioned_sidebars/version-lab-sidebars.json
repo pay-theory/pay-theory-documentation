@@ -91,6 +91,19 @@
     },
     {
       "type": "category",
+      "label": "Idempotency",
+      "items": [
+        {
+          "type": "doc",
+          "id": "api/idempotency/idempotency-lookup",
+          "label": "Lookup Idempotency Key"
+        }
+      ],
+      "collapsible": true,
+      "collapsed": true
+    },
+    {
+      "type": "category",
       "label": "Invoice",
       "items": [
         {
@@ -122,19 +135,6 @@
           "type": "doc",
           "id": "api/invoice/create-offline-transaction",
           "label": "Create Offline Transaction"
-        }
-      ],
-      "collapsible": true,
-      "collapsed": true
-    },
-    {
-      "type": "category",
-      "label": "Idempotency",
-      "items": [
-        {
-          "type": "doc",
-          "id": "api/idempotency/idempotency-lookup",
-          "label": "Lookup Idempotency Key"
         }
       ],
       "collapsible": true,
