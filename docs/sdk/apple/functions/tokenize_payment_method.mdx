@@ -43,7 +43,7 @@ The function returns a [`TokenizePaymentMethodResponse`](../response_types/token
 do {
     let response = try await payTheory.tokenizePaymentMethod(
         paymentMethod: .card,
-        payor: Payor(firstName: "John", lastName: "Doe", email: "john@example.com"),
+        payor: Payor(firstName: "John", lastName: "Doe", email: "john@paytheory.com"),
         metadata: ["customer_id": "12345"]
     )
 
@@ -83,7 +83,7 @@ The parameters for the closure-based version are the same as the async version, 
 ```swift
 payTheory.tokenizePaymentMethod(
     paymentMethod: .card,
-    payor: Payor(firstName: "John", lastName: "Doe", email: "john@example.com"),
+    payor: Payor(firstName: "John", lastName: "Doe", email: "john@paytheory.com"),
     metadata: ["customer_id": "12345"]
 ) { response in
     switch response {

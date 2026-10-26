@@ -65,7 +65,7 @@
     "examples": [
       {
         "name": "Create an authorization with an idempotency key",
-        "description": "Places a hold on a card. Use a new key for each new authorization, and reuse it only to retry this request.",
+        "description": "Creates an authorization. Reuse the same key only to retry this same request.",
         "query": "mutation CreateAuthorization(\n  $merchant_uid: String!\n  $amount: Int!\n  $idempotency_key: String\n  $payment_method: PaymentMethodInput\n  $fee_mode: FeeMode\n) {\n  createAuthorization(\n    merchant_uid: $merchant_uid\n    amount: $amount\n    idempotency_key: $idempotency_key\n    payment_method: $payment_method\n    fee_mode: $fee_mode\n  ) {\n    authorization_id\n    merchant_uid\n    amount\n    currency\n    status\n    fee_mode\n    fees\n    authorization_date\n    expiration_date\n    sale_id\n  }\n}",
         "variables": {
           "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
@@ -118,7 +118,7 @@
       },
       {
         "name": "Retry an authorization with the same key",
-        "description": "Sending the same request with the same key returns the original authorization. No second hold is placed.",
+        "description": "Retrying the same request with the same key returns the original authorization with the same ID.",
         "query": "mutation CreateAuthorization(\n  $merchant_uid: String!\n  $amount: Int!\n  $idempotency_key: String\n  $payment_method: PaymentMethodInput\n  $fee_mode: FeeMode\n) {\n  createAuthorization(\n    merchant_uid: $merchant_uid\n    amount: $amount\n    idempotency_key: $idempotency_key\n    payment_method: $payment_method\n    fee_mode: $fee_mode\n  ) {\n    authorization_id\n    merchant_uid\n    amount\n    currency\n    status\n    fee_mode\n    fees\n    authorization_date\n    expiration_date\n    sale_id\n  }\n}",
         "variables": {
           "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
@@ -170,13 +170,13 @@
         }
       },
       {
-        "name": "Key reused with a different request",
-        "description": "Returns a CONFLICT error when the key was already used with a different request, such as another amount. errorInfo.details.authorization_id holds the original authorization.",
+        "name": "Reuse an authorization key with a changed amount",
+        "description": "Changing the amount while reusing a key returns a conflict that identifies the original authorization.",
         "query": "mutation CreateAuthorization(\n  $merchant_uid: String!\n  $amount: Int!\n  $idempotency_key: String\n  $payment_method: PaymentMethodInput\n  $fee_mode: FeeMode\n) {\n  createAuthorization(\n    merchant_uid: $merchant_uid\n    amount: $amount\n    idempotency_key: $idempotency_key\n    payment_method: $payment_method\n    fee_mode: $fee_mode\n  ) {\n    authorization_id\n    merchant_uid\n    amount\n    currency\n    status\n    fee_mode\n    fees\n    authorization_date\n    expiration_date\n    sale_id\n  }\n}",
         "variables": {
-          "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
-          "idempotency_key": "order-1042-authorization",
-          "amount": 900,
+          "merchant_uid": "9f0acb5e-a176-404a-b735-f4caac66098e",
+          "idempotency_key": "order-1042-authorization-changed",
+          "amount": 150,
           "payment_method": {
             "card": {
               "card_number": "4835034598457895",
@@ -196,10 +196,9 @@
               "full_name": "Pat Theodore",
               "email": "pat@paytheory.com",
               "phone": "+15555550123",
-              "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
+              "merchant_uid": "9f0acb5e-a176-404a-b735-f4caac66098e"
             }
-          },
-          "fee_mode": "MERCHANT_FEE"
+          }
         },
         "response": {
           "type": "error",
@@ -216,11 +215,11 @@
                 "errorInfo": {
                   "code": "CONFLICT",
                   "details": {
-                    "authorization_id": "ptl_auth_5xhiVIdYV1XRd6At4B8Ioc",
                     "error_code": "IDEMPOTENCY_KEY_PAYLOAD_MISMATCH",
                     "idempotency_status": "COMPLETED",
-                    "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
-                    "operation": "CREATE_AUTHORIZATION"
+                    "merchant_uid": "9f0acb5e-a176-404a-b735-f4caac66098e",
+                    "operation": "CREATE_AUTHORIZATION",
+                    "authorization_id": "ptl_auth_7oCnztGodT48Lgg3yWJfBX"
                   }
                 },
                 "message": "Idempotency key was already used with a different request payload."

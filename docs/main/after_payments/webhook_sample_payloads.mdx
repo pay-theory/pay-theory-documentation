@@ -79,8 +79,8 @@ This example is abbreviated. Real transaction payloads may include additional ne
       "last_four": "6767",
       "payor": {
         "payor_id": "ptl_pay_123",
-        "full_name": "Jane Doe",
-        "email": "jane@example.com"
+        "full_name": "Pat Theodore",
+        "email": "pat@example.com"
       }
     }
   }
@@ -184,8 +184,8 @@ Payor webhooks notify your endpoint when a payor record is created or updated.
   "payload": {
     "payor_id": "payor_123",
     "merchant_uid": "mer_123",
-    "full_name": "Jane Doe",
-    "email": "jane@example.com",
+    "full_name": "Pat Theodore",
+    "email": "pat@example.com",
     "phone": "+18005550000",
     "address_line1": "123 Main St",
     "address_line2": "Suite 100",
@@ -249,7 +249,7 @@ Payment method updates use the same event family with the `UPDATED` subtype.
     "last_four": "4242",
     "cvv_status": "MATCH",
     "is_active": true,
-    "full_name": "Jane Doe",
+    "full_name": "Pat Theodore",
     "address_line1": "123 Main St",
     "city": "Austin",
     "region": "TX",

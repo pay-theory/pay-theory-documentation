@@ -28320,16 +28320,16 @@
         "type": {
           "kind": "ENUM",
           "name": "IdempotencyOperation",
-          "description": "Operations that support idempotency lookups.",
+          "description": "Operations that can be checked with idempotencyLookup.",
           "values": [
             {
               "name": "CREATE_AUTHORIZATION",
-              "description": "Lookup an idempotency key used with createAuthorization.",
+              "description": "Look up a key used with createAuthorization.",
               "isDeprecated": false
             },
             {
               "name": "CREATE_TRANSACTION",
-              "description": "Lookup an idempotency key used with createTransaction.",
+              "description": "Look up a key used with createTransaction.",
               "isDeprecated": false
             }
           ]
@@ -28345,7 +28345,7 @@
         "type": {
           "kind": "ENUM",
           "name": "IdempotencyStatus",
-          "description": "Status of a retained idempotency ledger record.",
+          "description": "Status of a retained idempotency record.",
           "values": [
             {
               "name": "IN_PROGRESS",
@@ -35035,16 +35035,16 @@
   "IdempotencyOperation": {
     "kind": "ENUM",
     "name": "IdempotencyOperation",
-    "description": "Operations that support idempotency lookups.",
+    "description": "Operations that can be checked with idempotencyLookup.",
     "values": [
       {
         "name": "CREATE_AUTHORIZATION",
-        "description": "Lookup an idempotency key used with createAuthorization.",
+        "description": "Look up a key used with createAuthorization.",
         "isDeprecated": false
       },
       {
         "name": "CREATE_TRANSACTION",
-        "description": "Lookup an idempotency key used with createTransaction.",
+        "description": "Look up a key used with createTransaction.",
         "isDeprecated": false
       }
     ]
@@ -35052,7 +35052,7 @@
   "IdempotencyStatus": {
     "kind": "ENUM",
     "name": "IdempotencyStatus",
-    "description": "Status of a retained idempotency ledger record.",
+    "description": "Status of a retained idempotency record.",
     "values": [
       {
         "name": "IN_PROGRESS",

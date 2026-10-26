@@ -153,6 +153,109 @@
     "operationType": "mutation",
     "examples": [
       {
+        "name": "Create a transaction with an idempotency key",
+        "description": "Creates a transaction and returns its ID. Reuse the same key only to retry this same request.",
+        "query": "mutation CreateTransaction(\n  $merchant_uid: String!\n  $amount: Int!\n  $idempotency_key: String\n  $payment_method_id: String\n  $fee_mode: FeeMode\n) {\n  createTransaction(\n    merchant_uid: $merchant_uid\n    amount: $amount\n    idempotency_key: $idempotency_key\n    payment_method_id: $payment_method_id\n    fee_mode: $fee_mode\n  ) {\n    transaction_id\n    merchant_uid\n    gross_amount\n    net_amount\n    currency\n    status\n    fee_mode\n    fees\n    transaction_type\n    transaction_date\n  }\n}",
+        "variables": {
+          "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+          "idempotency_key": "order-1042-transaction",
+          "amount": 250,
+          "payment_method_id": "ptl_pmt_54LidQwRcTs5MU9g0QYrgt",
+          "fee_mode": "MERCHANT_FEE"
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "createTransaction": {
+                "transaction_id": "ptl_txn_5mos8Z6NFWAWQRac7BAQFX",
+                "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                "gross_amount": 250,
+                "net_amount": 218,
+                "currency": "USD",
+                "status": "PENDING",
+                "fee_mode": "MERCHANT_FEE",
+                "fees": 32,
+                "transaction_type": "DEBIT",
+                "transaction_date": "2026-09-02T20:55:54.494Z"
+              }
+            }
+          }
+        }
+      },
+      {
+        "name": "Retry a transaction with the same key",
+        "description": "Retrying the same request with the same key returns the original transaction with the same ID.",
+        "query": "mutation CreateTransaction(\n  $merchant_uid: String!\n  $amount: Int!\n  $idempotency_key: String\n  $payment_method_id: String\n  $fee_mode: FeeMode\n) {\n  createTransaction(\n    merchant_uid: $merchant_uid\n    amount: $amount\n    idempotency_key: $idempotency_key\n    payment_method_id: $payment_method_id\n    fee_mode: $fee_mode\n  ) {\n    transaction_id\n    merchant_uid\n    gross_amount\n    net_amount\n    currency\n    status\n    fee_mode\n    fees\n    transaction_type\n    transaction_date\n  }\n}",
+        "variables": {
+          "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+          "idempotency_key": "order-1042-transaction",
+          "amount": 250,
+          "payment_method_id": "ptl_pmt_54LidQwRcTs5MU9g0QYrgt",
+          "fee_mode": "MERCHANT_FEE"
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "createTransaction": {
+                "transaction_id": "ptl_txn_5mos8Z6NFWAWQRac7BAQFX",
+                "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                "gross_amount": 250,
+                "net_amount": 218,
+                "currency": "USD",
+                "status": "PENDING",
+                "fee_mode": "MERCHANT_FEE",
+                "fees": 32,
+                "transaction_type": "DEBIT",
+                "transaction_date": "2026-09-02T20:55:54.494Z"
+              }
+            }
+          }
+        }
+      },
+      {
+        "name": "Reuse a transaction key with a changed amount",
+        "description": "Changing the amount while reusing a key returns a conflict that identifies the original transaction.",
+        "query": "mutation CreateTransaction(\n  $merchant_uid: String!\n  $amount: Int!\n  $idempotency_key: String\n  $payment_method_id: String\n  $fee_mode: FeeMode\n) {\n  createTransaction(\n    merchant_uid: $merchant_uid\n    amount: $amount\n    idempotency_key: $idempotency_key\n    payment_method_id: $payment_method_id\n    fee_mode: $fee_mode\n  ) {\n    transaction_id\n    merchant_uid\n    gross_amount\n    net_amount\n    currency\n    status\n    fee_mode\n    fees\n    transaction_type\n    transaction_date\n  }\n}",
+        "variables": {
+          "merchant_uid": "9f0acb5e-a176-404a-b735-f4caac66098e",
+          "idempotency_key": "order-1042-transaction-changed",
+          "amount": 150,
+          "payment_method_id": "ptl_pmt_54LidQwRcTs5MU9g0QYrgt",
+          "fee_mode": "MERCHANT_FEE"
+        },
+        "response": {
+          "type": "error",
+          "httpStatus": 200,
+          "body": {
+            "data": null,
+            "errors": [
+              {
+                "path": [
+                  "createTransaction"
+                ],
+                "data": null,
+                "errorType": "CONFLICT",
+                "errorInfo": {
+                  "code": "CONFLICT",
+                  "details": {
+                    "error_code": "IDEMPOTENCY_KEY_PAYLOAD_MISMATCH",
+                    "idempotency_status": "COMPLETED",
+                    "merchant_uid": "9f0acb5e-a176-404a-b735-f4caac66098e",
+                    "operation": "CREATE_TRANSACTION",
+                    "transaction_id": "ptl_txn_7aryoK34UbPuS5j6bpnHcp"
+                  }
+                },
+                "message": "Idempotency key was already used with a different request payload."
+              }
+            ]
+          }
+        }
+      },
+      {
         "name": "Charge a saved payment method",
         "description": "Charges a saved payment method.",
         "query": "mutation CreateTransaction(\n  $merchant_uid: String!\n  $amount: Int!\n  $payment_method_id: String\n  $fee_mode: FeeMode\n) {\n  createTransaction(\n    merchant_uid: $merchant_uid\n    amount: $amount\n    payment_method_id: $payment_method_id\n    fee_mode: $fee_mode\n  ) {\n    transaction_id\n    merchant_uid\n    gross_amount\n    net_amount\n    currency\n    status\n    fee_mode\n    fees\n    transaction_type\n    transaction_date\n  }\n}",
@@ -180,148 +283,6 @@
                 "transaction_date": "2026-09-02T20:55:54.494Z"
               }
             }
-          }
-        }
-      },
-      {
-        "name": "Charge with an idempotency key",
-        "description": "Charges a saved payment method. Use a new key for each new charge, and reuse it only to retry this request.",
-        "query": "mutation CreateTransaction(\n  $merchant_uid: String!\n  $amount: Int!\n  $idempotency_key: String\n  $payment_method_id: String\n  $fee_mode: FeeMode\n) {\n  createTransaction(\n    merchant_uid: $merchant_uid\n    amount: $amount\n    idempotency_key: $idempotency_key\n    payment_method_id: $payment_method_id\n    fee_mode: $fee_mode\n  ) {\n    transaction_id\n    merchant_uid\n    gross_amount\n    net_amount\n    currency\n    status\n    fee_mode\n    fees\n    transaction_type\n    transaction_date\n  }\n}",
-        "variables": {
-          "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
-          "idempotency_key": "order-1042-transaction",
-          "amount": 250,
-          "payment_method_id": "ptl_pmt_54LidQwRcTs5MU9g0QYrgt",
-          "fee_mode": "MERCHANT_FEE"
-        },
-        "response": {
-          "type": "success",
-          "httpStatus": 200,
-          "body": {
-            "data": {
-              "createTransaction": {
-                "transaction_id": "ptl_txn_5mos8Z6NFWAWQRac7BAQFX",
-                "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
-                "gross_amount": 250,
-                "net_amount": 218,
-                "currency": "USD",
-                "status": "PENDING",
-                "fee_mode": "MERCHANT_FEE",
-                "fees": 32,
-                "transaction_type": "DEBIT",
-                "transaction_date": "2026-09-02T20:55:54.494Z"
-              }
-            }
-          }
-        }
-      },
-      {
-        "name": "Retry with the same key",
-        "description": "Sending the same request with the same key returns the original transaction. No second charge is made.",
-        "query": "mutation CreateTransaction(\n  $merchant_uid: String!\n  $amount: Int!\n  $idempotency_key: String\n  $payment_method_id: String\n  $fee_mode: FeeMode\n) {\n  createTransaction(\n    merchant_uid: $merchant_uid\n    amount: $amount\n    idempotency_key: $idempotency_key\n    payment_method_id: $payment_method_id\n    fee_mode: $fee_mode\n  ) {\n    transaction_id\n    merchant_uid\n    gross_amount\n    net_amount\n    currency\n    status\n    fee_mode\n    fees\n    transaction_type\n    transaction_date\n  }\n}",
-        "variables": {
-          "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
-          "idempotency_key": "order-1042-transaction",
-          "amount": 250,
-          "payment_method_id": "ptl_pmt_54LidQwRcTs5MU9g0QYrgt",
-          "fee_mode": "MERCHANT_FEE"
-        },
-        "response": {
-          "type": "success",
-          "httpStatus": 200,
-          "body": {
-            "data": {
-              "createTransaction": {
-                "transaction_id": "ptl_txn_5mos8Z6NFWAWQRac7BAQFX",
-                "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
-                "gross_amount": 250,
-                "net_amount": 218,
-                "currency": "USD",
-                "status": "PENDING",
-                "fee_mode": "MERCHANT_FEE",
-                "fees": 32,
-                "transaction_type": "DEBIT",
-                "transaction_date": "2026-09-02T20:55:54.494Z"
-              }
-            }
-          }
-        }
-      },
-      {
-        "name": "Key reused with a different request",
-        "description": "Returns a CONFLICT error when the key was already used with a different request, such as another amount. errorInfo.details.transaction_id holds the original transaction.",
-        "query": "mutation CreateTransaction(\n  $merchant_uid: String!\n  $amount: Int!\n  $idempotency_key: String\n  $payment_method_id: String\n  $fee_mode: FeeMode\n) {\n  createTransaction(\n    merchant_uid: $merchant_uid\n    amount: $amount\n    idempotency_key: $idempotency_key\n    payment_method_id: $payment_method_id\n    fee_mode: $fee_mode\n  ) {\n    transaction_id\n    merchant_uid\n    gross_amount\n    net_amount\n    currency\n    status\n    fee_mode\n    fees\n    transaction_type\n    transaction_date\n  }\n}",
-        "variables": {
-          "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
-          "idempotency_key": "order-1042-transaction",
-          "amount": 300,
-          "payment_method_id": "ptl_pmt_54LidQwRcTs5MU9g0QYrgt",
-          "fee_mode": "MERCHANT_FEE"
-        },
-        "response": {
-          "type": "error",
-          "httpStatus": 200,
-          "body": {
-            "data": null,
-            "errors": [
-              {
-                "path": [
-                  "createTransaction"
-                ],
-                "data": null,
-                "errorType": "CONFLICT",
-                "errorInfo": {
-                  "code": "CONFLICT",
-                  "details": {
-                    "error_code": "IDEMPOTENCY_KEY_PAYLOAD_MISMATCH",
-                    "idempotency_status": "COMPLETED",
-                    "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
-                    "operation": "CREATE_TRANSACTION",
-                    "transaction_id": "ptl_txn_5mos8Z6NFWAWQRac7BAQFX"
-                  }
-                },
-                "message": "Idempotency key was already used with a different request payload."
-              }
-            ]
-          }
-        }
-      },
-      {
-        "name": "Key reused while the first request is running",
-        "description": "Returns a CONFLICT error when a request with this key hasn't finished. errorInfo.details.transaction_id holds that request's transaction. Look the key up with idempotencyLookup before you retry.",
-        "query": "mutation CreateTransaction(\n  $merchant_uid: String!\n  $amount: Int!\n  $idempotency_key: String\n  $payment_method_id: String\n  $fee_mode: FeeMode\n) {\n  createTransaction(\n    merchant_uid: $merchant_uid\n    amount: $amount\n    idempotency_key: $idempotency_key\n    payment_method_id: $payment_method_id\n    fee_mode: $fee_mode\n  ) {\n    transaction_id\n    merchant_uid\n    gross_amount\n    net_amount\n    currency\n    status\n    fee_mode\n    fees\n    transaction_type\n    transaction_date\n  }\n}",
-        "variables": {
-          "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
-          "idempotency_key": "order-1042-transaction",
-          "amount": 250,
-          "payment_method_id": "ptl_pmt_54LidQwRcTs5MU9g0QYrgt",
-          "fee_mode": "MERCHANT_FEE"
-        },
-        "response": {
-          "type": "error",
-          "httpStatus": 200,
-          "body": {
-            "data": null,
-            "errors": [
-              {
-                "path": [
-                  "createTransaction"
-                ],
-                "data": null,
-                "errorType": "CONFLICT",
-                "errorInfo": {
-                  "code": "CONFLICT",
-                  "details": {
-                    "error_code": "IDEMPOTENCY_KEY_ALREADY_USED",
-                    "idempotency_status": "IN_PROGRESS",
-                    "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
-                    "operation": "CREATE_TRANSACTION",
-                    "transaction_id": "ptl_txn_5mos8Z6NFWAWQRac7BAQFX"
-                  }
-                },
-                "message": "Idempotency key has already been used for this operation."
-              }
-            ]
           }
         }
       },
