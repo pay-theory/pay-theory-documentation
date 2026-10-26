@@ -5,7 +5,7 @@
     "examples": [
       {
         "name": "Get a paid invoice",
-        "description": "status is PAID and total_paid_amount equals invoice_amount.",
+        "description": "Gets the invoice after createOfflineTransaction. status is PAID and total_paid_amount equals invoice_amount.",
         "query": "query Invoices($query: SqlQuery, $limit: Int) {\n  invoices(query: $query, limit: $limit) {\n    items {\n      invoice_id\n      merchant_uid\n      invoice_name\n      invoice_description\n      invoice_amount\n      total_paid_amount\n      currency\n      status\n      fee_mode\n      due_by\n      invoice_date\n      merchant_invoice_number\n      account_code\n      reference\n      created_date\n      settings {\n        is_secure\n        security_pin\n        require_payor_address\n        accepted_payment_methods { ach card cash }\n      }\n      payor {\n        payor_id\n        full_name\n        email\n        merchant_uid\n      }\n      metadata\n      offline_transactions { instance_id amount type note transaction_date }\n    }\n    total_row_count\n  }\n}",
         "variables": {
           "query": {
@@ -46,7 +46,7 @@
                     "payor": {
                       "payor_id": "ptl_pay_3FUmPZJT65KZ0MRttPfmBi",
                       "full_name": "Pat Theodore",
-                      "email": "pat@paytheory.com",
+                      "email": "pat@example.com",
                       "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
                     },
                     "metadata": "{}",
@@ -90,7 +90,7 @@
             "account_code": "CLEANING-1001",
             "send_email": false,
             "payor": {
-              "email": "pat@paytheory.com",
+              "email": "pat@example.com",
               "full_name": "Pat Theodore"
             },
             "metadata": "{\"order_id\":\"INV-1001\"}"
@@ -121,7 +121,7 @@
                 "payor": {
                   "payor_id": "ptl_pay_2NM2STwd3pWznLo1hGnUSc",
                   "full_name": "Pat Theodore",
-                  "email": "pat@paytheory.com",
+                  "email": "pat@example.com",
                   "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
                 }
               }
@@ -183,7 +183,7 @@
       },
       {
         "name": "Unknown invoice ID",
-        "description": "Attempts to delete the invoice identified by invoice_id.",
+        "description": "Returns true even when invoice_id doesn't match an invoice.",
         "query": "mutation DeleteInvoice($invoice_id: String!) {\n  deleteInvoice(invoice_id: $invoice_id)\n}",
         "variables": {
           "invoice_id": "ptl_inv_does_not_exist"

@@ -65,7 +65,7 @@
     "examples": [
       {
         "name": "Create an authorization with an idempotency key",
-        "description": "Creates an authorization. Reuse the same key only to retry this same request.",
+        "description": "Places a hold on a card. Use a new key for each new authorization, and reuse it only to retry this request.",
         "query": "mutation CreateAuthorization(\n  $merchant_uid: String!\n  $amount: Int!\n  $idempotency_key: String\n  $payment_method: PaymentMethodInput\n  $fee_mode: FeeMode\n) {\n  createAuthorization(\n    merchant_uid: $merchant_uid\n    amount: $amount\n    idempotency_key: $idempotency_key\n    payment_method: $payment_method\n    fee_mode: $fee_mode\n  ) {\n    authorization_id\n    merchant_uid\n    amount\n    currency\n    status\n    fee_mode\n    fees\n    authorization_date\n    expiration_date\n    sale_id\n  }\n}",
         "variables": {
           "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
@@ -80,7 +80,7 @@
               },
               "security_code": "123",
               "full_name": "Pat Theodore",
-              "address_line1": "123 Test Street",
+              "address_line1": "123 Main Street",
               "city": "Cincinnati",
               "region": "OH",
               "postal_code": "45209",
@@ -88,7 +88,7 @@
             },
             "payor": {
               "full_name": "Pat Theodore",
-              "email": "pat@paytheory.com",
+              "email": "pat@example.com",
               "phone": "+15555550123",
               "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
             }
@@ -118,7 +118,7 @@
       },
       {
         "name": "Retry an authorization with the same key",
-        "description": "Retrying the same request with the same key returns the original authorization with the same ID.",
+        "description": "Sending the same request with the same key returns the original authorization. No second hold is placed.",
         "query": "mutation CreateAuthorization(\n  $merchant_uid: String!\n  $amount: Int!\n  $idempotency_key: String\n  $payment_method: PaymentMethodInput\n  $fee_mode: FeeMode\n) {\n  createAuthorization(\n    merchant_uid: $merchant_uid\n    amount: $amount\n    idempotency_key: $idempotency_key\n    payment_method: $payment_method\n    fee_mode: $fee_mode\n  ) {\n    authorization_id\n    merchant_uid\n    amount\n    currency\n    status\n    fee_mode\n    fees\n    authorization_date\n    expiration_date\n    sale_id\n  }\n}",
         "variables": {
           "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
@@ -133,7 +133,7 @@
               },
               "security_code": "123",
               "full_name": "Pat Theodore",
-              "address_line1": "123 Test Street",
+              "address_line1": "123 Main Street",
               "city": "Cincinnati",
               "region": "OH",
               "postal_code": "45209",
@@ -141,7 +141,7 @@
             },
             "payor": {
               "full_name": "Pat Theodore",
-              "email": "pat@paytheory.com",
+              "email": "pat@example.com",
               "phone": "+15555550123",
               "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
             }
@@ -172,9 +172,9 @@
       {
         "name": "Reuse an authorization key with a changed amount",
         "description": "Changing the amount while reusing a key returns a conflict that identifies the original authorization.",
-        "query": "mutation CreateAuthorization(\n  $merchant_uid: String!\n  $amount: Int!\n  $idempotency_key: String\n  $payment_method: PaymentMethodInput\n  $fee_mode: FeeMode\n) {\n  createAuthorization(\n    merchant_uid: $merchant_uid\n    amount: $amount\n    idempotency_key: $idempotency_key\n    payment_method: $payment_method\n    fee_mode: $fee_mode\n  ) {\n    authorization_id\n    merchant_uid\n    amount\n    currency\n    status\n    fee_mode\n    fees\n    authorization_date\n    expiration_date\n    sale_id\n  }\n}",
+        "query": "mutation CreateAuthorization(\n  $merchant_uid: String!\n  $amount: Int!\n  $idempotency_key: String\n  $payment_method: PaymentMethodInput\n) {\n  createAuthorization(\n    merchant_uid: $merchant_uid\n    amount: $amount\n    idempotency_key: $idempotency_key\n    payment_method: $payment_method\n  ) {\n    authorization_id\n    merchant_uid\n    amount\n    currency\n    status\n    fee_mode\n    fees\n    authorization_date\n    expiration_date\n    sale_id\n  }\n}",
         "variables": {
-          "merchant_uid": "9f0acb5e-a176-404a-b735-f4caac66098e",
+          "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
           "idempotency_key": "order-1042-authorization-changed",
           "amount": 150,
           "payment_method": {
@@ -186,7 +186,7 @@
               },
               "security_code": "123",
               "full_name": "Pat Theodore",
-              "address_line1": "123 Test Street",
+              "address_line1": "123 Main Street",
               "city": "Cincinnati",
               "region": "OH",
               "postal_code": "45209",
@@ -194,9 +194,9 @@
             },
             "payor": {
               "full_name": "Pat Theodore",
-              "email": "pat@paytheory.com",
+              "email": "pat@example.com",
               "phone": "+15555550123",
-              "merchant_uid": "9f0acb5e-a176-404a-b735-f4caac66098e"
+              "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
             }
           }
         },
@@ -217,7 +217,7 @@
                   "details": {
                     "error_code": "IDEMPOTENCY_KEY_PAYLOAD_MISMATCH",
                     "idempotency_status": "COMPLETED",
-                    "merchant_uid": "9f0acb5e-a176-404a-b735-f4caac66098e",
+                    "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
                     "operation": "CREATE_AUTHORIZATION",
                     "authorization_id": "ptl_auth_7oCnztGodT48Lgg3yWJfBX"
                   }
@@ -243,7 +243,7 @@
               },
               "security_code": "123",
               "full_name": "Pat Theodore",
-              "address_line1": "123 Test Street",
+              "address_line1": "123 Main Street",
               "city": "Cincinnati",
               "region": "OH",
               "postal_code": "45209",
@@ -251,7 +251,7 @@
             },
             "payor": {
               "full_name": "Pat Theodore",
-              "email": "pat@paytheory.com",
+              "email": "pat@example.com",
               "phone": "+15555550123",
               "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
             }
@@ -292,7 +292,7 @@
               },
               "security_code": "123",
               "full_name": "Pat Theodore",
-              "address_line1": "123 Test Street",
+              "address_line1": "123 Main Street",
               "city": "Cincinnati",
               "region": "OH",
               "postal_code": "45209",
@@ -300,7 +300,7 @@
             },
             "payor": {
               "full_name": "Pat Theodore",
-              "email": "pat@paytheory.com",
+              "email": "pat@example.com",
               "phone": "+15555550123",
               "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
             }
@@ -466,7 +466,7 @@
             }
           }
         },
-        "description": "Captures the amount held by an authorization."
+        "description": "Captures the amount held by an authorization. You can capture an authorization once, so a partial capture releases the rest."
       },
       {
         "name": "Amount is too high",
@@ -605,7 +605,7 @@
         "description": "Releases the funds held by an authorization."
       },
       {
-        "name": "authorization was already captured",
+        "name": "Authorization already captured",
         "query": "mutation CreateVoidForAuthorization($authorization_id: String!) {\n    createVoidForAuthorization(authorization_id: $authorization_id)\n  }",
         "variables": {
           "authorization_id": "ptl_auth_5xhiVIdYV1XRd6At4B8Ioc"
@@ -633,7 +633,7 @@
         "description": "Returns an error when an authorization has already been captured and cannot be voided."
       },
       {
-        "name": "authorization already voided",
+        "name": "Authorization already voided",
         "query": "mutation CreateVoidForAuthorization($authorization_id: String!) {\n    createVoidForAuthorization(authorization_id: $authorization_id)\n  }",
         "variables": {
           "authorization_id": "ptl_auth_2eKdi1Wgr3vkLAHDLpI8i2"

@@ -31,7 +31,7 @@
         }
       },
       {
-        "name": "Look up a key that has not been used",
+        "name": "Unused key",
         "description": "Returns null when this merchant has not used the key for the selected operation.",
         "query": "query IdempotencyLookup(\n  $merchant_uid: String!\n  $operation: IdempotencyOperation!\n  $idempotency_key: String!\n) {\n  idempotencyLookup(\n    merchant_uid: $merchant_uid\n    operation: $operation\n    idempotency_key: $idempotency_key\n  ) {\n    merchant_uid\n    operation\n    idempotency_status\n    transaction_id\n    authorization_id\n    locked_until\n    expires_at\n  }\n}",
         "variables": {

@@ -93,7 +93,7 @@
     "examples": [
       {
         "name": "Create a fixed-amount payment link",
-        "description": "Creates a card-only $25.00 link for a workshop.",
+        "description": "Creates a card-only $25.00 link for a workshop. Save link_id to update the link later.",
         "query": "mutation CreatePaymentLink($input: PaymentLinkInput!) {\n  createPaymentLink(input: $input) {\n    link_id\n    link_name\n    link_url\n    merchant_uid\n    amount\n    amount_is_variable\n    min_amount\n    accepted_payment_methods\n    account_code\n    call_to_action\n    created_date\n    currency\n    custom_success_message\n    fee_mode\n    is_active\n    payment_name\n    payment_description\n    redirect_url\n    require_phone\n  }\n}",
         "variables": {
           "input": {
@@ -197,7 +197,7 @@
     "examples": [
       {
         "name": "Change the amount and description",
-        "description": "Changes the amount to $30.00 and updates the description.",
+        "description": "Changes the workshop link from $25.00 to $30.00 and updates its description.",
         "query": "mutation UpdatePaymentLink($input: UpdatePaymentLinkInput!) {\n  updatePaymentLink(input: $input) {\n    link_id\n    link_name\n    link_url\n    merchant_uid\n    amount\n    amount_is_variable\n    min_amount\n    accepted_payment_methods\n    account_code\n    call_to_action\n    created_date\n    currency\n    custom_success_message\n    fee_mode\n    is_active\n    payment_name\n    payment_description\n    redirect_url\n    require_phone\n  }\n}",
         "variables": {
           "input": {

@@ -39,7 +39,7 @@
         "query": "mutation CreateUser($input: UserInput!) {\n  createUser(input: $input) {\n  email\n  full_name\n  phone\n  user_status\n  username\n  }\n}",
         "variables": {
           "input": {
-            "email": "user@paytheory.com",
+            "email": "user@example.com",
             "first_name": "example",
             "last_name": "example",
             "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",

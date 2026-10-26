@@ -5,7 +5,7 @@
     "examples": [
       {
         "name": "Get a barcode",
-        "description": "expiration_date has no time. metadata is returned as a JSON string of key/value pairs.",
+        "description": "expiration_date has no time. metadata comes back as a JSON string of key/value pairs, not the object you sent.",
         "query": "query Barcode($merchant_uid: ID!, $barcode_id: String!) {\n  barcode(merchant_uid: $merchant_uid, barcode_id: $barcode_id) {\n    barcode_id\n    merchant_uid\n    amount\n    fees\n    expiration_date\n    full_name\n    email_or_phone\n    sale_id\n    reference\n    account_code\n    invoice_id\n    metadata\n  }\n}",
         "variables": {
           "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
@@ -23,7 +23,7 @@
                 "fees": 200,
                 "expiration_date": "2026-12-03",
                 "full_name": "Pat Theodore",
-                "email_or_phone": "pat@paytheory.com",
+                "email_or_phone": "pat@example.com",
                 "sale_id": "ptl_sale_nwxNxlENbB8VBlW7ZxZnf",
                 "reference": "order-2026-1001",
                 "account_code": "customer-1042",
@@ -67,7 +67,7 @@
             "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
             "amount": 500,
             "full_name": "Pat Theodore",
-            "email_or_phone": "pat@paytheory.com",
+            "email_or_phone": "pat@example.com",
             "reference": "order-2026-1001",
             "account_code": "customer-1042",
             "metadata": "{\"source\":\"documentation\",\"purpose\":\"cash_payment\"}"
@@ -85,7 +85,7 @@
                 "fees": 200,
                 "expiration_date": "2026-12-03",
                 "full_name": "Pat Theodore",
-                "email_or_phone": "pat@paytheory.com",
+                "email_or_phone": "pat@example.com",
                 "sale_id": "ptl_sale_nwxNxlENbB8VBlW7ZxZnf",
                 "reference": "order-2026-1001",
                 "account_code": "customer-1042"
@@ -103,7 +103,7 @@
             "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
             "amount": 500,
             "full_name": "Pat Theodore",
-            "email_or_phone": "pat@paytheory.com",
+            "email_or_phone": "pat@example.com",
             "days_until_expiration": 120
           }
         },
@@ -135,7 +135,7 @@
             "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
             "amount": 500,
             "full_name": "Pat Theodore",
-            "email_or_phone": "pat@paytheory.com",
+            "email_or_phone": "pat@example.com",
             "days_until_expiration": 10,
             "expiration_date": "2026-12-01"
           }
@@ -168,7 +168,7 @@
             "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
             "amount": 500,
             "full_name": "Pat Theodore",
-            "email_or_phone": "pat@paytheory.com",
+            "email_or_phone": "pat@example.com",
             "sale_id": "northstar-order-2026-10-22-00001"
           }
         },

@@ -5,7 +5,7 @@
     "examples": [
       {
         "name": "Get a merchant",
-        "description": "Shows the merchant maximum for card and ACH payments in cents. Service fees count toward the limit.",
+        "description": "Gets one merchant by merchant_uid.",
         "query": "query Merchant($merchant_uid: String) {\n  merchant(merchant_uid: $merchant_uid) {\n    merchant_uid\n    merchant_name\n    card_active\n    ach_active\n    cash_active\n    max_transaction_amount\n    country_code\n    settings {\n      contact_email\n      website\n    }\n  }\n}",
         "variables": {
           "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
@@ -319,7 +319,7 @@
         "variables": {
           "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
           "settings": {
-            "contact_email": "pat@paytheory.com",
+            "contact_email": "pat@example.com",
             "contact_phone": "+14045551234",
             "website": "https://paytheory.com"
           }
@@ -336,7 +336,7 @@
       },
       {
         "name": "Update the website only",
-        "description": "Settings updates replace the old settings. Send every field you want to keep. Omitted settings are cleared.",
+        "description": "Updates the merchant's website.",
         "query": "mutation UpdateMerchantSettings($merchant_uid: ID!, $settings: MerchantSettingsInput!) {\n  updateMerchantSettings(merchant_uid: $merchant_uid, settings: $settings)\n}",
         "variables": {
           "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",

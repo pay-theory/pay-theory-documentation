@@ -59,7 +59,7 @@
       },
       {
         "name": "Filter transactions by card and payor",
-        "description": "Filter transaction rows when the corresponding fields are selected.",
+        "description": "Nested query_list arguments narrow the results to transactions whose payment method and payor match.",
         "query": "query TransactionsByCardAndPayor($query: SqlQuery, $paymentMethodQuery: [QueryPair], $payorQuery: [QueryPair]) {\n  transactions(query: $query, limit: 10) {\n    items {\n      transaction_id\n      payment_method(query_list: $paymentMethodQuery) {\n        last_four\n        payor(query_list: $payorQuery) {\n          email\n        }\n      }\n    }\n    total_row_count\n  }\n}",
         "variables": {
           "query": {
@@ -81,7 +81,7 @@
           "payorQuery": [
             {
               "key": "email",
-              "value": "pat@paytheory.com",
+              "value": "pat@example.com",
               "operator": "EQUAL"
             }
           ]
@@ -98,7 +98,7 @@
                     "payment_method": {
                       "last_four": "7895",
                       "payor": {
-                        "email": "pat@paytheory.com"
+                        "email": "pat@example.com"
                       }
                     }
                   }
@@ -154,7 +154,7 @@
     "examples": [
       {
         "name": "Create a transaction with an idempotency key",
-        "description": "Creates a transaction and returns its ID. Reuse the same key only to retry this same request.",
+        "description": "Charges a saved payment method. Use a new key for each new charge, and reuse it only to retry this request.",
         "query": "mutation CreateTransaction(\n  $merchant_uid: String!\n  $amount: Int!\n  $idempotency_key: String\n  $payment_method_id: String\n  $fee_mode: FeeMode\n) {\n  createTransaction(\n    merchant_uid: $merchant_uid\n    amount: $amount\n    idempotency_key: $idempotency_key\n    payment_method_id: $payment_method_id\n    fee_mode: $fee_mode\n  ) {\n    transaction_id\n    merchant_uid\n    gross_amount\n    net_amount\n    currency\n    status\n    fee_mode\n    fees\n    transaction_type\n    transaction_date\n  }\n}",
         "variables": {
           "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
@@ -221,7 +221,7 @@
         "description": "Changing the amount while reusing a key returns a conflict that identifies the original transaction.",
         "query": "mutation CreateTransaction(\n  $merchant_uid: String!\n  $amount: Int!\n  $idempotency_key: String\n  $payment_method_id: String\n  $fee_mode: FeeMode\n) {\n  createTransaction(\n    merchant_uid: $merchant_uid\n    amount: $amount\n    idempotency_key: $idempotency_key\n    payment_method_id: $payment_method_id\n    fee_mode: $fee_mode\n  ) {\n    transaction_id\n    merchant_uid\n    gross_amount\n    net_amount\n    currency\n    status\n    fee_mode\n    fees\n    transaction_type\n    transaction_date\n  }\n}",
         "variables": {
-          "merchant_uid": "9f0acb5e-a176-404a-b735-f4caac66098e",
+          "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
           "idempotency_key": "order-1042-transaction-changed",
           "amount": 150,
           "payment_method_id": "ptl_pmt_54LidQwRcTs5MU9g0QYrgt",
@@ -244,12 +244,51 @@
                   "details": {
                     "error_code": "IDEMPOTENCY_KEY_PAYLOAD_MISMATCH",
                     "idempotency_status": "COMPLETED",
-                    "merchant_uid": "9f0acb5e-a176-404a-b735-f4caac66098e",
+                    "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
                     "operation": "CREATE_TRANSACTION",
                     "transaction_id": "ptl_txn_7aryoK34UbPuS5j6bpnHcp"
                   }
                 },
                 "message": "Idempotency key was already used with a different request payload."
+              }
+            ]
+          }
+        }
+      },
+      {
+        "name": "Transaction key still in progress",
+        "description": "Returns a conflict when another request with this key hasn't finished. The error identifies that request's transaction. Look the key up with idempotencyLookup before you retry.",
+        "query": "mutation CreateTransaction(\n  $merchant_uid: String!\n  $amount: Int!\n  $idempotency_key: String\n  $payment_method_id: String\n  $fee_mode: FeeMode\n) {\n  createTransaction(\n    merchant_uid: $merchant_uid\n    amount: $amount\n    idempotency_key: $idempotency_key\n    payment_method_id: $payment_method_id\n    fee_mode: $fee_mode\n  ) {\n    transaction_id\n    merchant_uid\n    gross_amount\n    net_amount\n    currency\n    status\n    fee_mode\n    fees\n    transaction_type\n    transaction_date\n  }\n}",
+        "variables": {
+          "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+          "idempotency_key": "order-1042-transaction-race",
+          "amount": 250,
+          "payment_method_id": "ptl_pmt_54LidQwRcTs5MU9g0QYrgt",
+          "fee_mode": "MERCHANT_FEE"
+        },
+        "response": {
+          "type": "error",
+          "httpStatus": 200,
+          "body": {
+            "data": null,
+            "errors": [
+              {
+                "path": [
+                  "createTransaction"
+                ],
+                "data": null,
+                "errorType": "CONFLICT",
+                "errorInfo": {
+                  "code": "CONFLICT",
+                  "details": {
+                    "error_code": "IDEMPOTENCY_KEY_ALREADY_USED",
+                    "idempotency_status": "IN_PROGRESS",
+                    "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                    "operation": "CREATE_TRANSACTION",
+                    "transaction_id": "ptl_txn_5AdClJ1LJNZX3fXGT8U1yM"
+                  }
+                },
+                "message": "Idempotency key has already been used for this operation."
               }
             ]
           }
@@ -288,7 +327,7 @@
       },
       {
         "name": "Charge a card",
-        "description": "Creates a card transaction by passing card details directly in payment_method Available only to Partners who have completed a full PCI Level 1 audit.",
+        "description": "Creates a card transaction by passing card details directly in payment_method. Available only to Partners who have completed a full PCI Level 1 audit.",
         "query": "mutation CreateTransaction(\n  $merchant_uid: String!\n  $amount: Int!\n  $payment_method: PaymentMethodInput\n  $fee_mode: FeeMode\n  $account_code: String\n  $reference: String\n) {\n  createTransaction(\n    merchant_uid: $merchant_uid\n    amount: $amount\n    payment_method: $payment_method\n    fee_mode: $fee_mode\n    account_code: $account_code\n    reference: $reference\n  ) {\n    transaction_id\n    merchant_uid\n    gross_amount\n    net_amount\n    currency\n    status\n    fee_mode\n    fees\n    transaction_type\n    transaction_date\n  }\n}",
         "variables": {
           "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
@@ -302,7 +341,7 @@
               },
               "security_code": "123",
               "full_name": "Pat Theodore",
-              "address_line1": "123 Test Street",
+              "address_line1": "123 Main Street",
               "city": "Cincinnati",
               "region": "OH",
               "postal_code": "45209",
@@ -310,7 +349,7 @@
             },
             "payor": {
               "full_name": "Pat Theodore",
-              "email": "pat@paytheory.com",
+              "email": "pat@example.com",
               "phone": "+15555550123",
               "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
             }
@@ -342,7 +381,7 @@
       },
       {
         "name": "Charge an ACH account",
-        "description": "Creates an ACH transaction by passing bank account details directly in payment_method Available only to Partners who have completed a full PCI Level 1 audit.",
+        "description": "Creates an ACH transaction by passing bank account details directly in payment_method. Available only to Partners who have completed a full PCI Level 1 audit.",
         "query": "mutation CreateTransaction(\n  $merchant_uid: String!\n  $amount: Int!\n  $payment_method: PaymentMethodInput\n  $fee_mode: FeeMode\n) {\n  createTransaction(\n    merchant_uid: $merchant_uid\n    amount: $amount\n    payment_method: $payment_method\n    fee_mode: $fee_mode\n  ) {\n    transaction_id\n    merchant_uid\n    gross_amount\n    net_amount\n    currency\n    status\n    fee_mode\n    fees\n    transaction_type\n    transaction_date\n  }\n}",
         "variables": {
           "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
@@ -356,7 +395,7 @@
             },
             "payor": {
               "full_name": "Pat Theodore",
-              "email": "pat@paytheory.com",
+              "email": "pat@example.com",
               "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
             }
           },
@@ -385,7 +424,7 @@
       },
       {
         "name": "Charge an EFT account",
-        "description": "Creates an EFT transaction by passing Canadian bank account details directly in payment_method Available only to Partners who have completed a full PCI Level 1 audit.",
+        "description": "Creates an EFT transaction by passing Canadian bank account details directly in payment_method. Available only to Partners who have completed a full PCI Level 1 audit.",
         "query": "mutation CreateTransaction(\n  $merchant_uid: String!\n  $amount: Int!\n  $payment_method: PaymentMethodInput\n  $fee_mode: FeeMode\n) {\n  createTransaction(\n    merchant_uid: $merchant_uid\n    amount: $amount\n    payment_method: $payment_method\n    fee_mode: $fee_mode\n  ) {\n    transaction_id\n    merchant_uid\n    gross_amount\n    net_amount\n    currency\n    status\n    fee_mode\n    fees\n    transaction_type\n    transaction_date\n  }\n}",
         "variables": {
           "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
@@ -400,7 +439,7 @@
             },
             "payor": {
               "full_name": "Pat Theodore",
-              "email": "pat@paytheory.com",
+              "email": "pat@example.com",
               "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
             }
           },
@@ -470,7 +509,7 @@
               },
               "security_code": "123",
               "full_name": "Pat Theodore",
-              "address_line1": "123 Test Street",
+              "address_line1": "123 Main Street",
               "city": "Cincinnati",
               "region": "OH",
               "postal_code": "45209",
@@ -478,7 +517,7 @@
             },
             "payor": {
               "full_name": "Pat Theodore",
-              "email": "pat@paytheory.com",
+              "email": "pat@example.com",
               "phone": "+15555550123",
               "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
             }
@@ -550,7 +589,7 @@
               },
               "security_code": "123",
               "full_name": "Pat Theodore",
-              "address_line1": "123 Test Street",
+              "address_line1": "123 Main Street",
               "city": "Cincinnati",
               "region": "OH",
               "postal_code": "45209",
@@ -558,7 +597,7 @@
             },
             "payor": {
               "full_name": "Pat Theodore",
-              "email": "pat@paytheory.com",
+              "email": "pat@example.com",
               "phone": "+15555550123",
               "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
             }
@@ -939,7 +978,7 @@
         "query": "mutation CreateReceiptEmail($transaction_id: String!, $receipt_description: String, $email: AWSEmail) {\n  createReceiptEmail(transaction_id: $transaction_id, receipt_description: $receipt_description, email: $email)\n}",
         "variables": {
           "transaction_id": "ptl_txn_4rNilJChpgcuQFgLvdZbxm",
-          "email": "pat@paytheory.com",
+          "email": "pat@example.com",
           "receipt_description": "Thanks for your business - order 4815"
         },
         "response": {

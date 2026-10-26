@@ -123,7 +123,7 @@
                 "payor": {
                   "payor_id": "ptl_pay_5Q860Z2ouH3KKLnWfNpyxd",
                   "full_name": "Pat Theodore",
-                  "email": "pat@paytheory.com"
+                  "email": "pat@example.com"
                 }
               }
             }
@@ -178,7 +178,7 @@
                 "payor": {
                   "payor_id": "ptl_pay_5Q860Z2ouH3KKLnWfNpyxd",
                   "full_name": "Pat Theodore",
-                  "email": "pat@paytheory.com"
+                  "email": "pat@example.com"
                 }
               }
             }
@@ -233,7 +233,7 @@
                 "payor": {
                   "payor_id": "ptl_pay_5Q860Z2ouH3KKLnWfNpyxd",
                   "full_name": "Pat Theodore",
-                  "email": "pat@paytheory.com"
+                  "email": "pat@example.com"
                 }
               }
             }
@@ -248,7 +248,7 @@
     "examples": [
       {
         "name": "Mute schedule emails",
-        "description": "Turns off email notifications for this schedule.",
+        "description": "Turns off emails for this schedule.",
         "query": "mutation UpdateRecurringPayment($input: UpdateRecurringPaymentInput!) {\n  updateRecurringPayment(input: $input) {\n    recurring_id\n    mute_all_emails\n    fee_per_payment\n    total_amount_per_payment\n    next_payment_date\n    remaining_payments\n    status\n    is_active\n    payment_method {\n      payment_method_id\n      last_four\n    }\n  }\n}",
         "variables": {
           "input": {
@@ -288,7 +288,7 @@
     "examples": [
       {
         "name": "Cancel a recurring schedule",
-        "description": "Cancels a schedule.",
+        "description": "Cancels a schedule. Get it with recurringPayments afterward to confirm is_active is false.",
         "query": "mutation CancelRecurringPayment($recurring_id: String!) {\n  cancelRecurringPayment(recurring_id: $recurring_id)\n}",
         "variables": {
           "recurring_id": "ptl_rec_64ImZH6LpufCQddDXX2OYH"

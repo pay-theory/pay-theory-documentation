@@ -174,7 +174,7 @@
               },
               "security_code": "123",
               "full_name": "Pat Theodore",
-              "address_line1": "123 Test Street",
+              "address_line1": "123 Main Street",
               "city": "Cincinnati",
               "region": "OH",
               "postal_code": "45209",
@@ -182,7 +182,7 @@
             },
             "payor": {
               "full_name": "Pat Theodore",
-              "email": "pat@paytheory.com",
+              "email": "pat@example.com",
               "phone": "+15555550123",
               "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
             }
@@ -222,7 +222,7 @@
             },
             "payor": {
               "full_name": "Pat Theodore",
-              "email": "pat@paytheory.com",
+              "email": "pat@example.com",
               "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
             }
           }
@@ -262,7 +262,7 @@
             },
             "payor": {
               "full_name": "Pat Theodore",
-              "email": "pat@paytheory.com",
+              "email": "pat@example.com",
               "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
             }
           }
@@ -301,7 +301,7 @@
               },
               "security_code": "123",
               "full_name": "Pat Theodore",
-              "address_line1": "123 Test Street",
+              "address_line1": "123 Main Street",
               "city": "Cincinnati",
               "region": "OH",
               "postal_code": "45209",
@@ -309,7 +309,7 @@
             },
             "payor": {
               "full_name": "Pat Theodore",
-              "email": "pat@paytheory.com",
+              "email": "pat@example.com",
               "phone": "+15555550123",
               "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
             }
@@ -351,7 +351,7 @@
               },
               "security_code": "12",
               "full_name": "Pat Theodore",
-              "address_line1": "123 Test Street",
+              "address_line1": "123 Main Street",
               "city": "Cincinnati",
               "region": "OH",
               "postal_code": "45209",
@@ -359,7 +359,7 @@
             },
             "payor": {
               "full_name": "Pat Theodore",
-              "email": "pat@paytheory.com",
+              "email": "pat@example.com",
               "phone": "+15555550123",
               "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
             }
@@ -401,7 +401,7 @@
               },
               "security_code": "123",
               "full_name": "Pat Theodore",
-              "address_line1": "123 Test Street",
+              "address_line1": "123 Main Street",
               "city": "Cincinnati",
               "region": "OH",
               "postal_code": "45209",
@@ -409,7 +409,7 @@
             },
             "payor": {
               "full_name": "Pat Theodore",
-              "email": "pat@paytheory.com",
+              "email": "pat@example.com",
               "phone": "+15555550123",
               "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
             },
@@ -451,7 +451,7 @@
           "payment_method": {
             "payor": {
               "full_name": "Pat Theodore",
-              "email": "pat@paytheory.com",
+              "email": "pat@example.com",
               "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
             }
           }
@@ -493,7 +493,7 @@
               },
               "security_code": "123",
               "full_name": "Pat Theodore",
-              "address_line1": "123 Test Street",
+              "address_line1": "123 Main Street",
               "city": "Cincinnati",
               "region": "OH",
               "postal_code": "45209",
@@ -501,7 +501,7 @@
             },
             "payor": {
               "full_name": "Pat Theodore",
-              "email": "pat@paytheory.com",
+              "email": "pat@example.com",
               "phone": "+15555550123",
               "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
             },
@@ -543,7 +543,7 @@
               },
               "security_code": "123",
               "full_name": "Pat Theodore",
-              "address_line1": "123 Test Street",
+              "address_line1": "123 Main Street",
               "city": "Cincinnati",
               "region": "OH",
               "postal_code": "45209",
@@ -588,7 +588,7 @@
               },
               "security_code": "123",
               "full_name": "Pat Theodore",
-              "address_line1": "123 Test Street",
+              "address_line1": "123 Main Street",
               "city": "Cincinnati",
               "region": "OH",
               "postal_code": "45209",
@@ -596,7 +596,7 @@
             },
             "payor": {
               "full_name": "Pat Theodore",
-              "email": "pat@paytheory.com",
+              "email": "pat@example.com",
               "phone": "+15555550123",
               "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
             }
