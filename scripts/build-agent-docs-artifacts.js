@@ -6,6 +6,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const {
+  HOMEPAGE_MARKDOWN_FILENAME,
   LLM_DOCS_DIRNAME,
   MARKDOWN_ROUTES_MANIFEST_FILENAME,
 } = require('../edge/markdown-redirect/constants');
@@ -177,15 +178,26 @@ const buildLlmsTxt = manifest => {
   const lines = [
     '# Pay Theory Documentation',
     '',
+    `> ${config.summary}`,
+    '',
     `For human-readable documentation visit: ${config.siteUrl}`,
     '',
-    `> ${config.defaultVersionGuidance}`,
+    config.defaultVersionGuidance,
+    '',
+    '## When to use Pay Theory',
+    '',
+    ...config.whenToUse.map(useCase => `- ${useCase}`),
+    '',
+    '## How to call Pay Theory',
+    '',
+    ...config.howToCall.map(step => `- ${step}`),
     '',
     '## Machine-Readable Resources',
     '',
     `- [Markdown Route Manifest](${config.siteUrl}${config.llmDocs.manifestPath}): JSON map of every docs route to its Markdown URL`,
     `- [Agent Index](${config.siteUrl}${config.llmDocs.agentIndexPath}): Enriched catalog with title, version, section, and source metadata`,
     `- [Full Markdown Index](${config.siteUrl}${config.llmDocs.llmsFullTxtPath}): All Markdown-accessible routes`,
+    `- [GraphQL Schema](${config.siteUrl}${config.llmDocs.schemaPath}): Public SDL for the Pay Theory GraphQL API`,
     '',
     '## Markdown Negotiation',
     '',
@@ -249,6 +261,13 @@ const buildLlmsTxt = manifest => {
     lines.push(
       `- [${idx.title}](${config.siteUrl}${config.llmDocs.indexesBasePath}${idx.filename})`,
     );
+  }
+  lines.push('');
+
+  lines.push('## Support');
+  lines.push('');
+  for (const contact of config.support) {
+    lines.push(`- [${contact.title}](${contact.url})`);
   }
   lines.push('');
 
@@ -343,6 +362,12 @@ const main = () => {
   fs.writeFileSync(llmsTxtPath, llmsTxt);
   const llmDocsLlmsTxtPath = path.join(LLM_DOCS_BUILD_DIR, 'llms.txt');
   fs.writeFileSync(llmDocsLlmsTxtPath, llmsTxt);
+  // Markdown twin of the homepage, served for `/` with Accept: text/markdown.
+  const homepageMarkdownPath = path.join(
+    LLM_DOCS_BUILD_DIR,
+    HOMEPAGE_MARKDOWN_FILENAME,
+  );
+  fs.writeFileSync(homepageMarkdownPath, llmsTxt);
 
   // llms-full.txt → build/llms-full.txt
   const llmsFullTxt = buildLlmsFullTxt(manifest, docMeta);
@@ -370,6 +395,7 @@ const main = () => {
       `[agent-docs] Wrote agent-index.json with ${catalog.length} entries → ${path.relative(SITE_DIR, agentIndexPath)}`,
       `[agent-docs] Wrote llms.txt → ${path.relative(SITE_DIR, llmsTxtPath)}`,
       `[agent-docs] Wrote llm-docs/llms.txt alias → ${path.relative(SITE_DIR, llmDocsLlmsTxtPath)}`,
+      `[agent-docs] Wrote homepage Markdown → ${path.relative(SITE_DIR, homepageMarkdownPath)}`,
       `[agent-docs] Copied ${copiedApiSkills.length} API skill package(s) → build/${LLM_DOCS_DIRNAME}/agent-skills/`,
       `[agent-docs] Wrote llms-full.txt with ${Object.keys(manifest.routes).length} routes → ${path.relative(SITE_DIR, llmsFullPath)}`,
       `[agent-docs] Wrote ${config.topicIndexes.length} topic indexes (${totalIndexRoutes} total route entries) → build/${LLM_DOCS_DIRNAME}/indexes/`,
@@ -377,4 +403,10 @@ const main = () => {
   );
 };
 
-main();
+if (require.main === module) {
+  main();
+}
+
+module.exports = {
+  buildLlmsTxt,
+};
