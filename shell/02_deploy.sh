@@ -8,7 +8,6 @@ TARGET_MODE=$5
 
 S3_ARTIFACTS_BUCKET="partner-services-deployment-${PARTNER}-${TARGET_ACCOUNT_ID}-${TARGET_REGION}"
 S3_ARTIFACTS_PATH="code/${SERVICE_NAME}-${PARTNER}-${STAGE}"
-MARKDOWN_EDGE_LAMBDA_S3_BUCKET="partner-services-deployment-${PARTNER}-${TARGET_ACCOUNT_ID}-us-east-1"
 
 echo "Printing Local scope variables";
 echo "PARTNER :: $PARTNER"
@@ -18,29 +17,19 @@ echo "SERVICE_TYPE :: $SERVICE_TYPE"
 echo "TARGET_MODE :: $TARGET_MODE"
 echo "S3_ARTIFACTS_BUCKET :: $S3_ARTIFACTS_BUCKET"
 echo "S3_ARTIFACTS_PATH :: $S3_ARTIFACTS_PATH"
-echo "MARKDOWN_EDGE_LAMBDA_S3_BUCKET :: $MARKDOWN_EDGE_LAMBDA_S3_BUCKET"
+
+# formation.yml gets the edge function's code inlined at deploy time.
+FORMATION_TEMPLATE=$(mktemp -t formation.XXXXXX)
+node scripts/render-formation-template.js "${FORMATION_TEMPLATE}" || exit 1
 
 echo "Validating the cfn templates $(date) in $(pwd)" ;
-aws cloudformation validate-template --template-body file://templates/formation.yml
-aws cloudformation validate-template --region us-east-1 --template-body file://templates/distribution.yml
+aws cloudformation validate-template --template-body "file://${FORMATION_TEMPLATE}" || exit 1
+aws cloudformation validate-template --region us-east-1 --template-body file://templates/distribution.yml || exit 1
 
-aws s3 cp build s3://"${SERVICE_NAME}"-"${TARGET_ACCOUNT_ID}"-"${PARTNER}"-"${STAGE}"/"${STAGE}"/"${PARTNER}" --recursive --cache-control max-age=3
-
-echo "Packaging Markdown Lambda@Edge artifact"
-MARKDOWN_EDGE_LAMBDA_ZIP=$(bash shell/package_markdown_edge_lambda.sh "${SERVICE_NAME}")
-# Name the artifact by its contents, not the commit. A new key publishes a new
-# Lambda@Edge version and updates CloudFront (~10 min), so only change it when
-# the Lambda code or its route manifest changes.
-MARKDOWN_EDGE_LAMBDA_HASH=$(cat "${MARKDOWN_EDGE_LAMBDA_ZIP}.sha256")
-if [[ -z "${MARKDOWN_EDGE_LAMBDA_HASH}" ]]
-then
-    echo "Failed to read the Markdown Lambda@Edge content hash!"
-    exit 1
-fi
-MARKDOWN_EDGE_LAMBDA_S3_KEY="${S3_ARTIFACTS_PATH}/markdown-edge-lambda-${MARKDOWN_EDGE_LAMBDA_HASH}.zip"
-echo "Uploading Markdown Lambda@Edge artifact to s3://${MARKDOWN_EDGE_LAMBDA_S3_BUCKET}/${MARKDOWN_EDGE_LAMBDA_S3_KEY}"
-aws s3 cp "${MARKDOWN_EDGE_LAMBDA_ZIP}" "s3://${MARKDOWN_EDGE_LAMBDA_S3_BUCKET}/${MARKDOWN_EDGE_LAMBDA_S3_KEY}"
-echo "Markdown Lambda@Edge artifact uploaded"
+SITE_S3_PATH="s3://${SERVICE_NAME}-${TARGET_ACCOUNT_ID}-${PARTNER}-${STAGE}/${STAGE}/${PARTNER}"
+aws s3 cp build "${SITE_S3_PATH}" --recursive --cache-control max-age=3 --exclude '*.graphql' || exit 1
+# S3 has no MIME type for .graphql; serve the schema as readable text.
+aws s3 cp build "${SITE_S3_PATH}" --recursive --cache-control max-age=3 --exclude '*' --include '*.graphql' --content-type 'text/plain; charset=utf-8' || exit 1
 
 
 echo "Deploying certificates and hosted zone resources"
@@ -52,9 +41,7 @@ aws cloudformation deploy --template-file ./templates/distribution.yml \
 --parameter-overrides \
 Partner="${PARTNER}" \
 Stage="${STAGE}" \
-TargetMode="${TARGET_MODE}" \
-MarkdownEdgeLambdaS3Bucket="${MARKDOWN_EDGE_LAMBDA_S3_BUCKET}" \
-MarkdownEdgeLambdaS3Key="${MARKDOWN_EDGE_LAMBDA_S3_KEY}"
+TargetMode="${TARGET_MODE}"
 
 # Check the status of cloudformation stack set
 STATUS=$(aws cloudformation describe-stacks --region "us-east-1" --stack-name "${SERVICE_NAME}"-distribution-"${PARTNER}"-"${STAGE}" --output text --query "Stacks[0].StackStatus")
@@ -73,16 +60,20 @@ echo "Retrieving hosted zone" ;
 HOSTED_ZONE=$(aws --region="us-east-1" ssm get-parameters --name "${SERVICE_NAME}-${PARTNER}-${STAGE}-hosted-zone" --output text --query "Parameters[0].Value")
 echo "Retrieving certificate" ;
 CERTIFICATE_ARN=$(aws --region="us-east-1" ssm get-parameters --name "${SERVICE_NAME}-${PARTNER}-${STAGE}-certificate-arn" --output text --query "Parameters[0].Value")
-echo "Retrieving Markdown Lambda@Edge version" ;
-MARKDOWN_EDGE_LAMBDA_VERSION_ARN=$(aws --region="us-east-1" ssm get-parameters --name "${SERVICE_NAME}-${PARTNER}-${STAGE}-markdown-edge-lambda-version-arn" --output text --query "Parameters[0].Value")
+echo "Retrieving edge routes key value store" ;
+EDGE_ROUTES_KVS_ARN=$(aws --region="us-east-1" ssm get-parameters --name "${SERVICE_NAME}-${PARTNER}-${STAGE}-edge-routes-kvs-arn" --output text --query "Parameters[0].Value")
 
-if [[ ${MARKDOWN_EDGE_LAMBDA_VERSION_ARN} != *":function:"* ]]
+if [[ ${EDGE_ROUTES_KVS_ARN} != *":key-value-store/"* ]]
 then
-    echo "Failed to retrieve Markdown Lambda@Edge version ARN!"
+    echo "Failed to retrieve edge routes key value store ARN!"
     exit 1
 fi
 
-aws cloudformation deploy --template-file ./templates/formation.yml \
+# Runs after the S3 upload, so every route in the store already has its pages.
+echo "Syncing edge routes" ;
+node scripts/sync-edge-routes.js "${EDGE_ROUTES_KVS_ARN}" || exit 1
+
+aws cloudformation deploy --template-file "${FORMATION_TEMPLATE}" \
 --stack-name "${SERVICE_NAME}"-"${PARTNER}"-"${STAGE}" \
 --region "${TARGET_REGION}" \
 --capabilities CAPABILITY_NAMED_IAM \
@@ -93,7 +84,7 @@ Stage="${STAGE}" \
 TargetMode="${TARGET_MODE}" \
 HostedZone="${HOSTED_ZONE}" \
 CertificateArn="${CERTIFICATE_ARN}" \
-MarkdownEdgeLambdaVersionArn="${MARKDOWN_EDGE_LAMBDA_VERSION_ARN}"
+EdgeRoutesKvsArn="${EDGE_ROUTES_KVS_ARN}"
 
 # Check the status of cloudformation stack set
 STATUS=$(aws cloudformation describe-stacks --stack-name "${SERVICE_NAME}"-"${PARTNER}"-"${STAGE}" --output text --query "Stacks[0].StackStatus")

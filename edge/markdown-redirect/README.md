@@ -1,17 +1,16 @@
-# Markdown Redirect Edge Function
+# Docs Edge Router
 
-This Lambda@Edge function routes documentation requests at the edge. One
-published version is associated with two CloudFront events:
+`function.js` is a CloudFront Function (`cloudfront-js-2.0`) that routes
+documentation requests at the edge. It's associated with two CloudFront events:
 
 - `viewer-request` (before cache lookup): rewrites page requests to Markdown
   objects when the caller asks for Markdown, rewrites pretty URLs to their
   `index.html` object, answers unknown routes with a real 404, and redirects
   trust/portal paths. HTML and Markdown cache as separate S3 objects.
-- `origin-response` (on cache miss): adds `Vary: Accept` to HTML and Markdown
-  responses and serves `.graphql` files as `text/plain`.
+- `viewer-response`: adds `Vary: Accept` to HTML and Markdown responses.
 
-CloudFront does not allow CloudFront Functions on viewer events alongside a
-Lambda@Edge viewer trigger, so all edge logic lives in this one function.
+The route list lives in a CloudFront KeyValueStore, not in the code, so new
+pages don't change the function. See `adr/0002-edge-routing-in-a-cloudfront-function.md`.
 
 ## Request Detection
 
@@ -27,56 +26,53 @@ The function mirrors the `@lewl/graphql-doc` Docusaurus plugin defaults:
 
 Only `GET` and `HEAD` requests are eligible.
 
+## Route Store
+
+`npm run build` writes `build/llm-docs/markdown-routes-manifest.json`.
+`scripts/sync-edge-routes.js` turns it into one key per route:
+
+| Key | Value |
+|-----|-------|
+| `/docs/main/getting_started/quickstart` | `/llm-docs/source/docs/main/getting_started/quickstart.md` |
+| `/docs/api/transaction/create-transaction` | `/llm-docs/transaction/create-transaction.md` |
+| `/docs/api/types/enums/card-type` | `html` (page has no Markdown twin) |
+
+Keys have no trailing slash; the homepage is `/`.
+
 ## Route Behavior
 
-Packaging replaces `manifest.js` with the route map generated at
-`build/llm-docs/markdown-routes-manifest.json`. `routes` maps docs routes to
-Markdown; `htmlRoutes` lists every route with a built `index.html`.
-
 - `/about`, `/contact`, `/privacy`, and `/developers` return a 301 (see
-  `REDIRECTS` in `constants.js`).
-- With a Markdown request, `/` rewrites to `/llm-docs/home.md` (a copy of
-  `llms.txt`), API operation routes rewrite to generated `/llm-docs/**`
-  Markdown, and other docs rewrite to `/llm-docs/source/**`.
-- Pages without a Markdown twin, and all HTML requests, rewrite to
-  `<route>/index.html`.
-- Extensionless routes missing from `htmlRoutes` return a generated Markdown
-  404 when Markdown was requested. HTML requests miss in S3 and CloudFront
-  serves `/404.html` with status 404 (`CustomErrorResponses` in
+  `REDIRECTS` in `function.js`).
+- With a Markdown request, routes whose value is a `/llm-docs/**` path
+  rewrite to it. `/` rewrites to `/llm-docs/home.md` (a copy of `llms.txt`).
+- Routes stored as `html`, and all HTML requests, rewrite to
+  `<route>/index.html`. HTML requests never read the store.
+- Extensionless routes missing from the store return a generated Markdown 404
+  when Markdown was requested. HTML requests miss in S3 and CloudFront serves
+  `/404.html` with status 404 (`CustomErrorResponses` in
   `templates/formation.yml`).
+- If the store can't be read, Markdown requests get the HTML page instead of a
+  404.
 - Static assets, `/llms.txt`, and `/llm-docs/**` pass through.
-- A manifest without `htmlRoutes` (the local fallback) disables 404 detection.
-
-Page rewrites change `request.uri`; only the trust/portal paths redirect the
-browser.
 
 ## Runtime Contract
 
-- `npm run build` writes `build/llm-docs/markdown-routes-manifest.json` and
-  source fallback files under `build/llm-docs/source/**`.
-- `shell/package_markdown_edge_lambda.sh` embeds that manifest into
-  `manifest.js` inside the Lambda zip.
-- `templates/distribution.yml` publishes a numbered Lambda version in
-  `us-east-1`; CloudFront cannot use `$LATEST` for Lambda@Edge.
-- `templates/formation.yml` associates that published version on
-  `viewer-request` and `origin-response`, and switches the custom error
-  responses from the SPA fallback to `/404.html` only when the version ARN is
-  present.
+- The runtime is ES 5.1 plus a few later features. There's no `require`,
+  `Set`, `Map`, spread, `for...of` or optional chaining, and the code must
+  stay under 10 KB. `tests/edge-router.test.js` checks for these.
+- `templates/distribution.yml` creates the KeyValueStore and stores its ARN in
+  SSM.
+- `shell/02_deploy.sh` uploads the site to S3 (`.graphql` files as
+  `text/plain`), syncs the store, then deploys `templates/formation.yml` with
+  this file inlined by `scripts/render-formation-template.js`.
+- `AutoPublish` publishes code changes in place. CloudFront keeps the same
+  function ARN, so a code change doesn't redeploy the distribution.
 
 ## Tests
 
-`npm test` runs the handler unit tests in `tests/edge-markdown-redirect.test.js`.
-After a deploy, run `bash shell/verify_agentic.sh https://<docs host>` to check
-the live behavior.
+`npm test` runs `function.js` in a Node sandbox with a fake store
+(`tests/edge-router.test.js`). After a deploy, run
+`bash shell/verify_agentic.sh https://<docs host>` to check the live behavior.
 
-## Local Smoke Test
-
-After `npm run build`, package the Lambda artifact and inspect the generated
-manifest copy:
-
-```bash
-bash shell/package_markdown_edge_lambda.sh pay-theory-documentation
-```
-
-You can also import `rewriteRequest` from `index.js` and pass a test manifest
-object without invoking AWS.
+To try the function in the real runtime before deploying, create it in the
+`DEVELOPMENT` stage and run `aws cloudfront test-function` against it.

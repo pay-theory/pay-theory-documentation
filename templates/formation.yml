@@ -25,14 +25,31 @@ Parameters:
   CertificateArn:
     Type: String
     Description: v2 certificate arn
-  MarkdownEdgeLambdaVersionArn:
+  EdgeRoutesKvsArn:
     Type: String
-    Description: Published Lambda@Edge version ARN for Markdown negotiation.
+    Description: ARN of the CloudFront KeyValueStore that lists the docs routes.
     Default: ''
 Conditions:
     isStandard: !Equals [ !Ref TargetMode, standard]
-    hasMarkdownEdgeLambda: !Not [!Equals [!Ref MarkdownEdgeLambdaVersionArn, '']]
+    hasEdgeRouter: !Not [!Equals [!Ref EdgeRoutesKvsArn, '']]
 Resources:
+
+  # Routes requests at the edge: pretty URLs, Markdown negotiation, 404s and
+  # redirects (edge/markdown-redirect/README.md). Updating the code publishes
+  # it in place; CloudFront keeps the same function ARN.
+  EdgeRouterFunction:
+    Condition: hasEdgeRouter
+    Type: AWS::CloudFront::Function
+    Properties:
+      Name: !Sub '${Repository}-${Partner}-${Stage}-edge-router'
+      AutoPublish: true
+      FunctionConfig:
+        Comment: !Sub 'Docs routing for ${Repository}-${Partner}-${Stage}'
+        Runtime: cloudfront-js-2.0
+        KeyValueStoreAssociations:
+          - KeyValueStoreARN: !Ref EdgeRoutesKvsArn
+      # scripts/render-formation-template.js inlines function.js here.
+      FunctionCode: EDGE_FUNCTION_CODE
 
   S3Bucket:
     DependsOn:
@@ -171,11 +188,11 @@ Resources:
         isStandard, 
         !Sub "docs.${Stage}.com", 
         !Sub "docs.${Stage}.com" ]
-        # With the edge Lambda, pretty URLs are rewritten to their index.html
+        # With the edge function, pretty URLs are rewritten to their index.html
         # object, so an S3 miss (403 under OAC) means the page does not exist.
         # Without it, keep the SPA fallback that pretty URLs depend on.
         CustomErrorResponses: !If
-          - hasMarkdownEdgeLambda
+          - hasEdgeRouter
           -
             -
               ErrorCachingMinTTL: 10
@@ -212,15 +229,14 @@ Resources:
           CachePolicyId: '{{resolve:ssm:pt-global-books-cache}}'
           OriginRequestPolicyId: '{{resolve:ssm:pt-global-books-origin}}'
           ViewerProtocolPolicy: redirect-to-https
-          LambdaFunctionAssociations: !If
-            - hasMarkdownEdgeLambda
+          FunctionAssociations: !If
+            - hasEdgeRouter
             -
               - EventType: viewer-request
-                LambdaFunctionARN: !Ref MarkdownEdgeLambdaVersionArn
-                IncludeBody: false
-              # Same function version; adds Vary: Accept to HTML and Markdown.
-              - EventType: origin-response
-                LambdaFunctionARN: !Ref MarkdownEdgeLambdaVersionArn
+                FunctionARN: !GetAtt EdgeRouterFunction.FunctionARN
+              # Same function; adds Vary: Accept to HTML and Markdown.
+              - EventType: viewer-response
+                FunctionARN: !GetAtt EdgeRouterFunction.FunctionARN
             - !Ref AWS::NoValue
         HttpVersion: http2
         DefaultRootObject: index.html

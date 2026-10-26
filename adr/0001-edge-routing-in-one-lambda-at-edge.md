@@ -1,5 +1,7 @@
 # Edge routing lives in one Lambda@Edge function with a build-time route manifest
 
+Superseded by [0002](0002-edge-routing-in-a-cloudfront-function.md).
+
 The docs site needs pretty-URL rewrites, real 404s, Markdown content negotiation with `Vary: Accept`, and a few redirects at the CloudFront edge. We already ran a Lambda@Edge `viewer-request` function for Markdown negotiation, and CloudFront does not allow a CloudFront Function on a viewer event alongside a Lambda@Edge viewer trigger. So we extended that one function rather than adding CloudFront Functions. It also handles `origin-response` (for `Vary`), dispatching on the event type. It decides which routes exist from the `htmlRoutes` list that the build writes into the packaged manifest.
 
 ## Considered Options

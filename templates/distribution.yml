@@ -19,6 +19,9 @@ Parameters:
       - standard
       - '-new'
       - '-old'
+  # Retired Lambda@Edge inputs. 02_deploy.sh no longer passes them, so the stack
+  # keeps their last values and the old Lambda resources stay unchanged until a
+  # follow-up removes them (see adr/0002).
   MarkdownEdgeLambdaS3Bucket:
     Type: String
     Description: S3 bucket containing the packaged Markdown Lambda@Edge artifact.
@@ -87,6 +90,25 @@ Resources:
       Value: !GetAtt V2Certificate.CertificateArn
       Description: !Sub 'Certificate arn for ${Repository}-${Partner}-${Stage}'
 
+  # Lists every docs route for the edge function in formation.yml.
+  # scripts/sync-edge-routes.js fills it on each deploy.
+  EdgeRoutesKeyValueStore:
+    Type: AWS::CloudFront::KeyValueStore
+    Properties:
+      Name: !Sub '${Repository}-${Partner}-${Stage}-routes'
+      Comment: !Sub 'Docs routes for ${Repository}-${Partner}-${Stage}'
+
+  EdgeRoutesKvsArnParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Sub '${Repository}-${Partner}-${Stage}-edge-routes-kvs-arn'
+      Type: String
+      Value: !GetAtt EdgeRoutesKeyValueStore.Arn
+      Description: !Sub 'Edge routes key value store ARN for ${Repository}-${Partner}-${Stage}'
+
+  # Retired: CloudFront now uses the CloudFront Function in formation.yml.
+  # Remove these four resources a few hours after the switch, once Lambda@Edge
+  # has deleted the replicas.
   MarkdownEdgeLambdaRole:
     Condition: HasMarkdownEdgeLambdaArtifact
     Type: AWS::IAM::Role
@@ -145,6 +167,9 @@ Outputs:
   Renew:
     Description: Trigger to update/rebuild formation
     Value: 'Mar 14 2022'
+  EdgeRoutesKvsArn:
+    Description: Edge routes key value store ARN.
+    Value: !GetAtt EdgeRoutesKeyValueStore.Arn
   MarkdownEdgeLambdaVersionArn:
     Condition: HasMarkdownEdgeLambdaArtifact
     Description: Published Lambda@Edge version ARN.
