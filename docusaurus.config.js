@@ -89,6 +89,9 @@ const config = {
       {
         configPath: './graphql-docs.config.js',
         allTargets: true,
+        // prebuild/prestart already clean and regenerate the output. Emptying it
+        // again here races the docs plugin, which loads in parallel.
+        cleanOutput: false,
         markdownRedirect: {
           enabled: true,
           docsBasePath: '/docs/api',
