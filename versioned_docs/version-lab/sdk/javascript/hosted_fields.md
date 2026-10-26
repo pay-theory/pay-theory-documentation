@@ -184,15 +184,11 @@ const STYLES = {
     width: 18,
     fill: 'blue',
     stroke: 'grey',
-    textFontSize: '14px',
-    textColor: 'grey',
-    textFontFamily: 'Helvetica, Arial, sans-serif',
-  },
-  button: {
-    color: 'PURPLE',
-    callToAction: 'PAY',
-    pill: false,
-    height: 48,
+    text: {
+      fontSize: '14px',
+      color: 'grey',
+      fontFamily: 'Helvetica, Arial, sans-serif',
+    },
   },
   hidePlaceholder: false,
 };
@@ -204,8 +200,9 @@ const STYLES = {
 | `success`         | [Field Style Object](#field-style-object) | Styling applied to text inputs that pass validation. Merged on top of `default`, so any property not set here keeps its `default` value. |
 | `error`           | [Field Style Object](#field-style-object) | Styling applied to text inputs that fail validation. Merged on top of `default` the same way as `success`.                         |
 | `radio`           | [Radio Object](#radio-object)             | Styling for the ACH account-type radio buttons.                                                                                                |
-| `button`          | [Button Object](#button-object)           | Styling for the hosted checkout button.                                                                                                        |
 | `hidePlaceholder` | Boolean                                   | When `true`, the placeholder text in the input fields is hidden. Defaults to `false`.                                                          |
+
+To style the hosted checkout button, pass `style` to `button`. See [Style object](payment_button#style-object).
 
 ### Field style object
 
@@ -234,21 +231,18 @@ The `default`, `success`, and `error` keys each accept the same 18 properties. A
 
 ### Radio object
 
-Styles for the ACH account-type radio buttons. It supports both the flat properties and the older nested `text` object. If you set both, the nested values win.
+Styles for the ACH account-type radio buttons.
 
-| Key              | type                        | description                                                        |
-| ---------------- | --------------------------- | ------------------------------------------------------------------ |
-| `width`          | Int \| String               | Width of the radio button. Bare numbers are interpreted as pixels. |
-| `fill`           | String                      | Fill color of the selected indicator.                              |
-| `stroke`         | String                      | Color of the radio outline.                                        |
-| `textFontSize`   | String                      | Font size for the radio label.                                     |
-| `textColor`      | String                      | Color for the radio label.                                         |
-| `textFontFamily` | String                      | Font family for the radio label.                                   |
-| `text`           | [Text Object](#text-object) | Backwards-compatible nested form for label styling.                |
+| Key      | type                        | description                                                        |
+| -------- | --------------------------- | ------------------------------------------------------------------ |
+| `width`  | Int                         | Width of the radio button, in pixels.                              |
+| `fill`   | String                      | Fill color of the selected indicator.                              |
+| `stroke` | String                      | Color of the radio outline.                                        |
+| `text`   | [Text Object](#text-object) | Styling for the radio button labels.                               |
 
 ### Text object
 
-Backwards-compatible nested form for styling the radio button labels.
+Styles for the radio button labels.
 
 | Key          | type   | description                             |
 | ------------ | ------ | --------------------------------------- |
@@ -256,36 +250,3 @@ Backwards-compatible nested form for styling the radio button labels.
 | `color`      | String | Color of the radio button labels.       |
 | `fontFamily` | String | Font family of the radio button labels. |
 | `fontWeight` | String | Font weight of the radio button labels. |
-
-### Button object
-
-Styles for the hosted checkout button. The button accepts a **config** form, with a preset color and call to action, or a **processed** form, where you set the CSS properties directly. Most integrations use the config form.
-
-**Config form**
-
-| Key            | type                                              | description                                                                     |
-| -------------- | ------------------------------------------------- | ------------------------------------------------------------------------------- |
-| `color`        | `'PURPLE'` \| `'WHITE'` \| `'BLACK'` \| `'GREY'`  | Preset color theme. Matching is case-insensitive. Defaults to `'PURPLE'`.       |
-| `callToAction` | `'PAY'` \| `'DONATE'` \| `'BOOK'` | Sets the button text, for example `'PAY'` shows "Pay with". Matching is case-insensitive. |
-| `pill`         | Boolean                                           | When `true`, gives the button a fully rounded (pill) shape.                     |
-| `height`       | Int \| String                                     | Button height. Numbers are interpreted as pixels.                               |
-
-**Processed form**
-
-| Key               | type   | description                                                       |
-| ----------------- | ------ | ----------------------------------------------------------------- |
-| `backgroundColor` | String | Button background color. Default: `#9139D2`.                      |
-| `borderRadius`    | String | Button corner radius. Default: `4px` (`100px` when `pill: true`). |
-| `fontColor`       | String | Button text color. Default: `#FFFFFF`.                            |
-| `height`          | String | Button height. Default: `48px`.                                   |
-| `border`          | String | CSS `border` shorthand (e.g. `'0.5px solid #C9C4CA'`).            |
-| `altText`         | String | Accessible label / button copy.                                   |
-
-**Defaults applied by preset `color`**
-
-| `color`  | background | text color | border                |
-| -------- | ---------- | ---------- | --------------------- |
-| `PURPLE` | `#9139D2`  | `#FFFFFF`  | none                  |
-| `BLACK`  | `#000000`  | `#FFFFFF`  | none                  |
-| `WHITE`  | `#FFFFFF`  | `#000000`  | `0.5px solid #C9C4CA` |
-| `GREY`   | `#F7F7F4`  | `#000000`  | none                  |

@@ -1916,6 +1916,8 @@ type Merchant @aws_lambda @aws_iam @aws_cognito_user_pools {
   fee_model: FeeModel @deprecated(reason: "Use fee_matrix instead.")
   "If the merchant is a system merchant. System merchants are merchants that also have sub merchants."
   is_system: Boolean
+  "Maximum card or ACH payment total in cents, including service fees. Zero or null means no merchant maximum."
+  max_transaction_amount: Int
   "The name of the merchant."
   merchant_name: String
   "The Pay Theory unique identifier assigned to the merchant."
@@ -3611,6 +3613,8 @@ type Settlement @aws_lambda @aws_iam @aws_cognito_user_pools {
   settlement_date: AWSDateTime
   "The status of the settlement. Will be one of PENDING, SUCCEEDED, or HOLD."
   status: String
+  "The type of settlement letting you know if it is NET or GROSS."
+  settlement_type: SettlementType
   "The number of transactions of type DEBIT that were included in the settlement."
   transaction_debit_count: Int
   "The number of transactions of type DISPUTE that were included in the settlement."
@@ -3637,6 +3641,12 @@ type Settlements @aws_lambda @aws_iam @aws_cognito_user_pools {
   items: [Settlement]
   "Total number of rows matching the query."
   total_row_count: Int
+}
+
+"The type of settlement, NET or GROSS."
+enum SettlementType {
+  NET
+  GROSS
 }
 
 "The direction to sort the data. These are case-sensitive."

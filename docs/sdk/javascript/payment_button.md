@@ -110,12 +110,14 @@ Pass `button` one object with these keys.
 ***
 ## Style object
 
+`style` is optional. If you pass it, include all four keys. Without it, the button is purple, says "Pay with", has square corners and is 48 pixels tall.
+
 | Key | type | description |
 |-----|------|-------------|
-| color | String | Button color. Defaults to `paytheory.PURPLE`. See [color](#color). |
-| callToAction | String | Text on the button. Defaults to `paytheory.PAY`. See [call to action](#call-to-action). |
-| pill | Boolean | Pass `true` for a pill shape. Defaults to `false`. |
-| height | Int | Button height in pixels. Defaults to `48`. |
+| color | String | Button color. See [color](#color). |
+| callToAction | String | Text on the button. See [call to action](#call-to-action). |
+| pill | Boolean | Pass `true` for a pill shape. |
+| height | Int | Button height in pixels. |
 
 ***
 ## Success response

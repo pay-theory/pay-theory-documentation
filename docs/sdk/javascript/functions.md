@@ -88,7 +88,7 @@ Pass either `payorInfo` or `payorId`, not both. Pass either `invoiceId` or `recu
 | fee | Int | Fee to charge, in cents. With `SERVICE_FEE`, pass the fee the [state observer](event_listeners#service-fee) reports. Pay Theory checks it against the fee it calculates and returns an error if they don't match. |
 | feeMode | String | `paytheory.MERCHANT_FEE` (default) or `paytheory.SERVICE_FEE`. With `SERVICE_FEE`, Pay Theory adds the fee to the amount and charges it to the payor. |
 | healthExpenseType | String | Healthcare category: `HEALTHCARE`, `RX`, `VISION`, `CLINICAL`, `COPAY`, `DENTAL` or `TRANSIT`. |
-| idempotencyKey | String | Your key for this payment. If you call `transact` again with the same key and the same details, Pay Theory returns the first response instead of charging again. See [Idempotency](../../main/online_payments/idempotency). |
+| idempotencyKey | String | Your key for this payment. If you retry with the same key and the same details, Pay Theory returns the first response instead of charging again. Cash payments ignore it. See [Idempotency](../../main/online_payments/idempotency). |
 | invoiceId | String | ID of the invoice this payment pays. |
 | level3DataSummary | [Level 3 data summary](#level-3-data-summary-object) | Level 3 summary data for the transaction. |
 | metadata | Object | Key-value data stored with the transaction. |
@@ -107,7 +107,7 @@ Pass either `payorInfo` or `payorId`, not both. Pass either `invoiceId` or `recu
 - [`CASH`](#cash-response): The cash barcode was created. Details are in `body`.
 - [`ERROR`](#error-response): The SDK couldn't run the payment. The message is in `error`.
 
-If you reuse an `idempotencyKey` with the same details, `transact` returns the first response. With changed details, it returns an `ERROR` whose message includes `IDEMPOTENCY_KEY_PAYLOAD_MISMATCH` and the original `transaction_id`. Either way, no new payment is created.
+If you retry with the same `idempotencyKey` and the same details, `transact` returns the first response. With changed details, it returns an `ERROR` whose message includes `IDEMPOTENCY_KEY_PAYLOAD_MISMATCH` and the original `transaction_id`. Either way, no new payment is created. On the same page, you can retry after an `ERROR` or `FAILED` response. After `SUCCESS` or `CASH`, the fields are used up and `transact` returns `ACTION_COMPLETE`.
 
 For a cash barcode, the SDK asks the browser for the payor's location to build the map URL. The first time, the browser asks the payor to allow it.
 

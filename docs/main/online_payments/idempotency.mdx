@@ -8,7 +8,7 @@ title: 'Idempotency'
 
 An idempotency key makes a payment safe to retry. Send a key with a payment, and Pay Theory processes it once. If the same request arrives again with the same key, Pay Theory returns the first response instead of charging again, whether that was a transaction, a decline or an error.
 
-Keys work the same way from the JS SDK and the API.
+Keys work for card and bank account payments made with [`transact`](../../sdk/javascript/functions#transact) in the JS SDK, and with `createTransaction` and `createAuthorization` in the API. Cash payments ignore the key, and the payment button, QR codes and Messenger wallet payments don't take one.
 
 ***
 
@@ -38,7 +38,7 @@ Pay Theory tracks each key per merchant and operation. The operation is `CREATE_
 
 A changed request is any difference in what you send, such as the amount, payment method, payor, metadata or reference.
 
-A key is any string that isn't empty or only spaces. Pay Theory trims spaces from the ends. Use one key per payment attempt, such as your order ID, and send the same key on every retry of that attempt.
+Pay Theory trims spaces from the ends of a key. An empty key sends the payment without idempotency, and a key of only spaces is rejected. Use one key per payment attempt, such as your order ID, and send the same key on every retry of that attempt.
 
 A declined payment is a saved response too. Retrying it with the same key returns the same decline. To let the payor try another card, send a new key.
 
@@ -100,12 +100,12 @@ Send the same request with the same key. You get the first response back.
 
 From the API, a retried `createTransaction` or `createAuthorization` returns the original transaction or authorization, exactly as the first request did.
 
-From the JS SDK, `transact` resolves to the original `SUCCESS`, `FAILED` or `ERROR` response. After a page reload, the payor needs to enter the same card or bank details, and you need to pass the same amount and payor details. Otherwise the retry counts as a changed request.
+From the JS SDK, `transact` resolves to the original `SUCCESS`, `FAILED` or `ERROR` response. On the same page, you can call `transact` again after it returns `ERROR` or `FAILED`. After `SUCCESS`, the SDK returns `ACTION_COMPLETE` without sending the request. After a page reload, the payor needs to enter the same card or bank details, and you need to pass the same amount and payor details. Otherwise the retry counts as a changed request.
 
 If the request changed, or the first request is still running, `transact` returns an `ERROR`. The message includes the error code and the original `transaction_id`:
 
 ```text title="Error message"
-SOCKET_ERROR: CONFLICT: Idempotency key was already used with a different request payload., {'error_code': 'IDEMPOTENCY_KEY_PAYLOAD_MISMATCH', 'idempotency_status': 'COMPLETED', 'operation': 'CREATE_TRANSACTION', 'transaction_id': 'ptl_txn_5mos8Z6NFWAWQRac7BAQFX', ...}
+SOCKET_ERROR: CONFLICT: Idempotency key was already used with a different request payload., None, {'code': 'CONFLICT', 'details': {'error_code': 'IDEMPOTENCY_KEY_PAYLOAD_MISMATCH', 'idempotency_status': 'COMPLETED', 'operation': 'CREATE_TRANSACTION', 'transaction_id': 'ptl_txn_5mos8Z6NFWAWQRac7BAQFX', ...}}, ...
 ```
 
 ```javascript title="javascript"
@@ -144,7 +144,7 @@ The API returns the same conflicts as a `CONFLICT` error. `errorInfo.details` ho
 }
 ```
 
-An `IDEMPOTENCY_KEY_ALREADY_USED` error can have an `idempotency_status` of `COMPLETED` when the first request finished while yours was being checked. Retry with the same key to get its response.
+An `IDEMPOTENCY_KEY_ALREADY_USED` error can have an `idempotency_status` of `COMPLETED`. The first payment finished, but Pay Theory has no saved response to return. Use the `transaction_id` or `authorization_id` from `details` to get the payment. Don't send a new key, or you create a second payment.
 
 ***
 
@@ -199,8 +199,15 @@ To get the whole transaction or authorization in the same request, add the `tran
 | Result | What it means | What to do |
 |--------|---------------|------------|
 | `COMPLETED` | The payment ran. It may have succeeded or been declined. | Use `transaction_id` or `authorization_id` and check its status. A retry with the same key returns the same result. |
-| `IN_PROGRESS` | Pay Theory started the payment and hasn't saved a response yet. | Look the key up again after a short wait. Until it completes, a retry returns `IDEMPOTENCY_KEY_ALREADY_USED`. |
+| `IN_PROGRESS` | Pay Theory started the payment and hasn't saved a response yet. | Look the key up again after a short wait. Until it completes, a retry returns `IDEMPOTENCY_KEY_ALREADY_USED`. See [Stuck keys](#stuck-keys) if it's still `IN_PROGRESS` after `locked_until`. |
 | `null` | Pay Theory has no record of the key, or the record expired after 7 days. | If the request was in the last 7 days, no payment was created. Retry with the same key. |
+
+### Stuck keys
+
+`locked_until` is 30 minutes after the first request. A key that's still `IN_PROGRESS` after `locked_until` belongs to a request that stopped before it finished, and it stays `IN_PROGRESS` until it expires.
+
+- If the result has a `transaction_id` or `authorization_id`, check that payment's status.
+- If it has neither, check your transactions in the Pay Theory portal. If the payment isn't there, retry with a new key.
 
 ***
 
@@ -219,7 +226,7 @@ sequenceDiagram
     else First request still running
         PT-->>App: IDEMPOTENCY_KEY_ALREADY_USED
         App->>PT: idempotencyLookup (order-1042)
-        Note over App: Look up again until COMPLETED
+        Note over App: Look up again until COMPLETED or past locked_until
     end
 ```
 

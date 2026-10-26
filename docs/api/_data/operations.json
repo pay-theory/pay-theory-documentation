@@ -740,7 +740,7 @@
                   "card_active": true,
                   "ach_active": true,
                   "cash_active": true,
-                  "max_transaction_amount": 50000000,
+                  "max_transaction_amount": 1000000,
                   "country_code": "USA",
                   "settings": {
                     "contact_email": null,
@@ -1075,27 +1075,6 @@
                 "paymentLinks": {
                   "items": [
                     {
-                      "link_id": "ptl_link_6oLR7QBSFPe1kr2NKP4A2O",
-                      "link_name": "Spring workshop",
-                      "link_url": "https://pt.checkout.paytheory.com/payment_link/ptl_link_6oLR7QBSFPe1kr2NKP4A2O",
-                      "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
-                      "amount": 2500,
-                      "amount_is_variable": false,
-                      "min_amount": 100,
-                      "accepted_payment_methods": "ONLY_CARD",
-                      "account_code": null,
-                      "call_to_action": "PAY",
-                      "created_date": "2026-09-05T03:56:52.0Z",
-                      "currency": "USD",
-                      "custom_success_message": null,
-                      "fee_mode": "MERCHANT_FEE",
-                      "is_active": true,
-                      "payment_name": "Spring workshop",
-                      "payment_description": "One seat at the spring workshop",
-                      "redirect_url": null,
-                      "require_phone": false
-                    },
-                    {
                       "link_id": "ptl_link_6tLFJ4mTX7vx7Sj90kLDno",
                       "link_name": "Annual fund",
                       "link_url": "https://pt.checkout.paytheory.com/payment_link/ptl_link_6tLFJ4mTX7vx7Sj90kLDno",
@@ -1114,6 +1093,27 @@
                       "payment_name": "Annual fund",
                       "payment_description": null,
                       "redirect_url": "https://example.com/thank-you",
+                      "require_phone": false
+                    },
+                    {
+                      "link_id": "ptl_link_6oLR7QBSFPe1kr2NKP4A2O",
+                      "link_name": "Spring workshop",
+                      "link_url": "https://pt.checkout.paytheory.com/payment_link/ptl_link_6oLR7QBSFPe1kr2NKP4A2O",
+                      "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                      "amount": 2500,
+                      "amount_is_variable": false,
+                      "min_amount": 100,
+                      "accepted_payment_methods": "ONLY_CARD",
+                      "account_code": null,
+                      "call_to_action": "PAY",
+                      "created_date": "2026-09-05T03:56:52.0Z",
+                      "currency": "USD",
+                      "custom_success_message": null,
+                      "fee_mode": "MERCHANT_FEE",
+                      "is_active": true,
+                      "payment_name": "Spring workshop",
+                      "payment_description": "One seat at the spring workshop",
+                      "redirect_url": null,
                       "require_phone": false
                     }
                   ]
@@ -1688,11 +1688,11 @@
                       "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
                       "full_name": "Pat Theodore",
                       "email": "pat@example.com",
-                      "phone": "+15555550125",
-                      "address_line1": "549 Reading Rd",
-                      "city": "Evendale",
+                      "phone": "+15555550123",
+                      "address_line1": "123 Main Street",
+                      "city": "Cincinnati",
                       "region": "OH",
-                      "postal_code": "45241-2524",
+                      "postal_code": "45209",
                       "country": "USA"
                     }
                   ],
@@ -2096,13 +2096,13 @@
                   "query_group": [
                     {
                       "key": "settlement_batch",
-                      "value": 2,
+                      "value": "2",
                       "operator": "EQUAL",
                       "conjunctive_operator": "OR_NEXT"
                     },
                     {
                       "key": "settlement_batch",
-                      "value": 3,
+                      "value": "3",
                       "operator": "EQUAL"
                     }
                   ]
@@ -3564,11 +3564,11 @@
         },
         {
           "name": "Reuse an authorization key with a changed amount",
-          "description": "Changing the amount while reusing a key returns a conflict that identifies the original authorization.",
-          "query": "mutation CreateAuthorization(\n  $merchant_uid: String!\n  $amount: Int!\n  $idempotency_key: String\n  $payment_method: PaymentMethodInput\n) {\n  createAuthorization(\n    merchant_uid: $merchant_uid\n    amount: $amount\n    idempotency_key: $idempotency_key\n    payment_method: $payment_method\n  ) {\n    authorization_id\n    merchant_uid\n    amount\n    currency\n    status\n    fee_mode\n    fees\n    authorization_date\n    expiration_date\n    sale_id\n  }\n}",
+          "description": "Sends the key from the first example with a changed amount. Returns a conflict that identifies the original authorization.",
+          "query": "mutation CreateAuthorization(\n  $merchant_uid: String!\n  $amount: Int!\n  $idempotency_key: String\n  $payment_method: PaymentMethodInput\n  $fee_mode: FeeMode\n) {\n  createAuthorization(\n    merchant_uid: $merchant_uid\n    amount: $amount\n    idempotency_key: $idempotency_key\n    payment_method: $payment_method\n    fee_mode: $fee_mode\n  ) {\n    authorization_id\n    merchant_uid\n    amount\n    currency\n    status\n    fee_mode\n    fees\n    authorization_date\n    expiration_date\n    sale_id\n  }\n}",
           "variables": {
             "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
-            "idempotency_key": "order-1042-authorization-changed",
+            "idempotency_key": "order-1042-authorization",
             "amount": 150,
             "payment_method": {
               "card": {
@@ -3591,7 +3591,8 @@
                 "phone": "+15555550123",
                 "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
               }
-            }
+            },
+            "fee_mode": "MERCHANT_FEE"
           },
           "response": {
             "type": "error",
@@ -3612,7 +3613,7 @@
                       "idempotency_status": "COMPLETED",
                       "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
                       "operation": "CREATE_AUTHORIZATION",
-                      "authorization_id": "ptl_auth_7oCnztGodT48Lgg3yWJfBX"
+                      "authorization_id": "ptl_auth_5xhiVIdYV1XRd6At4B8Ioc"
                     }
                   },
                   "message": "Idempotency key was already used with a different request payload."
@@ -3676,7 +3677,7 @@
           "query": "mutation CreateAuthorization(\n  $merchant_uid: String!\n  $amount: Int!\n  $payment_method: PaymentMethodInput\n  $fee_mode: FeeMode\n) {\n  createAuthorization(\n    merchant_uid: $merchant_uid\n    amount: $amount\n    payment_method: $payment_method\n    fee_mode: $fee_mode\n  ) {\n    authorization_id\n    merchant_uid\n    amount\n    currency\n    status\n    fee_mode\n    fees\n    authorization_date\n    expiration_date\n    sale_id\n  }\n}",
           "variables": {
             "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
-            "amount": 50000001,
+            "amount": 1000001,
             "payment_method": {
               "card": {
                 "card_number": "4835034598457895",
@@ -3716,7 +3717,7 @@
                   "errorInfo": {
                     "failure_reason": "MERCHANT_MAX_AMOUNT_EXCEEDED"
                   },
-                  "message": "CARD payment amount 50000001 exceeds the merchant maximum of 1000000 cents."
+                  "message": "CARD payment amount 1000001 exceeds the merchant maximum of 1000000 cents."
                 }
               ]
             }
@@ -4155,7 +4156,7 @@
         },
         {
           "name": "Amount is too high",
-          "description": "Returns an error when the capture amount exceeds the authorization and reauthorization is not allowed.",
+          "description": "Returns an error when the capture amount is above the authorization amount and allow_exceeded_amount isn’t true.",
           "query": "mutation CreateCapture(\n  $merchant_uid: String!\n  $authorization_id: String!\n  $amount: Int!\n) {\n  createCapture(\n    merchant_uid: $merchant_uid\n    authorization_id: $authorization_id\n    amount: $amount\n  ) {\n    transaction_id\n    merchant_uid\n    gross_amount\n    net_amount\n    status\n    fee_mode\n    authorization_id\n  }\n}",
           "variables": {
             "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
@@ -4187,7 +4188,7 @@
           "query": "mutation CreateCapture(\n  $merchant_uid: String!\n  $authorization_id: String!\n  $amount: Int!\n  $allow_exceeded_amount: Boolean\n) {\n  createCapture(\n    merchant_uid: $merchant_uid\n    authorization_id: $authorization_id\n    amount: $amount\n    allow_exceeded_amount: $allow_exceeded_amount\n  ) {\n    transaction_id\n    merchant_uid\n    gross_amount\n    net_amount\n    status\n    fee_mode\n    authorization_id\n  }\n}",
           "variables": {
             "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
-            "authorization_id": "ptl_auth_capture_over_amount",
+            "authorization_id": "ptl_auth_GWj45Pa0k9xWD88a1EbINi",
             "amount": 900,
             "allow_exceeded_amount": true
           },
@@ -4197,13 +4198,13 @@
             "body": {
               "data": {
                 "createCapture": {
-                  "transaction_id": "ptl_txn_capture_over_amount",
+                  "transaction_id": "ptl_txn_Zae839ET0RTtUi0OfNMrmY",
                   "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
                   "gross_amount": 900,
                   "net_amount": 849,
                   "status": "PENDING",
                   "fee_mode": "MERCHANT_FEE",
-                  "authorization_id": "ptl_auth_capture_over_amount_new"
+                  "authorization_id": "ptl_auth_IAk0T74E2jZgc9XDpfNyU9"
                 }
               }
             }
@@ -4215,7 +4216,7 @@
           "query": "mutation CreateCapture(\n  $merchant_uid: String!\n  $authorization_id: String!\n  $amount: Int!\n  $allow_reauth: Boolean\n) {\n  createCapture(\n    merchant_uid: $merchant_uid\n    authorization_id: $authorization_id\n    amount: $amount\n    allow_reauth: $allow_reauth\n  ) {\n    transaction_id\n    merchant_uid\n    gross_amount\n    net_amount\n    status\n    fee_mode\n    authorization_id\n  }\n}",
           "variables": {
             "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
-            "authorization_id": "ptl_auth_expired_capture_allowed",
+            "authorization_id": "ptl_auth_hQ1ZP7mbwvv4rkljec4loS",
             "amount": 800,
             "allow_reauth": true
           },
@@ -4225,13 +4226,13 @@
             "body": {
               "data": {
                 "createCapture": {
-                  "transaction_id": "ptl_txn_expired_capture_allowed",
+                  "transaction_id": "ptl_txn_qS9dzsABud9lWW432Ae57x",
                   "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
                   "gross_amount": 800,
                   "net_amount": 754,
                   "status": "PENDING",
                   "fee_mode": "MERCHANT_FEE",
-                  "authorization_id": "ptl_auth_expired_capture_renewed"
+                  "authorization_id": "ptl_auth_sJ1Rrh5x7gu96OwVRAf50g"
                 }
               }
             }
@@ -4243,7 +4244,7 @@
           "query": "mutation CreateCapture(\n  $merchant_uid: String!\n  $authorization_id: String!\n  $amount: Int!\n  $allow_reauth: Boolean\n) {\n  createCapture(\n    merchant_uid: $merchant_uid\n    authorization_id: $authorization_id\n    amount: $amount\n    allow_reauth: $allow_reauth\n  ) {\n    transaction_id\n    merchant_uid\n    gross_amount\n    net_amount\n    status\n    fee_mode\n    authorization_id\n  }\n}",
           "variables": {
             "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
-            "authorization_id": "ptl_auth_expired_capture_denied",
+            "authorization_id": "ptl_auth_zdA3Kz5gP25MuXDSJV5zqI",
             "amount": 800,
             "allow_reauth": false
           },
@@ -6442,7 +6443,7 @@
         },
         {
           "name": "Missing merchant ID",
-          "description": "Returns an error when merchant_uid is empty.",
+          "description": "Returns an error when merchant_uid is missing.",
           "query": "mutation CreatePayor($input: PayorInput!) {\n  createPayor(input: $input) {\n    payor_id\n    merchant_uid\n    full_name\n    email\n    phone\n    address_line1\n    city\n    region\n    postal_code\n    country\n  }\n}",
           "variables": {
             "input": {
@@ -6465,7 +6466,7 @@
                     "payor_id": null,
                     "merchant_uid": null,
                     "full_name": "Pat Theodore",
-                    "email": "pat@example.com",
+                    "email": null,
                     "phone": null,
                     "address_line1": null,
                     "city": null,
@@ -6552,11 +6553,11 @@
             "payor_data": {
               "full_name": "Pat Theodore",
               "email": "pat@example.com",
-              "phone": "+15555550124",
-              "address_line1": "549 Reading Rd",
-              "city": "Evendale",
+              "phone": "+15555550123",
+              "address_line1": "123 Main Street",
+              "city": "Cincinnati",
               "region": "OH",
-              "postal_code": "45241-2524",
+              "postal_code": "45209",
               "country": "USA"
             }
           },
@@ -6832,7 +6833,6 @@
           "variables": {
             "input": {
               "recurring_id": "ptl_rec_62ArNw2Lk9mvWUaa0dNpQT",
-              "payment_method_id": "ptl_pmt_5UMEF8ojehU4IIxRTNzZYs",
               "mute_all_emails": true
             }
           },
@@ -7376,11 +7376,11 @@
         },
         {
           "name": "Reuse a transaction key with a changed amount",
-          "description": "Changing the amount while reusing a key returns a conflict that identifies the original transaction.",
+          "description": "Sends the key from the first example with a changed amount. Returns a conflict that identifies the original transaction.",
           "query": "mutation CreateTransaction(\n  $merchant_uid: String!\n  $amount: Int!\n  $idempotency_key: String\n  $payment_method_id: String\n  $fee_mode: FeeMode\n) {\n  createTransaction(\n    merchant_uid: $merchant_uid\n    amount: $amount\n    idempotency_key: $idempotency_key\n    payment_method_id: $payment_method_id\n    fee_mode: $fee_mode\n  ) {\n    transaction_id\n    merchant_uid\n    gross_amount\n    net_amount\n    currency\n    status\n    fee_mode\n    fees\n    transaction_type\n    transaction_date\n  }\n}",
           "variables": {
             "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
-            "idempotency_key": "order-1042-transaction-changed",
+            "idempotency_key": "order-1042-transaction",
             "amount": 150,
             "payment_method_id": "ptl_pmt_54LidQwRcTs5MU9g0QYrgt",
             "fee_mode": "MERCHANT_FEE"
@@ -7404,7 +7404,7 @@
                       "idempotency_status": "COMPLETED",
                       "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
                       "operation": "CREATE_TRANSACTION",
-                      "transaction_id": "ptl_txn_7aryoK34UbPuS5j6bpnHcp"
+                      "transaction_id": "ptl_txn_5mos8Z6NFWAWQRac7BAQFX"
                     }
                   },
                   "message": "Idempotency key was already used with a different request payload."
@@ -7468,7 +7468,7 @@
             "body": {
               "data": {
                 "createTransaction": {
-                  "transaction_id": "ptl_txn_5mos8Z6NFWAWQRac7BAQFX",
+                  "transaction_id": "ptl_txn_WrrCZ01zilf5kDqbXVFbcq",
                   "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
                   "gross_amount": 250,
                   "net_amount": 218,
@@ -7477,7 +7477,7 @@
                   "fee_mode": "MERCHANT_FEE",
                   "fees": 32,
                   "transaction_type": "DEBIT",
-                  "transaction_date": "2026-09-02T20:55:54.494Z"
+                  "transaction_date": "2026-09-02T20:55:52.108Z"
                 }
               }
             }
@@ -8241,8 +8241,8 @@
           }
         },
         {
-          "name": "Refund after capture",
-          "description": "Refunds a captured transaction. The transaction ID points to the reversal.",
+          "name": "Refund part of a settled transaction",
+          "description": "Refunds part of a settled transaction. The transaction_id in the response is the new reversal.",
           "query": "mutation CreateReversal(\n  $transaction_id: String!\n  $amount: Int!\n  $refund_reason: RefundReasonInput!\n) {\n  createReversal(\n    transaction_id: $transaction_id\n    amount: $amount\n    refund_reason: $refund_reason\n  ) {\n    is_void\n    transaction_id\n  }\n}",
           "variables": {
             "amount": 100,

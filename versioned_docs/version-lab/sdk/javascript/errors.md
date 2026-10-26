@@ -32,6 +32,6 @@ Errors from Pay Theory's servers start with `SOCKET_ERROR`, followed by the serv
 | NO_TOKEN | The SDK couldn't get a session token. Usually a network failure. |
 | NOT_READY | The SDK isn't connected yet. Wait for [`readyObserver`](event_listeners#readyobserver). |
 | NOT_VALID | The transacting fields aren't valid. The payor needs to fix them. |
-| SESSION_EXPIRED | The SDK's connection session expired. |
+| SESSION_EXPIRED | The SDK's connection session expired. Arrives inside a `SOCKET_ERROR` message, as `SOCKET_ERROR: SESSION_EXPIRED: ...`. |
 | SOCKET_ERROR | Pay Theory's servers returned an error, such as an idempotency key reused with a different request, or a processor rejection. |
 | TRANSACTING_FIELD_ERROR | The SDK found more than one set of transacting fields visible on the page, or none. |

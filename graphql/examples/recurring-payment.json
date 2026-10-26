@@ -253,7 +253,6 @@
         "variables": {
           "input": {
             "recurring_id": "ptl_rec_62ArNw2Lk9mvWUaa0dNpQT",
-            "payment_method_id": "ptl_pmt_5UMEF8ojehU4IIxRTNzZYs",
             "mute_all_emails": true
           }
         },

@@ -76,13 +76,13 @@
                 "query_group": [
                   {
                     "key": "settlement_batch",
-                    "value": 2,
+                    "value": "2",
                     "operator": "EQUAL",
                     "conjunctive_operator": "OR_NEXT"
                   },
                   {
                     "key": "settlement_batch",
-                    "value": 3,
+                    "value": "3",
                     "operator": "EQUAL"
                   }
                 ]

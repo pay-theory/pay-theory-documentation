@@ -72,7 +72,7 @@ You will pass a single object into the function with the following keys.
 | size                    |int                |This is the size, height and width, of the qrCode in pixels. Defaults to 128 and must be above 128 and below 300.|
 | onReady                 |function           |A function that will be called when the qrCode is ready to be displayed.|
 | onError                 |function           |A function that will be called when an error occurs. It is passed an error string.|
-| onSuccess               |function           |In the tested live QR flow, this callback receives an opaque encrypted string. It does not receive a transaction object.|
+| onSuccess               |function           |A function that will be called when the payment is successful. It is passed the [success response](../../sdk/javascript/payment_qr_code#success-response).|
 
 ***
 

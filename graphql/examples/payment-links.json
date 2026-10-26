@@ -38,27 +38,6 @@
               "paymentLinks": {
                 "items": [
                   {
-                    "link_id": "ptl_link_6oLR7QBSFPe1kr2NKP4A2O",
-                    "link_name": "Spring workshop",
-                    "link_url": "https://pt.checkout.paytheory.com/payment_link/ptl_link_6oLR7QBSFPe1kr2NKP4A2O",
-                    "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
-                    "amount": 2500,
-                    "amount_is_variable": false,
-                    "min_amount": 100,
-                    "accepted_payment_methods": "ONLY_CARD",
-                    "account_code": null,
-                    "call_to_action": "PAY",
-                    "created_date": "2026-09-05T03:56:52.0Z",
-                    "currency": "USD",
-                    "custom_success_message": null,
-                    "fee_mode": "MERCHANT_FEE",
-                    "is_active": true,
-                    "payment_name": "Spring workshop",
-                    "payment_description": "One seat at the spring workshop",
-                    "redirect_url": null,
-                    "require_phone": false
-                  },
-                  {
                     "link_id": "ptl_link_6tLFJ4mTX7vx7Sj90kLDno",
                     "link_name": "Annual fund",
                     "link_url": "https://pt.checkout.paytheory.com/payment_link/ptl_link_6tLFJ4mTX7vx7Sj90kLDno",
@@ -77,6 +56,27 @@
                     "payment_name": "Annual fund",
                     "payment_description": null,
                     "redirect_url": "https://example.com/thank-you",
+                    "require_phone": false
+                  },
+                  {
+                    "link_id": "ptl_link_6oLR7QBSFPe1kr2NKP4A2O",
+                    "link_name": "Spring workshop",
+                    "link_url": "https://pt.checkout.paytheory.com/payment_link/ptl_link_6oLR7QBSFPe1kr2NKP4A2O",
+                    "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                    "amount": 2500,
+                    "amount_is_variable": false,
+                    "min_amount": 100,
+                    "accepted_payment_methods": "ONLY_CARD",
+                    "account_code": null,
+                    "call_to_action": "PAY",
+                    "created_date": "2026-09-05T03:56:52.0Z",
+                    "currency": "USD",
+                    "custom_success_message": null,
+                    "fee_mode": "MERCHANT_FEE",
+                    "is_active": true,
+                    "payment_name": "Spring workshop",
+                    "payment_description": "One seat at the spring workshop",
+                    "redirect_url": null,
                     "require_phone": false
                   }
                 ]

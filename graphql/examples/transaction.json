@@ -218,11 +218,11 @@
       },
       {
         "name": "Reuse a transaction key with a changed amount",
-        "description": "Changing the amount while reusing a key returns a conflict that identifies the original transaction.",
+        "description": "Sends the key from the first example with a changed amount. Returns a conflict that identifies the original transaction.",
         "query": "mutation CreateTransaction(\n  $merchant_uid: String!\n  $amount: Int!\n  $idempotency_key: String\n  $payment_method_id: String\n  $fee_mode: FeeMode\n) {\n  createTransaction(\n    merchant_uid: $merchant_uid\n    amount: $amount\n    idempotency_key: $idempotency_key\n    payment_method_id: $payment_method_id\n    fee_mode: $fee_mode\n  ) {\n    transaction_id\n    merchant_uid\n    gross_amount\n    net_amount\n    currency\n    status\n    fee_mode\n    fees\n    transaction_type\n    transaction_date\n  }\n}",
         "variables": {
           "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
-          "idempotency_key": "order-1042-transaction-changed",
+          "idempotency_key": "order-1042-transaction",
           "amount": 150,
           "payment_method_id": "ptl_pmt_54LidQwRcTs5MU9g0QYrgt",
           "fee_mode": "MERCHANT_FEE"
@@ -246,7 +246,7 @@
                     "idempotency_status": "COMPLETED",
                     "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
                     "operation": "CREATE_TRANSACTION",
-                    "transaction_id": "ptl_txn_7aryoK34UbPuS5j6bpnHcp"
+                    "transaction_id": "ptl_txn_5mos8Z6NFWAWQRac7BAQFX"
                   }
                 },
                 "message": "Idempotency key was already used with a different request payload."
@@ -310,7 +310,7 @@
           "body": {
             "data": {
               "createTransaction": {
-                "transaction_id": "ptl_txn_5mos8Z6NFWAWQRac7BAQFX",
+                "transaction_id": "ptl_txn_WrrCZ01zilf5kDqbXVFbcq",
                 "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
                 "gross_amount": 250,
                 "net_amount": 218,
@@ -319,7 +319,7 @@
                 "fee_mode": "MERCHANT_FEE",
                 "fees": 32,
                 "transaction_type": "DEBIT",
-                "transaction_date": "2026-09-02T20:55:54.494Z"
+                "transaction_date": "2026-09-02T20:55:52.108Z"
               }
             }
           }
@@ -743,8 +743,8 @@
         }
       },
       {
-        "name": "Refund after capture",
-        "description": "Refunds a captured transaction. The transaction ID points to the reversal.",
+        "name": "Refund part of a settled transaction",
+        "description": "Refunds part of a settled transaction. The transaction_id in the response is the new reversal.",
         "query": "mutation CreateReversal(\n  $transaction_id: String!\n  $amount: Int!\n  $refund_reason: RefundReasonInput!\n) {\n  createReversal(\n    transaction_id: $transaction_id\n    amount: $amount\n    refund_reason: $refund_reason\n  ) {\n    is_void\n    transaction_id\n  }\n}",
         "variables": {
           "amount": 100,

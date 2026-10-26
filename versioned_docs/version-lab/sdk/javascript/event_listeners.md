@@ -49,7 +49,7 @@ const removeListener = window.paytheory.errorObserver(error => {
 
 An error string. SDK errors start with one of the [error codes](errors). Field validation messages, such as an invalid card number, arrive without a code, and an empty string means a field's error cleared.
 
-Most errors need the payor to reload the page and try again. `NOT_VALID` is the exception: the payor fixes the data in the fields, and you can call `transact` or `tokenizePaymentMethod` again once the [valid observer](#validobserver) reports the fields as valid.
+After `transact` or `tokenizePaymentMethod` returns an `ERROR` or `FAILED` response, you can call it again without reloading the page. For `NOT_VALID`, the payor fixes the data in the fields first, and you call again once the [valid observer](#validobserver) reports the fields as valid. Errors from mounting the fields, such as `FIELD_ERROR` or `NO_FIELDS`, need a fix to your page and a reload.
 
 ***
 ## stateObserver
@@ -105,7 +105,7 @@ The object includes every field key, whether or not you mounted that field.
 | bank_fee | Int | Service fee for a bank payment, in cents. |
 | ach_fee | Int | Same value as `bank_fee`. Kept for older integrations. |
 
-The fee keys are `undefined` until the SDK has an amount and has calculated the fee. Pass the amount to [`payTheoryFields`](functions#paytheoryfields) or [`updateAmount`](functions#updateamount).
+The fee keys are `undefined` until the SDK has an amount and has calculated the fee. Pass the amount to [`payTheoryFields`](functions#paytheoryfields) or [`updateAmount`](functions#updateamount). `card_fee` also waits until the payor has typed enough of the card number for Pay Theory to identify the card.
 
 ***
 ## validObserver

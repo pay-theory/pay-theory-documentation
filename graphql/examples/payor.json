@@ -85,11 +85,11 @@
                     "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
                     "full_name": "Pat Theodore",
                     "email": "pat@example.com",
-                    "phone": "+15555550125",
-                    "address_line1": "549 Reading Rd",
-                    "city": "Evendale",
+                    "phone": "+15555550123",
+                    "address_line1": "123 Main Street",
+                    "city": "Cincinnati",
                     "region": "OH",
-                    "postal_code": "45241-2524",
+                    "postal_code": "45209",
                     "country": "USA"
                   }
                 ],
@@ -199,7 +199,7 @@
                   "payor_id": null,
                   "merchant_uid": null,
                   "full_name": "Pat Theodore",
-                  "email": "pat@example.com",
+                  "email": null,
                   "phone": null,
                   "address_line1": null,
                   "city": null,
@@ -223,7 +223,7 @@
             ]
           }
         },
-        "description": "Returns an error when merchant_uid is empty."
+        "description": "Returns an error when merchant_uid is missing."
       }
     ]
   },
@@ -239,11 +239,11 @@
           "payor_data": {
             "full_name": "Pat Theodore",
             "email": "pat@example.com",
-            "phone": "+15555550124",
-            "address_line1": "549 Reading Rd",
-            "city": "Evendale",
+            "phone": "+15555550123",
+            "address_line1": "123 Main Street",
+            "city": "Cincinnati",
             "region": "OH",
-            "postal_code": "45241-2524",
+            "postal_code": "45209",
             "country": "USA"
           }
         },

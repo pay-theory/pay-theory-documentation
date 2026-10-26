@@ -30,7 +30,7 @@ const unsubscribe = messenger.on(event, callback)
 |-------|-------------|
 | `ready` | Fires when [`initialize`](./initialize) connects the Messenger. |
 | `transaction_complete` | Fires when [`processWalletTransaction`](./processWalletTransaction) processes a payment, including a declined one. The payload has the [Transaction](../../../api/types/types/transaction). Check its `status`. |
-| `transaction_error` | Fires when `processWalletTransaction` can't run the payment. The payload has the error message. |
+| `transaction_error` | Fires when Pay Theory's servers return an error for `processWalletTransaction`. The payload has the error message. Errors the Messenger catches before it sends the payment, such as a missing field, only come back in the `ERROR` response. |
 | `iframe_unloaded` | Fires when the Messenger's hidden iframe unloads. |
 
 ***

@@ -40270,6 +40270,19 @@
         "isDeprecated": false
       },
       {
+        "name": "max_transaction_amount",
+        "description": "Maximum card or ACH payment total in cents, including service fees. Zero or null means no merchant maximum.",
+        "type": {
+          "kind": "TYPE_REF",
+          "name": "Int",
+          "link": "#int"
+        },
+        "typeString": "Int",
+        "isRequired": false,
+        "isList": false,
+        "isDeprecated": false
+      },
+      {
         "name": "merchant_name",
         "description": "The name of the merchant.",
         "type": {
@@ -56093,6 +56106,29 @@
         "isDeprecated": false
       },
       {
+        "name": "settlement_type",
+        "description": "The type of settlement letting you know if it is NET or GROSS.",
+        "type": {
+          "kind": "ENUM",
+          "name": "SettlementType",
+          "description": "The type of settlement, NET or GROSS.",
+          "values": [
+            {
+              "name": "NET",
+              "isDeprecated": false
+            },
+            {
+              "name": "GROSS",
+              "isDeprecated": false
+            }
+          ]
+        },
+        "typeString": "SettlementType",
+        "isRequired": false,
+        "isList": false,
+        "isDeprecated": false
+      },
+      {
         "name": "transaction_debit_count",
         "description": "The number of transactions of type DEBIT that were included in the settlement.",
         "type": {
@@ -56350,6 +56386,29 @@
                 "isDeprecated": false
               },
               {
+                "name": "settlement_type",
+                "description": "The type of settlement letting you know if it is NET or GROSS.",
+                "type": {
+                  "kind": "ENUM",
+                  "name": "SettlementType",
+                  "description": "The type of settlement, NET or GROSS.",
+                  "values": [
+                    {
+                      "name": "NET",
+                      "isDeprecated": false
+                    },
+                    {
+                      "name": "GROSS",
+                      "isDeprecated": false
+                    }
+                  ]
+                },
+                "typeString": "SettlementType",
+                "isRequired": false,
+                "isList": false,
+                "isDeprecated": false
+              },
+              {
                 "name": "transaction_debit_count",
                 "description": "The number of transactions of type DEBIT that were included in the settlement.",
                 "type": {
@@ -56494,6 +56553,21 @@
     ],
     "interfaces": [],
     "isCollapsible": false
+  },
+  "SettlementType": {
+    "kind": "ENUM",
+    "name": "SettlementType",
+    "description": "The type of settlement, NET or GROSS.",
+    "values": [
+      {
+        "name": "NET",
+        "isDeprecated": false
+      },
+      {
+        "name": "GROSS",
+        "isDeprecated": false
+      }
+    ]
   },
   "SortDirection": {
     "kind": "ENUM",

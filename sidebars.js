@@ -1281,6 +1281,11 @@ const __gqlDocsItems = [
       },
       {
         type: 'doc',
+        id: 'api/types/enums/settlement-type',
+        label: 'SettlementType',
+      },
+      {
+        type: 'doc',
         id: 'api/types/enums/sort-direction',
         label: 'SortDirection',
       },

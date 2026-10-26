@@ -120,5 +120,5 @@ if (result.type === 'ERROR') {
 
 - Call [`initialize`](./initialize) first.
 - `walletType` must match the wallet that produced `digitalWalletPayload`.
-- After an `ERROR`, the Messenger refreshes its connection. Call `processWalletTransaction` again to retry.
-- A processed payment fires the [`transaction_complete`](./on) event, whether it succeeded or was declined. An `ERROR` fires `transaction_error`.
+- After an `ERROR` from Pay Theory's servers, the Messenger refreshes its connection. Call `processWalletTransaction` again to retry.
+- A processed payment fires the [`transaction_complete`](./on) event, whether it succeeded or was declined. An error from Pay Theory's servers also fires `transaction_error`. Errors the Messenger catches before it sends the payment, such as a missing field, only come back in the `ERROR` response.
