@@ -120,9 +120,14 @@ Resources:
         S3Bucket: !Ref MarkdownEdgeLambdaS3Bucket
         S3Key: !Ref MarkdownEdgeLambdaS3Key
 
+  # Keep replaced versions. CloudFront still uses the old version until the
+  # formation stack updates, so deleting it here fails and CloudFormation
+  # retries for ~6 minutes. Prune old versions by hand.
   MarkdownEdgeLambdaVersion:
     Condition: HasMarkdownEdgeLambdaArtifact
     Type: AWS::Lambda::Version
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
     Properties:
       FunctionName: !Ref MarkdownEdgeLambdaFunction
       Description: !Sub 'Markdown edge artifact ${MarkdownEdgeLambdaS3Key}'

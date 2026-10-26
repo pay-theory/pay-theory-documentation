@@ -28,14 +28,16 @@ aws s3 cp build s3://"${SERVICE_NAME}"-"${TARGET_ACCOUNT_ID}"-"${PARTNER}"-"${ST
 
 echo "Packaging Markdown Lambda@Edge artifact"
 MARKDOWN_EDGE_LAMBDA_ZIP=$(bash shell/package_markdown_edge_lambda.sh "${SERVICE_NAME}")
-SOURCE_VERSION=${CODEBUILD_RESOLVED_SOURCE_VERSION:-}
-if [[ -z "${SOURCE_VERSION}" ]] && git rev-parse --short HEAD >/dev/null 2>&1
+# Name the artifact by its contents, not the commit. A new key publishes a new
+# Lambda@Edge version and updates CloudFront (~10 min), so only change it when
+# the Lambda code or its route manifest changes.
+MARKDOWN_EDGE_LAMBDA_HASH=$(cat "${MARKDOWN_EDGE_LAMBDA_ZIP}.sha256")
+if [[ -z "${MARKDOWN_EDGE_LAMBDA_HASH}" ]]
 then
-    SOURCE_VERSION=$(git rev-parse --short HEAD)
+    echo "Failed to read the Markdown Lambda@Edge content hash!"
+    exit 1
 fi
-SOURCE_VERSION=${SOURCE_VERSION:-local}
-SOURCE_VERSION=$(echo "${SOURCE_VERSION}" | tr -c 'A-Za-z0-9._-' '-')
-MARKDOWN_EDGE_LAMBDA_S3_KEY="${S3_ARTIFACTS_PATH}/markdown-edge-lambda-${SOURCE_VERSION}.zip"
+MARKDOWN_EDGE_LAMBDA_S3_KEY="${S3_ARTIFACTS_PATH}/markdown-edge-lambda-${MARKDOWN_EDGE_LAMBDA_HASH}.zip"
 echo "Uploading Markdown Lambda@Edge artifact to s3://${MARKDOWN_EDGE_LAMBDA_S3_BUCKET}/${MARKDOWN_EDGE_LAMBDA_S3_KEY}"
 aws s3 cp "${MARKDOWN_EDGE_LAMBDA_ZIP}" "s3://${MARKDOWN_EDGE_LAMBDA_S3_BUCKET}/${MARKDOWN_EDGE_LAMBDA_S3_KEY}"
 echo "Markdown Lambda@Edge artifact uploaded"

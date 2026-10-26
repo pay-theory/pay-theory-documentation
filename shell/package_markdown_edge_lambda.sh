@@ -47,10 +47,21 @@ fs.writeFileSync(
 );
 NODE
 
-rm -f "${ZIP_PATH}"
+rm -f "${ZIP_PATH}" "${ZIP_PATH}.sha256"
 (
   cd "${TMP_DIR}"
   zip -qr "${OLDPWD}/${ZIP_PATH}" .
 )
+
+# Hash the artifact's files, not the zip (zip bytes change with timestamps).
+# 02_deploy.sh names the S3 key with it, so an unchanged Lambda leaves both
+# stacks with nothing to update.
+sha256() {
+  if command -v sha256sum >/dev/null 2>&1; then sha256sum; else shasum -a 256; fi
+}
+(
+  cd "${TMP_DIR}"
+  find . -type f -print0 | LC_ALL=C sort -z | xargs -0 cat | sha256 | cut -c1-16
+) > "${ZIP_PATH}.sha256"
 
 echo "${ZIP_PATH}"
