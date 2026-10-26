@@ -4,16 +4,14 @@
     "operationType": "mutation",
     "examples": [
       {
-        "name": "Example updateMetadata",
-        "description": "Updates metadata for an item.",
+        "name": "Add metadata to a transaction",
+        "description": "Adds metadata to a transaction. Send metadata as a JSON string.",
         "query": "mutation UpdateMetadata($id: String!, $metadata_associate: MetadataAssociate!, $merchant_uid: String!, $metadata: AWSJSON!) {\n  updateMetadata(id: $id, metadata_associate: $metadata_associate, merchant_uid: $merchant_uid, metadata: $metadata)\n}",
         "variables": {
-          "id": "example",
-          "metadata_associate": "AUTHORIZATION",
-          "merchant_uid": "example",
-          "metadata": {
-            "key": "value"
-          }
+          "id": "ptl_txn_7pCgkYFpOJIa04NlWSum0b",
+          "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+          "metadata": "{\"department\":\"athletics\",\"student_id\":\"1234567\"}",
+          "metadata_associate": "TRANSACTION"
         },
         "response": {
           "type": "success",
@@ -30,29 +28,6 @@
   {
     "operation": "deleteMetadata",
     "operationType": "mutation",
-    "examples": [
-      {
-        "name": "Example deleteMetadata",
-        "description": "Deletes metadata for an item.",
-        "query": "mutation DeleteMetadata($id: String!, $metadata_associate: MetadataAssociate!, $merchant_uid: String!, $metadata_keys: [String]!) {\n  deleteMetadata(id: $id, metadata_associate: $metadata_associate, merchant_uid: $merchant_uid, metadata_keys: $metadata_keys)\n}",
-        "variables": {
-          "id": "example",
-          "metadata_associate": "AUTHORIZATION",
-          "merchant_uid": "example",
-          "metadata_keys": [
-            "example"
-          ]
-        },
-        "response": {
-          "type": "success",
-          "httpStatus": 200,
-          "body": {
-            "data": {
-              "deleteMetadata": true
-            }
-          }
-        }
-      }
-    ]
+    "examples": []
   }
 ]

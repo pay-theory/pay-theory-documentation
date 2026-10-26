@@ -65,7 +65,7 @@ The link below provides list of all event listeners available in the below link.
 :::
 
 ```jsx title="javascript"
-paytheory.errorobserver(error => {
+paytheory.errorObserver(error => {
   //Logic to respond to errors
 })
 ```
@@ -100,19 +100,25 @@ const AMOUNT = 1000
 
 // Parameters that you will pass into the transact function. More details below.
 const TRANSACTING_PARAMETERS = {
-    amount: AMOUNT
+    amount: AMOUNT,
+    // Optional. Send the same key on a retry so the payor isn't charged twice
+    idempotencyKey: 'order-1042'
 }
 
 let result = await paytheory.transact(TRANSACTING_PARAMETERS)
 
 if (result.type === "SUCCESS") {
 // Logic to respond to successful transaction
-} else if (result.type === "FAILURE") {
+} else if (result.type === "FAILED") {
 // Logic to respond to failed transaction
 } else if (result.type === "ERROR") {
 // Logic to respond to error
 }
 ```
+
+:::tip Retry without double charging
+Pass an `idempotencyKey` with each payment. If a request times out, you can retry it or look up the original payment. See [Idempotency](../online_payments/idempotency).
+:::
 ***
 
 

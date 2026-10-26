@@ -6,7 +6,7 @@ title: "destroy"
 
 # destroy
 
-Cleans up resources and disconnects the messenger. Should be called when the messenger is no longer needed.
+Disconnects the Messenger and removes its iframe and listeners. Call it when the page no longer needs wallet payments.
 
 ***
 ## Function
@@ -33,9 +33,9 @@ const messenger = new paytheory.PayTheoryMessenger({
   apiKey: 'your-api-key'
 });
 
-// Use the messenger...
+// Use the Messenger
 await messenger.initialize();
-// ... perform transactions ...
+// ...process wallet transactions
 
 // Clean up when done
 messenger.destroy();
@@ -44,9 +44,5 @@ messenger.destroy();
 ***
 ## Notes
 
-- Removes all event listeners
-- Disconnects the communication channel
-- Removes the iframe from the DOM
-- Clears the token manager
-- Resets the messenger state
-- After calling destroy(), the messenger instance cannot be used again
+- `destroy` removes every listener added with [`on`](./on), closes the channel and removes the iframe from the page.
+- A destroyed Messenger can't be used again. Create a new `PayTheoryMessenger` instead.

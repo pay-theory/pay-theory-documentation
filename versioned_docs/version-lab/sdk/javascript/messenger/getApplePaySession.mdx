@@ -6,7 +6,7 @@ title: "getApplePaySession"
 
 # getApplePaySession
 
-Validates merchant identity with Apple Pay and returns a session object required for completing Apple Pay merchant validation.
+Requests an Apple Pay merchant session from Pay Theory. Pass the session to `completeMerchantValidation` in your Apple Pay `onvalidatemerchant` handler.
 
 ***
 ## Function
@@ -25,17 +25,26 @@ This function takes no parameters.
 
 ```javascript
 {
-  type: String  // 'SUCCESS' or 'ERROR'
-  session: Object
+  type: String, // 'SUCCESS' or 'ERROR'
+  session: {
+    success: Boolean,
+    session: Object, // Apple Pay merchant session
+    error: String
+  },
   error: String
 }
 ```
 
-| Key | Type | Description |
+| Key | type | description |
 |-----|------|-------------|
-| type | String | Response type indicating success or error |
-| session | Object | Apple Pay merchant session object used for validation |
-| error | String | Error message if the operation failed |
+| type | String | `SUCCESS` when Pay Theory answered the request, `ERROR` when the Messenger couldn't connect. |
+| session | Object | Pay Theory's validation result. Read `session.success` before you use it. |
+| session.success | Boolean | `true` when Apple validated the merchant. |
+| session.session | Object | The Apple Pay merchant session to pass to `completeMerchantValidation`. |
+| session.error | String | Why validation failed, when `session.success` is `false`. |
+| error | String | The error message when `type` is `ERROR`. |
+
+A `SUCCESS` response can still carry a failed validation, so check `session.success` as well as `type`.
 
 ***
 ## Usage
@@ -43,19 +52,16 @@ This function takes no parameters.
 ```javascript
 const result = await messenger.getApplePaySession();
 
-if (result.type === 'SUCCESS') {
-  // Use the session for Apple Pay validation
-  const session = result.session;
-  // Complete merchant validation with Apple
+if (result.type === 'SUCCESS' && result.session.success) {
+  applePaySession.completeMerchantValidation(result.session.session);
 } else {
-  console.error('Failed to get Apple Pay session:', result.error);
+  console.error('Apple Pay validation failed:', result.error || result.session.error);
+  applePaySession.abort();
 }
 ```
 
 ***
 ## Notes
 
-- Must be called after initializing the messenger
-- The session object is used to complete Apple Pay merchant validation
-- If the token has expired, the method will automatically attempt to refresh it
-- Returns an error response if the connection cannot be established
+- Call [`initialize`](./initialize) first.
+- If the Messenger's token has expired, `getApplePaySession` refreshes the connection before it answers.

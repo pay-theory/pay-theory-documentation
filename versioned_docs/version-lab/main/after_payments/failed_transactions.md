@@ -37,7 +37,7 @@ The failure codes are listed below.
 | DEVICE_NOT_CONNECTED | The payment terminal isn't connected to a network. Connect the payment terminal to a network and reattempt the transaction. |
 | DEVICE_IN_USE | The device is currently processing a request. Attempt a request again once the request is complete, or within 6 minutes. |
 | DO_NOT_HONOR | The card was declined for an unknown reason. The cardholder needs to contact their issuing bank for more information. |
-| DUPLICATE_TRANSACTION | A transaction with the same amount and payment method was approved recently and marked as a duplicate. If this duplicate transaction was intentional, contact the processor for support. |
+| DUPLICATE_TRANSACTION | A transaction with the same amount and payment method was approved recently and marked as a duplicate. If this duplicate transaction was intentional, contact the processor for support. To keep your own retries from charging twice, use an [idempotency key](../online_payments/idempotency). |
 | EXCEEDS_APPROVAL_LIMIT | The authorization exceeds the approval limit. The cardholder needs to contact their card issuer for more information. |
 | EXCEEDS_WITHDRAWAL_FREQUENCY_LIMIT | The card has exceeded its withdrawal frequency limit. The cardholder needs to use a different card. |
 | EXPIRED_CARD | The card has expired. The cardholder needs to use another card that's not expired. |

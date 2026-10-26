@@ -1278,6 +1278,16 @@ directive @docPriority(level: Int!) on FIELD_DEFINITION
 
 directive @docTags(tags: [String!]!) on FIELD_DEFINITION
 
+"One nested field argument to document for an operation."
+input DocNestedArg {
+  "Path from the operation return type to the field argument."
+  path: String!
+  "Optional description used only on this operation's page."
+  description: String
+}
+
+directive @docNestedArgs(args: [DocNestedArg!]!) on FIELD_DEFINITION
+
 "Document object."
 type Document @aws_lambda @aws_iam @aws_cognito_user_pools {
   "Unique identifier for the attachment."
@@ -1549,6 +1559,44 @@ enum InstructionStatus {
   PENDING
   "The instruction was processed successfully."
   PROCESSED
+}
+
+"Operations that can be checked with idempotencyLookup."
+enum IdempotencyOperation {
+  "Look up a key used with createAuthorization."
+  CREATE_AUTHORIZATION
+  "Look up a key used with createTransaction."
+  CREATE_TRANSACTION
+}
+
+"Status of a retained idempotency record."
+enum IdempotencyStatus {
+  "The original request is still being processed."
+  IN_PROGRESS
+  "The original request completed and has a linked payment resource."
+  COMPLETED
+}
+
+"Payment creation record found by idempotency key."
+type IdempotencyLookup @aws_lambda @aws_iam @aws_cognito_user_pools {
+  "The Pay Theory unique identifier for the merchant that owns the idempotency key."
+  merchant_uid: String!
+  "The payment creation operation the key was scoped to."
+  operation: IdempotencyOperation!
+  "The status of the retained idempotency record."
+  idempotency_status: IdempotencyStatus!
+  "The Pay Theory unique identifier for the matching transaction, when the key was used with createTransaction."
+  transaction_id: String
+  "The matching transaction, when it has been created."
+  transaction: Transaction
+  "The Pay Theory unique identifier for the matching authorization, when the key was used with createAuthorization."
+  authorization_id: String
+  "The matching authorization, when it has been created."
+  authorization: Authorization
+  "The time until which the original request may still be considered in progress."
+  locked_until: AWSDateTime
+  "The time after which the idempotency record is no longer retained."
+  expires_at: AWSDateTime
 }
 
 "Invoices are used to create a payment request that can be sent to a payor."
@@ -1868,6 +1916,8 @@ type Merchant @aws_lambda @aws_iam @aws_cognito_user_pools {
   fee_model: FeeModel @deprecated(reason: "Use fee_matrix instead.")
   "If the merchant is a system merchant. System merchants are merchants that also have sub merchants."
   is_system: Boolean
+  "Maximum card or ACH payment total in cents, including service fees. Zero or null means no merchant maximum."
+  max_transaction_amount: Int
   "The name of the merchant."
   merchant_name: String
   "The Pay Theory unique identifier assigned to the merchant."
@@ -2043,10 +2093,12 @@ type Mutation @aws_lambda @aws_iam @aws_cognito_user_pools {
     "Pay Theory unique identifier for the merchant."
     merchant_uid: ID!
   ): Instruction @docGroup(name: "Settlement", sidebarTitle: "Cancel Settlement Instruction")
-  "This mutation will create a new authorization for a merchant."
+  "Creates an authorization for a merchant. With a non-empty idempotency_key, retrying the same request returns the original authorization, including a failed result. Reusing the key with changed request details returns a conflict. Concurrent requests with the same key create one authorization."
   createAuthorization(
     "The Pay Theory unique identifier assigned to the merchant that the authorization belongs to."
     merchant_uid: String!
+    "Optional caller-provided key for identifying retries of this authorization request."
+    idempotency_key: String
     "The Pay Theory unique identifier assigned to the sale that the authorization belongs to. Sales can be used to tie together multiple auths and captures."
     sale_id: String
     "The amount of the authorization in cents."
@@ -2266,10 +2318,12 @@ type Mutation @aws_lambda @aws_iam @aws_cognito_user_pools {
     "The instruction details to create."
     input: CreateSettlementInstructionInput!
   ): CreateSettlementInstructionResponse @docGroup(name: "Settlement", sidebarTitle: "Create Settlement Instruction")
-  "Creates transaction."
+  "Creates a transaction. With a non-empty idempotency_key, retrying the same request returns the original transaction, including a declined result. Reusing the key with changed request details returns a conflict. Concurrent requests with the same key create one transaction. Without a key or with an empty key, repeated requests can create separate transactions. Unicode keys are supported."
   createTransaction(
     "The Pay Theory unique identifier for the merchant the transaction is for."
     merchant_uid: String!
+    "Optional caller-provided key for identifying retries of this transaction request."
+    idempotency_key: String
     "The amount of the transaction. If the FeeMode is SERVICE_FEE, this is the amount of the transaction before fees."
     amount: Int!
     "The Pay Theory unique identifier for the payment method the transaction will be charged to."
@@ -2838,7 +2892,10 @@ type PaymentMethodToken @aws_lambda @aws_iam @aws_cognito_user_pools {
   "The type of payment method. It can be one of the following: CARD, ACH"
   payment_type: PaymentType
   "The payor object. Refer to the Payor docs for more info."
-  payor(query_list: [QueryPair]): Payor
+  payor(
+    "Query conditions for payor fields such as email. Supported filtering depends on the operation."
+    query_list: [QueryPair]
+  ): Payor
   "The postal code of the billing address."
   postal_code: String
   "The region of the billing address."
@@ -3028,6 +3085,15 @@ type Query @aws_lambda @aws_iam @aws_cognito_user_pools {
     "The instruction date in YYYY-MM-DD format (UTC)."
     date: AWSDate!
   ): [Instruction] @docGroup(name: "Settlement", sidebarTitle: "List Instructions")
+  "Looks up a payment creation key for the supplied merchant and operation. An unused key returns null. A completed record returns its status, linked transaction or authorization ID, and lock and expiry timestamps. The same key can be used independently for createTransaction and createAuthorization."
+  idempotencyLookup(
+    "The Pay Theory unique identifier for the merchant that owns the idempotency key."
+    merchant_uid: String!
+    "The payment creation operation to look up."
+    operation: IdempotencyOperation!
+    "The caller-provided idempotency key."
+    idempotency_key: String!
+  ): IdempotencyLookup @docGroup(name: "Idempotency", sidebarTitle: "Lookup Idempotency Key") @docPriority(level: 1)
   "Returns invoices."
   invoices(
     "The query to filter the invoices with based on Pay Theory defined data."
@@ -3098,7 +3164,15 @@ type Query @aws_lambda @aws_iam @aws_cognito_user_pools {
     direction: MoveDirection
     "The payment_method_id of the offset item."
     offset_id: String
-  ): PaymentMethodTokens @docGroup(name: "Payment Method Token", sidebarTitle: "List Payment Method Tokens") @docPriority(level: 1)
+  ): PaymentMethodTokens
+    @docGroup(name: "Payment Method Token", sidebarTitle: "List Payment Method Tokens")
+    @docPriority(level: 1)
+    @docNestedArgs(args: [
+      {
+        path: "items.payor.query_list"
+        description: "When selected, filters payment method token rows by payor fields such as email."
+      }
+    ])
   "Returns payors."
   payors(
     "The query to filter the payors with based on Pay Theory defined data. Detailed information about the query object can be found here."
@@ -3184,7 +3258,19 @@ type Query @aws_lambda @aws_iam @aws_cognito_user_pools {
     direction: MoveDirection
     "The transaction_id of the offset item."
     offset_id: String
-  ): Transactions @docGroup(name: "Transaction", sidebarTitle: "List Transactions") @docPriority(level: 1)
+  ): Transactions
+    @docGroup(name: "Transaction", sidebarTitle: "List Transactions")
+    @docPriority(level: 1)
+    @docNestedArgs(args: [
+      {
+        path: "items.payment_method.query_list"
+        description: "When selected, filters transaction rows by payment method fields such as last_four."
+      }
+      {
+        path: "items.payment_method.payor.query_list"
+        description: "When selected, filters transaction rows by payor fields such as email."
+      }
+    ])
   "Returns users."
   users(
     "The user pool to query. One of the following: MERCHANT, SYSTEM, PARTNER."
@@ -3421,7 +3507,7 @@ enum ReserveAccountType {
 type ReversalResponse @aws_lambda @aws_iam @aws_cognito_user_pools {
   "Whether void."
   is_void: Boolean!
-  "Pay Theory unique identifier for the transaction."
+  "Full void: no new transaction ID handed back. Partial void: new transaction ID for the adjusted debit. Refund: transaction ID points to the reversal."
   transaction_id: String
 }
 
@@ -3527,6 +3613,8 @@ type Settlement @aws_lambda @aws_iam @aws_cognito_user_pools {
   settlement_date: AWSDateTime
   "The status of the settlement. Will be one of PENDING, SUCCEEDED, or HOLD."
   status: String
+  "The type of settlement letting you know if it is NET or GROSS."
+  settlement_type: SettlementType
   "The number of transactions of type DEBIT that were included in the settlement."
   transaction_debit_count: Int
   "The number of transactions of type DISPUTE that were included in the settlement."
@@ -3553,6 +3641,12 @@ type Settlements @aws_lambda @aws_iam @aws_cognito_user_pools {
   items: [Settlement]
   "Total number of rows matching the query."
   total_row_count: Int
+}
+
+"The type of settlement, NET or GROSS."
+enum SettlementType {
+  NET
+  GROSS
 }
 
 "The direction to sort the data. These are case-sensitive."
@@ -3763,7 +3857,10 @@ type Transaction @aws_lambda @aws_iam @aws_cognito_user_pools {
   "The Pay Theory unique identifier for the parent transaction if any."
   parent_id: String
   "The payment method used to make the transaction."
-  payment_method(query_list: [QueryPair]): PaymentMethodToken
+  payment_method(
+    "Query conditions for payment method fields such as last_four. Supported filtering depends on the operation."
+    query_list: [QueryPair]
+  ): PaymentMethodToken
   processor: String
   "The recurring payment that the transaction belongs to if any."
   recurring: RecurringPayment

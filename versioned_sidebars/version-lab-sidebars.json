@@ -91,6 +91,19 @@
     },
     {
       "type": "category",
+      "label": "Idempotency",
+      "items": [
+        {
+          "type": "doc",
+          "id": "api/idempotency/idempotency-lookup",
+          "label": "Lookup Idempotency Key"
+        }
+      ],
+      "collapsible": true,
+      "collapsed": true
+    },
+    {
+      "type": "category",
       "label": "Invoice",
       "items": [
         {
@@ -622,6 +635,16 @@
         },
         {
           "type": "doc",
+          "id": "api/types/enums/idempotency-operation",
+          "label": "IdempotencyOperation"
+        },
+        {
+          "type": "doc",
+          "id": "api/types/enums/idempotency-status",
+          "label": "IdempotencyStatus"
+        },
+        {
+          "type": "doc",
           "id": "api/types/enums/instruction-status",
           "label": "InstructionStatus"
         },
@@ -689,6 +712,11 @@
           "type": "doc",
           "id": "api/types/enums/reserve-account-type",
           "label": "ReserveAccountType"
+        },
+        {
+          "type": "doc",
+          "id": "api/types/enums/settlement-type",
+          "label": "SettlementType"
         },
         {
           "type": "doc",
@@ -1258,6 +1286,11 @@
         },
         {
           "type": "doc",
+          "id": "api/types/types/idempotency-lookup",
+          "label": "IdempotencyLookup"
+        },
+        {
+          "type": "doc",
           "id": "api/types/types/instruction",
           "label": "Instruction"
         },
@@ -1550,6 +1583,10 @@
         {
           "type": "doc",
           "id": "main/online_payments/custom_fees"
+        },
+        {
+          "type": "doc",
+          "id": "main/online_payments/idempotency"
         },
         {
           "type": "category",
@@ -1910,6 +1947,10 @@
     {
       "type": "doc",
       "id": "sdk/javascript/main"
+    },
+    {
+      "type": "doc",
+      "id": "sdk/javascript/typescript"
     },
     {
       "type": "doc",

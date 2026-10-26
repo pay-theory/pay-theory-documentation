@@ -26,7 +26,7 @@ This guide will walk you through the basics of styling your Pay Theory Fields an
 
 ## Styling the Pay Theory fields
 
-To style the Pay Theory fields you can pass in a custom style object to the create function in our SDK. The style object accepts a fixed set of keys for each surface — text inputs (across `default`, `success`, and `error` states), the ACH account-type radio buttons, the hosted checkout button, and the placeholder visibility flag. Any property not listed in the tables below is silently ignored.
+To style the Pay Theory fields you can pass in a custom style object to the create function in our SDK. The style object accepts a fixed set of keys for each surface — text inputs (across `default`, `success`, and `error` states), the ACH account-type radio buttons, and the placeholder visibility flag. To style the hosted checkout button, pass `style` to `button` instead. See [Style object](../../sdk/javascript/payment_button#style-object). Any property not listed in the tables below is silently ignored.
 
 ```jsx title="paytheory.js"
 const STYLES = {
@@ -51,15 +51,11 @@ const STYLES = {
     width: 18,
     fill: 'blue',
     stroke: 'grey',
-    textFontSize: '14px',
-    textColor: 'grey',
-    textFontFamily: 'Helvetica, Arial, sans-serif',
-  },
-  button: {
-    color: 'PURPLE',
-    callToAction: 'PAY',
-    pill: false,
-    height: 48,
+    text: {
+      fontSize: '14px',
+      color: 'grey',
+      fontFamily: 'Helvetica, Arial, sans-serif',
+    },
   },
   hidePlaceholder: false,
 };
@@ -73,7 +69,6 @@ const STYLES = {
 | `success`         | object  | Styling applied to text inputs that pass validation. Merged on top of `default` — any property not set here falls back to its `default` value. |
 | `error`           | object  | Styling applied to text inputs that fail validation. Merged on top of `default` — same fallback behavior as `success`.                         |
 | `radio`           | object  | Styling for the ACH account-type radio buttons. See [Radio object](#radio-object).                                                             |
-| `button`          | object  | Styling for the hosted checkout button. See [Button object](#button-object).                                                                   |
 | `hidePlaceholder` | boolean | When `true`, the placeholder text in the input fields is hidden. Defaults to `false`.                                                          |
 
 :::info success and error inherit from default
@@ -107,50 +102,14 @@ Properties set in `default` automatically apply to `success` and `error` too —
 
 ### Radio object
 
-Styles for the ACH account-type radio buttons. Both the flat properties and the legacy nested `text` object are supported; if both forms are set, the nested values take precedence.
+Styles for the ACH account-type radio buttons.
 
-| Key              | type          | description                                                                                |
-| ---------------- | ------------- | ------------------------------------------------------------------------------------------ |
-| `width`          | int \| string | Width of the radio button. Bare numbers are interpreted as pixels.                         |
-| `fill`           | string        | Fill color of the selected indicator.                                                      |
-| `stroke`         | string        | Color of the radio outline.                                                                |
-| `textFontSize`   | string        | Font size for the radio label.                                                             |
-| `textColor`      | string        | Color for the radio label.                                                                 |
-| `textFontFamily` | string        | Font family for the radio label.                                                           |
-| `text`           | object        | Backwards-compatible nested form. Accepts `fontSize`, `color`, `fontFamily`, `fontWeight`. |
-
-### Button object
-
-Styles for the hosted checkout button. The button accepts a **config** form (preset color and call-to-action — the common case) or a **processed** form where you set the resolved CSS properties directly.
-
-**Config form**
-
-| Key            | type                                              | description                                                                     |
-| -------------- | ------------------------------------------------- | ------------------------------------------------------------------------------- |
-| `color`        | `'PURPLE'` \| `'WHITE'` \| `'BLACK'` \| `'GREY'`  | Preset color theme. Matching is case-insensitive. Defaults to `'PURPLE'`.       |
-| `callToAction` | `'PAY'` \| `'CHECKOUT'` \| `'DONATE'` \| `'BOOK'` | Sets the button copy (e.g. `'PAY'` → "Pay with"). Matching is case-insensitive. |
-| `pill`         | boolean                                           | When `true`, gives the button a fully rounded (pill) shape.                     |
-| `height`       | int \| string                                     | Button height. Numbers are interpreted as pixels.                               |
-
-**Processed form**
-
-| Key               | type   | description                                                       |
-| ----------------- | ------ | ----------------------------------------------------------------- |
-| `backgroundColor` | string | Button background color. Default: `#9139D2`.                      |
-| `borderRadius`    | string | Button corner radius. Default: `4px` (`100px` when `pill: true`). |
-| `fontColor`       | string | Button text color. Default: `#FFFFFF`.                            |
-| `height`          | string | Button height. Default: `48px`.                                   |
-| `border`          | string | CSS `border` shorthand (e.g. `'0.5px solid #C9C4CA'`).            |
-| `altText`         | string | Accessible label / button copy.                                   |
-
-**Defaults applied by preset `color`**
-
-| `color`  | background | text color | border                |
-| -------- | ---------- | ---------- | --------------------- |
-| `PURPLE` | `#9139D2`  | `#FFFFFF`  | none                  |
-| `BLACK`  | `#000000`  | `#FFFFFF`  | none                  |
-| `WHITE`  | `#FFFFFF`  | `#000000`  | `0.5px solid #C9C4CA` |
-| `GREY`   | `#F7F7F4`  | `#000000`  | none                  |
+| Key      | type   | description                                                                       |
+| -------- | ------ | --------------------------------------------------------------------------------- |
+| `width`  | int    | Width of the radio button, in pixels.                                             |
+| `fill`   | string | Fill color of the selected indicator.                                             |
+| `stroke` | string | Color of the radio outline.                                                       |
+| `text`   | object | Styles for the radio labels. Accepts `fontSize`, `color`, `fontFamily`, `fontWeight`. |
 
 ---
 
@@ -201,6 +160,18 @@ const stateHandler = state => {
 };
 
 window.paytheory.stateObserver(stateHandler);
+```
+
+### Show fields as they load
+
+Each field's state also has `iframeLoaded`. It's `false` while the field loads and turns `true` once that field's iframe has loaded. Use it to swap a placeholder for the field as soon as it renders, instead of waiting for the `readyObserver`.
+
+```jsx title="src/paytheory.js"
+window.paytheory.stateObserver(state => {
+  const loaded = state['card-number'].iframeLoaded;
+  document.getElementById('card-number-skeleton').hidden = loaded;
+  document.getElementById('pay-theory-credit-card-number').hidden = !loaded;
+});
 ```
 
 :::info Additional stateObserver functionality

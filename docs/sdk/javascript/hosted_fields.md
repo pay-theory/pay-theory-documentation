@@ -6,17 +6,20 @@ title: 'Hosted Fields'
 
 # Hosted Fields
 
-These Hosted Fields are used to collect sensitive payment information from the user.
+Hosted fields collect card, bank and cash details in Pay Theory iframes, so the payment data never touches your page. Add an empty `div` with the field's ID where the field goes, then call [`payTheoryFields`](functions#paytheoryfields) to mount them.
 
-## Card Fields
+To show each field as soon as it renders, watch [`iframeLoaded`](event_listeners#field-state) in the state observer.
 
-These fields are used to collect card information from the user. The card number, expiration date, and CVV are all required to collect a valid card payment.
+***
+## Card fields
 
-You also need to ensure you are capturing the zip code for the card. You can do this by either using the `pay-theory-credit-card-zip` field or by passing the `billingInfo` into the `transact` or `tokenizePaymentMethod` fields.
+A card payment needs the card number, expiration date and CVV.
 
-### Separate Card Fields
+It also needs the billing ZIP code. Mount the `pay-theory-credit-card-zip` field, or pass `billingInfo` to `transact` or `tokenizePaymentMethod`.
 
-These fields are used to collect the required info from the user for a valid card payment.
+### Separate card fields
+
+One field each for number, expiration and CVV.
 
 ```html
 <form>
@@ -28,9 +31,9 @@ These fields are used to collect the required info from the user for a valid car
 </form>
 ```
 
-### Combined Card Field
+### Combined card field
 
-These fields are used to collect the required info from the user for a valid card payment while combining the card number and expiration date and CVV into one field.
+Number, expiration and CVV in one field.
 
 ```html
 <form>
@@ -40,9 +43,9 @@ These fields are used to collect the required info from the user for a valid car
 </form>
 ```
 
-### Optional Billing Detail Fields
+### Billing detail fields
 
-These optional fields are used to collect billing information from the user.
+Optional fields for the name on the card and the billing address.
 
 ```html
 <form>
@@ -58,9 +61,10 @@ These optional fields are used to collect billing information from the user.
 </form>
 ```
 
-## ACH Fields
+***
+## ACH fields
 
-These fields are all required to collect ACH information from the user for Bank Accounts in the USA.
+All four fields are required for a US bank account.
 
 ```html
 <form>
@@ -73,9 +77,10 @@ These fields are all required to collect ACH information from the user for Bank 
 </form>
 ```
 
-## EFT Fields
+***
+## EFT fields
 
-These fields are all required to collect EFT information from the user for Bank Accounts in Canada.
+All five fields are required for a Canadian bank account. Pass `country: 'CAN'` to `payTheoryFields`.
 
 ```html
 <form>
@@ -88,9 +93,10 @@ These fields are all required to collect EFT information from the user for Bank 
 </form>
 ```
 
-## Cash Fields
+***
+## Cash fields
 
-These fields are all required to collect Cash information from the user.
+Both fields are required to create a cash barcode.
 
 ```html
 <form>
@@ -101,19 +107,19 @@ These fields are all required to collect Cash information from the user.
 </form>
 ```
 
-## Checkout Button Field
+***
+## Checkout button field
 
-This div is used to mount an iframe that will include a checkout button.
-This button will open a hosted checkout page that will allow the user to select a payment method and complete the payment.
+[`button`](payment_button) mounts its button here. The button opens a Pay Theory checkout page where the payor picks a payment method and pays.
 
 ```html
 <div id="pay-theory-checkout-button"></div>
 ```
 
-## QR Code Field
+***
+## QR code field
 
-This div is used to mount an iframe that will include a QR Code.
-This QR Code will open a hosted checkout page that will allow the user to select a payment method and complete the payment.
+[`qrCode`](payment_qr_code) mounts its QR code here. Scanning it opens a Pay Theory checkout page where the payor picks a payment method and pays.
 
 ```html
 <div id="pay-theory-checkout-qr"></div>
@@ -133,11 +139,12 @@ This QR Code will open a hosted checkout page that will allow the user to select
 [//]: # '</form>'
 [//]: # '```'
 
-## Styling Hosted Fields
+***
+## Styling hosted fields
 
-To style the input parent div simply provide your own CSS for the pay theory containers you create. This is best used to style the height, width, and border of the container.
+Style the container `div`s with your own CSS. Use it for the height, width and border of each container.
 
-_Individual pay-theory-credit-card-number containers should be at least 340px wide, pay-theory-credit-card combined input should be 400px_
+Make each `pay-theory-credit-card-number` container at least 340px wide, and the combined `pay-theory-credit-card` container 400px.
 
 ```css
 #pay-theory-credit-card-number,
@@ -150,9 +157,9 @@ _Individual pay-theory-credit-card-number containers should be at least 340px wi
 }
 ```
 
-### Styles Object
+### Styles object
 
-To style the input fields you can pass in a custom style object to the create function in our SDK. The style object accepts a fixed set of keys — any property not listed in the tables below is silently ignored.
+To style the inputs inside the iframes, pass a styles object to `payTheoryFields`. It accepts only the keys in the tables below and ignores any other property.
 
 ```javascript
 const STYLES = {
@@ -177,15 +184,11 @@ const STYLES = {
     width: 18,
     fill: 'blue',
     stroke: 'grey',
-    textFontSize: '14px',
-    textColor: 'grey',
-    textFontFamily: 'Helvetica, Arial, sans-serif',
-  },
-  button: {
-    color: 'PURPLE',
-    callToAction: 'PAY',
-    pill: false,
-    height: 48,
+    text: {
+      fontSize: '14px',
+      color: 'grey',
+      fontFamily: 'Helvetica, Arial, sans-serif',
+    },
   },
   hidePlaceholder: false,
 };
@@ -194,13 +197,14 @@ const STYLES = {
 | Key               | type                                      | description                                                                                                                                    |
 | ----------------- | ----------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
 | `default`         | [Field Style Object](#field-style-object) | Styling applied to text inputs when not in `success` or `error` state.                                                                         |
-| `success`         | [Field Style Object](#field-style-object) | Styling applied to text inputs that pass validation. Merged on top of `default` — any property not set here falls back to its `default` value. |
-| `error`           | [Field Style Object](#field-style-object) | Styling applied to text inputs that fail validation. Merged on top of `default` — same fallback behavior as `success`.                         |
+| `success`         | [Field Style Object](#field-style-object) | Styling applied to text inputs that pass validation. Merged on top of `default`, so any property not set here keeps its `default` value. |
+| `error`           | [Field Style Object](#field-style-object) | Styling applied to text inputs that fail validation. Merged on top of `default` the same way as `success`.                         |
 | `radio`           | [Radio Object](#radio-object)             | Styling for the ACH account-type radio buttons.                                                                                                |
-| `button`          | [Button Object](#button-object)           | Styling for the hosted checkout button.                                                                                                        |
 | `hidePlaceholder` | Boolean                                   | When `true`, the placeholder text in the input fields is hidden. Defaults to `false`.                                                          |
 
-### Field Style Object
+To style the hosted checkout button, pass `style` to `button`. See [Style object](payment_button#style-object).
+
+### Field style object
 
 The `default`, `success`, and `error` keys each accept the same 18 properties. All values are CSS strings.
 
@@ -225,23 +229,20 @@ The `default`, `success`, and `error` keys each accept the same 18 properties. A
 | `opacity`          | String | CSS `opacity` (`'0'`–`'1'`).                                                                                                                                  |
 | `webkitAppearance` | String | CSS `-webkit-appearance` value.                                                                                                                               |
 
-### Radio Object
+### Radio object
 
-Styles for the ACH account-type radio buttons. Both the flat properties and the legacy nested `text` object are supported; if both forms are set, the nested values take precedence.
+Styles for the ACH account-type radio buttons.
 
-| Key              | type                        | description                                                        |
-| ---------------- | --------------------------- | ------------------------------------------------------------------ |
-| `width`          | Int \| String               | Width of the radio button. Bare numbers are interpreted as pixels. |
-| `fill`           | String                      | Fill color of the selected indicator.                              |
-| `stroke`         | String                      | Color of the radio outline.                                        |
-| `textFontSize`   | String                      | Font size for the radio label.                                     |
-| `textColor`      | String                      | Color for the radio label.                                         |
-| `textFontFamily` | String                      | Font family for the radio label.                                   |
-| `text`           | [Text Object](#text-object) | Backwards-compatible nested form for label styling.                |
+| Key      | type                        | description                                                        |
+| -------- | --------------------------- | ------------------------------------------------------------------ |
+| `width`  | Int                         | Width of the radio button, in pixels.                              |
+| `fill`   | String                      | Fill color of the selected indicator.                              |
+| `stroke` | String                      | Color of the radio outline.                                        |
+| `text`   | [Text Object](#text-object) | Styling for the radio button labels.                               |
 
-### Text Object
+### Text object
 
-Backwards-compatible nested form for styling the radio button labels.
+Styles for the radio button labels.
 
 | Key          | type   | description                             |
 | ------------ | ------ | --------------------------------------- |
@@ -249,36 +250,3 @@ Backwards-compatible nested form for styling the radio button labels.
 | `color`      | String | Color of the radio button labels.       |
 | `fontFamily` | String | Font family of the radio button labels. |
 | `fontWeight` | String | Font weight of the radio button labels. |
-
-### Button Object
-
-Styles for the hosted checkout button. The button accepts a **config** form (preset color and call-to-action — the common case) or a **processed** form where you set the resolved CSS properties directly.
-
-**Config form**
-
-| Key            | type                                              | description                                                                     |
-| -------------- | ------------------------------------------------- | ------------------------------------------------------------------------------- |
-| `color`        | `'PURPLE'` \| `'WHITE'` \| `'BLACK'` \| `'GREY'`  | Preset color theme. Matching is case-insensitive. Defaults to `'PURPLE'`.       |
-| `callToAction` | `'PAY'` \| `'CHECKOUT'` \| `'DONATE'` \| `'BOOK'` | Sets the button copy (e.g. `'PAY'` → "Pay with"). Matching is case-insensitive. |
-| `pill`         | Boolean                                           | When `true`, gives the button a fully rounded (pill) shape.                     |
-| `height`       | Int \| String                                     | Button height. Numbers are interpreted as pixels.                               |
-
-**Processed form**
-
-| Key               | type   | description                                                       |
-| ----------------- | ------ | ----------------------------------------------------------------- |
-| `backgroundColor` | String | Button background color. Default: `#9139D2`.                      |
-| `borderRadius`    | String | Button corner radius. Default: `4px` (`100px` when `pill: true`). |
-| `fontColor`       | String | Button text color. Default: `#FFFFFF`.                            |
-| `height`          | String | Button height. Default: `48px`.                                   |
-| `border`          | String | CSS `border` shorthand (e.g. `'0.5px solid #C9C4CA'`).            |
-| `altText`         | String | Accessible label / button copy.                                   |
-
-**Defaults applied by preset `color`**
-
-| `color`  | background | text color | border                |
-| -------- | ---------- | ---------- | --------------------- |
-| `PURPLE` | `#9139D2`  | `#FFFFFF`  | none                  |
-| `BLACK`  | `#000000`  | `#FFFFFF`  | none                  |
-| `WHITE`  | `#FFFFFF`  | `#000000`  | `0.5px solid #C9C4CA` |
-| `GREY`   | `#F7F7F4`  | `#000000`  | none                  |

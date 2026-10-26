@@ -4,26 +4,20 @@
     "operationType": "query",
     "examples": [
       {
-        "name": "Example settlements",
-        "description": "Returns settlements.",
-        "query": "query Settlements($query: SqlQuery, $limit: Int, $offset: String, $direction: MoveDirection, $offset_id: String) {\n  settlements(query: $query, limit: $limit, offset: $offset, direction: $direction, offset_id: $offset_id) {\n  items {\n    merchant_uid\n    settlement_date\n    currency\n    gross_amount\n    gross_amount_64bit\n  }\n  total_row_count\n  }\n}",
+        "name": "List settlements for a merchant",
+        "description": "Shows the status, settlement date, transfer date, and net amount for each batch.",
+        "query": "query Settlements($query: SqlQuery, $limit: Int) {\n  settlements(query: $query, limit: $limit) {\n    items {\n      merchant_uid\n      settlement_batch\n      settlement_date\n      currency\n      status\n      settlement_type\n      transaction_debit_count\n      transaction_reversal_count\n      transfer_date\n      gross_amount_64bit\n      net_amount_64bit\n    }\n    total_row_count\n  }\n}",
         "variables": {
           "query": {
             "query_list": [
               {
-                "conjunctive_operator": "AND_NEXT"
-              }
-            ],
-            "sort_list": [
-              {
-                "direction": "ASC"
+                "key": "merchant_uid",
+                "value": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                "operator": "EQUAL"
               }
             ]
           },
-          "limit": 123,
-          "offset": "example",
-          "direction": "BACKWARD",
-          "offset_id": "example"
+          "limit": 2
         },
         "response": {
           "type": "success",
@@ -33,14 +27,105 @@
               "settlements": {
                 "items": [
                   {
-                    "merchant_uid": "example",
-                    "settlement_date": "2025-01-01T00:00:00Z",
-                    "currency": "example",
-                    "gross_amount": 123,
-                    "gross_amount_64bit": "example"
+                    "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                    "settlement_batch": 2,
+                    "settlement_date": "2026-08-25T00:00:00Z",
+                    "currency": "USD",
+                    "status": "SUCCEEDED",
+                    "settlement_type": "NET",
+                    "transaction_debit_count": 1,
+                    "transaction_reversal_count": 3,
+                    "transfer_date": "2026-08-25T13:31:33.0Z",
+                    "gross_amount_64bit": "-400",
+                    "net_amount_64bit": "-453"
+                  },
+                  {
+                    "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                    "settlement_batch": 3,
+                    "settlement_date": "2026-08-25T00:00:00Z",
+                    "currency": "USD",
+                    "status": "SUCCEEDED",
+                    "settlement_type": "NET",
+                    "transaction_debit_count": 5,
+                    "transaction_reversal_count": 0,
+                    "transfer_date": "2026-08-25T13:32:28.0Z",
+                    "gross_amount_64bit": "4000",
+                    "net_amount_64bit": "3669"
                   }
                 ],
-                "total_row_count": 123
+                "total_row_count": 7
+              }
+            }
+          }
+        }
+      },
+      {
+        "name": "Get two settlement batches",
+        "description": "Wraps the two settlement_batch filters in query_group, so OR applies only to them and the merchant_uid filter still holds.",
+        "query": "query Settlements($query: SqlQuery, $limit: Int) {\n  settlements(query: $query, limit: $limit) {\n    items {\n      merchant_uid\n      settlement_batch\n      settlement_date\n      currency\n      status\n      settlement_type\n      transaction_debit_count\n      transaction_reversal_count\n      transfer_date\n      gross_amount_64bit\n      net_amount_64bit\n    }\n    total_row_count\n  }\n}",
+        "variables": {
+          "query": {
+            "query_list": [
+              {
+                "key": "merchant_uid",
+                "value": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                "operator": "EQUAL",
+                "conjunctive_operator": "AND_NEXT"
+              },
+              {
+                "query_group": [
+                  {
+                    "key": "settlement_batch",
+                    "value": "2",
+                    "operator": "EQUAL",
+                    "conjunctive_operator": "OR_NEXT"
+                  },
+                  {
+                    "key": "settlement_batch",
+                    "value": "3",
+                    "operator": "EQUAL"
+                  }
+                ]
+              }
+            ]
+          },
+          "limit": 10
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "settlements": {
+                "items": [
+                  {
+                    "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                    "settlement_batch": 2,
+                    "settlement_date": "2026-08-25T00:00:00Z",
+                    "currency": "USD",
+                    "status": "SUCCEEDED",
+                    "settlement_type": "NET",
+                    "transaction_debit_count": 1,
+                    "transaction_reversal_count": 3,
+                    "transfer_date": "2026-08-25T13:31:33.0Z",
+                    "gross_amount_64bit": "-400",
+                    "net_amount_64bit": "-453"
+                  },
+                  {
+                    "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                    "settlement_batch": 3,
+                    "settlement_date": "2026-08-25T00:00:00Z",
+                    "currency": "USD",
+                    "status": "SUCCEEDED",
+                    "settlement_type": "NET",
+                    "transaction_debit_count": 5,
+                    "transaction_reversal_count": 0,
+                    "transfer_date": "2026-08-25T13:32:28.0Z",
+                    "gross_amount_64bit": "4000",
+                    "net_amount_64bit": "3669"
+                  }
+                ],
+                "total_row_count": 2
               }
             }
           }
@@ -51,120 +136,21 @@
   {
     "operation": "createBatchCapture",
     "operationType": "mutation",
-    "examples": [
-      {
-        "name": "Example createBatchCapture",
-        "description": "This mutation will capture all PENDING transactions for a merchant in a batch and shortly after create a settlement for the merchant.",
-        "query": "mutation CreateBatchCapture($merchant_uid: String!) {\n  createBatchCapture(merchant_uid: $merchant_uid)\n}",
-        "variables": {
-          "merchant_uid": "example"
-        },
-        "response": {
-          "type": "success",
-          "httpStatus": 200,
-          "body": {
-            "data": {
-              "createBatchCapture": true
-            }
-          }
-        }
-      }
-    ]
+    "examples": []
   },
   {
     "operation": "availableFundsBalance",
     "operationType": "query",
-    "examples": [
-      {
-        "name": "Example availableFundsBalance",
-        "description": "This query returns the instructional hold and reserve balances for a merchant, along with the instruction window status.",
-        "query": "query AvailableFundsBalance($merchant_uid: ID!) {\n  availableFundsBalance(merchant_uid: $merchant_uid) {\n  instructional_hold_balance_updated\n  instruction_window_status\n  instructional_hold_balance\n  reserve_balance\n  }\n}",
-        "variables": {
-          "merchant_uid": "id_123"
-        },
-        "response": {
-          "type": "success",
-          "httpStatus": 200,
-          "body": {
-            "data": {
-              "availableFundsBalance": {
-                "instructional_hold_balance_updated": true,
-                "instruction_window_status": "example",
-                "instructional_hold_balance": "example",
-                "reserve_balance": "example"
-              }
-            }
-          }
-        }
-      }
-    ]
+    "examples": []
   },
   {
     "operation": "fundingTransfers",
     "operationType": "query",
-    "examples": [
-      {
-        "name": "Example fundingTransfers",
-        "description": "Returns funding transfers.",
-        "query": "query FundingTransfers($merchant_uid: ID!, $settlement_batch: Int!) {\n  fundingTransfers(merchant_uid: $merchant_uid, settlement_batch: $settlement_batch) {\n  transfers {\n    id\n    transfer_date\n    ach_return\n    amount\n    created_at\n  }\n  }\n}",
-        "variables": {
-          "merchant_uid": "id_123",
-          "settlement_batch": 123
-        },
-        "response": {
-          "type": "success",
-          "httpStatus": 200,
-          "body": {
-            "data": {
-              "fundingTransfers": {
-                "transfers": [
-                  {
-                    "id": "id_123",
-                    "transfer_date": "2025-01-01T00:00:00Z",
-                    "ach_return": {
-                      "key": "value"
-                    },
-                    "amount": "example",
-                    "created_at": "2025-01-01T00:00:00Z"
-                  }
-                ]
-              }
-            }
-          }
-        }
-      }
-    ]
+    "examples": []
   },
   {
     "operation": "instruction",
     "operationType": "query",
-    "examples": [
-      {
-        "name": "Example instruction",
-        "description": "Returns instruction.",
-        "query": "query Instruction($merchant_uid: ID!, $date: AWSDate!) {\n  instruction(merchant_uid: $merchant_uid, date: $date) {\n  id\n  date\n  amount\n  merchant_uid\n  metadata\n  }\n}",
-        "variables": {
-          "merchant_uid": "id_123",
-          "date": "2025-01-01"
-        },
-        "response": {
-          "type": "success",
-          "httpStatus": 200,
-          "body": {
-            "data": {
-              "instruction": {
-                "id": "id_123",
-                "date": "2025-01-01",
-                "amount": "example",
-                "merchant_uid": "id_123",
-                "metadata": {
-                  "key": "value"
-                }
-              }
-            }
-          }
-        }
-      }
-    ]
+    "examples": []
   }
 ]

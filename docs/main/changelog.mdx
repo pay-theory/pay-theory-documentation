@@ -5,8 +5,25 @@ title: "Changelog"
 ---
 
 # Changelog
-Additions and updates to Pay Theory’s API
+Additions and updates to Pay Theory's API and SDKs
 
+
+## October 22, 2026
+#### Added to JS SDK
+* `transact` accepts `idempotencyKey`. A retry with the same key returns the first response instead of charging twice. See [Idempotency](online_payments/idempotency).
+* Each hosted field's state in `stateObserver` has `iframeLoaded`. It turns `true` once that field's iframe loads, so you can show fields before the SDK is ready.
+* `tokenizePaymentMethod` with `expandedResponse: true` returns `FAILED` with `failure_code` and `failure_text` when the processor rejects the payment method. Before, this was an `ERROR` string. Without `expandedResponse`, nothing changes.
+* The SDK publishes TypeScript declarations, `paytheory-sdk.d.ts`, on the same host as the SDK. See [TypeScript](../sdk/javascript/typescript).
+
+#### Deprecated in JS SDK
+* The confirmation flow: `transact` with `confirmation: true`, `confirm`, `cancel`, `tokenizeObserver` and `captureObserver`. To show the service fee before charging, read it from `stateObserver` and pass it as `fee`. See [Deprecations](../sdk/javascript/deprecated#confirmation-flow).
+
+#### Added to API
+* `createTransaction` and `createAuthorization` accept `idempotency_key`. Retrying the same request with the same key returns the first response, including a decline, instead of creating a second payment. A changed request returns `IDEMPOTENCY_KEY_PAYLOAD_MISMATCH`.
+* The `idempotencyLookup` query returns a key's status (`IN_PROGRESS` or `COMPLETED`), the linked transaction or authorization, and when the record expires.
+* Merchants have `max_transaction_amount`, one limit in cents for card and ACH payments, including service fees. Pay Theory rejects a payment above it before processing, and marks a recurring payment above it `MERCHANT_MAX_AMOUNT_EXCEEDED`.
+
+---
 
 ## August 14, 2025
 #### Added to JS SDK
@@ -21,8 +38,9 @@ Additions and updates to Pay Theory’s API
     - Transaction metadata and billing information
   * `on()` function for event listener registration supporting events:
     - `ready` - Messenger initialization complete
-    - `error` - Error handling
-    - `success` - Transaction success
+    - `transaction_complete` - Transaction success
+    - `transaction_error` - Transaction failure
+    - `iframe_unloaded` - Messenger iframe unloaded
   * `destroy()` function for cleanup and resource management
   * Static wallet type constants: `PayTheoryMessenger.applePay`, `PayTheoryMessenger.googlePay`, `PayTheoryMessenger.paze`
 

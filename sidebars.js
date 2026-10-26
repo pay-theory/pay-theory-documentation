@@ -144,6 +144,10 @@ module.exports = {
           id: 'main/online_payments/custom_fees',
         },
         {
+          type: 'doc',
+          id: 'main/online_payments/idempotency',
+        },
+        {
           type: 'category',
           label: 'Tokenizing Payments',
           items: [
@@ -514,6 +518,10 @@ module.exports = {
     },
     {
       type: 'doc',
+      id: 'sdk/javascript/typescript',
+    },
+    {
+      type: 'doc',
       id: 'sdk/javascript/functions',
     },
     {
@@ -642,6 +650,19 @@ const __gqlDocsItems = [
         type: 'doc',
         id: 'api/disputes/disputes',
         label: 'List Disputes',
+      },
+    ],
+    collapsible: true,
+    collapsed: true,
+  },
+  {
+    type: 'category',
+    label: 'Idempotency',
+    items: [
+      {
+        type: 'doc',
+        id: 'api/idempotency/idempotency-lookup',
+        label: 'Lookup Idempotency Key',
       },
     ],
     collapsible: true,
@@ -1180,6 +1201,16 @@ const __gqlDocsItems = [
       },
       {
         type: 'doc',
+        id: 'api/types/enums/idempotency-operation',
+        label: 'IdempotencyOperation',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/enums/idempotency-status',
+        label: 'IdempotencyStatus',
+      },
+      {
+        type: 'doc',
         id: 'api/types/enums/instruction-status',
         label: 'InstructionStatus',
       },
@@ -1247,6 +1278,11 @@ const __gqlDocsItems = [
         type: 'doc',
         id: 'api/types/enums/reserve-account-type',
         label: 'ReserveAccountType',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/enums/settlement-type',
+        label: 'SettlementType',
       },
       {
         type: 'doc',
@@ -1813,6 +1849,11 @@ const __gqlDocsItems = [
         type: 'doc',
         id: 'api/types/types/id',
         label: 'ID',
+      },
+      {
+        type: 'doc',
+        id: 'api/types/types/idempotency-lookup',
+        label: 'IdempotencyLookup',
       },
       {
         type: 'doc',
