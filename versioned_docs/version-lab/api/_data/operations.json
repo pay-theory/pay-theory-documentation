@@ -1891,29 +1891,7 @@
         "String"
       ],
       "isDeprecated": false,
-      "examples": [
-        {
-          "name": "Example missedRecurringPaymentData",
-          "description": "This call will return details you need to display the proper amount to the customer to catch up on missed payments for a recurring payment.",
-          "query": "query MissedRecurringPaymentData($recurring_id: String!) {\n  missedRecurringPaymentData(recurring_id: $recurring_id) {\n  fee\n  number_of_payments_missed\n  total_amount_owed\n  }\n}",
-          "variables": {
-            "recurring_id": "example"
-          },
-          "response": {
-            "type": "success",
-            "httpStatus": 200,
-            "body": {
-              "data": {
-                "missedRecurringPaymentData": {
-                  "fee": 123,
-                  "number_of_payments_missed": 123,
-                  "total_amount_owed": 123
-                }
-              }
-            }
-          }
-        }
-      ],
+      "examples": [],
       "returnTypeString": "MissedRecurringPaymentData"
     },
     "settlements": {
@@ -2175,30 +2153,7 @@
         "ID"
       ],
       "isDeprecated": false,
-      "examples": [
-        {
-          "name": "Example availableFundsBalance",
-          "description": "This query returns the instructional hold and reserve balances for a merchant, along with the instruction window status.",
-          "query": "query AvailableFundsBalance($merchant_uid: ID!) {\n  availableFundsBalance(merchant_uid: $merchant_uid) {\n  instructional_hold_balance_updated\n  instruction_window_status\n  instructional_hold_balance\n  reserve_balance\n  }\n}",
-          "variables": {
-            "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
-          },
-          "response": {
-            "type": "success",
-            "httpStatus": 200,
-            "body": {
-              "data": {
-                "availableFundsBalance": {
-                  "instructional_hold_balance_updated": true,
-                  "instruction_window_status": "example",
-                  "instructional_hold_balance": "example",
-                  "reserve_balance": "example"
-                }
-              }
-            }
-          }
-        }
-      ],
+      "examples": [],
       "returnTypeString": "[AvailableFundsBalance]"
     },
     "fundingTransfers": {
@@ -2249,38 +2204,7 @@
         "Int"
       ],
       "isDeprecated": false,
-      "examples": [
-        {
-          "name": "Example fundingTransfers",
-          "description": "Returns funding transfers.",
-          "query": "query FundingTransfers($merchant_uid: ID!, $settlement_batch: Int!) {\n  fundingTransfers(merchant_uid: $merchant_uid, settlement_batch: $settlement_batch) {\n  transfers {\n    id\n    transfer_date\n    ach_return\n    amount\n    created_at\n  }\n  }\n}",
-          "variables": {
-            "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
-            "settlement_batch": 123
-          },
-          "response": {
-            "type": "success",
-            "httpStatus": 200,
-            "body": {
-              "data": {
-                "fundingTransfers": {
-                  "transfers": [
-                    {
-                      "id": "id_123",
-                      "transfer_date": "2025-01-01T00:00:00Z",
-                      "ach_return": {
-                        "key": "value"
-                      },
-                      "amount": "example",
-                      "created_at": "2025-01-01T00:00:00Z"
-                    }
-                  ]
-                }
-              }
-            }
-          }
-        }
-      ],
+      "examples": [],
       "returnTypeString": "FundingTransfers"
     },
     "instruction": {
@@ -2334,34 +2258,7 @@
         "AWSDate"
       ],
       "isDeprecated": false,
-      "examples": [
-        {
-          "name": "Example instruction",
-          "description": "Returns a merchant's settlement instruction for the specified date.",
-          "query": "query Instruction($merchant_uid: ID!, $date: AWSDate!) {\n  instruction(merchant_uid: $merchant_uid, date: $date) {\n  id\n  date\n  amount\n  merchant_uid\n  metadata\n  }\n}",
-          "variables": {
-            "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
-            "date": "2025-01-01"
-          },
-          "response": {
-            "type": "success",
-            "httpStatus": 200,
-            "body": {
-              "data": {
-                "instruction": {
-                  "id": "id_123",
-                  "date": "2025-01-01",
-                  "amount": "example",
-                  "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
-                  "metadata": {
-                    "key": "value"
-                  }
-                }
-              }
-            }
-          }
-        }
-      ],
+      "examples": [],
       "returnTypeString": "[Instruction]"
     },
     "splits": {
@@ -2987,32 +2884,7 @@
         "String"
       ],
       "isDeprecated": false,
-      "examples": [
-        {
-          "name": "Example users",
-          "description": "Requires a partner key.",
-          "query": "query Users($user_pool: UserPool!, $merchant_uid: String) {\n  users(user_pool: $user_pool, merchant_uid: $merchant_uid) {\n  email\n  full_name\n  phone\n  user_status\n  username\n  }\n}",
-          "variables": {
-            "user_pool": "MERCHANT",
-            "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
-          },
-          "response": {
-            "type": "success",
-            "httpStatus": 200,
-            "body": {
-              "data": {
-                "users": {
-                  "email": "example",
-                  "full_name": "example",
-                  "phone": "example",
-                  "user_status": "example",
-                  "username": "example"
-                }
-              }
-            }
-          }
-        }
-      ],
+      "examples": [],
       "returnTypeString": "[User]"
     },
     "webhooks": {
@@ -3056,29 +2928,7 @@
         "String"
       ],
       "isDeprecated": false,
-      "examples": [
-        {
-          "name": "Example webhooks",
-          "description": "Returns webhooks.",
-          "query": "query Webhooks($endpoint: String) {\n  webhooks(endpoint: $endpoint) {\n  endpoint\n  is_active\n  name\n  }\n}",
-          "variables": {
-            "endpoint": "example"
-          },
-          "response": {
-            "type": "success",
-            "httpStatus": 200,
-            "body": {
-              "data": {
-                "webhooks": {
-                  "endpoint": "example",
-                  "is_active": true,
-                  "name": "example"
-                }
-              }
-            }
-          }
-        }
-      ],
+      "examples": [],
       "returnTypeString": "[Webhook]!"
     },
     "webhookEvents": {
@@ -3167,40 +3017,7 @@
         "Int"
       ],
       "isDeprecated": false,
-      "examples": [
-        {
-          "name": "Example webhookEvents",
-          "description": "Returns webhook events.",
-          "query": "query WebhookEvents($id: ID, $endpoint: String, $result: WebhookNotificationResult, $last_evaluated_key: String, $limit: Int) {\n  webhookEvents(id: $id, endpoint: $endpoint, result: $result, last_evaluated_key: $last_evaluated_key, limit: $limit) {\n  last_evaluated_key\n  events {\n    id\n    endpoint\n    error\n    event\n    finished_at\n  }\n  }\n}",
-          "variables": {
-            "id": "id_123",
-            "endpoint": "example",
-            "result": "FAILURE",
-            "last_evaluated_key": "example",
-            "limit": 123
-          },
-          "response": {
-            "type": "success",
-            "httpStatus": 200,
-            "body": {
-              "data": {
-                "webhookEvents": {
-                  "last_evaluated_key": "example",
-                  "events": [
-                    {
-                      "id": "id_123",
-                      "endpoint": "example",
-                      "error": "example",
-                      "event": "example",
-                      "finished_at": "example"
-                    }
-                  ]
-                }
-              }
-            }
-          }
-        }
-      ],
+      "examples": [],
       "returnTypeString": "WebhookEvents!"
     },
     "serviceFeeAmount": {
@@ -4066,77 +3883,6 @@
                   "message": "Session key missing, invalid request."
                 }
               ]
-            }
-          }
-        },
-        {
-          "name": "Example createWalletAuthorization",
-          "description": "This call is used to create an authorization for a wallet payment via Apple Pay or Google Pay. It works in conjunction with our SDKs to allow you to create an authorization via our API.",
-          "query": "mutation CreateWalletAuthorization($app_id: String, $merchant_uid: String!, $sale_id: String, $wallet_type: WalletType, $digital_wallet_payload: String!, $amount: Int, $fee: Int, $billing_address: BillingAddressInput, $payor_id: String, $payor: PayorInput, $invoice_id: String, $account_code: String, $reference: String, $metadata: AWSJSON, $health_expense_type: HealthExpenseType, $additional_purchase_data: AdditionalPurchaseDataInput) {\n  createWalletAuthorization(app_id: $app_id, merchant_uid: $merchant_uid, sale_id: $sale_id, wallet_type: $wallet_type, digital_wallet_payload: $digital_wallet_payload, amount: $amount, fee: $fee, billing_address: $billing_address, payor_id: $payor_id, payor: $payor, invoice_id: $invoice_id, account_code: $account_code, reference: $reference, metadata: $metadata, health_expense_type: $health_expense_type, additional_purchase_data: $additional_purchase_data) {\n  authorization_id\n  authorization_date\n  account_code\n  amount\n  avs_status\n  }\n}",
-          "variables": {
-            "app_id": "example",
-            "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
-            "sale_id": "example",
-            "wallet_type": "APPLE_PAY",
-            "digital_wallet_payload": "example",
-            "amount": 123,
-            "fee": 123,
-            "billing_address": {
-              "address_line1": "example",
-              "address_line2": "example",
-              "city": "example",
-              "country": "example",
-              "full_name": "example",
-              "postal_code": "example",
-              "region": "example"
-            },
-            "payor_id": "example",
-            "payor": {
-              "address_line1": "example",
-              "address_line2": "example",
-              "city": "example",
-              "country": "example",
-              "email": "example",
-              "full_name": "example",
-              "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
-              "metadata": {
-                "key": "value"
-              },
-              "phone": "example",
-              "postal_code": "example",
-              "region": "example"
-            },
-            "invoice_id": "example",
-            "account_code": "example",
-            "reference": "example",
-            "metadata": {
-              "key": "value"
-            },
-            "health_expense_type": "CLINICAL",
-            "additional_purchase_data": {
-              "level3_data_line_item": [
-                {
-                  "item_code": "example"
-                }
-              ],
-              "level3_data_summary": {
-                "dest_postal_code": "example"
-              }
-            }
-          },
-          "response": {
-            "type": "success",
-            "httpStatus": 200,
-            "body": {
-              "data": {
-                "createWalletAuthorization": {
-                  "authorization_id": "example",
-                  "authorization_date": "2025-01-01T00:00:00Z",
-                  "account_code": "example",
-                  "amount": 123,
-                  "avs_status": "example"
-                }
-              }
             }
           }
         }
@@ -5318,134 +5064,7 @@
         "FeeMatrixInput"
       ],
       "isDeprecated": false,
-      "examples": [
-        {
-          "name": "Example updateFeeMatrix",
-          "description": ":::note Limited Access This mutation is only available to users with Partner level access. Please contact Pay Theory support if you need to update a merchant's fee matrix and do not have Partner level access. :::",
-          "query": "mutation UpdateFeeMatrix($fee_matrix: FeeMatrixInput!) {\n  updateFeeMatrix(fee_matrix: $fee_matrix) {\n  merchant_uid\n  card_account_updater\n  ach_return_disputed_fee\n  ach_return_fee\n  cash\n  }\n}",
-          "variables": {
-            "fee_matrix": {
-              "ach": {
-                "merchant_fee": {
-                  "basis_points": 123
-                },
-                "service_fee": {
-                  "basis_points": 123,
-                  "fixed": 123
-                }
-              },
-              "ach_return_fee": 123,
-              "ach_return_disputed_fee": 123,
-              "business_credit": {
-                "merchant_fee": {
-                  "basis_points": 123,
-                  "fixed": 123
-                },
-                "service_fee": {
-                  "basis_points": 123,
-                  "fixed": 123
-                }
-              },
-              "business_debit": {
-                "merchant_fee": {
-                  "basis_points": 123,
-                  "fixed": 123
-                },
-                "service_fee": {
-                  "basis_points": 123,
-                  "fixed": 123
-                }
-              },
-              "amex": {
-                "merchant_fee": {
-                  "basis_points": 123,
-                  "fixed": 123
-                }
-              },
-              "card": {
-                "merchant_fee": {
-                  "basis_points": 123,
-                  "fixed": 123
-                },
-                "service_fee": {
-                  "basis_points": 123,
-                  "fixed": 123
-                }
-              },
-              "card_account_updater": 123,
-              "cash": 123,
-              "chargeback_fee": 123,
-              "credit_card": {
-                "merchant_fee": {
-                  "basis_points": 123,
-                  "fixed": 123
-                },
-                "service_fee": {
-                  "basis_points": 123,
-                  "fixed": 123
-                }
-              },
-              "debit_card": {
-                "merchant_fee": {
-                  "basis_points": 123,
-                  "fixed": 123
-                },
-                "service_fee": {
-                  "basis_points": 123,
-                  "fixed": 123
-                }
-              },
-              "discover": {
-                "merchant_fee": {
-                  "basis_points": 123,
-                  "fixed": 123
-                }
-              },
-              "interchange_plus": true,
-              "international_card_basis": 123,
-              "mastercard": {
-                "merchant_fee": {
-                  "basis_points": 123,
-                  "fixed": 123
-                }
-              },
-              "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
-              "prepaid_card": {
-                "merchant_fee": {
-                  "basis_points": 123,
-                  "fixed": 123
-                },
-                "service_fee": {
-                  "basis_points": 123,
-                  "fixed": 123
-                }
-              },
-              "service_fee_enabled": true,
-              "visa": {
-                "merchant_fee": {
-                  "basis_points": 123,
-                  "fixed": 123
-                }
-              }
-            }
-          },
-          "response": {
-            "type": "success",
-            "httpStatus": 200,
-            "body": {
-              "data": {
-                "updateFeeMatrix": {
-                  "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
-                  "card_account_updater": 123,
-                  "ach_return_disputed_fee": 123,
-                  "ach_return_fee": 123,
-                  "cash": 123
-                }
-              }
-            }
-          }
-        }
-      ],
+      "examples": [],
       "returnTypeString": "FeeMatrix"
     },
     "updateMerchantSettings": {
@@ -5723,30 +5342,7 @@
         "MetadataAssociate"
       ],
       "isDeprecated": false,
-      "examples": [
-        {
-          "name": "Example deleteMetadata",
-          "description": "Deletes metadata for an item.",
-          "query": "mutation DeleteMetadata($id: String!, $metadata_associate: MetadataAssociate!, $merchant_uid: String!, $metadata_keys: [String]!) {\n  deleteMetadata(id: $id, metadata_associate: $metadata_associate, merchant_uid: $merchant_uid, metadata_keys: $metadata_keys)\n}",
-          "variables": {
-            "id": "example",
-            "metadata_associate": "AUTHORIZATION",
-            "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
-            "metadata_keys": [
-              "example"
-            ]
-          },
-          "response": {
-            "type": "success",
-            "httpStatus": 200,
-            "body": {
-              "data": {
-                "deleteMetadata": true
-              }
-            }
-          }
-        }
-      ],
+      "examples": [],
       "returnTypeString": "Boolean"
     },
     "createPaymentLink": {
@@ -7247,25 +6843,7 @@
         "String"
       ],
       "isDeprecated": false,
-      "examples": [
-        {
-          "name": "Example createRetryForFailedRecurringPayment",
-          "description": "This call will allow you to retry a payment for a recurring payment that is in a Failed state. This should be used when the state is INSTRUMENT_FAILURE and the issue with the payment method has been addressed. EX: Payment failed for insufficient funds on the card, but the customer has since made a payment on the balance to resolve the issue.",
-          "query": "mutation CreateRetryForFailedRecurringPayment($recurring_id: String!) {\n  createRetryForFailedRecurringPayment(recurring_id: $recurring_id)\n}",
-          "variables": {
-            "recurring_id": "example"
-          },
-          "response": {
-            "type": "success",
-            "httpStatus": 200,
-            "body": {
-              "data": {
-                "createRetryForFailedRecurringPayment": true
-              }
-            }
-          }
-        }
-      ],
+      "examples": [],
       "returnTypeString": "Boolean"
     },
     "cancelSettlementInstruction": {
@@ -7303,33 +6881,7 @@
         "ID"
       ],
       "isDeprecated": false,
-      "examples": [
-        {
-          "name": "Example cancelSettlementInstruction",
-          "description": "Cancels settlement instruction.",
-          "query": "mutation CancelSettlementInstruction($merchant_uid: ID!) {\n  cancelSettlementInstruction(merchant_uid: $merchant_uid) {\n  id\n  date\n  amount\n  merchant_uid\n  metadata\n  }\n}",
-          "variables": {
-            "merchant_uid": "id_123"
-          },
-          "response": {
-            "type": "success",
-            "httpStatus": 200,
-            "body": {
-              "data": {
-                "cancelSettlementInstruction": {
-                  "id": "id_123",
-                  "date": "2025-01-01",
-                  "amount": "example",
-                  "merchant_uid": "id_123",
-                  "metadata": {
-                    "key": "value"
-                  }
-                }
-              }
-            }
-          }
-        }
-      ],
+      "examples": [],
       "returnTypeString": "Instruction"
     },
     "createSettlementInstruction": {
@@ -7367,39 +6919,7 @@
         "CreateSettlementInstructionInput"
       ],
       "isDeprecated": false,
-      "examples": [
-        {
-          "name": "Example createSettlementInstruction",
-          "description": "This mutation creates an instructional funding request for a merchant.",
-          "query": "mutation CreateSettlementInstruction($input: CreateSettlementInstructionInput!) {\n  createSettlementInstruction(input: $input) {\n  instruction_id\n  scheduled_processing_date\n  metadata\n  projected_reserve_balance\n  settlement_batch\n  }\n}",
-          "variables": {
-            "input": {
-              "merchant_uid": "id_123",
-              "amount": "example",
-              "metadata": {
-                "key": "value"
-              }
-            }
-          },
-          "response": {
-            "type": "success",
-            "httpStatus": 200,
-            "body": {
-              "data": {
-                "createSettlementInstruction": {
-                  "instruction_id": "id_123",
-                  "scheduled_processing_date": "2025-01-01T00:00:00Z",
-                  "metadata": {
-                    "key": "value"
-                  },
-                  "projected_reserve_balance": "example",
-                  "settlement_batch": 123
-                }
-              }
-            }
-          }
-        }
-      ],
+      "examples": [],
       "returnTypeString": "CreateSettlementInstructionResponse"
     },
     "createTransaction": {
@@ -8466,85 +7986,6 @@
               ]
             }
           }
-        },
-        {
-          "name": "Example createWalletTransaction",
-          "description": "This call is used to create a transaction for a wallet payment via Apple Pay or Google Pay. It works in conjunction with our SDKs to allow you to create a transaction via our API.",
-          "query": "mutation CreateWalletTransaction($app_id: String, $merchant_uid: String!, $wallet_type: WalletType, $digital_wallet_payload: String!, $amount: Int, $fee: Int, $billing_address: BillingAddressInput, $payor_id: String, $payor: PayorInput, $recurring_id: String, $invoice_id: String, $account_code: String, $reference: String, $send_receipt: Boolean, $receipt_description: String, $metadata: AWSJSON, $health_expense_type: HealthExpenseType, $additional_purchase_data: AdditionalPurchaseDataInput, $split: [SplitInput]) {\n  createWalletTransaction(app_id: $app_id, merchant_uid: $merchant_uid, wallet_type: $wallet_type, digital_wallet_payload: $digital_wallet_payload, amount: $amount, fee: $fee, billing_address: $billing_address, payor_id: $payor_id, payor: $payor, recurring_id: $recurring_id, invoice_id: $invoice_id, account_code: $account_code, reference: $reference, send_receipt: $send_receipt, receipt_description: $receipt_description, metadata: $metadata, health_expense_type: $health_expense_type, additional_purchase_data: $additional_purchase_data, split: $split) {\n  transaction_id\n  transaction_date\n  account_code\n  authorization_id\n  avs_status\n  }\n}",
-          "variables": {
-            "app_id": "example",
-            "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
-            "wallet_type": "APPLE_PAY",
-            "digital_wallet_payload": "example",
-            "amount": 123,
-            "fee": 123,
-            "billing_address": {
-              "address_line1": "example",
-              "address_line2": "example",
-              "city": "example",
-              "country": "example",
-              "full_name": "example",
-              "postal_code": "example",
-              "region": "example"
-            },
-            "payor_id": "example",
-            "payor": {
-              "address_line1": "example",
-              "address_line2": "example",
-              "city": "example",
-              "country": "example",
-              "email": "example",
-              "full_name": "example",
-              "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
-              "metadata": {
-                "key": "value"
-              },
-              "phone": "example",
-              "postal_code": "example",
-              "region": "example"
-            },
-            "recurring_id": "example",
-            "invoice_id": "example",
-            "account_code": "example",
-            "reference": "example",
-            "send_receipt": true,
-            "receipt_description": "example",
-            "metadata": {
-              "key": "value"
-            },
-            "health_expense_type": "CLINICAL",
-            "additional_purchase_data": {
-              "level3_data_line_item": [
-                {
-                  "item_code": "example"
-                }
-              ],
-              "level3_data_summary": {
-                "dest_postal_code": "example"
-              }
-            },
-            "split": [
-              {
-                "amount": 123,
-                "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
-              }
-            ]
-          },
-          "response": {
-            "type": "success",
-            "httpStatus": 200,
-            "body": {
-              "data": {
-                "createWalletTransaction": {
-                  "transaction_id": "example",
-                  "transaction_date": "2025-01-01T00:00:00Z",
-                  "account_code": "example",
-                  "authorization_id": "example",
-                  "avs_status": "example"
-                }
-              }
-            }
-          }
         }
       ],
       "returnTypeString": "Transaction!"
@@ -8958,38 +8399,7 @@
         "UserInput"
       ],
       "isDeprecated": false,
-      "examples": [
-        {
-          "name": "Example createUser",
-          "description": "Requires a partner key.",
-          "query": "mutation CreateUser($input: UserInput!) {\n  createUser(input: $input) {\n  email\n  full_name\n  phone\n  user_status\n  username\n  }\n}",
-          "variables": {
-            "input": {
-              "email": "user@example.com",
-              "first_name": "example",
-              "last_name": "example",
-              "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
-              "phone": "+14045551234",
-              "user_pool": "MERCHANT"
-            }
-          },
-          "response": {
-            "type": "success",
-            "httpStatus": 200,
-            "body": {
-              "data": {
-                "createUser": {
-                  "email": "example",
-                  "full_name": "example",
-                  "phone": "example",
-                  "user_status": "example",
-                  "username": "example"
-                }
-              }
-            }
-          }
-        }
-      ],
+      "examples": [],
       "returnTypeString": "User"
     },
     "deleteUser": {
@@ -9043,26 +8453,7 @@
         "UserPool"
       ],
       "isDeprecated": false,
-      "examples": [
-        {
-          "name": "Example deleteUser",
-          "description": "Requires a partner key.",
-          "query": "mutation DeleteUser($username: String!, $user_pool: UserPool!) {\n  deleteUser(username: $username, user_pool: $user_pool)\n}",
-          "variables": {
-            "username": "example",
-            "user_pool": "MERCHANT"
-          },
-          "response": {
-            "type": "success",
-            "httpStatus": 200,
-            "body": {
-              "data": {
-                "deleteUser": true
-              }
-            }
-          }
-        }
-      ],
+      "examples": [],
       "returnTypeString": "Boolean"
     },
     "createWebhook": {
@@ -9115,26 +8506,7 @@
         "String"
       ],
       "isDeprecated": false,
-      "examples": [
-        {
-          "name": "Example createWebhook",
-          "description": "To create a webhook, you need to provide the endpoint and a name for the webhook using the following mutation:",
-          "query": "mutation CreateWebhook($endpoint: String!, $name: String!) {\n  createWebhook(endpoint: $endpoint, name: $name)\n}",
-          "variables": {
-            "endpoint": "example",
-            "name": "example"
-          },
-          "response": {
-            "type": "success",
-            "httpStatus": 200,
-            "body": {
-              "data": {
-                "createWebhook": true
-              }
-            }
-          }
-        }
-      ],
+      "examples": [],
       "returnTypeString": "Boolean!"
     },
     "updateWebhook": {
@@ -9199,27 +8571,7 @@
         "String"
       ],
       "isDeprecated": false,
-      "examples": [
-        {
-          "name": "Example updateWebhook",
-          "description": "To update a webhook, you can use a mutation like the following:",
-          "query": "mutation UpdateWebhook($endpoint: String!, $name: String, $is_active: Boolean) {\n  updateWebhook(endpoint: $endpoint, name: $name, is_active: $is_active)\n}",
-          "variables": {
-            "endpoint": "example",
-            "name": "example",
-            "is_active": true
-          },
-          "response": {
-            "type": "success",
-            "httpStatus": 200,
-            "body": {
-              "data": {
-                "updateWebhook": true
-              }
-            }
-          }
-        }
-      ],
+      "examples": [],
       "returnTypeString": "Boolean!"
     },
     "deleteWebhook": {
@@ -9260,25 +8612,7 @@
         "String"
       ],
       "isDeprecated": false,
-      "examples": [
-        {
-          "name": "Example deleteWebhook",
-          "description": "To delete a webhook, you can use the following mutation:",
-          "query": "mutation DeleteWebhook($endpoint: String!) {\n  deleteWebhook(endpoint: $endpoint)\n}",
-          "variables": {
-            "endpoint": "example"
-          },
-          "response": {
-            "type": "success",
-            "httpStatus": 200,
-            "body": {
-              "data": {
-                "deleteWebhook": true
-              }
-            }
-          }
-        }
-      ],
+      "examples": [],
       "returnTypeString": "Boolean!"
     },
     "createBarcodePaymentSandbox": {
@@ -9332,30 +8666,7 @@
         "Int"
       ],
       "isDeprecated": false,
-      "examples": [
-        {
-          "name": "Example createBarcodePaymentSandbox",
-          "description": "Sandbox Only This mutation will only work in sandbox environments. It is used to simulate barcode payments for testing purposes.",
-          "query": "mutation CreateBarcodePaymentSandbox($barcode_id: String!, $amount_to_pay: Int!) {\n  createBarcodePaymentSandbox(barcode_id: $barcode_id, amount_to_pay: $amount_to_pay) {\n  confirmation_code\n  status\n  status_message\n  }\n}",
-          "variables": {
-            "barcode_id": "example",
-            "amount_to_pay": 123
-          },
-          "response": {
-            "type": "success",
-            "httpStatus": 200,
-            "body": {
-              "data": {
-                "createBarcodePaymentSandbox": {
-                  "confirmation_code": "example",
-                  "status": "example",
-                  "status_message": "example"
-                }
-              }
-            }
-          }
-        }
-      ],
+      "examples": [],
       "returnTypeString": "BarcodePaymentResponse!"
     },
     "createBatchCapture": {
@@ -9396,25 +8707,7 @@
         "String"
       ],
       "isDeprecated": false,
-      "examples": [
-        {
-          "name": "Example createBatchCapture",
-          "description": "Captures a merchant's pending transactions in one batch and creates a settlement for them.",
-          "query": "mutation CreateBatchCapture($merchant_uid: String!) {\n  createBatchCapture(merchant_uid: $merchant_uid)\n}",
-          "variables": {
-            "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
-          },
-          "response": {
-            "type": "success",
-            "httpStatus": 200,
-            "body": {
-              "data": {
-                "createBatchCapture": true
-              }
-            }
-          }
-        }
-      ],
+      "examples": [],
       "returnTypeString": "Boolean"
     },
     "createSandboxAchReturn": {
@@ -9452,32 +8745,7 @@
         "CreateSandboxAchReturnInput"
       ],
       "isDeprecated": false,
-      "examples": [
-        {
-          "name": "Example createSandboxAchReturn",
-          "description": "Use this mutation to create an ACH return for a completed ACH transaction.",
-          "query": "mutation CreateSandboxAchReturn($input: CreateSandboxAchReturnInput!) {\n  createSandboxAchReturn(input: $input) {\n  ach_return_transaction_id\n  return_code\n  success\n  }\n}",
-          "variables": {
-            "input": {
-              "transaction_id": "example",
-              "return_code": "R01"
-            }
-          },
-          "response": {
-            "type": "success",
-            "httpStatus": 200,
-            "body": {
-              "data": {
-                "createSandboxAchReturn": {
-                  "ach_return_transaction_id": "example",
-                  "return_code": "example",
-                  "success": true
-                }
-              }
-            }
-          }
-        }
-      ],
+      "examples": [],
       "returnTypeString": "SandboxAchReturnResult!"
     },
     "createSandboxDispute": {
@@ -9515,32 +8783,7 @@
         "CreateSandboxDisputeInput"
       ],
       "isDeprecated": false,
-      "examples": [
-        {
-          "name": "Example createSandboxDispute",
-          "description": "Use this mutation to create a dispute for a card transaction.",
-          "query": "mutation CreateSandboxDispute($input: CreateSandboxDisputeInput!) {\n  createSandboxDispute(input: $input) {\n  dispute_id\n  success\n  transaction_id\n  }\n}",
-          "variables": {
-            "input": {
-              "transaction_id": "example",
-              "reason": "CLERICAL"
-            }
-          },
-          "response": {
-            "type": "success",
-            "httpStatus": 200,
-            "body": {
-              "data": {
-                "createSandboxDispute": {
-                  "dispute_id": "example",
-                  "success": true,
-                  "transaction_id": "example"
-                }
-              }
-            }
-          }
-        }
-      ],
+      "examples": [],
       "returnTypeString": "SandboxDisputeResult!"
     },
     "createSandboxSettlement": {
@@ -9578,29 +8821,7 @@
         "CreateSandboxSettlementInput"
       ],
       "isDeprecated": false,
-      "examples": [
-        {
-          "name": "Example createSandboxSettlement",
-          "description": "Create a settlement from a prepared sandbox batch.",
-          "query": "mutation CreateSandboxSettlement($input: CreateSandboxSettlementInput!) {\n  createSandboxSettlement(input: $input) {\n  success\n  }\n}",
-          "variables": {
-            "input": {
-              "merchant_uid": "id_123"
-            }
-          },
-          "response": {
-            "type": "success",
-            "httpStatus": 200,
-            "body": {
-              "data": {
-                "createSandboxSettlement": {
-                  "success": true
-                }
-              }
-            }
-          }
-        }
-      ],
+      "examples": [],
       "returnTypeString": "SandboxSettlementResult!"
     },
     "prepareSandboxSettlementBatch": {
@@ -9638,37 +8859,7 @@
         "PrepareSandboxSettlementBatchInput"
       ],
       "isDeprecated": false,
-      "examples": [
-        {
-          "name": "Example prepareSandboxSettlementBatch",
-          "description": "Prepare a settlement batch to lock in line items and calculate totals for a merchant.",
-          "query": "mutation PrepareSandboxSettlementBatch($input: PrepareSandboxSettlementBatchInput!) {\n  prepareSandboxSettlementBatch(input: $input) {\n  prep_id\n  ach_return_ids\n  calculated_gross_amount\n  calculated_net_amount\n  debit_ids\n  }\n}",
-          "variables": {
-            "input": {
-              "merchant_uid": "id_123"
-            }
-          },
-          "response": {
-            "type": "success",
-            "httpStatus": 200,
-            "body": {
-              "data": {
-                "prepareSandboxSettlementBatch": {
-                  "prep_id": "id_123",
-                  "ach_return_ids": [
-                    "example"
-                  ],
-                  "calculated_gross_amount": 123,
-                  "calculated_net_amount": 123,
-                  "debit_ids": [
-                    "example"
-                  ]
-                }
-              }
-            }
-          }
-        }
-      ],
+      "examples": [],
       "returnTypeString": "SandboxSettlementBatchPrepResult!"
     },
     "updateSandboxDisputeStatus": {
@@ -9706,30 +8897,7 @@
         "UpdateSandboxDisputeStatusInput"
       ],
       "isDeprecated": false,
-      "examples": [
-        {
-          "name": "Example updateSandboxDisputeStatus",
-          "description": "Use this mutation to move a dispute through its lifecycle.",
-          "query": "mutation UpdateSandboxDisputeStatus($input: UpdateSandboxDisputeStatusInput!) {\n  updateSandboxDisputeStatus(input: $input) {\n  success\n  }\n}",
-          "variables": {
-            "input": {
-              "dispute_id": "example",
-              "status": "INQUIRY"
-            }
-          },
-          "response": {
-            "type": "success",
-            "httpStatus": 200,
-            "body": {
-              "data": {
-                "updateSandboxDisputeStatus": {
-                  "success": true
-                }
-              }
-            }
-          }
-        }
-      ],
+      "examples": [],
       "returnTypeString": "SandboxDisputeUpdateResult!"
     },
     "createOneTimePayment": {
@@ -9983,85 +9151,6 @@
                   "message": "Either payment_method or payment_method_id must be passed in."
                 }
               ]
-            }
-          }
-        },
-        {
-          "name": "Example createOneTimePayment",
-          "description": "This call was deprecated in favor of the createTransaction mutation. The createTransaction mutation returns a more detailed response than this call.",
-          "query": "mutation CreateOneTimePayment($merchant_uid: String!, $amount: Int!, $payment_method_id: String, $payment_method: PaymentMethodInput, $recurring_id: String, $invoice_id: String, $fee: Int, $fee_mode: FeeMode, $payment_parameters_name: String, $account_code: String, $reference: String, $send_receipt: Boolean, $receipt_description: String, $metadata: AWSJSON, $health_expense_type: HealthExpenseType, $additional_purchase_data: AdditionalPurchaseDataInput) {\n  createOneTimePayment(merchant_uid: $merchant_uid, amount: $amount, payment_method_id: $payment_method_id, payment_method: $payment_method, recurring_id: $recurring_id, invoice_id: $invoice_id, fee: $fee, fee_mode: $fee_mode, payment_parameters_name: $payment_parameters_name, account_code: $account_code, reference: $reference, send_receipt: $send_receipt, receipt_description: $receipt_description, metadata: $metadata, health_expense_type: $health_expense_type, additional_purchase_data: $additional_purchase_data) {\n  transaction_id\n  created_at\n  amount\n  card_brand\n  currency\n  }\n}",
-          "variables": {
-            "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
-            "amount": 123,
-            "payment_method_id": "example",
-            "payment_method": {
-              "ach": {
-                "account_number": "example",
-                "account_type": "BUSINESS_CHECKING",
-                "name_on_account": "example",
-                "routing_number": "example"
-              },
-              "canadian_eft": {
-                "account_number": "example",
-                "account_type": "BUSINESS_CHECKING",
-                "institution_number": "example",
-                "name_on_account": "example",
-                "transit_number": "example"
-              },
-              "card": {
-                "card_number": "example",
-                "exp_date": {
-                  "month": "example",
-                  "year": "example"
-                },
-                "postal_code": "example",
-                "security_code": "example"
-              },
-              "metadata": {
-                "key": "value"
-              },
-              "payor": {
-                "address_line1": "example"
-              },
-              "payor_id": "example"
-            },
-            "recurring_id": "example",
-            "invoice_id": "example",
-            "fee": 123,
-            "fee_mode": "CUSTOM_FEE",
-            "payment_parameters_name": "example",
-            "account_code": "example",
-            "reference": "example",
-            "send_receipt": true,
-            "receipt_description": "example",
-            "metadata": {
-              "key": "value"
-            },
-            "health_expense_type": "CLINICAL",
-            "additional_purchase_data": {
-              "level3_data_line_item": [
-                {
-                  "item_code": "example"
-                }
-              ],
-              "level3_data_summary": {
-                "dest_postal_code": "example"
-              }
-            }
-          },
-          "response": {
-            "type": "success",
-            "httpStatus": 200,
-            "body": {
-              "data": {
-                "createOneTimePayment": {
-                  "transaction_id": "example",
-                  "created_at": "2025-01-01T00:00:00Z",
-                  "amount": 123,
-                  "card_brand": "example",
-                  "currency": "example"
-                }
-              }
             }
           }
         }

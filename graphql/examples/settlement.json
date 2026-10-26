@@ -136,120 +136,21 @@
   {
     "operation": "createBatchCapture",
     "operationType": "mutation",
-    "examples": [
-      {
-        "name": "Example createBatchCapture",
-        "description": "Captures a merchant's pending transactions in one batch and creates a settlement for them.",
-        "query": "mutation CreateBatchCapture($merchant_uid: String!) {\n  createBatchCapture(merchant_uid: $merchant_uid)\n}",
-        "variables": {
-          "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
-        },
-        "response": {
-          "type": "success",
-          "httpStatus": 200,
-          "body": {
-            "data": {
-              "createBatchCapture": true
-            }
-          }
-        }
-      }
-    ]
+    "examples": []
   },
   {
     "operation": "availableFundsBalance",
     "operationType": "query",
-    "examples": [
-      {
-        "name": "Example availableFundsBalance",
-        "description": "This query returns the instructional hold and reserve balances for a merchant, along with the instruction window status.",
-        "query": "query AvailableFundsBalance($merchant_uid: ID!) {\n  availableFundsBalance(merchant_uid: $merchant_uid) {\n  instructional_hold_balance_updated\n  instruction_window_status\n  instructional_hold_balance\n  reserve_balance\n  }\n}",
-        "variables": {
-          "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
-        },
-        "response": {
-          "type": "success",
-          "httpStatus": 200,
-          "body": {
-            "data": {
-              "availableFundsBalance": {
-                "instructional_hold_balance_updated": true,
-                "instruction_window_status": "example",
-                "instructional_hold_balance": "example",
-                "reserve_balance": "example"
-              }
-            }
-          }
-        }
-      }
-    ]
+    "examples": []
   },
   {
     "operation": "fundingTransfers",
     "operationType": "query",
-    "examples": [
-      {
-        "name": "Example fundingTransfers",
-        "description": "Returns funding transfers.",
-        "query": "query FundingTransfers($merchant_uid: ID!, $settlement_batch: Int!) {\n  fundingTransfers(merchant_uid: $merchant_uid, settlement_batch: $settlement_batch) {\n  transfers {\n    id\n    transfer_date\n    ach_return\n    amount\n    created_at\n  }\n  }\n}",
-        "variables": {
-          "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
-          "settlement_batch": 123
-        },
-        "response": {
-          "type": "success",
-          "httpStatus": 200,
-          "body": {
-            "data": {
-              "fundingTransfers": {
-                "transfers": [
-                  {
-                    "id": "id_123",
-                    "transfer_date": "2025-01-01T00:00:00Z",
-                    "ach_return": {
-                      "key": "value"
-                    },
-                    "amount": "example",
-                    "created_at": "2025-01-01T00:00:00Z"
-                  }
-                ]
-              }
-            }
-          }
-        }
-      }
-    ]
+    "examples": []
   },
   {
     "operation": "instruction",
     "operationType": "query",
-    "examples": [
-      {
-        "name": "Example instruction",
-        "description": "Returns a merchant's settlement instruction for the specified date.",
-        "query": "query Instruction($merchant_uid: ID!, $date: AWSDate!) {\n  instruction(merchant_uid: $merchant_uid, date: $date) {\n  id\n  date\n  amount\n  merchant_uid\n  metadata\n  }\n}",
-        "variables": {
-          "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
-          "date": "2025-01-01"
-        },
-        "response": {
-          "type": "success",
-          "httpStatus": 200,
-          "body": {
-            "data": {
-              "instruction": {
-                "id": "id_123",
-                "date": "2025-01-01",
-                "amount": "example",
-                "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
-                "metadata": {
-                  "key": "value"
-                }
-              }
-            }
-          }
-        }
-      }
-    ]
+    "examples": []
   }
 ]

@@ -308,51 +308,11 @@
   {
     "operation": "missedRecurringPaymentData",
     "operationType": "query",
-    "examples": [
-      {
-        "name": "Example missedRecurringPaymentData",
-        "description": "This call will return details you need to display the proper amount to the customer to catch up on missed payments for a recurring payment.",
-        "query": "query MissedRecurringPaymentData($recurring_id: String!) {\n  missedRecurringPaymentData(recurring_id: $recurring_id) {\n  fee\n  number_of_payments_missed\n  total_amount_owed\n  }\n}",
-        "variables": {
-          "recurring_id": "example"
-        },
-        "response": {
-          "type": "success",
-          "httpStatus": 200,
-          "body": {
-            "data": {
-              "missedRecurringPaymentData": {
-                "fee": 123,
-                "number_of_payments_missed": 123,
-                "total_amount_owed": 123
-              }
-            }
-          }
-        }
-      }
-    ]
+    "examples": []
   },
   {
     "operation": "createRetryForFailedRecurringPayment",
     "operationType": "mutation",
-    "examples": [
-      {
-        "name": "Example createRetryForFailedRecurringPayment",
-        "description": "This call will allow you to retry a payment for a recurring payment that is in a Failed state. This should be used when the state is INSTRUMENT_FAILURE and the issue with the payment method has been addressed. EX: Payment failed for insufficient funds on the card, but the customer has since made a payment on the balance to resolve the issue.",
-        "query": "mutation CreateRetryForFailedRecurringPayment($recurring_id: String!) {\n  createRetryForFailedRecurringPayment(recurring_id: $recurring_id)\n}",
-        "variables": {
-          "recurring_id": "example"
-        },
-        "response": {
-          "type": "success",
-          "httpStatus": 200,
-          "body": {
-            "data": {
-              "createRetryForFailedRecurringPayment": true
-            }
-          }
-        }
-      }
-    ]
+    "examples": []
   }
 ]

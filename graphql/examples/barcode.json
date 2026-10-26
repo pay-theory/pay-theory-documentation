@@ -227,29 +227,6 @@
   {
     "operation": "createBarcodePaymentSandbox",
     "operationType": "mutation",
-    "examples": [
-      {
-        "name": "Example createBarcodePaymentSandbox",
-        "description": "Sandbox Only This mutation will only work in sandbox environments. It is used to simulate barcode payments for testing purposes.",
-        "query": "mutation CreateBarcodePaymentSandbox($barcode_id: String!, $amount_to_pay: Int!) {\n  createBarcodePaymentSandbox(barcode_id: $barcode_id, amount_to_pay: $amount_to_pay) {\n  confirmation_code\n  status\n  status_message\n  }\n}",
-        "variables": {
-          "barcode_id": "example",
-          "amount_to_pay": 123
-        },
-        "response": {
-          "type": "success",
-          "httpStatus": 200,
-          "body": {
-            "data": {
-              "createBarcodePaymentSandbox": {
-                "confirmation_code": "example",
-                "status": "example",
-                "status_message": "example"
-              }
-            }
-          }
-        }
-      }
-    ]
+    "examples": []
   }
 ]
