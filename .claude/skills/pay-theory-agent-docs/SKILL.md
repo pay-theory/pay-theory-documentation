@@ -114,6 +114,8 @@ Direct Markdown URLs are always accessible:
 | Agent artifact builder | `scripts/build-agent-docs-artifacts.js` |
 | Validation | `scripts/validate-agent-docs-artifacts.js` |
 | Edge route constants | `edge/markdown-redirect/constants.js` |
+| Edge function (CloudFront Function) | `edge/markdown-redirect/function.js` |
+| Edge route store sync | `scripts/sync-edge-routes.js` |
 | Robots file | `static/robots.txt` |
 
 ## Related skills

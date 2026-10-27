@@ -61,5 +61,5 @@ else
     echo "Using existing NODE_OPTIONS=${NODE_OPTIONS}"
 fi
 
-npm install
+npm ci --no-audit --no-fund
 npm run build

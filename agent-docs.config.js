@@ -9,8 +9,49 @@ const SOURCE_DOCS_PREFIX = '/llm-docs/source/';
 module.exports = {
   siteUrl: SITE_URL,
 
+  summary:
+    'Pay Theory is a payment processor for software platforms. These docs cover embedding card, ACH, cash, and digital wallet payments with the Pay Theory JavaScript, Apple iOS, and Android SDKs, and managing payments, invoices, recurring billing, merchants, and settlements through the Pay Theory GraphQL API.',
+
   defaultVersionGuidance:
     'Use Live docs by default. Use Lab docs only when the user explicitly requests preview or beta behavior.',
+
+  // Rendered as the "When to use Pay Theory" section of llms.txt. Name the
+  // jobs Pay Theory fits, not marketing claims.
+  whenToUse: [
+    'Accept card, ACH, cash (barcode), Apple Pay, Google Pay, or Paze payments inside a web or mobile app without handling raw card data: use the SDK hosted fields.',
+    'Send hosted payment links, payment buttons, or QR codes when no custom checkout UI is needed.',
+    'Create invoices, subscriptions, payment plans, or recurring payments for payors.',
+    'Save a payment method as a payment method token and charge it later.',
+    'Onboard sub-merchants, split payments, and set fees as a software platform (createMerchant, fee matrices, split transactions).',
+    'Report on transactions, settlements, disputes, and refunds, or react to them with webhooks.',
+  ],
+
+  // Rendered as "How to call Pay Theory" in llms.txt.
+  howToCall: [
+    'Browser and mobile checkout: initialize a Pay Theory SDK with the public API Key, mount the hosted fields, then call `transact` or `tokenizePaymentMethod`.',
+    'Server side: POST GraphQL operations to the API endpoint shown in the Pay Theory Portal (Settings tab) with the header `Authorization: MERCHANT_UID;SECRET_KEY`. Keep the secret key server side.',
+    'Build against a sandbox merchant first; sandbox test cards and failure numbers are on the Testing page.',
+  ],
+
+  // Rendered as the "Support" section of llms.txt.
+  support: [
+    {
+      title: 'Developer support',
+      url: 'mailto:developer@paytheory.com',
+    },
+    {
+      title: 'Customer support',
+      url: 'mailto:support@paytheory.com',
+    },
+    {
+      title: 'Knowledge base',
+      url: 'https://paytheory.freshdesk.com/support/solutions',
+    },
+    {
+      title: 'Pay Theory company site',
+      url: 'https://www.paytheory.com',
+    },
+  ],
 
   // Routes excluded from agent indexes (nav chrome, search, etc.).
   excludedRoutePatterns: ['/search', '/markdown-page', '/tags'],
@@ -54,7 +95,8 @@ module.exports = {
       title: 'After Payments',
       description:
         'Settlements, disputes, failed transactions, receipts, and post-transaction management.',
-      representativeRoute: '/docs/main/after_payments/overview',
+      representativeRoute:
+        '/docs/main/after_payments/understanding_transaction_statuses',
       routePrefix: '/docs/main/after_payments',
     },
     {
@@ -162,6 +204,7 @@ module.exports = {
     agentIndexPath: '/llm-docs/agent-index.json',
     llmsTxtPath: '/llms.txt',
     llmsFullTxtPath: '/llms-full.txt',
+    schemaPath: '/llm-docs/schema.graphql',
     indexesBasePath: '/llm-docs/indexes/',
     sourcePath: SOURCE_DOCS_PREFIX,
   },

@@ -31,6 +31,11 @@ jobs:
       - name: Check TS
         run: npm run check-ts
 
-      # - name: Check tests
-      #   run: |
-      #     npm run test
+      - name: Run tests
+        run: npm test
+
+      - name: Build site
+        run: npm run build
+
+      - name: Check agent-facing artifacts
+        run: npm run agent-docs:check
