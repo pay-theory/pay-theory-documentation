@@ -69,8 +69,25 @@ then
     exit 1
 fi
 
+echo "Retrieving edge routes sync role" ;
+EDGE_ROUTES_SYNC_ROLE_ARN=$(aws --region="us-east-1" ssm get-parameters --name "${SERVICE_NAME}-${PARTNER}-${STAGE}-edge-routes-sync-role-arn" --output text --query "Parameters[0].Value")
+# A new role can take a few seconds to become assumable.
+for ATTEMPT in 1 2 3 4 5 6; do
+  read -r SYNC_KEY_ID SYNC_SECRET SYNC_TOKEN <<< "$(aws sts assume-role --role-arn "${EDGE_ROUTES_SYNC_ROLE_ARN}" --role-session-name edge-routes-sync --output text --query "Credentials.[AccessKeyId,SecretAccessKey,SessionToken]")"
+  [ -n "${SYNC_TOKEN}" ] && break
+  echo "Sync role not assumable yet (attempt ${ATTEMPT}), retrying in 10s"
+  sleep 10
+done
+if [ -z "${SYNC_TOKEN}" ]
+then
+    echo "Failed to assume edge routes sync role!"
+    exit 1
+fi
+
 # Runs after the S3 upload, so every route in the store already has its pages.
+# Only this command uses the sync role's credentials.
 echo "Syncing edge routes" ;
+AWS_ACCESS_KEY_ID="${SYNC_KEY_ID}" AWS_SECRET_ACCESS_KEY="${SYNC_SECRET}" AWS_SESSION_TOKEN="${SYNC_TOKEN}" \
 node scripts/sync-edge-routes.js "${EDGE_ROUTES_KVS_ARN}" || exit 1
 
 aws cloudformation deploy --template-file "${FORMATION_TEMPLATE}" \

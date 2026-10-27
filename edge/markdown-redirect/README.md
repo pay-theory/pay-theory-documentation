@@ -61,7 +61,10 @@ Keys have no trailing slash; the homepage is `/`.
   `Set`, `Map`, spread, `for...of` or optional chaining, and the code must
   stay under 10 KB. `tests/edge-router.test.js` checks for these.
 - `templates/distribution.yml` creates the KeyValueStore and stores its ARN in
-  SSM.
+  SSM. It also creates `EdgeRoutesSyncRole`, the only role that can write to
+  the store. The shared deploy role (`pt-global-codebuild-role`) has no
+  `cloudfront-keyvaluestore` access, so `02_deploy.sh` assumes this role for
+  the sync.
 - `shell/02_deploy.sh` uploads the site to S3 (`.graphql` files as
   `text/plain`), syncs the store, then deploys `templates/formation.yml` with
   this file inlined by `scripts/render-formation-template.js`.

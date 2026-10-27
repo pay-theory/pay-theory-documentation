@@ -14,5 +14,6 @@ The Lambda@Edge router ran on every request, including cache hits and static ass
 - The Markdown 404 is generated in `viewer-request` from a store miss. `viewer-response` doesn't run on 4xx origin responses, but the generated 404 sets `Vary` itself.
 - `.graphql` files get `text/plain` at upload, since there's no `origin-response` hook to fix the content type.
 - HTML requests never read the store. If the store fails, Markdown requests fall back to the HTML page.
+- The store sync runs as `EdgeRoutesSyncRole`, created in `templates/distribution.yml` and trusted only by the deploy role. The shared `pt-global-codebuild-role` lacks `cloudfront-keyvaluestore` access, and this keeps the change out of a role every service uses.
 - `shell/02_deploy.sh` uploads to S3 before syncing the store, and puts keys before deleting them, so the store never lists a route whose objects aren't there yet.
 - The retired Lambda@Edge resources stay in `templates/distribution.yml` until a follow-up removes them, a few hours after the first deploy, once their replicas are gone.

@@ -19,6 +19,10 @@ Parameters:
       - standard
       - '-new'
       - '-old'
+  DeployRoleName:
+    Type: String
+    Description: Role that runs 02_deploy.sh and assumes the edge routes sync role.
+    Default: pt-global-codebuild-role
   # Retired Lambda@Edge inputs. 02_deploy.sh no longer passes them, so the stack
   # keeps their last values and the old Lambda resources stay unchanged until a
   # follow-up removes them (see adr/0002).
@@ -106,6 +110,40 @@ Resources:
       Value: !GetAtt EdgeRoutesKeyValueStore.Arn
       Description: !Sub 'Edge routes key value store ARN for ${Repository}-${Partner}-${Stage}'
 
+  # Writes to the route store need the cloudfront-keyvaluestore API, which the
+  # shared deploy role doesn't grant. 02_deploy.sh assumes this role for the sync.
+  EdgeRoutesSyncRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub '${Repository}-${Partner}-${Stage}-edge-routes-sync'
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS: !Sub 'arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${DeployRoleName}'
+            Action:
+              - sts:AssumeRole
+      Policies:
+        - PolicyName: edge-routes-sync
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - cloudfront-keyvaluestore:DescribeKeyValueStore
+                  - cloudfront-keyvaluestore:ListKeys
+                  - cloudfront-keyvaluestore:UpdateKeys
+                Resource: !GetAtt EdgeRoutesKeyValueStore.Arn
+
+  EdgeRoutesSyncRoleArnParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Sub '${Repository}-${Partner}-${Stage}-edge-routes-sync-role-arn'
+      Type: String
+      Value: !GetAtt EdgeRoutesSyncRole.Arn
+      Description: !Sub 'Role that syncs the edge routes store for ${Repository}-${Partner}-${Stage}'
+
   # Retired: CloudFront now uses the CloudFront Function in formation.yml.
   # Remove these four resources a few hours after the switch, once Lambda@Edge
   # has deleted the replicas.
@@ -170,6 +208,9 @@ Outputs:
   EdgeRoutesKvsArn:
     Description: Edge routes key value store ARN.
     Value: !GetAtt EdgeRoutesKeyValueStore.Arn
+  EdgeRoutesSyncRoleArn:
+    Description: Role that syncs the edge routes store.
+    Value: !GetAtt EdgeRoutesSyncRole.Arn
   MarkdownEdgeLambdaVersionArn:
     Condition: HasMarkdownEdgeLambdaArtifact
     Description: Published Lambda@Edge version ARN.
