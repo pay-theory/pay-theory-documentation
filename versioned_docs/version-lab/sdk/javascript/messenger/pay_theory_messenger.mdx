@@ -1,0 +1,56 @@
+---
+sidebar_position: 1
+sidebar_label: 'Pay Theory Messenger'
+title: "Pay Theory Messenger"
+---
+
+# Pay Theory Messenger
+
+`PayTheoryMessenger` processes digital wallet payments from Apple Pay, Google Pay and Paze. It opens a hidden iframe to Pay Theory and sends each wallet payload through it.
+
+***
+## Constructor
+
+```javascript
+const messenger = new paytheory.PayTheoryMessenger(options)
+```
+
+### Parameters
+
+| Parameter | type | required | description |
+|-----------|------|----------|-------------|
+| options | Object | Yes | Configuration for the Messenger. |
+
+#### Options
+
+| Key | type | required | description |
+|-----|------|----------|-------------|
+| apiKey | String | Yes | Your Pay Theory API Key. |
+
+### Returns
+
+A new `PayTheoryMessenger`. Call [`initialize`](./initialize) on it before anything else.
+
+***
+## Static properties
+
+### Wallet type constants
+
+```javascript
+PayTheoryMessenger.applePay   // 'APPLE_PAY'
+PayTheoryMessenger.googlePay  // 'GOOGLE_PAY'
+PayTheoryMessenger.paze       // 'PAZE'
+```
+
+***
+## Functions
+
+Each `PayTheoryMessenger` has these functions:
+
+- [`initialize()`](./initialize) connects the Messenger.
+- [`getApplePaySession()`](./getApplePaySession) gets an Apple Pay merchant session.
+- [`processWalletTransaction()`](./processWalletTransaction) charges a wallet payload.
+- [`on()`](./on) subscribes to a Messenger event.
+- [`destroy()`](./destroy) removes the iframe and listeners.
+
+The SDK also exposes the class as `window.PayTheoryMessenger`, so older integrations that call `new PayTheoryMessenger(...)` keep working.

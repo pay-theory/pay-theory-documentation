@@ -1,0 +1,48 @@
+---
+sidebar_position: 6
+sidebar_label: 'destroy'
+title: "destroy"
+---
+
+# destroy
+
+Disconnects the Messenger and removes its iframe and listeners. Call it when the page no longer needs wallet payments.
+
+***
+## Function
+
+```javascript
+messenger.destroy()
+```
+
+***
+## Parameters
+
+This function takes no parameters.
+
+***
+## Returns
+
+This function does not return a value.
+
+***
+## Usage
+
+```javascript
+const messenger = new paytheory.PayTheoryMessenger({
+  apiKey: 'your-api-key'
+});
+
+// Use the Messenger
+await messenger.initialize();
+// ...process wallet transactions
+
+// Clean up when done
+messenger.destroy();
+```
+
+***
+## Notes
+
+- `destroy` removes every listener added with [`on`](./on), closes the channel and removes the iframe from the page.
+- A destroyed Messenger can't be used again. Create a new `PayTheoryMessenger` instead.

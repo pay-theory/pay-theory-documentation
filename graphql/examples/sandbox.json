@@ -1,0 +1,27 @@
+[
+  {
+    "operation": "createSandboxAchReturn",
+    "operationType": "mutation",
+    "examples": []
+  },
+  {
+    "operation": "createSandboxDispute",
+    "operationType": "mutation",
+    "examples": []
+  },
+  {
+    "operation": "createSandboxSettlement",
+    "operationType": "mutation",
+    "examples": []
+  },
+  {
+    "operation": "prepareSandboxSettlementBatch",
+    "operationType": "mutation",
+    "examples": []
+  },
+  {
+    "operation": "updateSandboxDisputeStatus",
+    "operationType": "mutation",
+    "examples": []
+  }
+]

@@ -1,0 +1,317 @@
+[
+  {
+    "operation": "recurringPayments",
+    "operationType": "query",
+    "examples": [
+      {
+        "name": "List recurring schedules",
+        "description": "Filters on merchant_uid. remaining_payments is null for schedules with no end date.",
+        "query": "query RecurringPayments($query: SqlQuery, $limit: Int) {\n  recurringPayments(query: $query, limit: $limit) {\n    items {\n      recurring_id\n      merchant_uid\n      recurring_name\n      amount_per_payment\n      fee_per_payment\n      total_amount_per_payment\n      fee_mode\n      payment_interval\n      prev_payment_date\n      next_payment_date\n      remaining_payments\n      status\n      is_active\n      created_date\n    }\n    total_row_count\n  }\n}",
+        "variables": {
+          "query": {
+            "query_list": [
+              {
+                "key": "merchant_uid",
+                "value": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                "operator": "EQUAL"
+              }
+            ]
+          },
+          "limit": 2
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "recurringPayments": {
+                "items": [
+                  {
+                    "recurring_id": "ptl_rec_10sEzSXMr1YAfyngLg8I75",
+                    "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                    "recurring_name": "Weekly plan",
+                    "amount_per_payment": 300,
+                    "fee_per_payment": 44,
+                    "total_amount_per_payment": 300,
+                    "fee_mode": "MERCHANT_FEE",
+                    "payment_interval": "WEEKLY",
+                    "prev_payment_date": "2026-09-04",
+                    "next_payment_date": "2026-09-11",
+                    "remaining_payments": null,
+                    "status": "SUCCESS",
+                    "is_active": true,
+                    "created_date": "2026-09-04T03:02:56.0Z"
+                  },
+                  {
+                    "recurring_id": "ptl_rec_110zy3F6tcdrI2DaFHpy0D",
+                    "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                    "recurring_name": "Second weekly plan",
+                    "amount_per_payment": 300,
+                    "fee_per_payment": 44,
+                    "total_amount_per_payment": 300,
+                    "fee_mode": "MERCHANT_FEE",
+                    "payment_interval": "WEEKLY",
+                    "prev_payment_date": "2026-09-04",
+                    "next_payment_date": "2026-09-11",
+                    "remaining_payments": 0,
+                    "status": "SUCCESS",
+                    "is_active": true,
+                    "created_date": "2026-09-04T19:37:57.0Z"
+                  }
+                ],
+                "total_row_count": 252
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "operation": "createRecurringPayment",
+    "operationType": "mutation",
+    "examples": [
+      {
+        "name": "Create a monthly schedule with a future start",
+        "description": "Sets first_payment_date, so the first charge runs on that date. Leave it out to charge right away.",
+        "query": "mutation CreateRecurringPayment($input: RecurringPaymentInput!) {\n  createRecurringPayment(input: $input) {\n    recurring_id\n    merchant_uid\n    recurring_name\n    recurring_description\n    amount_per_payment\n    fee_per_payment\n    total_amount_per_payment\n    fee_mode\n    payment_interval\n    prev_payment_date\n    next_payment_date\n    remaining_payments\n    status\n    is_active\n    mute_all_emails\n    account_code\n    reference\n    created_date\n    payment_method {\n      payment_method_id\n      last_four\n      payment_type\n    }\n    payor {\n      payor_id\n      full_name\n      email\n    }\n  }\n}",
+        "variables": {
+          "input": {
+            "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+            "payment_method_id": "ptl_pmt_5Q85Bcghv1Ppxfk7PGYrLd",
+            "payor_id": "ptl_pay_5Q860Z2ouH3KKLnWfNpyxd",
+            "amount": 2500,
+            "payment_interval": "MONTHLY",
+            "payment_count": 12,
+            "first_payment_date": "2026-10-27",
+            "recurring_name": "Gym membership",
+            "recurring_description": "Monthly membership fee",
+            "account_code": "MEMBERSHIP-2026",
+            "reference": "GYM-MEMBERSHIP-2026-09",
+            "metadata": "{\"plan\":\"standard\"}"
+          }
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "createRecurringPayment": {
+                "recurring_id": "ptl_rec_62ArNw2Lk9mvWUaa0dNpQT",
+                "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                "recurring_name": "Gym membership",
+                "recurring_description": "Monthly membership fee",
+                "amount_per_payment": 2500,
+                "fee_per_payment": 143,
+                "total_amount_per_payment": 2500,
+                "fee_mode": "MERCHANT_FEE",
+                "payment_interval": "MONTHLY",
+                "prev_payment_date": null,
+                "next_payment_date": "2026-10-27",
+                "remaining_payments": 12,
+                "status": "SUCCESS",
+                "is_active": true,
+                "mute_all_emails": false,
+                "account_code": "MEMBERSHIP-2026",
+                "reference": "GYM-MEMBERSHIP-2026-09",
+                "created_date": "2026-09-04T20:25:31.0Z",
+                "payment_method": {
+                  "payment_method_id": "ptl_pmt_5Q85Bcghv1Ppxfk7PGYrLd",
+                  "last_four": "1111",
+                  "payment_type": "CARD"
+                },
+                "payor": {
+                  "payor_id": "ptl_pay_5Q860Z2ouH3KKLnWfNpyxd",
+                  "full_name": "Pat Theodore",
+                  "email": "pat@example.com"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "name": "Create a schedule that charges today",
+        "description": "Leaves out first_payment_date, so the first payment runs when the schedule is created. remaining_payments drops from 3 to 2.",
+        "query": "mutation CreateRecurringPayment($input: RecurringPaymentInput!) {\n  createRecurringPayment(input: $input) {\n    recurring_id\n    merchant_uid\n    recurring_name\n    recurring_description\n    amount_per_payment\n    fee_per_payment\n    total_amount_per_payment\n    fee_mode\n    payment_interval\n    prev_payment_date\n    next_payment_date\n    remaining_payments\n    status\n    is_active\n    mute_all_emails\n    account_code\n    reference\n    created_date\n    payment_method {\n      payment_method_id\n      last_four\n      payment_type\n    }\n    payor {\n      payor_id\n      full_name\n      email\n    }\n  }\n}",
+        "variables": {
+          "input": {
+            "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+            "payment_method_id": "ptl_pmt_5Q85Bcghv1Ppxfk7PGYrLd",
+            "payor_id": "ptl_pay_5Q860Z2ouH3KKLnWfNpyxd",
+            "amount": 300,
+            "payment_interval": "WEEKLY",
+            "payment_count": 3,
+            "recurring_name": "Weekly membership",
+            "metadata": "{\"purpose\":\"weekly-membership\"}"
+          }
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "createRecurringPayment": {
+                "recurring_id": "ptl_rec_6763Eq8t8UkhpUseTEEWtJ",
+                "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                "recurring_name": "Weekly membership",
+                "recurring_description": null,
+                "amount_per_payment": 300,
+                "fee_per_payment": 44,
+                "total_amount_per_payment": 300,
+                "fee_mode": "MERCHANT_FEE",
+                "payment_interval": "WEEKLY",
+                "prev_payment_date": "2026-09-04",
+                "next_payment_date": "2026-09-11",
+                "remaining_payments": 2,
+                "status": "SUCCESS",
+                "is_active": true,
+                "mute_all_emails": false,
+                "account_code": null,
+                "reference": null,
+                "created_date": "2026-09-04T20:25:35.0Z",
+                "payment_method": {
+                  "payment_method_id": "ptl_pmt_5Q85Bcghv1Ppxfk7PGYrLd",
+                  "last_four": "1111",
+                  "payment_type": "CARD"
+                },
+                "payor": {
+                  "payor_id": "ptl_pay_5Q860Z2ouH3KKLnWfNpyxd",
+                  "full_name": "Pat Theodore",
+                  "email": "pat@example.com"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "name": "Create a schedule with no end date",
+        "description": "Leaves out payment_count, so the schedule runs until canceled. remaining_payments is null.",
+        "query": "mutation CreateRecurringPayment($input: RecurringPaymentInput!) {\n  createRecurringPayment(input: $input) {\n    recurring_id\n    merchant_uid\n    recurring_name\n    recurring_description\n    amount_per_payment\n    fee_per_payment\n    total_amount_per_payment\n    fee_mode\n    payment_interval\n    prev_payment_date\n    next_payment_date\n    remaining_payments\n    status\n    is_active\n    mute_all_emails\n    account_code\n    reference\n    created_date\n    payment_method {\n      payment_method_id\n      last_four\n      payment_type\n    }\n    payor {\n      payor_id\n      full_name\n      email\n    }\n  }\n}",
+        "variables": {
+          "input": {
+            "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+            "payment_method_id": "ptl_pmt_5Q85Bcghv1Ppxfk7PGYrLd",
+            "payor_id": "ptl_pay_5Q860Z2ouH3KKLnWfNpyxd",
+            "amount": 1000,
+            "fee_mode": "SERVICE_FEE",
+            "payment_interval": "WEEKLY",
+            "first_payment_date": "2026-10-27",
+            "recurring_name": "Weekly donation"
+          }
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "createRecurringPayment": {
+                "recurring_id": "ptl_rec_64ImZH6LpufCQddDXX2OYH",
+                "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                "recurring_name": "Weekly donation",
+                "recurring_description": null,
+                "amount_per_payment": 1000,
+                "fee_per_payment": 195,
+                "total_amount_per_payment": 1195,
+                "fee_mode": "SERVICE_FEE",
+                "payment_interval": "WEEKLY",
+                "prev_payment_date": null,
+                "next_payment_date": "2026-10-27",
+                "remaining_payments": null,
+                "status": "SUCCESS",
+                "is_active": true,
+                "mute_all_emails": false,
+                "account_code": null,
+                "reference": null,
+                "created_date": "2026-09-04T20:25:33.0Z",
+                "payment_method": {
+                  "payment_method_id": "ptl_pmt_5Q85Bcghv1Ppxfk7PGYrLd",
+                  "last_four": "1111",
+                  "payment_type": "CARD"
+                },
+                "payor": {
+                  "payor_id": "ptl_pay_5Q860Z2ouH3KKLnWfNpyxd",
+                  "full_name": "Pat Theodore",
+                  "email": "pat@example.com"
+                }
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "operation": "updateRecurringPayment",
+    "operationType": "mutation",
+    "examples": [
+      {
+        "name": "Mute schedule emails",
+        "description": "Turns off emails for this schedule.",
+        "query": "mutation UpdateRecurringPayment($input: UpdateRecurringPaymentInput!) {\n  updateRecurringPayment(input: $input) {\n    recurring_id\n    mute_all_emails\n    fee_per_payment\n    total_amount_per_payment\n    next_payment_date\n    remaining_payments\n    status\n    is_active\n    payment_method {\n      payment_method_id\n      last_four\n    }\n  }\n}",
+        "variables": {
+          "input": {
+            "recurring_id": "ptl_rec_62ArNw2Lk9mvWUaa0dNpQT",
+            "mute_all_emails": true
+          }
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "updateRecurringPayment": {
+                "recurring_id": "ptl_rec_62ArNw2Lk9mvWUaa0dNpQT",
+                "mute_all_emails": true,
+                "fee_per_payment": 143,
+                "total_amount_per_payment": 2500,
+                "next_payment_date": "2026-10-27",
+                "remaining_payments": 12,
+                "status": "SUCCESS",
+                "is_active": true,
+                "payment_method": {
+                  "payment_method_id": "ptl_pmt_5UMEF8ojehU4IIxRTNzZYs",
+                  "last_four": "1111"
+                }
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "operation": "cancelRecurringPayment",
+    "operationType": "mutation",
+    "examples": [
+      {
+        "name": "Cancel a recurring schedule",
+        "description": "Cancels a schedule. Get it with recurringPayments afterward to confirm is_active is false.",
+        "query": "mutation CancelRecurringPayment($recurring_id: String!) {\n  cancelRecurringPayment(recurring_id: $recurring_id)\n}",
+        "variables": {
+          "recurring_id": "ptl_rec_64ImZH6LpufCQddDXX2OYH"
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "cancelRecurringPayment": true
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "operation": "missedRecurringPaymentData",
+    "operationType": "query",
+    "examples": []
+  },
+  {
+    "operation": "createRetryForFailedRecurringPayment",
+    "operationType": "mutation",
+    "examples": []
+  }
+]

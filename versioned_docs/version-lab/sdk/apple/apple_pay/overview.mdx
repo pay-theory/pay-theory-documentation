@@ -1,0 +1,81 @@
+---
+sidebar_position: 1
+title: "Apple Pay Overview"
+---
+
+# Apple Pay Integration
+
+The Pay Theory iOS SDK provides seamless integration with Apple Pay, allowing you to accept payments through Apple's secure payment platform. This integration supports processing payments from your server or through the SDK. Many of the configurations types are defined inside the [`PassKit` framework](https://developer.apple.com/documentation/passkit).
+
+## Features
+
+- Easy-to-implement Apple Pay button
+- Support for processing payments from your server or through the SDK
+- Customizable payment sheet configuration
+- Service fee calculation and display
+
+## Requirements
+
+Before implementing Apple Pay, ensure you have:
+
+1. A valid Apple Pay merchant identifier
+2. The Pay Theory iOS SDK properly installed and configured
+3. [Required payment processing capabilities set up](../app_registration#registering-for-apple-pay) in your Apple Developer account
+
+## Basic Implementation Steps
+
+1. Configure the Apple Pay payment sheet
+2. Create and display the Apple Pay button
+3. Handle payment authorization and processing
+
+Here's a basic example of setting up Apple Pay:
+
+:::note Payment Processing Options
+Pay Theory offers two ways to process Apple Pay payments:
+1. **Direct SDK Processing**: Use `onPaymentCompletion` to process the payment immediately through our SDK
+2. **Server-Side Processing**: Use `onPaymentTokenizationCompletion` to receive a token string that can be used to process the payment through your server using our API
+
+<br/>
+***You can use either option, but you cannot use both.***
+:::
+
+```swift
+// Create payment summary items
+let items = [
+    PKPaymentSummaryItem(label: "Total", amount: NSDecimalNumber(value: 99.99))
+]
+
+// Configure the payment sheet
+let config = PTApplePayRequestConfig(
+    merchantIdentifier: "merchant.com.example",
+    paymentSummaryItems: items
+)
+
+let sheetConfig = PTApplePaySheetConfig(
+    requestConfiguration: config,
+    onPaymentCompletion: { response in
+        switch response {
+        case .success(let transaction):
+            // Handle successful payment
+        case .failure(let failedTransaction):
+            // Handle failed payment
+        case .error(let error):
+            // Handle error
+        }
+    }
+)
+
+// Configure Pay Theory instance for Apple Pay
+payTheory.configureApplePaySheet(sheetConfig)
+
+// Create and display Apple Pay button
+// This should be inside your SwiftUI view
+payTheory.createApplePayButton()
+```
+
+
+
+For detailed information about these features, refer to the following sections:
+- [Apple Pay Button](button)
+- [Apple Pay Functions](functions)
+- [Apple Pay Models](models) 

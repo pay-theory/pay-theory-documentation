@@ -1,0 +1,17 @@
+[
+  {
+    "operation": "users",
+    "operationType": "query",
+    "examples": []
+  },
+  {
+    "operation": "createUser",
+    "operationType": "mutation",
+    "examples": []
+  },
+  {
+    "operation": "deleteUser",
+    "operationType": "mutation",
+    "examples": []
+  }
+]

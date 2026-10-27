@@ -1,0 +1,263 @@
+[
+  {
+    "operation": "payors",
+    "operationType": "query",
+    "examples": [
+      {
+        "name": "List payors",
+        "query": "query Payors($query: SqlQuery, $limit: Int) {\n  payors(query: $query, limit: $limit) {\n    items {\n      payor_id\n      merchant_uid\n      full_name\n      email\n      phone\n      address_line1\n      city\n      region\n      postal_code\n      country\n    }\n    total_row_count\n  }\n}",
+        "variables": {
+          "query": {
+            "query_list": [
+              {
+                "key": "merchant_uid",
+                "value": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                "operator": "EQUAL"
+              }
+            ]
+          },
+          "limit": 2
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "payors": {
+                "items": [
+                  {
+                    "payor_id": "ptl_pay_10juZtcNdkEUTxm0SaepXH",
+                    "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                    "full_name": "Pat Theodore",
+                    "email": "pat@example.com",
+                    "phone": null,
+                    "address_line1": "123 Main Street",
+                    "city": "Cincinnati",
+                    "region": "OH",
+                    "postal_code": "45202",
+                    "country": "USA"
+                  },
+                  {
+                    "payor_id": "ptl_pay_11Tvd4EamaiPn90XGtfqdD",
+                    "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                    "full_name": "Pat Theodore",
+                    "email": "pat@example.com",
+                    "phone": "+15555550123",
+                    "address_line1": "123 Main Street",
+                    "city": "Cincinnati",
+                    "region": "OH",
+                    "postal_code": "45209",
+                    "country": "USA"
+                  }
+                ],
+                "total_row_count": 1220
+              }
+            }
+          }
+        },
+        "description": "Lists payors for a merchant with a SqlQuery filter."
+      },
+      {
+        "name": "Get a payor by ID",
+        "description": "Filters on payor_id to get one payor.",
+        "query": "query Payors($query: SqlQuery, $limit: Int) {\n  payors(query: $query, limit: $limit) {\n    items {\n      payor_id\n      merchant_uid\n      full_name\n      email\n      phone\n      address_line1\n      city\n      region\n      postal_code\n      country\n    }\n    total_row_count\n  }\n}",
+        "variables": {
+          "query": {
+            "query_list": [
+              {
+                "key": "payor_id",
+                "value": "ptl_pay_6tOEQ5lesXwGSGaKECSfJy",
+                "operator": "EQUAL"
+              }
+            ]
+          },
+          "limit": 1
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "payors": {
+                "items": [
+                  {
+                    "payor_id": "ptl_pay_6tOEQ5lesXwGSGaKECSfJy",
+                    "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                    "full_name": "Pat Theodore",
+                    "email": "pat@example.com",
+                    "phone": "+15555550123",
+                    "address_line1": "123 Main Street",
+                    "city": "Cincinnati",
+                    "region": "OH",
+                    "postal_code": "45209",
+                    "country": "USA"
+                  }
+                ],
+                "total_row_count": 1
+              }
+            }
+          }
+        }
+      },
+      {
+        "name": "No payors found",
+        "query": "query Payors($query: SqlQuery, $limit: Int) {\n  payors(query: $query, limit: $limit) {\n    items {\n      payor_id\n      merchant_uid\n      full_name\n      email\n      phone\n      address_line1\n      city\n      region\n      postal_code\n      country\n    }\n    total_row_count\n  }\n}",
+        "variables": {
+          "query": {
+            "query_list": [
+              {
+                "key": "email",
+                "value": "nobody@example.com",
+                "operator": "EQUAL"
+              }
+            ]
+          },
+          "limit": 2
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "payors": {
+                "items": [],
+                "total_row_count": 0
+              }
+            }
+          }
+        },
+        "description": "Returns an empty list when the filter matches nothing."
+      }
+    ]
+  },
+  {
+    "operation": "createPayor",
+    "operationType": "mutation",
+    "examples": [
+      {
+        "name": "Create a payor",
+        "query": "mutation CreatePayor($input: PayorInput!) {\n  createPayor(input: $input) {\n    payor_id\n    merchant_uid\n    full_name\n    email\n    phone\n    address_line1\n    city\n    region\n    postal_code\n    country\n    metadata\n  }\n}",
+        "variables": {
+          "input": {
+            "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+            "full_name": "Pat Theodore",
+            "email": "pat@example.com",
+            "phone": "+15555550123",
+            "address_line1": "123 Main Street",
+            "address_line2": "Suite 200",
+            "city": "Cincinnati",
+            "region": "OH",
+            "postal_code": "45209",
+            "country": "USA",
+            "metadata": "{\"source\":\"api-docs\",\"segment\":\"retail\"}"
+          }
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "createPayor": {
+                "payor_id": "ptl_pay_6tOEQ5lesXwGSGaKECSfJy",
+                "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                "full_name": "Pat Theodore",
+                "email": "pat@example.com",
+                "phone": "+15555550123",
+                "address_line1": "123 Main Street",
+                "city": "Cincinnati",
+                "region": "OH",
+                "postal_code": "45209",
+                "country": "USA",
+                "metadata": "{\"source\":\"api-docs\",\"segment\":\"retail\"}"
+              }
+            }
+          }
+        },
+        "description": "Creates a payor with contact information and metadata."
+      },
+      {
+        "name": "Missing merchant ID",
+        "query": "mutation CreatePayor($input: PayorInput!) {\n  createPayor(input: $input) {\n    payor_id\n    merchant_uid\n    full_name\n    email\n    phone\n    address_line1\n    city\n    region\n    postal_code\n    country\n  }\n}",
+        "variables": {
+          "input": {
+            "full_name": "Pat Theodore"
+          }
+        },
+        "response": {
+          "type": "error",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "createPayor": null
+            },
+            "errors": [
+              {
+                "path": [
+                  "createPayor"
+                ],
+                "data": {
+                  "payor_id": null,
+                  "merchant_uid": null,
+                  "full_name": "Pat Theodore",
+                  "email": null,
+                  "phone": null,
+                  "address_line1": null,
+                  "city": null,
+                  "region": null,
+                  "postal_code": null,
+                  "country": null
+                },
+                "errorType": "CLIENT_ERROR",
+                "errorInfo": {
+                  "code": "PARAMETER_ERROR",
+                  "details": {
+                    "field": "merchant_uid",
+                    "message": "merchant_uid is required"
+                  },
+                  "method": "POST",
+                  "path": "/createPayor",
+                  "trigger_type": "appsync"
+                },
+                "message": "merchant_uid is required"
+              }
+            ]
+          }
+        },
+        "description": "Returns an error when merchant_uid is missing."
+      }
+    ]
+  },
+  {
+    "operation": "updatePayor",
+    "operationType": "mutation",
+    "examples": [
+      {
+        "name": "Update every payor field",
+        "query": "mutation UpdatePayor($payor_id: String!, $payor_data: PayorData!) {\n  updatePayor(payor_id: $payor_id, payor_data: $payor_data)\n}",
+        "variables": {
+          "payor_id": "ptl_pay_6tOEQ5lesXwGSGaKECSfJy",
+          "payor_data": {
+            "full_name": "Pat Theodore",
+            "email": "pat@example.com",
+            "phone": "+15555550123",
+            "address_line1": "123 Main Street",
+            "city": "Cincinnati",
+            "region": "OH",
+            "postal_code": "45209",
+            "country": "USA"
+          }
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "updatePayor": true
+            }
+          }
+        },
+        "description": "Updates the name, email, phone and full address on an existing payor."
+      }
+    ]
+  }
+]

@@ -1,0 +1,88 @@
+---
+sidebar_position: 5
+sidebar_label: 'on'
+title: "on"
+---
+
+# on
+
+Registers a listener for a Messenger event.
+
+***
+## Function
+
+```javascript
+const unsubscribe = messenger.on(event, callback)
+```
+
+***
+## Parameters
+
+| Parameter | type | required | description |
+|-----------|------|----------|-------------|
+| event | String | Yes | Name of the event. One of the events below. |
+| callback | Function | Yes | Called with the event's payload each time the event fires. |
+
+***
+## Available events
+
+| Event | description |
+|-------|-------------|
+| `ready` | Fires when [`initialize`](./initialize) connects the Messenger. |
+| `transaction_complete` | Fires when [`processWalletTransaction`](./processWalletTransaction) processes a payment, including a declined one. The payload has the [Transaction](../../../api/types/types/transaction). Check its `status`. |
+| `transaction_error` | Fires when Pay Theory's servers return an error for `processWalletTransaction`. The payload has the error message. Errors the Messenger catches before it sends the payment, such as a missing field, only come back in the `ERROR` response. |
+| `iframe_unloaded` | Fires when the Messenger's hidden iframe unloads. |
+
+***
+## Returns
+
+Returns a function that removes the event listener when called.
+
+***
+## Usage
+
+```javascript
+// Register event listener
+const unsubscribe = messenger.on('transaction_complete', (data) => {
+  console.log('Transaction completed:', data.transaction);
+});
+
+// Remove event listener later
+unsubscribe();
+```
+
+***
+## Event data
+
+### ready event
+```javascript
+{
+  success: Boolean
+}
+```
+
+### transaction_complete event
+```javascript
+{
+  transaction: {
+    transaction_id: String,
+    status: String,
+    gross_amount: Number,
+    // ...the rest of the Transaction fields
+  }
+}
+```
+
+### transaction_error event
+```javascript
+{
+  error: String
+}
+```
+
+### iframe_unloaded event
+```javascript
+{
+  timestamp: Number
+}
+```

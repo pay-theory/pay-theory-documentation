@@ -1,0 +1,124 @@
+---
+sidebar_position: 4
+sidebar_label: 'processWalletTransaction'
+title: 'processWalletTransaction'
+---
+
+# processWalletTransaction
+
+Charges a payment from Apple Pay, Google Pay or Paze. Pass the payload the wallet gave you and Pay Theory creates the transaction.
+
+---
+
+## Function
+
+```javascript
+await messenger.processWalletTransaction(payload);
+```
+
+---
+
+## Parameters
+
+| Parameter | Type   | Required | Description                |
+| --------- | ------ | -------- | -------------------------- |
+| payload   | Object | Yes      | Transaction payload object |
+
+### Payload
+
+| Key | type | required | description |
+|-----|------|----------|-------------|
+| amount | Int | Yes | Amount to charge, in cents. |
+| digitalWalletPayload | Object | Yes | The payment data the wallet returned. Its shape is set by the wallet provider. |
+| walletType | String | Yes | `APPLE_PAY`, `GOOGLE_PAY` or `PAZE`. Use the [wallet type constants](./pay_theory_messenger#wallet-type-constants). |
+| payor | [Payor](#payor-object) | No | The payor to create for this payment. Leave it out if you pass `payorId`. |
+| payorId | String | No | ID of an existing payor. |
+| reference | String | No | Your own reference for the payment. Shows on the transaction and in the portal. |
+| accountCode | String | No | Code for tracking a payment or group of payments. |
+| metadata | Object | No | Key-value data stored with the transaction. |
+| additionalPurchaseData | Object | No | Level 3 line items and summary data. Same shape as `additional_purchase_data` on [createTransaction](../../../api/transaction/create-transaction). |
+| billingAddress | Object | No | Billing address for the payment method. |
+| fee | Int | No | Fee to charge, in cents. |
+| healthExpenseType | String | No | Healthcare category: `HEALTHCARE`, `RX`, `VISION`, `CLINICAL`, `COPAY`, `DENTAL` or `TRANSIT`. |
+| invoiceId | String | No | ID of the invoice this payment pays. Don't combine with `recurringId`. |
+| recurringId | String | No | ID of the recurring payment this payment pays. |
+| receiptDescription | String | No | Description shown on the receipt. |
+| sendReceipt | Boolean | No | Pass `true` to email a receipt to the payor. |
+| split | Object | No | How to split the payment between merchants. See [Split transactions](../../../main/online_payments/split_transactions). |
+
+---
+
+## Payor object
+
+```javascript
+{
+  full_name: String;
+  email: String;
+  phone: String;
+  address_line1: String;
+  address_line2: String;
+  city: String;
+  region: String;
+  postal_code: String;
+  country: String;
+}
+```
+
+---
+
+## Returns
+
+```javascript
+{
+  type: String; // 'SUCCESS' or 'ERROR'
+  transaction: Object;
+  error: String;
+}
+```
+
+| Key | type | description |
+|-----|------|-------------|
+| type | String | `SUCCESS` when Pay Theory processed the payment, even if it was declined. `ERROR` when the request couldn't run. |
+| transaction | [Transaction](../../../api/types/types/transaction) | The transaction, with its payment method and payor. Present when `type` is `SUCCESS`. Check `transaction.status` to see whether it succeeded. |
+| error | String | Why the request couldn't run. Present when `type` is `ERROR`. |
+
+---
+
+## Usage
+
+```javascript
+const payload = {
+  amount: 1000, // $10.00
+  digitalWalletPayload: paymentData, // From Apple Pay, Google Pay, etc.
+  walletType: PayTheoryMessenger.applePay, // or 'APPLE_PAY'
+  payor: {
+    full_name: 'Pat Theodore',
+    email: 'pat@example.com',
+    phone: '+15555550123',
+    address_line1: '123 Main Street',
+    city: 'Cincinnati',
+    region: 'OH',
+    postal_code: '45209',
+    country: 'USA',
+  },
+};
+
+const result = await messenger.processWalletTransaction(payload);
+
+if (result.type === 'ERROR') {
+  console.error('Payment could not run:', result.error);
+} else if (result.transaction.status === 'FAILED') {
+  console.log('Payment declined:', result.transaction.transaction_id);
+} else {
+  console.log('Payment succeeded:', result.transaction.transaction_id);
+}
+```
+
+---
+
+## Notes
+
+- Call [`initialize`](./initialize) first.
+- `walletType` must match the wallet that produced `digitalWalletPayload`.
+- After an `ERROR` from Pay Theory's servers, the Messenger refreshes its connection. Call `processWalletTransaction` again to retry.
+- A processed payment fires the [`transaction_complete`](./on) event, whether it succeeded or was declined. An error from Pay Theory's servers also fires `transaction_error`. Errors the Messenger catches before it sends the payment, such as a missing field, only come back in the `ERROR` response.

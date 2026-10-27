@@ -4,24 +4,34 @@ sidebar_label: 'Error Handling'
 title: "SDK Error Handling"
 ---
 
-# SDK Errors
-You can be returned a number of errors from the SDK. They can be returned to the `errorObserver` or potentially in a response of type `ERROR` from a function call.  
-Below is a list of errors that can be returned from the SDK.
+# SDK errors
 
+SDK errors are strings that start with a code, such as `NOT_READY: Not all fields are ready to update the amount`. You get the string in two places:
 
+- the [`errorObserver`](event_listeners#errorobserver) callback
+- the `error` key of an [`ERROR` response](functions#error-response) from a function
 
-| CODE                    | DESCRIPTION                                                                                                                     |
-|-------------------------|---------------------------------------------------------------------------------------------------------------------------------|
-| ACTION_COMPLETE         | Indicates that an action has been successfully completed and cannot be run again. The fields must be cleared and mounted again. |
-| ACTION_IN_PROGRESS      | Indicates that an action is currently in progress. The action cannot be run again until the current action is complete.         |
-| CANCEL_FAILED           | Indicates that a cancellation operation failed.                                                                                 |
-| FIELD_ERROR             | Indicates an error with mounting the PayTheory Fields.                                                                          |
-| INVALID_PARAM           | Indicates that an invalid parameter was provided.                                                                               |
-| NO_FIELDS               | Indicates that no fields were found on the DOM to mount.                                                                        |
-| NO_TOKEN                | Indicates that no session token was found. This is typically indicative of a network failure.                                   |
-| NOT_READY               | Indicates that the SDK is not yet connected and ready to perform the action of a function.                                      |
-| NOT_VALID               | Indicates that the transacting field is not valid at the time of running the function.                                          |
-| SESSION_EXPIRED         | Indicates that the socket session has expired.                                                                                  |
-| SOCKET_ERROR            | Indicates an error with the call to the socket.                                                                                 |
-| TRANSACTING_FIELD_ERROR | Indicates either multiple transacting fields or no transacting fields were found visible on the DOM when running a function.    |
+```javascript
+const result = await paytheory.transact({ amount: 1000 })
 
+if (result.type === 'ERROR' && result.error.startsWith('NOT_VALID')) {
+  // Ask the payor to fix the highlighted fields
+}
+```
+
+Errors from Pay Theory's servers start with `SOCKET_ERROR`, followed by the server's message. The `errorObserver` also receives field validation messages, which have no code.
+
+| Code | description |
+|------|-------------|
+| ACTION_COMPLETE | The action already finished and can't run again. Remount the fields to start over. |
+| ACTION_IN_PROGRESS | The same action is still running. Wait for it to finish. |
+| CANCEL_FAILED | `cancel` couldn't cancel the payment. |
+| FIELD_ERROR | The SDK couldn't mount the hosted fields. |
+| INVALID_PARAM | A parameter is missing, has the wrong type or conflicts with another parameter. The message names it. |
+| NO_FIELDS | The SDK found no hosted field containers on the page. |
+| NO_TOKEN | The SDK couldn't get a session token. Usually a network failure. |
+| NOT_READY | The SDK isn't connected yet. Wait for [`readyObserver`](event_listeners#readyobserver). |
+| NOT_VALID | The transacting fields aren't valid. The payor needs to fix them. |
+| SESSION_EXPIRED | The SDK's connection session expired. Arrives inside a `SOCKET_ERROR` message, as `SOCKET_ERROR: SESSION_EXPIRED: ...`. |
+| SOCKET_ERROR | Pay Theory's servers returned an error, such as an idempotency key reused with a different request, or a processor rejection. |
+| TRANSACTING_FIELD_ERROR | The SDK found more than one set of transacting fields visible on the page, or none. |

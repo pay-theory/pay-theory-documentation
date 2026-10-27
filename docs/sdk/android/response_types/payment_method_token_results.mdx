@@ -1,0 +1,47 @@
+---
+sidebar_position: 2
+sidebar_label: 'PaymentMethodTokenResults'
+title: "PaymentMethodTokenResults"
+---
+
+# Payment Method Token Results
+
+The `PaymentMethodTokenResults` class represents the response from a successful payment method tokenization request. It contains details about the tokenized payment method that can be used for future transactions.
+
+## Properties
+
+| Property | Type | Description |
+|----------|------|-------------|
+| paymentMethodId | String | Unique identifier for the tokenized payment method |
+| metadata | Map&lt;String, Any&gt;? | Optional metadata associated with the token |
+| payor_id | String? | ID of the payor associated with the payment method |
+| lastFour | String? | Last four digits of the card/account number |
+| firstSix | String? | First six digits of the card number (for card payments) |
+| brand | String? | Card brand or payment method type |
+| expiration | String? | Expiration date (for card payments) |
+| paymentType | String | Type of payment method (e.g., "card", "bank") |
+
+## Example Usage
+
+```kotlin
+class TokenizeActivity : PayTheoryMerchantActivity(), Payable {
+    override fun handleTokenizeSuccess(result: PaymentMethodTokenResults) {
+        // Store payment method ID for future use
+        val paymentMethodId = result.paymentMethodId
+        
+        // Display payment method info
+        println("Payment Method: ${result.brand} ending in ${result.lastFour}")
+        
+        // Check payment type
+        when (result.paymentType) {
+            "card" -> {
+                // Handle card token
+                println("Card expires: ${result.expiration}")
+            }
+            "bank" -> {
+                // Handle bank account token
+                println("Bank account tokenized")
+            }
+        }
+    }
+} 
