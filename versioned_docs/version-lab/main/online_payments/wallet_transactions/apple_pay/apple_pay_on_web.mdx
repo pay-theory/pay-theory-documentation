@@ -43,6 +43,7 @@ const paymentRequest = {
   currencyCode: 'USD', // Transaction currency
   supportedNetworks: ['visa', 'masterCard', 'amex', 'discover'],
   merchantCapabilities: ['supports3DS'],
+  requiredBillingContactFields: ['postalAddress'],
   total: {
     label: 'Your Business Name', // Your merchant display name
     amount: '10.00', // Transaction amount
@@ -54,6 +55,7 @@ const paymentRequest = {
 
 - **countryCode**: Must match your merchant registration country
 - **merchantCapabilities**: Must include `supports3DS` for Pay Theory processing
+- **requiredBillingContactFields**: Must include `'postalAddress'`. Pay Theory uses the billing postal code for address verification, and transactions can be declined without it.
   :::
 
 ### Finding Your Configuration
@@ -110,6 +112,7 @@ const APPLE_PAY_CONFIG = {
   currencyCode: 'USD',
   supportedNetworks: ['visa', 'masterCard', 'amex', 'discover'],
   merchantCapabilities: ['supports3DS'],
+  requiredBillingContactFields: ['postalAddress'],
 };
 
 // Check if Apple Pay™ is available
@@ -121,6 +124,14 @@ function checkApplePayAvailability() {
   }
 }
 ```
+
+:::warning Request the billing address
+Billing and shipping contact fields are separate settings. Requesting a shipping address does not send a billing address.
+
+You can request other billing fields, such as `'name'`, alongside `'postalAddress'`. Only `'postalAddress'` is required.
+
+Pass the full `event.payment` object to `digitalWalletPayload`, as step 6 shows. The billing contact is inside it.
+:::
 
 ### 4. Check Apple Pay™ Availability
 
@@ -225,15 +236,12 @@ async function handleApplePay() {
       if (result.type === 'SUCCESS') {
         const transaction = result.transaction;
 
-        if (
-          transaction.status === 'PENDING' ||
-          transaction.status === 'SUCCEEDED'
-        ) {
-          session.completePayment(ApplePaySession.STATUS_SUCCESS);
-          showSuccessMessage(transaction);
-        } else {
+        if (transaction.status === 'FAILED') {
           session.completePayment(ApplePaySession.STATUS_FAILURE);
           showErrorMessage(transaction.failure_reasons);
+        } else {
+          session.completePayment(ApplePaySession.STATUS_SUCCESS);
+          showSuccessMessage(transaction);
         }
       } else {
         session.completePayment(ApplePaySession.STATUS_FAILURE);
@@ -251,6 +259,8 @@ async function handleApplePay() {
 ```
 
 ### 7. Handle Transaction Results
+
+When you handle the result, check `transaction.status`, not only `type`. `processWalletTransaction` returns `type: 'SUCCESS'` whenever Pay Theory processed the payment, including declines. Treat `FAILED` as a decline and any other status as a successful payment. See [processWalletTransaction](../../../../sdk/javascript/messenger/processWalletTransaction) for the full response.
 
 ```javascript
 function showSuccessMessage(transaction) {
@@ -331,6 +341,7 @@ The Apple Pay™ payment data must include:
 - Valid payment token from Apple
 - Payment network information
 - Transaction details
+- Billing contact with postal address
 
 ### Processing Flow
 
