@@ -1,0 +1,77 @@
+---
+sidebar_position: 2
+sidebar_label: 'configureTokenize'
+title: "configureTokenize"
+---
+
+# configureTokenize
+
+The `configureTokenize` function initializes the PayTheory Fragment for tokenizing payment methods. It sets up the payment fields and validation for storing payment information without processing a payment.
+
+## Function Signature
+
+```kotlin
+fun configureTokenize(
+    configuration: PayTheoryConfiguration,
+    merchantActivity: PayTheoryMerchantActivity
+)
+```
+
+## Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| configuration | PayTheoryConfiguration | Configuration object containing all tokenization settings |
+| merchantActivity | PayTheoryMerchantActivity | Activity that implements the PayTheoryMerchantActivity interface |
+
+## Example Usage
+
+```kotlin
+// Get submit button reference and the PayTheoryFragment
+val submitButton = findViewById<PayTheoryButton>(R.id.submit_button)
+val payTheoryFragment = supportFragmentManager.findFragmentById(R.id.payment_fragment) as PayTheoryFragment
+
+
+// Create configuration
+val configuration = PayTheoryConfiguration(
+    apiKey = resources.getString(R.string.api_key),
+    payTheoryButton = submitButton
+).apply {
+    paymentMethodType = PaymentMethodType.CARD
+}
+
+// Configure the payment after fragment is attached
+payTheoryFragment.configureTokenize(
+    merchantActivity = requireActivity() as PayTheoryMerchantActivity,
+    configuration = configuration
+)
+```
+
+## Key Configuration Parameters for Tokenization
+
+| Parameter              | Type                   | Required | Description                                                                                                       |
+|------------------------|------------------------|----------|-------------------------------------------------------------------------------------------------------------------|
+| payTheoryButton        | PayTheoryButton        | Yes      | Button that triggers tokenization                                                                                 |
+| apiKey                 | String                 | Yes      | Your Pay Theory API key                                                                                           |
+| paymentMethodType      | PaymentMethodType      | Yes      | Type of payment method to tokenize (CARD or BANK)                                                                 |
+| requireAccountName     | Boolean                | No       | Whether to require account name field                                                                             |
+| requireBillingAddress  | Boolean                | No       | Whether to require billing address fields                                                                         |
+| metadata               | Map&lt;String, Any&gt; | No       | Additional data to associate with token                                                                           |
+| payorInfo              | PayorInfo              | No       | Information about the person paying                                                                               |
+| payorId                | String                 | No       | Existing payor ID to use                                                                                          |
+| skipTokenizeValidation | Boolean                | No       | Skip payment method validation. Should only be used if you intend to immediately use the tokenized payment method |
+
+## Important Notes
+
+- The `amount` parameter should not be set when tokenizing payment methods
+- Cash payment methods cannot be tokenized
+- The API key must be valid and contain the correct partner and stage information
+- A network connection is required for tokenization
+- The fragment must be configured before calling `tokenize()`
+
+## Related Documentation
+
+For complete details on all available configuration options, please see:
+- [PayTheoryConfiguration](../data_models/configuration.mdx)
+- [PayorInfo](../data_models/payor.mdx)
+- [Address](../data_models/address.mdx)

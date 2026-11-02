@@ -1,0 +1,149 @@
+---
+sidebar_position: 4
+sidebar_label: 'CashState'
+title: "CashState"
+---
+
+# CashState
+
+The `CashState` class in the PayTheory SDK manages the state of cash payment information. It provides a way to handle and validate cash payment details, which typically involve generating a barcode for in-person payments.
+
+## CashState Class
+
+### Overview
+
+`CashState` is the main class that encapsulates the state of a cash payment method. It conforms to the `ObservableObject` protocol, making it compatible with SwiftUI's state management system.
+
+### Properties
+
+| Property    | Type        | Description                                         |
+|-------------|-------------|-----------------------------------------------------|
+| isValid     | `Bool`      | Indicates if all cash payment details are valid and complete. |
+| name        | `CashName`  | Manages the state of the payer's name.              |
+| contact     | `CashContact` | Manages the state of the payer's contact information. |
+
+### Usage
+
+```swift
+@EnvironmentObject var payTheory: PayTheory
+
+var body: some View {
+    VStack {
+        Text("Cash Payment Valid: \(payTheory.cash.isValid ? "Yes" : "No")")
+        // Cash payment form fields
+    }
+}
+```
+
+## Sub-classes
+
+Each of the following sub-classes conforms to the `ObservableObject` and `ValidAndEmpty` protocols.
+
+### CashName
+
+Manages the state of the payer's name for cash payments.
+
+#### Properties
+
+| Property | Type   | Description                                               |
+|----------|--------|-----------------------------------------------------------|
+| isValid  | `Bool` | Indicates if the payer's name is valid.                   |
+| isEmpty  | `Bool` | Indicates if the payer's name field is empty.             |
+
+#### Usage
+
+```swift
+Text("Name Valid: \(payTheory.cash.name.isValid ? "Yes" : "No")")
+Text("Name Empty: \(payTheory.cash.name.isEmpty ? "Yes" : "No")")
+```
+
+### CashContact
+
+Manages the state of the payer's contact information for cash payments.
+
+#### Properties
+
+| Property | Type   | Description                                               |
+|----------|--------|-----------------------------------------------------------|
+| isValid  | `Bool` | Indicates if the contact information is valid.            |
+| isEmpty  | `Bool` | Indicates if the contact information field is empty.      |
+
+#### Usage
+
+```swift
+Text("Contact Valid: \(payTheory.cash.contact.isValid ? "Yes" : "No")")
+Text("Contact Empty: \(payTheory.cash.contact.isEmpty ? "Yes" : "No")")
+```
+
+## Validation Logic
+
+- The `isValid` property of `CashState` is `true` only when both `name` and `contact` are valid.
+- Validation logic for sub-classes:
+- `CashName`: Typically valid if not empty and meets any specific name requirements.
+- `CashContact`: Valid if it's a properly formatted email address or phone number.
+
+## Best Practices
+
+1. Always use the provided PayTheory UI components (`PTCashName`, `PTCashContact`) to ensure proper state management.
+2. Observe the `isValid` and `isEmpty` properties to provide real-time feedback to users.
+3. Use the `CashState.isValid` property to control the enabled state of your submission button.
+4. Remember that cash payments typically result in generating a barcode for in-person payment, so the actual payment process differs from card or ACH payments.
+
+## Example: Complete Cash Payment Form
+
+Here's an example of how to use `CashState` in a complete cash payment form:
+
+```swift
+struct CashPaymentForm: View {
+    @EnvironmentObject var payTheory: PayTheory
+
+    var body: some View {
+        VStack {
+            PTCashName()
+                .background(backgroundColor(for: payTheory.cash.name))
+            PTCashContact()
+                .background(backgroundColor(for: payTheory.cash.contact))
+
+            Button("Generate Cash Payment Barcode") {
+                generateBarcode()
+            }
+            .disabled(!payTheory.cash.isValid)
+        }
+    }
+
+    private func backgroundColor(for field: ValidAndEmpty) -> Color {
+        if field.isEmpty {
+            return .white
+        } else if field.isValid {
+            return .green.opacity(0.2)
+        } else {
+            return .red.opacity(0.2)
+        }
+    }
+
+    private func generateBarcode() {
+        // Logic to generate cash payment barcode
+        payTheory.transact(amount: 1000, paymentMethod: .CASH) { response in
+            switch response {
+            case .Barcode(let barcode):
+                print("Barcode URL: \(barcode.barcodeUrl)")
+                // Present the barcode to the user
+            case .Error(let error):
+                print("Error: \(error.error)")
+            default:
+                print("Unexpected response")
+            }
+        }
+    }
+}
+```
+
+This example demonstrates how to use the `CashState` and its sub-classes to create a cash payment form with real-time validation feedback and barcode generation.
+
+## Important Notes
+
+- Cash payments in the PayTheory system typically involve generating a barcode that the payer can use to make a payment at a participating retail location.
+- The `transact` function, when used with `.CASH` payment method, will return a `Barcode` response containing the URL for the generated barcode.
+- Ensure that your UI provides clear instructions to the user on how to use the generated barcode to complete their payment.
+
+By leveraging `CashState` and its sub-classes, you can create user-friendly cash payment forms while adhering to PayTheory's requirements for cash transactions.

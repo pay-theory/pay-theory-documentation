@@ -45,7 +45,7 @@ export default function HomepageFeatures() {
         <div className="container col--3">
           <div className="row">
             <div className="col">
-              <h3>No Code</h3>
+              <h2>No Code</h2>
               <ul>
                 <li>
                   <a
@@ -66,7 +66,7 @@ export default function HomepageFeatures() {
               </ul>
             </div>
             <div className="col">
-              <h3>Low Code</h3>
+              <h2>Low Code</h2>
               <ul>
                 <li>
                   <a href="../docs/main/online_payments/payment_button">
@@ -81,13 +81,13 @@ export default function HomepageFeatures() {
               </ul>
             </div>
             <div className="col">
-              <h3>For Developers</h3>
+              <h2>For Developers</h2>
               <ul>
                 <li>
-                  <a href="../docs/api/main">API reference</a>
+                  <a href="../docs/api/intro/main">API reference</a>
                 </li>
                 <li>
-                  <a href="../docs/api/query">Customize reporting</a>
+                  <a href="../docs/api/intro/query">Customize reporting</a>
                 </li>
               </ul>
             </div>
@@ -110,7 +110,7 @@ export default function HomepageFeatures() {
                   src="/img/home_page/InclusiveIcon.svg"
                   alt="Online payments"></img>
                 <div className="text">
-                  <h4>Accepting Online Payments</h4>
+                  <h3>Accepting Online Payments</h3>
                   <p>Create a custom checkout page with our SDK</p>
                 </div>
               </div>
@@ -125,18 +125,20 @@ export default function HomepageFeatures() {
                   src="/img/home_page/InvoicingIcon.svg"
                   alt="Invoicing & billing"></img>
                 <div className="text">
-                  <h4>Invoicing & Billing</h4>
+                  <h3>Invoicing & Billing</h3>
                   <p>Send invoices to clients and customers</p>
                 </div>
               </div>
             </a>
-            <a href="../docs/api/recurring" className="features">
+            <a
+              href="../docs/api/recurring-payment/create-recurring-payment"
+              className="features">
               <div className="content">
                 <img
                   src="/img/home_page/RecurringIcon.svg"
                   alt="Recurring payments"></img>
                 <div className="text">
-                  <h4>Subscriptions & Recurring Payments</h4>
+                  <h3>Subscriptions & Recurring Payments</h3>
                   <p>Learn how to use our API to create recurring payments</p>
                 </div>
               </div>
@@ -149,7 +151,7 @@ export default function HomepageFeatures() {
                   src="/img/home_page/EmbeddedIcon.svg"
                   alt="Tokenizing a payment method"></img>
                 <div className="text">
-                  <h4>Tokenizing a Payment Method</h4>
+                  <h3>Tokenizing a Payment Method</h3>
                   <p>{"Recall a customer's previously used payment method"}</p>
                 </div>
               </div>
@@ -160,7 +162,7 @@ export default function HomepageFeatures() {
                   src="/img/home_page/SaaSIcon.svg"
                   alt="Testing payments"></img>
                 <div className="text">
-                  <h4>Testing Payments</h4>
+                  <h3>Testing Payments</h3>
                   <p>Learn how to test payments on your platform</p>
                 </div>
               </div>

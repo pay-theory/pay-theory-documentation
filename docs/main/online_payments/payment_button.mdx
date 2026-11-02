@@ -38,20 +38,21 @@ You will need to put together the details of the checkout. This includes the amo
 const AMOUNT = 1000
 
 const PAYMENT_METADATA = {
-  "student-name": "Jane Doe"
+  "student-name": "Pat Theodore"
 };
 
 // Parameters that you will pass in to configure the checkout page that opens when the button is clicked.
 const CHECKOUT_DETAILS = {
   amount: AMOUNT,
-  paymentName: “user-name”
+  paymentName: "School Technology Fees",
 
-  acceptedPaymentMethods: paytheory.CARD_ONLY,
-  payorId: "pt_pay_XXXXXXXXX",
+  acceptedPaymentMethods: paytheory.ONLY_CARD,
+  payorId: "ptl_pay_5Q860Z2ouH3KKLnWfNpyxd",
   metadata: PAYMENT_METADATA,
-  recurringId: "pt_rec_XXXXXXXXX",
+  recurringId: "ptl_rec_64ImZH6LpufCQddDXX2OYH",
 }
 ```
+Use either `invoiceId` or `recurringId` in `checkoutDetails`, not both.
 These are the parameters that you can pass into the `checkoutDetails` object to customize the checkout page that opens when the button is clicked.
 
 ### Required parameters:
@@ -102,7 +103,7 @@ You pass a single object into the function with the following keys.
 |Key                      |type               |description                                                                                |
 --------------------------|-------------------|-------------------------------------------------------------------------------------------|
 | apiKey                  |string             |The API key for your Pay Theory account. You can find this in your Pay Theory Portal.|
-| checkoutDetails         |object             |The details for the checkout page that opens when the button is clicked. Details are mentioned [above](#prepare-the-checkout-details).|
+| checkoutDetails         |object             |The details for the checkout page that opens when the button is clicked. Details are mentioned [above](#3-prepare-the-checkout-details).|
 
 ### Optional parameters
 
@@ -112,7 +113,7 @@ You pass a single object into the function with the following keys.
 | onClick                 |function           |A function that will be called when the button is clicked.|
 | onError                 |function           |A function that will be called when an error occurs. It is passed an error string.|
 | onCancel                |function           |A function that will be called when the user cancels the payment from the pop-up window.|
-| onSuccess               |function           |A function that will be called when the payment is successful. It is passed an object with the following values. <ul><li>last_four (String): The last four digits of the card number or account number.</li><li>amount (Int): The amount of the transaction (service fee is included).</li><li>service_fee (Int): The service fee of the transaction.</li><li>receipt_number (String): The Pay Theory receipt number.</li><li>brand (String): The brand of the card.</li><li>created_at (String): The date and time the transaction was created.</li><li>state (String): The status of the transaction.</li><li>metadata (JSON): The metadata of the transaction.</li><li>payor_id (String): The Pay Theory id for the payor that was used for the transaction.</li><li>payment_method_id (String): The Pay Theory id for the payment method token.</li></ul>
+| onSuccess               |function           |A function that will be called when the payment is successful. It is passed an object with the following values. <ul><li>last_four (String): The last four digits of the card number or account number.</li><li>amount (Int): The amount of the transaction (service fee is included).</li><li>service_fee (Int): The service fee of the transaction.</li><li>receipt_number (String): The unique transaction_id assigned to a transaction by Pay Theory.</li><li>brand (String): The brand of the card.</li><li>created_at (String): The date and time the transaction was created.</li><li>state (String): The status of the transaction.</li><li>metadata (JSON): The metadata of the transaction.</li><li>payor_id (String): The Pay Theory id for the payor that was used for the transaction.</li><li>payment_method_id (String): The Pay Theory id for the payment method token.</li></ul>
 | onBarcode               |function           |A function that will be called when a barcode is successfully created and the user closes the window. It is passed an object with the following values.<ul><li> barcodeUrl (String): The url for the barcode image.</li><li> mapUrl (String): The url for the map to find retail locations to pay the barcode.</li></ul>
 
 

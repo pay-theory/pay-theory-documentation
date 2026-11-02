@@ -6,346 +6,335 @@ title: "Functions"
 
 # Functions
 
-The Pay Theory SDK provides a set of functions that can be used to perform actions in tandem with the Hosted Fields.
+These functions mount the hosted fields and run payments and tokenization through them. Each one is on `window.paytheory`. The [TypeScript declarations](typescript) type every parameter and response on this page.
 
 ***
 ## payTheoryFields
 
-This function is used to initialize the Pay Theory Hosted Fields.
+Mounts the hosted fields on the page and connects them to Pay Theory.
 
 ```javascript
 paytheory.payTheoryFields({
-  apiKey: string,
-  styles: StyleObject,
-  placeholders: PlaceholderObject
+  apiKey: 'YOUR_API_KEY',
+  amount: 1000,
+  country: 'USA',
+  placeholders: PLACEHOLDERS,
+  styles: STYLES,
 })
 ```
 
-These are the parameters that you can pass into the `payTheoryFields` function to customize the Hosted Fields.
+| Key | type | description |
+|-----|------|-------------|
+| apiKey | String | Required. Your Pay Theory API Key. |
+| amount | Int | Amount of the payment, in cents. Pass it to have the SDK calculate the service fee and report it to the [state observer](event_listeners#stateobserver). Change it later with [`updateAmount`](#updateamount). |
+| country | String | `USA` or `CAN`. Match the merchant's `country_code` on the [merchant](../../api/types/types/merchant) object. Defaults to `USA`. |
+| placeholders | Object | Placeholder text, keyed by field name such as `card-number` or `billing-zip`. |
+| styles | [Styles object](hosted_fields#styles-object) | How the hosted fields look. |
 
-| Key          | type                                        | description                                                                                                                                                                                                                                  |
-|--------------|---------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| apiKey       | String                                      | Your Pay Theory API key. This is required to initialize the Hosted Fields.                                                                                                                                                                   |
-| country      | String                                      | The country code for the country of the merchant you are initializing the SDK for. This should alight with the `country_code` on their [merchant](/docs/api/merchant#the-merchant-object) object. Defaults to `USA` if nothing is passed in. |
-| placeholders | Object                                      | An object that contains any custom placeholders you would like to use for the fields.                                                                                                                                                        |
-| styles       | [Style Object](hosted_fields#styles-object) | An object that contains the styles for the Hosted Fields.                                                                                                                                                                                    |
+`payTheoryFields` returns a Promise. It resolves to `{ type: 'READY', body: true }` when the fields are connected, or an [error response](#error-response).
 
 ***
 ## transact
 
-This function is used to submit a payment to Pay Theory or generate a barcode using the cash hosted fields. It returns a Promise with the result or an error.
+Submits a payment with the mounted card or ACH fields, or creates a barcode with the cash fields.
 
 ```javascript
-//Amount passed in is in cents
+// Amount in cents
 const AMOUNT = 1000
 
-// optionally provide details about the payor
+// Optional details about the payor
 const PAYOR_INFO = {
-  "first_name": "Some",
-  "last_name": "Body",
-  "email": "somebody@gmail.com",
-  "phone": "3335554444",
-  "personal_address": {
-    "city": "Somewhere",
-    "country": "USA",
-    "region": "OH",
-    "line1": "123 Street St",
-    "line2": "Apartment 17",
-    "postal_code": "12345"
-  }
-}
-
-const BILLING_INFO = {
-    name: "Some Body",
-    address: {
-        line1: "123 Street St",
-        line2: "Apartment 17",
-        city: "Somewhere",
-        region: "OH",
-        postal_code: "12345",
-        country: "USA"
-    }
-}
-
-const PAYMENT_METADATA = {
-  "student-name": "Jane Doe"
-};
-
-// Parameters that you will pass into the transact function. More details below.
-const TRANSACTING_PARAMETERS = {
-    accountCode: "code-123456789", // optional
-    amount: AMOUNT,
-    billingInfo: BILLING_INFO, // optional
-    confirmation: false, // optional
-    fee: 100, // optional
-    feeMode: FEE_MODE, // optional
-    invoiceId: "pt_inv_XXXXXXXXX", // optional
-    metadata: PAYMENT_METADATA, // optional
-    oneTimeUseToken: false, // optional
-    payorId: "pt_pay_XXXXXXXXX", // optional
-    payorInfo: PAYOR_INFO, // optional
-    receiptDescription: "School Technology Fees", // optional
-    recurringId: "pt_rec_XXXXXXXXX", // optional
-    reference: "field-trip", // optional
-    sendReceipt: true, // optional
-}
-
-paytheory.transact(TRANSACTING_PARAMETERS)
-```
-
-These are the parameters that you can pass into the `transact` function to customize the payment.
-
-| Key                | type                                 | description                                                                                                                                                                                                                                                                                           |
-|--------------------|--------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| accountCode        | String                               | Code that can be used to track a payment or group of payments. Will be included in the transaction schema and in the Pay Theory Portal.                                                                                                                                                               |
-| amount             | Int                                  | The amount of the transaction in cents.                                                                                                                                                                                                                                                               |
-| billingInfo        | [Billing Info](#billing-info-object) | Billing info for the payment method. This is required if you are not using the zip hosted field.                                                                                                                                                                                                      |
-| confirmation       | Boolean                              | Defaults to false. If set to true the payment will return a response to the tokenizeObserver before it needs to be confirmed. Required if using SERVICE_FEE fee mode.                                                                                                                                 |
-| fee                | Int                                  | Represents the fee to be charged in cents. If you are using SERVICE_FEE mode and want to skip the confirmation step, you must provide the fee amount. This will be validated to make sure it matches the fee amount that would be charged. If the fee amount does not match, an error will be thrown. |
-| feeMode            | String                               | Defaults to window.paytheory.MERCHANT_FEE. If available to merchant and set to window.paytheory.SERVICE_FEE the fee will be added to the amount and charged to the payor. More details about the fee modes in your Pay Theory Portal.                                                                 |
-| invoiceId          | String                               | The Pay Theory invoice ID to use for the payment. Allows for user to assign a payment to an invoice.                                                                                                                                                                                                  |
-| metadata           | Object                               | An object that will be stored with the transaction and can be used to track the payment.                                                                                                                                                                                                              |
-| oneTimeUseToken    | Boolean                              | Defaults to false. If set to true the payment method will have the `is_active` flag set to `false` after the transaction processes so it cannot make payments.                                                                                                                                        |
-| payorId            | String                               | The Pay Theory payor ID to use for the payment. Allows for user to manage identities. This cannot be used if also using the payorInfo parameter.                                                                                                                                                      |
-| payorInfo          | [Payor Info](#payor-info-object)     | Details of the payor who is making the transaction.                                                                                                                                                                                                                                                   |
-| receiptDescription | String                               | Description to be included in the receipt. Defaults to "Payment from your merchant".                                                                                                                                                                                                                  |
-| recurringId        | String                               | The Pay Theory recurring ID to use for the payment. Allows for user to assign a payment to a recurring payment. If you pass in a recurring ID, the transactions amount must be an interval of the recurring payments amount per payment.                                                              |
-| reference          | String                               | Custom description assigned to a payment. Will be included in the transaction schema and in the Pay Theory Portal.                                                                                                                                                                                    |
-| sendReceipt        | Boolean                              | Pass true to send a receipt to the payor. Must have an email address on the payorInfo object or pass in a payorId that has an email address tied to it.                                                                                                                                               |
-
-The function returns a Promise that will contain an object with a key of `type`. You can expect the following values for `type`:
-- [`SUCCESS`](#success-response): The transaction was successful and the transaction details will be in the `body` key.
-- [`FAILED`](#failed-response): The transaction failed and the details will be in the `body` key.
-- [`CONFIRMATION`](#confirmation-response): The transaction requires confirmation and the transaction details will be in the `body` key.
-- [`CASH`](#cash-response): The transact call successfully generated a barcode and the barcode details will be in the `body` key.
-- [`ERROR`](#error-response): The transact call had an error while processing and the error details will be in the `error` key.
-
-While generating the Barcode it will use the geoloaction to return a map url for the users specific location.
-
-If this is the first time it has been requested the user will have the opportunity to accept or decline the request.
-
-***
-## confirm
-
-This function is used to confirm a payment that has been created and required the confirmation step.
-
-```javascript
-paytheory.confirm()
-```
-
-The function returns a Promise that will contain an object with a key of `type`. You can expect the following values for `type`:
-- [`SUCCESS`](#success-response): The transaction was successful and the transaction details will be in the `body` key.
-- [`FAILED`](#failed-response): The transaction failed and the details will be in the `body` key.
-- [`ERROR`](#error-response): The transact call had an error while processing and the error details will be in the `error` key.
-
-***
-## cancel
-
-This function is used to cancel a payment that has been created and required the confirmation step.
-
-```javascript
-paytheory.cancel()
-```
-
-The function returns a Promise that will contain `true` if the transaction was cancelled successfully or an [`ERROR`](#error-response) Response.
-
-Once you click cancel the transaction will be cancelled, and you will be able to run `transact` again.
-
-***
-## tokenizePaymentMethod
-
-This function is used to tokenize a card or bank account.
-
-```javascript
-/ optionally provide details about the payor
-const PAYOR_INFO = {
-  "first_name": "Some",
-  "last_name": "Body",
-  "email": "somebody@gmail.com",
-  "phone": "3335554444",
-  "personal_address": {
-    "city": "Somewhere",
-    "country": "USA",
-    "region": "OH",
-    "line1": "123 Street St",
-    "line2": "Apartment 17",
-    "postal_code": "12345"
-  }
-}
-
-const BILLING_INFO = {
-  name: "Some Body",
-  address: {
-    line1: "123 Street St",
-    line2: "Apartment 17",
-    city: "Somewhere",
+  first_name: "Pat",
+  last_name: "Theodore",
+  email: "pat@example.com",
+  phone: "+15555550123",
+  personal_address: {
+    line1: "123 Main Street",
+    city: "Cincinnati",
     region: "OH",
-    postal_code: "12345",
+    postal_code: "45209",
     country: "USA"
   }
 }
 
-const TOKEN_METADATA = {
-  "system_id": "123456789"
+const PAYMENT_METADATA = {
+  "student-name": "Pat Theodore"
 };
 
-const TOKENIZE_PAYMENT_METHOD_PARAMETERS = {
+const TRANSACTING_PARAMETERS = {
+  amount: AMOUNT,
   payorInfo: PAYOR_INFO, // optional
-  billingInfo: BILLING_INFO, // optional
-  payorId: "pt_pay_XXXXXXXXX", // optional
-  metadata: TOKEN_METADATA, // optional
+  metadata: PAYMENT_METADATA, // optional
+  feeMode: paytheory.MERCHANT_FEE, // optional
+  idempotencyKey: "order-1042", // optional
+  accountCode: "code-123456789", // optional
+  reference: "field-trip", // optional
+  invoiceId: "ptl_inv_2O0yTY3k5AIyDc8NQ2SvhC", // optional
+  receiptDescription: "School Technology Fees", // optional
+  sendReceipt: true, // optional
 }
 
-
-paytheory.tokenizePaymentMethod(TOKENIZE_PAYMENT_METHOD_PARAMETERS)
+const result = await paytheory.transact(TRANSACTING_PARAMETERS)
 ```
 
-These are the parameters that you can pass into the `tokenizePaymentMethod` function to tokenize a card or bank account.
+Pass either `payorInfo` or `payorId`, not both. Pass either `invoiceId` or `recurringId`, not both. The SDK returns an `INVALID_PARAM` error for either pair.
 
-|Key                | type                                 | description                                                                                                                                       |
-|-------------------|--------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------|
-|payorInfo          | [Payor Info](#payor-info-object)     | The details of the payor that you are tokenizing the payment method for.                                                                          |
-|billingInfo        | [Billing Info](#billing-info-object) | Billing info for the payment method. This is required if you are not using the `zip` hosted field.                                                |
-|metadata           | Object                               | An object that will be stored with the token and can be used to track the token.                                                                  |
-|payorId            | String                               | The Pay Theory payor ID to use for the payment. Allows for user to manage identities. This cannot be used if also using the `payorInfo` parameter. |
+| Key | type | description |
+|-----|------|-------------|
+| amount | Int | Required. Amount of the payment, in cents. |
+| accountCode | String | Code for tracking a payment or group of payments. Shows on the transaction and in the Pay Theory portal. |
+| billingInfo | [Billing info](#billing-info-object) | Billing name and address. Required for cards if you don't mount the `zip` hosted field. |
+| expandedResponse | Boolean | Defaults to `false`. With `true`, `SUCCESS` and `FAILED` responses return the full [Transaction](#expanded-responses). |
+| fee | Int | Fee to charge, in cents. With `SERVICE_FEE`, pass the fee the [state observer](event_listeners#service-fee) reports. Pay Theory checks it against the fee it calculates and returns an error if they don't match. |
+| feeMode | String | `paytheory.MERCHANT_FEE` (default) or `paytheory.SERVICE_FEE`. With `SERVICE_FEE`, Pay Theory adds the fee to the amount and charges it to the payor. |
+| healthExpenseType | String | Healthcare category: `HEALTHCARE`, `RX`, `VISION`, `CLINICAL`, `COPAY`, `DENTAL` or `TRANSIT`. |
+| idempotencyKey | String | Your key for this payment. If you retry with the same key and the same details, Pay Theory returns the first response instead of charging again. Cash payments ignore it. See [Idempotency](../../main/online_payments/idempotency). |
+| invoiceId | String | ID of the invoice this payment pays. |
+| level3DataSummary | [Level 3 data summary](#level-3-data-summary-object) | Level 3 summary data for the transaction. |
+| metadata | Object | Key-value data stored with the transaction. |
+| oneTimeUseToken | Boolean | Defaults to `false`. With `true`, Pay Theory sets the payment method's `is_active` to `false` after the payment, so it can't be charged again. |
+| payorId | String | ID of an existing payor. |
+| payorInfo | [Payor info](#payor-info-object) | Details for a new payor. |
+| receiptDescription | String | Description on the receipt. Defaults to "Payment from your merchant". |
+| recurringId | String | ID of the recurring payment this payment pays. The amount must be a multiple of the recurring amount per payment. |
+| reference | String | Your own description of the payment. Shows on the transaction and in the Pay Theory portal. |
+| sendReceipt | Boolean | Pass `true` to email a receipt. The payor needs an email address, from `payorInfo` or the payor with `payorId`. |
 
+`transact` returns a Promise that resolves to an object with a `type`:
 
-The function returns a Promise that will contain an object with a key of `type`. You can expect the following values for `type`:
+- [`SUCCESS`](#success-response): The payment succeeded. Details are in `body`.
+- [`FAILED`](#failed-response): The payment was declined. Details are in `body`.
+- [`CASH`](#cash-response): The cash barcode was created. Details are in `body`.
+- [`ERROR`](#error-response): The SDK couldn't run the payment. The message is in `error`.
 
-- [`TOKENIZED`](#tokenized-response): The payment method was tokenized successfully and the token will be in the `body` key.
-- [`ERROR`](#error-response): The transact call had an error while processing and the error details will be in the `error` key.
+If you retry with the same `idempotencyKey` and the same details, `transact` returns the first response. With changed details, it returns an `ERROR` whose message includes `IDEMPOTENCY_KEY_PAYLOAD_MISMATCH` and the original `transaction_id`. Either way, no new payment is created. On the same page, you can retry after an `ERROR` or `FAILED` response. After `SUCCESS` or `CASH`, the fields are used up and `transact` returns `ACTION_COMPLETE`.
+
+For a cash barcode, the SDK asks the browser for the payor's location to build the map URL. The first time, the browser asks the payor to allow it.
 
 ***
-## Payor Info Object
+## tokenizePaymentMethod
 
-This data will be used to create a payor in Pay Theory system that will be represented by a Payor ID.
+Saves the card or bank account in the mounted fields as a payment method token, without charging it.
+
+```javascript
+const TOKENIZE_PAYMENT_METHOD_PARAMETERS = {
+  payorInfo: PAYOR_INFO, // optional
+  metadata: { "system_id": "123456789" }, // optional
+  expandedResponse: true, // optional
+}
+
+const result = await paytheory.tokenizePaymentMethod(TOKENIZE_PAYMENT_METHOD_PARAMETERS)
+```
+
+| Key | type | description |
+|-----|------|-------------|
+| payorInfo | [Payor info](#payor-info-object) | Details for a new payor. Don't combine with `payorId`. |
+| payorId | String | ID of an existing payor. |
+| billingInfo | [Billing info](#billing-info-object) | Billing name and address. Required for cards if you don't mount the `zip` hosted field. |
+| metadata | Object | Key-value data stored with the payment method token. |
+| skipValidation | Boolean | Defaults to `false`. With `true`, Pay Theory saves the payment method without validating it first. |
+| expandedResponse | Boolean | Defaults to `false`. With `true`, a `TOKENIZED` response returns the full [payment method](#expanded-responses), and a processor rejection returns `FAILED` with the reason. |
+
+`tokenizePaymentMethod` returns a Promise that resolves to an object with a `type`:
+
+- [`TOKENIZED`](#tokenized-response): The payment method was saved. Details are in `body`.
+- [`FAILED`](#failed-tokenization-response): The processor rejected the payment method. Only returned with `expandedResponse: true`.
+- [`ERROR`](#error-response): The SDK couldn't save the payment method. The message is in `error`.
+
+Without `expandedResponse`, a processor rejection comes back as an `ERROR` that starts with `SOCKET_ERROR: Token validation failed:`.
+
+***
+## updateAmount
+
+Changes the amount on every mounted hosted field and recalculates the service fee.
+
+```javascript
+// Amount in cents
+const result = await paytheory.updateAmount(2000)
+
+if (result !== true) {
+  console.error('Could not update the amount:', result.error)
+}
+```
+
+| Key | type | description |
+|-----|------|-------------|
+| amount | Int | The new amount, in cents. |
+
+`updateAmount` returns a Promise that resolves to `true`, or an [error response](#error-response) that starts with one of these codes:
+
+- `INVALID_PARAM`: The amount isn't a number, is `0` or has a decimal.
+- `NOT_READY`: The fields aren't ready yet.
+- `NO_FIELDS`: There are no hosted fields on the page.
+- `SOCKET_ERROR`: The SDK couldn't reconnect to Pay Theory.
+
+After an update, the [state observer](event_listeners#stateobserver) fires with the new amount and fees.
+
+***
+## Parameter schemas
+
+### Payor info object
+
+Pay Theory creates a payor from this data and returns its ID as `payor_id`.
 
 ```json
 {
-  "first_name": "Some",
-  "last_name": "Body",
-  "email": "somebody@paytheory.com",
-  "phone": "3335554444",
+  "first_name": "Pat",
+  "last_name": "Theodore",
+  "email": "pat@example.com",
+  "phone": "+15555550123",
   "personal_address": {
-    "city": "Somewhere",
-    "country": "USA",
+    "line1": "123 Main Street",
+    "city": "Cincinnati",
     "region": "OH",
-    "line1": "123 Street St",
-    "line2": "Apartment 17",
-    "postal_code": "12345"
+    "postal_code": "45209",
+    "country": "USA"
   }
 }
 ```
 
-|Key                | type                       | description                                                                                                              |
-|-------------------|----------------------------|--------------------------------------------------------------------------------------------------------------------------|
-|first_name         | String                     | The first name of the payor                                                                                              |
-|last_name          | String                     | The last name of the payor                                                                                               |
-|email              | String                     | The email address of the payor                                                                                           |
-|phone              | String                     | The phone number of the payor                                                                                            |
-|personal_address   | [Address](#address-object) | The address of the payor                                                                                                 |
-|same_as_billing    | Boolean                    | Optional. If set to `true`, the address will be the same as the billing address. You only need to pass in `phone` and `email`. |
+| Key | type | description |
+|-----|------|-------------|
+| first_name | String | Payor's first name. |
+| last_name | String | Payor's last name. |
+| email | String | Payor's email address. Needed for `sendReceipt`. |
+| phone | String | Payor's phone number. |
+| personal_address | [Address](#address-object) | Payor's address. |
+| same_as_billing | Boolean | With `true`, Pay Theory uses the billing address as the payor's address. Pass only `email` and `phone` with it. |
 
-***
-## Billing Info Object
+### Billing info object
 
-This data will be used as the billing info for a card transaction. This is required if you are not using the billing hosted fields.
+The billing name and address for the payment method. Required for cards if you don't mount the billing hosted fields.
 
-|Key                | type                       |       description                     |
-|-------------------|----------------------------|---------------------------------------|
-|name               | String                     |The name on the card|
-|address            | [Address](#address-object) |The billing address of the card|
+| Key | type | description |
+|-----|------|-------------|
+| name | String | Name on the card or account. |
+| address | [Address](#address-object) | Billing address. |
 
-***
-## Address Object
-
-This object is used to represent an address.
+### Address object
 
 ```json
 {
-  "line1": "123 Street St",
-  "line2": "Apartment 17",
-  "city": "Somewhere",
+  "line1": "123 Main Street",
+  "line2": "Suite 200",
+  "city": "Cincinnati",
   "region": "OH",
-  "postal_code": "12345",
+  "postal_code": "45209",
   "country": "USA"
 }
 ```
 
-|Key                |type         |       description                     |
-|-------------------|-------------|---------------------------------------|
-|line1              |String       |The street address of the payor|
-|line2              |String       |The street address of the payor|
-|city               |String       |The city of the payor|
-|region             |String       |The region (state) of the payor|
-|postal_code        |String       |The postal code of the payor|
-|country            |String       |The country of the payor|
+| Key | type | description |
+|-----|------|-------------|
+| line1 | String | Street address. |
+| line2 | String | Second address line. |
+| city | String | City. |
+| region | String | State or province. |
+| postal_code | String | Postal code. |
+| country | String | Country. |
+
+### Level 3 data summary object
+
+Summary data for Level 3 card processing. All amounts are in cents.
+
+| Key | type | description |
+|-----|------|-------------|
+| tax_amt | Int | Total tax amount. |
+| tax_ind | String | How tax applies: `TAX_AMOUNT_PROVIDED`, `NOT_TAXABLE` or `NO_TAX_INFO_PROVIDED`. |
+| purch_idfr | String | Purchase identifier. |
+| order_num | String | Merchant's order number. |
+| discnt_amt | Int | Total discount amount. |
+| frght_amt | Int | Total freight or shipping amount. |
+| duty_amt | Int | Total duty amount. |
+| dest_postal_code | String | Postal code the goods ship to. |
+| prod_desc | String[] | Descriptions of the products in the transaction. |
 
 ***
 ## Responses
 
-### Success Response
+### Success response
 
-This is the value of the `body` key in the response if the `type` is `SUCCESS`:
+The `body` of a `SUCCESS` response. With `expandedResponse: true`, `body` is the full [Transaction](#expanded-responses) instead.
 
-|Key                |type         |       description                     |
-|-------------------|-------------|---------------------------------------|
-|last_four          |String       |The last four digits of the card number or account number|
-|amount             |Int          |The amount of the transaction|
-|service_fee        |Int          |The service fee of the transaction|
-|receipt_number     |String       |The Pay Theory receipt number|
-|brand              |String       |The brand of the card|
-|created_at         |String       |The date and time the transaction was created|
-|state              |String       |The status of the transaction|
-|metadata           |JSON         |The metadata of the transaction|
-|payor_id           |String       |The Pay Theory id for the payor that was used for the transaction|
-|payment_method_id  |String       |The Pay Theory id for the payment method token|
+| Key | type | description |
+|-----|------|-------------|
+| receipt_number | String | The transaction ID. |
+| amount | Int | Amount charged, in cents. Includes the service fee. |
+| service_fee | Int | Service fee, in cents. |
+| last_four | String | Last four digits of the card or account number. |
+| brand | String | Card brand. |
+| created_at | String | When the transaction was created. |
+| state | String | Status of the transaction. |
+| metadata | Object | The metadata you passed. |
+| payor_id | String | ID of the payor. |
+| payment_method_id | String | ID of the payment method token. |
 
-*note that the service fee is included in amount*
+### Failed response
 
-### Failed Response
+The `body` of a `FAILED` response. With `expandedResponse: true`, `body` is the full [Transaction](#expanded-responses) instead.
 
-This is the value of the `body` key in the response if the `type` is `FAILED`:
+| Key | type | description |
+|-----|------|-------------|
+| receipt_number | String | The transaction ID. |
+| last_four | String | Last four digits of the card or account number. |
+| brand | String | Card brand. |
+| state | String | Status of the transaction. This is `FAILURE`. |
+| type | String | Description of the failure. |
+| payor_id | String | ID of the payor. |
+| reason | Object | Why the payment failed. See below. |
 
-|Key                |type         |       description                     |
-|-------------------|-------------|---------------------------------------|
-|receipt_number     |String       |The Pay Theory receipt number|
-|last_four          |String       |The last four digits of the card number or account number|
-|brand              |String       |The brand of the card|
-|state              |String       |The state of the transaction. This will be `FAILURE`|
-|reason             |Object       |The reason for the failure. More details below.|
+**Reason object**
 
-**Reason Object**
+| Key | type | description |
+|-----|------|-------------|
+| failure_code | String | Failure code. See [Failure codes](../../main/after_payments/failed_transactions). |
+| failure_text | String | Failure message. |
 
-| Key          | type   | description                                                                           |
-|--------------|--------|---------------------------------------------------------------------------------------|
-| failure_code | String | The failure code for the failure. You can find a list of failure codes [here](errors) |
-| failure_text | String | The message for the failure                                                           |
+### Cash response
 
-### Confirmation Response
+The `body` of a `CASH` response.
 
-This is the value of the `body` key in the response if the `type` is `CONFIRMATION`:
+| Key | type | description |
+|-----|------|-------------|
+| barcodeUrl | String | URL of the barcode image. |
+| mapUrl | String | URL of a map of retail locations that accept the barcode. |
 
-|Key                |type         |       description                     |
-|-------------------|-------------|---------------------------------------|
-|first_six          |String       |The first six digits of the card number|
-|last_four          |String       |The last four digits of the card number or account number|
-|amount             |Int          |The amount of the transaction|
-|service_fee        |Int          |The service fee of the transaction|
-|receipt_number     |String       |The Pay Theory receipt number|
+### Tokenized response
 
-### Cash Response
+The `body` of a `TOKENIZED` response. With `expandedResponse: true`, `body` is the full [payment method](#expanded-responses) instead.
 
-This is the value of the `body` key in the response if the `type` is `CASH`:
+| Key | type | description |
+|-----|------|-------------|
+| payment_method_id | String | ID of the payment method token. |
+| payor_id | String | ID of the payor. |
+| last_four | String | Last four digits of the card or account number. |
+| brand | String | Card brand. |
+| expiration | String | Card expiration date, as `MMYY`. |
+| payment_type | String | `card` or `ach`. |
+| metadata | Object | The metadata you passed. |
 
-|Key                |type         |       description                     |
-|-------------------|-------------|---------------------------------------|
-|barcodeUrl         |String       |The url for the barcode image|
-|mapUrl             |String       |The url for the map to find retail locations to pay the barcode|
+### Failed tokenization response
 
-### Error Response
+The `body` of a `FAILED` response from `tokenizePaymentMethod`. Returned only with `expandedResponse: true`.
 
-If the response has the `type` of `ERROR` it will have another key `error` with a string attached to it. The string will begin with one of the codes shown [here](errors.md).
+```json
+{
+  "type": "FAILED",
+  "body": {
+    "failure_code": "GENERIC_DECLINE",
+    "failure_text": "The transaction was declined for an unknown reason."
+  }
+}
+```
+
+| Key | type | description |
+|-----|------|-------------|
+| failure_code | String | Failure code. See [Failure codes](../../main/after_payments/failed_transactions). |
+| failure_text | String | Failure message. |
+
+### Error response
+
+An `ERROR` response has an `error` string instead of a `body`. The string starts with one of the [error codes](errors).
 
 ```json
 {
@@ -354,16 +343,11 @@ If the response has the `type` of `ERROR` it will have another key `error` with 
 }
 ```
 
-### Tokenized Response
+### Expanded responses
 
-This is the value of the `body` key in the response if the `type` is `TOKENIZED`:
+With `expandedResponse: true`, the SDK returns the same objects as the API:
 
-| Key               | type   | description                                                                |
-|-------------------|--------|----------------------------------------------------------------------------|
-| payment_method_id | String | The Pay Theory id for the payment method token                             |
-| payor_id          | String | The Pay Theory id for the payor that was used for the payment method token |
-| last_four         | String | The last four digits of the card number or account number                  |
-| brand             | String | The brand of the card                                                      |
-| expiration        | String | The expiration date of the card formatted as MMYY                          |
-| payment_type      | String | The type of payment method tokenized. This will be `card` or `ach`         |
-| metadata          | JSON   | The metadata that was passed in when tokenizing the payment method         |
+- `transact`: `SUCCESS` and `FAILED` bodies are a [Transaction](../../api/types/types/transaction), with its `payment_method` and payor. `status` tells you which one you got.
+- `tokenizePaymentMethod`: a `TOKENIZED` body is a [payment method](../../api/types/types/payment-method-token), with its payor.
+
+Use expanded responses when your system already stores the API's objects, so you don't need a second query.

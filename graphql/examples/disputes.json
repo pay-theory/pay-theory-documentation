@@ -1,0 +1,40 @@
+[
+  {
+    "operation": "disputes",
+    "operationType": "query",
+    "examples": [
+      {
+        "name": "List disputes for a merchant",
+        "description": "Filters on merchant_uid.",
+        "query": "query Disputes($query: SqlQuery, $limit: Int) {\n  disputes(query: $query, limit: $limit) {\n    items {\n      dispute_id\n    }\n  }\n}",
+        "variables": {
+          "query": {
+            "query_list": [
+              {
+                "key": "merchant_uid",
+                "operator": "EQUAL",
+                "value": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
+              }
+            ]
+          },
+          "limit": 1
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "disputes": {
+                "items": [
+                  {
+                    "dispute_id": "DIwtRcdG58raHXxLDkmAVddS"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    ]
+  }
+]

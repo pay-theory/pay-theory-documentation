@@ -9,7 +9,7 @@ export default function Home() {
   return (
     <Layout
       title={`${siteConfig.title}`}
-      description="Description will go into a meta tag in <head />">
+      description="Developer documentation for Pay Theory payment processing: the GraphQL API, JavaScript, Apple iOS, and Android SDKs, and guides for online payments, invoicing, and recurring billing.">
       <main>
         <HomepageFeatures />
       </main>

@@ -7,13 +7,13 @@ title: "Deprecations"
 # Deprecations
 
 
-## Create and Mount
+## Create and mount
 
-These functions have been replaced with the [payTheoryFields](functions#paytheoryfields) function. You no longer need to run `create` and `mount` separately. Instead, you can run `payTheoryFields` and pass in the API key and styles object.
+[`payTheoryFields`](functions#paytheoryfields) replaces `create` and `mount`. It takes the API Key and styles object and mounts the fields in one call.
 
 ### create
 
-The `create` function is used to initialize the Pay Theory object. This function takes two arguments, the API key and the [styles object](hosted_fields#styling-hosted-fields).
+`create` initializes a Pay Theory controller. It takes the API Key and the [styles object](hosted_fields#styles-object).
 
 ```javascript
 const API_KEY = "YOUR_API_KEY"
@@ -24,11 +24,11 @@ const STYLES = {
 const myPayTheory = await window.paytheory.create(API_KEY, STYLES)
 ```
 
-This function returns a promise that resolves to the Pay Theory object containing the functions listed below and all available [Event Listeners](event_listeners).
+It returns a Promise that resolves to a controller with `mount`, the action functions and the [event listeners](event_listeners).
 
 ### mount
 
-The `mount` function is used to mount the Hosted Fields to the DOM. This function takes an object as an argument.
+`mount` adds the hosted fields to the page. It takes one object.
 
 ```javascript
 const customPlaceholders = {
@@ -42,9 +42,9 @@ myPayTheory.mount({
 })
 ```
 
-In the object you can pass in the following properties:
+The object accepts:
 
-- **placeholders**: An object that contains any custom placeholders you would like to use for the fields. These keys can be used to customize the placeholders for the following fields:
+- **placeholders**: Custom placeholder text, keyed by field:
   - **card-number**
   - **card-cvv**
   - **card-exp**
@@ -60,18 +60,35 @@ In the object you can pass in the following properties:
   - **cash-name**
   - **cash-contact**
 
-  *Use these values to customize the labels for the Account Type radio button*
+  These keys set the labels of the account type radio buttons:
   - **checking**
   - **savings**
 
 
-## Event Listeners
+## Confirmation flow
 
-These event listeners are no longer needed since the [transact](functions#transact), [tokenizePaymentMethod](functions#tokenizepaymentmethod), and [confirm](functions#confirm) functions will return a promise that resolves to the data you need.
+The confirmation flow is deprecated. To show the payor the service fee before you charge, read it from the [state observer](event_listeners#service-fee) and pass it to `transact` as `fee`.
+
+In the confirmation flow, `transact` with `confirmation: true` returns a `CONFIRMATION` response instead of charging. Its `body` has `first_six`, `last_four`, `brand`, `amount`, `service_fee` and `receipt_number`. You then call `confirm()` to charge the payment or `cancel()` to drop it.
+
+```javascript
+const result = await paytheory.transact({ amount: 1000, confirmation: true })
+
+if (result.type === 'CONFIRMATION') {
+  // Show result.body.service_fee, then:
+  await paytheory.confirm() // or paytheory.cancel()
+}
+```
+
+`confirm` returns `SUCCESS`, `FAILED` or `ERROR`, like `transact`. `cancel` returns `true` or an `ERROR`.
+
+## Event listeners
+
+You don't need these listeners. [`transact`](functions#transact) and [`tokenizePaymentMethod`](functions#tokenizepaymentmethod) return the same data in their Promise. The SDK still fires them for older integrations.
 
 ### tokenizeObserver
 
-The `tokenizeObserver` will fire when a function has tokenized a payment when the `transact` function is called with `true` passed in to the `require_confirmation` parameter.
+`tokenizeObserver` fires when `transact` runs with `confirmation: true` and the payment is waiting for `confirm`. See the [confirmation flow](#confirmation-flow).
 
 ```javascript
 myPayTheory.tokenizeObserver(token => {
@@ -79,22 +96,20 @@ myPayTheory.tokenizeObserver(token => {
 })
 ```
 
-#### Callback Argument
+#### Callback argument
 
-You will be passed back an object with the following properties:
-
-*note that the service fee is included in amount*
+The callback receives this object. `amount` includes the service fee.
 
 - **first_six** (String): The first six digits of the card number
-- **last_four**: (String) The last four digits of the card number or account number
+- **last_four** (String): The last four digits of the card number or account number
 - **amount** (Int): The amount of the transaction
 - **service_fee** (Int): The service fee of the transaction
-- **receipt_number** (String): The Pay Theory receipt number
+- **receipt_number** (String): The unique transaction_id assigned to a transaction by Pay Theory
 
 
 ### captureObserver
 
-The `captureObserver` will fire when the `capture` function has captured a payment following a successful tokenized payment.
+`captureObserver` fires when `confirm` completes a payment that was waiting for confirmation. See the [confirmation flow](#confirmation-flow).
 
 ```javascript
 myPayTheory.captureObserver(capture => {
@@ -102,39 +117,33 @@ myPayTheory.captureObserver(capture => {
 })
 ```
 
-#### Callback Argument
+#### Callback argument
 
-You will be passed back an object with the following properties:
-
-A successful capture will return the following properties:
-
-*note that the service fee is included in amount*
+A successful payment passes this object. `amount` includes the service fee.
 
 - **last_four** (String): The last four digits of the card number or account number
 - **amount** (Int): The amount of the transaction
 - **service_fee** (Int): The service fee of the transaction
-- **receipt_number** (String): The Pay Theory receipt number
+- **receipt_number** (String): The unique transaction_id assigned to a transaction by Pay Theory
 - **brand** (String): The brand of the card
 - **created_at** (String): The date and time the transaction was created
 - **state** (String): The status of the transaction
 - **metadata** (JSON): The metadata of the transaction
-- **payor_id** (String): The Pay Theory id for the payor that was used for the transaction
-- **payment_method_id** (String): The Pay Theory id for the payment method token
+- **payor_id** (String): The ID of the payor that was used for the transaction
+- **payment_method_id** (String): The ID of the payment method token
 
-If a failure or decline occurs during the payment, the response will be similar to the following:
+A failed or declined payment passes this object:
 
-- **receipt_number** (String): The Pay Theory receipt number
+- **receipt_number** (String): The unique transaction_id assigned to a transaction by Pay Theory
 - **last_four** (String): The last four digits of the card number or account number
 - **brand** (String): The brand of the card
 - **state** (String): The state of the transaction
-    - This will be `FAILURE`
+    - This is `FAILURE`
 - **type** (String): Description of the failure
 
 ### transactedObserver
 
-The `transactedObserver` will fire with a response after the `transact` function is called without the `require_confirmation` parameter passed in or set to `false`.
-
-This will also fire with a response after calling the `tokenizePaymentMethod`
+`transactedObserver` fires when `transact` completes a payment without `confirmation: true`. It also fires when `tokenizePaymentMethod` completes.
 
 ```javascript
 myPayTheory.transactedObserver(result => {
@@ -142,49 +151,41 @@ myPayTheory.transactedObserver(result => {
 })
 ```
 
-If you called the `transact` function you will be passed back an object with the following properties:
-
-A successful capture will return the following properties:
-
-*note that the service fee is included in amount*
+After `transact`, a successful payment passes this object. `amount` includes the service fee.
 
 - **last_four** (String): The last four digits of the card number or account number
 - **amount** (Int): The amount of the transaction
 - **service_fee** (Int): The service fee of the transaction
-- **receipt_number** (String): The Pay Theory receipt number
+- **receipt_number** (String): The unique transaction_id assigned to a transaction by Pay Theory
 - **brand** (String): The brand of the card
 - **created_at** (String): The date and time the transaction was created
 - **state** (String): The status of the transaction
 - **metadata** (JSON): The metadata of the transaction
-- **payor_id** (String): The Pay Theory id for the payor that was used for the transaction
-- **payment_method_id** (String): The Pay Theory id for the payment method token
+- **payor_id** (String): The ID of the payor that was used for the transaction
+- **payment_method_id** (String): The ID of the payment method token
 
-If a failure or decline occurs during the payment, the response will be similar to the following:
+A failed or declined payment passes this object:
 
-- **receipt_number** (String): The Pay Theory receipt number
+- **receipt_number** (String): The unique transaction_id assigned to a transaction by Pay Theory
 - **last_four** (String): The last four digits of the card number or account number
 - **brand** (String): The brand of the card
 - **state** (String): The state of the transaction
-    - This will be `FAILURE`
+    - This is `FAILURE`
 - **type** (String): Description of the failure
 
-If you called the `tokenizePaymentMethod` function you will be passed back an object with the following properties:
+After `tokenizePaymentMethod`, the callback receives this object. With `expandedResponse: true`, a rejected payment method passes `failure_code` and `failure_text` instead.
 
-- **payment_method_id** (String): The Pay Theory id for the payment method token
-- **payor_id** (String): The Pay Theory id for the payor that was used for the payment method token
+- **payment_method_id** (String): The ID of the payment method token
+- **payor_id** (String): The ID of the payor that was used for the payment method token
 - **last_four** (String): The last four digits of the card number or account number
 - **brand** (String): The brand of the card
 - **expiration** (String): The expiration date of the card formatted as MMYY
-- **payment_type** (String): The type of payment method tokenized
-    - This will be `card` or `ach`
+- **payment_type** (String): `card` or `ach`
 - **metadata** (JSON): The metadata that was passed in when tokenizing the payment method
-
-#### Callback Argument
-
 
 ### cashObserver
 
-The `cashObserver` will fire when a barcode has been generated after the `transact` function is called using the cash fields.
+`cashObserver` fires when `transact` creates a cash barcode from the cash fields. `transact` returns the same data as a [`CASH` response](functions#cash-response).
 
 ```javascript
 myPayTheory.cashObserver(result => {
@@ -192,13 +193,11 @@ myPayTheory.cashObserver(result => {
 })
 ```
 
-#### Callback Argument
+#### Callback argument
 
-While generating the Barcode it will use the geolocation to return a map url for the users specific location.
+To build the map URL, the SDK asks the browser for the payor's location. The first time, the browser asks the payor to allow it.
 
-If this is the first time it has been requested the user will have the opportunity to accept or decline the request.
-
-You will be passed back an object with the following properties:
+The callback receives this object:
 
 - **barcodeUrl** (String): The url for the barcode image
 - **mapUrl** (String): The url for the map to find retail locations to pay the barcode
@@ -206,9 +205,7 @@ You will be passed back an object with the following properties:
 
 ## initTransaction
 
-This function was deprecated, and you should use `transact` in its place.
-
-The initTransaction function is used to submit a payment to Pay Theory.
+Use [`transact`](functions#transact) instead. `initTransaction` submits a payment from a controller made with `create`.
 
 ```javascript
 myPayTheory.initTransaction(amount, payorInfo, confirmation)
@@ -218,4 +215,4 @@ myPayTheory.initTransaction(amount, payorInfo, confirmation)
 
 - **amount** (Int): The amount of the transaction
 - **payorInfo** (Object): The payor information. You can see more on the payorInfo object [here](functions#payor-info-object)
-- **confirmation** (Boolean): Whether to require confirmation of the payment. If this is set to `true` then the `tokenizeObserver` will fire when the payment is tokenized and the `captureObserver` will fire when the payment is captured. If this is set to `false` then the `transactedObserver` will fire when the payment is completed.
+- **confirmation** (Boolean): Whether to require confirmation of the payment. With `true`, `tokenizeObserver` fires when the payment is waiting for confirmation and `captureObserver` fires when it completes. With `false`, `transactedObserver` fires when it completes.

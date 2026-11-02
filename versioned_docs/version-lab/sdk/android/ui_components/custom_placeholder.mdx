@@ -1,0 +1,57 @@
+---
+sidebar_position: 4
+sidebar_label: 'Custom Placeholder Text'
+title: "Custom Placeholder Text"
+---
+
+# Custom Placeholder Text
+
+Pay Theory input fields use predefined string resources for placeholder text. Override these strings in your app's `strings.xml` file to customize the placeholders.
+
+### Card Payment Fields
+
+| Field | String Resource Name | Default Text |
+|-------|---------------------|--------------|
+| Card Number | `pt_card_number` | Card number |
+| CVV | `pt_cvv` | CVV |
+| Expiration | `pt_expiration` | Expiration |
+| Name on Card | `pt_name_on_card_account` | Name on Account |
+
+### Bank Account Fields
+
+| Field | String Resource Name | Default Text |
+|-------|---------------------|--------------|
+| Account Number | `pt_bank_account_number` | Bank Account Number |
+| Routing Number | `pt_bank_routing_number` | Bank Routing Number |
+| Account Type | `pt_account_type` | Account Type |
+| Name on Account | `pt_name_on_bank_account` | Name on Account |
+### Cash Payment Fields
+
+| Field | String Resource Name | Default Text |
+|-------|---------------------|--------------|
+| Contact Info | `pt_cash_contact` | Phone or Email |
+| Full Name | `pt_cash_name` | Full Name |
+
+### Billing Address Fields
+
+| Field | String Resource Name | Default Text |
+|-------|---------------------|--------------|
+| Address Line 1 | `pt_billing_address` | Address Line 1 |
+| Address Line 2 | `pt_billing_address_cont` | Address Line 2 |
+| City | `pt_city` | City |
+| Region | `pt_region` | Region |
+| Postal Code | `pt_billing_postal_code` | Postal Code |
+
+### Example: Customizing Card Fields
+
+To customize the placeholders, add the strings you want to override to your app's `strings.xml`:
+
+```xml
+<resources>
+    <!-- Custom Card Field Placeholders -->
+    <string name="pt_card_number">Enter your card number</string>
+    <string name="pt_cvv">Security code</string>
+    <string name="pt_expiration">MM/YY</string>
+    <string name="pt_name_on_card_account">Cardholder name</string>
+</resources>
+```

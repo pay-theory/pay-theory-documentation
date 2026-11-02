@@ -1,0 +1,85 @@
+---
+sidebar_position: 1
+sidebar_label: 'PTError'
+title: "PTError"
+---
+
+# PTError
+
+The `PTError` struct represents a standardized error format used by the PayTheory SDK. It provides a consistent way to communicate errors that may occur during SDK operations.
+
+## Properties
+
+| Property | Type | Description |
+|----------|------|-------------|
+| code | PTErrorCode | An enumerated error code identifying the type of error. |
+| error | String | A human-readable description of the error. |
+
+## Initializer
+
+```swift
+public init(code: PTErrorCode, error: String)
+```
+
+Creates a new instance of `PTError`.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| code | PTErrorCode | The error code for this error. |
+| error | String | A descriptive message explaining the error. |
+
+## PTErrorCode
+
+`PTErrorCode` is an enumeration that represents the possible error codes returned by the PayTheory SDK.
+
+| Case | Description |
+|------|-------------|
+| actionComplete | The requested action has already been completed. |
+| actionInProgress | An action is currently in progress, preventing a new action. |
+| attestationFailed | The device attestation process failed. |
+| inProgress | The operation is still in progress. |
+| invalidAPIKey | The provided API key is invalid or not recognized. |
+| invalidParam | An invalid parameter was provided to the SDK. |
+| noFields | Required fields were not provided for the operation. |
+| notReady | The SDK is not in a ready state for the requested operation. |
+| notValid | The provided data failed validation checks. |
+| socketError | An error occurred with the WebSocket connection. |
+| tokenFailed | Token generation or validation failed. |
+
+## Usage in SDK
+
+The PayTheory SDK uses `PTError` to return errors in a consistent format across various operations. When an error occurs, the SDK will return a `PTError` instance, allowing developers to easily identify the type of error (via the `code` property) and get more information about the error (via the `error` property).
+
+## Example: Handling a PTError
+
+Here's an example of how to handle and parse a `PTError` returned by the SDK:
+
+```swift
+func handlePTError(_ error: PTError) {
+    switch error.code {
+    case .invalidAPIKey:
+        print("API Key Error: The provided API key is not valid. Please check your configuration.")
+    case .socketError:
+        print("Network Error: \(error.error)")
+    case .notValid:
+        print("Validation Error: \(error.error)")
+    case .tokenFailed:
+        print("Token Error: \(error.error)")
+    case .notReady:
+        print("SDK Not Ready: \(error.error)")
+    default:
+        print("An unexpected error occurred: \(error.error)")
+    }
+
+    // Log the error for debugging purposes
+    logError(code: error.code, message: error.error)
+}
+
+// Usage example
+let error = PTError(code: .invalidAPIKey, error: "The provided API key has expired.")
+handlePTError(error)
+```
+
+In this example, the `handlePTError` function demonstrates how to work with a `PTError` returned by the SDK. By switching on the `code` property, you can determine the specific type of error that occurred and handle it appropriately in your application. The `error` property provides additional details about what went wrong, which can be used for user feedback or logging.
+
+By using `PTError`, the PayTheory SDK ensures that all errors are returned in a predictable format, making error handling and debugging more straightforward for developers integrating the SDK.

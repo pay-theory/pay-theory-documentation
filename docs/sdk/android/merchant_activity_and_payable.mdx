@@ -1,0 +1,138 @@
+---
+sidebar_position: 3
+sidebar_label: 'Activity & Interface Setup'
+title: "Activity & Interface Setup"
+---
+
+# Activity & Interface Setup
+
+To use the Pay Theory SDK, your activity must extend `PayTheoryMerchantActivity` and implement the `Payable` interface. This setup is crucial for handling payment responses and managing the payment flow.
+
+## Implementation Requirements
+
+```kotlin
+class YourActivity : PayTheoryMerchantActivity(), Payable {
+    // Your activity implementation
+}
+```
+
+## PayTheoryMerchantActivity
+
+The `PayTheoryMerchantActivity` class provides essential functionality for managing the Pay Theory payment flow:
+
+- Manages the PayTheoryFragment lifecycle
+- Provides access to payment form operations
+- Handles UI thread operations for payment responses
+
+### Key Methods
+
+| Method | Description |
+|--------|-------------|
+| `initializePayTheoryActivity(fragment: PayTheoryFragment)` | Initializes the activity with a PayTheoryFragment instance |
+| `clearFields()` | Clears all payment form fields on the UI thread |
+
+## Payable Interface
+
+The `Payable` interface defines callback methods for handling various payment states and responses. Your activity must implement these methods to handle payment results.
+
+### Required Handlers
+
+```kotlin
+interface Payable {
+    // Payment State Handlers
+    fun handleReady(isReady: Boolean)
+    fun handlePaymentStart(paymentType: String)
+    fun handleTokenStart(paymentType: String)
+    
+    // Success Handlers
+    fun handleSuccess(successfulTransactionResult: SuccessfulTransactionResult)
+    fun handleBarcodeSuccess(barcodeResult: BarcodeResult)
+    fun handleTokenizeSuccess(paymentMethodToken: PaymentMethodTokenResults)
+    
+    // Failure/Error Handlers
+    fun handleFailure(failedTransactionResult: FailedTransactionResult)
+    fun handleError(error: PTError)
+}
+```
+
+### Handler Details
+
+#### State Handlers
+
+| Handler | Description |
+|---------|-------------|
+| `handleReady` | Called when the SDK is ready to accept payments |
+| `handlePaymentStart` | Called when a payment transaction begins |
+| `handleTokenStart` | Called when a tokenization process begins |
+
+#### Success Handlers
+
+| Handler | Description |
+|---------|-------------|
+| `handleSuccess` | Called after a successful card/bank payment |
+| `handleBarcodeSuccess` | Called after successful cash barcode generation |
+| `handleTokenizeSuccess` | Called after successful payment method tokenization |
+
+#### Failure/Error Handlers
+
+| Handler | Description |
+|---------|-------------|
+| `handleFailure` | Called when a transaction fails but completes |
+| `handleError` | Called when a system error occurs during processing |
+
+## Example Implementation
+
+Here's a complete example showing how to implement the activity and interface:
+
+```kotlin
+class PaymentActivity : PayTheoryMerchantActivity(), Payable {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_payment)
+
+        if (savedInstanceState == null) {
+            // Create PayTheoryFragment
+            val payTheoryFragment = PayTheoryFragment()
+            
+            // Add fragment to container
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.payment_fragment, payTheoryFragment)
+                .commit()
+        }
+    }
+
+    // Required Payable interface handlers
+    override fun handleReady(isReady: Boolean) {
+        // Handle ready state
+    }
+
+    override fun handleError(error: PTError) {
+        // Handle error
+    }
+
+    override fun handleSuccess(successfulTransactionResult: SuccessfulTransactionResult) {
+        // Handle success
+    }
+
+    override fun handleFailure(failedTransactionResult: FailedTransactionResult) {
+        // Handle failure
+    }
+
+    override fun handlePaymentStart(paymentType: String) {
+        // Handle payment start
+    }
+
+    override fun handleTokenStart(paymentType: String) {
+        // Handle token start
+    }
+
+    override fun handleBarcodeSuccess(barcodeResult: BarcodeResult) {
+        // Handle barcode success
+    }
+
+    override fun handleTokenizeSuccess(paymentMethodToken: PaymentMethodTokenResults) {
+        // Handle tokenization success
+    }
+}
+```

@@ -1,0 +1,20 @@
+---
+id: create-retry-for-failed-recurring-payment
+title: createRetryForFailedRecurringPayment
+sidebar_label: Create Retry For Failed Recurring Payment
+hide_title: true
+api: true
+---
+
+import { OperationView } from '@lewl/graphql-doc/components';
+import operationsByType from '../_data/operations.json';
+import typesByName from '../_data/types.json';
+
+export const examplesByOperation = {
+  "createRetryForFailedRecurringPayment": (operationsByType["mutation"]["createRetryForFailedRecurringPayment"]?.examples ?? []),
+};
+
+export const operation = operationsByType["mutation"]["createRetryForFailedRecurringPayment"];
+
+<OperationView operation={ operation } typesByName={typesByName} headingLevel={ 1 } defaultExpandedLevels={ 0 } maxDepth={ 5 } typeLinkBase="../types" llmDocsBasePath="/llm-docs" siteBasePath="/docs/api">
+</OperationView>

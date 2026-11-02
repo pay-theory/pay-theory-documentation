@@ -6,9 +6,59 @@
 import { themes as prismThemes } from 'prism-react-renderer';
 //const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 
+// Identity data for agents and search engines. Mirrors the Organization
+// published on www.paytheory.com so both sites resolve to one entity.
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Organization',
+      '@id': 'https://www.paytheory.com/#organization',
+      name: 'Pay Theory',
+      url: 'https://www.paytheory.com',
+      logo: 'https://cdn.prod.website-files.com/63612c14cec8f7a33524ce09/6a5e1fd96f2e023763d57ca6_Pay%20Theory%20Primary%20Logo%20-%20Purple%20(1).png',
+      description:
+        'Pay Theory is a payment processor that lets software platforms accept card, ACH, cash, and digital wallet payments.',
+      sameAs: [
+        'https://www.linkedin.com/company/paytheory/',
+        'https://twitter.com/paytheory',
+        'https://www.crunchbase.com/organization/pay-theory',
+        'http://www.wikidata.org/entity/Q140757395',
+      ],
+      contactPoint: [
+        {
+          '@type': 'ContactPoint',
+          contactType: 'customer support',
+          telephone: '+1-513-207-9431',
+          email: 'support@paytheory.com',
+          areaServed: 'US',
+          availableLanguage: 'English',
+        },
+        {
+          '@type': 'ContactPoint',
+          contactType: 'technical support',
+          email: 'developer@paytheory.com',
+          areaServed: 'US',
+          availableLanguage: 'English',
+        },
+      ],
+    },
+    {
+      '@type': 'WebSite',
+      '@id': 'https://docs.paytheory.com/#website',
+      name: 'Pay Theory Docs',
+      url: 'https://docs.paytheory.com/',
+      description:
+        'Developer documentation for Pay Theory: the GraphQL API, JavaScript, Apple iOS, and Android SDKs, and guides for online payments, invoicing, and recurring billing.',
+      inLanguage: 'en',
+      publisher: { '@id': 'https://www.paytheory.com/#organization' },
+    },
+  ],
+};
+
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: 'Documentation',
+  title: 'Pay Theory Docs',
   tagline: 'Explore our quickstarts and guides.',
 
   favicon: 'img/favicon.jpg',
@@ -47,13 +97,14 @@ const config = {
           lastVersion: 'current',
           versions: {
             current: {
-              label: '2.23.0 (Labs)',
+              label: 'Live',
               path: '',
+              banner: 'none',
             },
-            '2.22.0': {
-              label: '2.22.0',
-              path: '2.22.0',
-              banner: 'none', // show banner for this version
+            lab: {
+              label: 'Lab (preview)',
+              path: 'lab',
+              banner: 'none',
             },
           },
           //routeBasePath: '/',
@@ -75,7 +126,51 @@ const config = {
       }),
     ],
   ],
+
+  themes: ['@docusaurus/theme-mermaid'],
+
+  markdown: {
+    mermaid: true,
+  },
+
   plugins: [
+    [
+      require.resolve('@lewl/graphql-doc/docusaurus-plugin'),
+      {
+        configPath: './graphql-docs.config.js',
+        allTargets: true,
+        // prebuild/prestart already clean and regenerate the output. Emptying it
+        // again here races the docs plugin, which loads in parallel.
+        cleanOutput: false,
+        markdownRedirect: {
+          enabled: true,
+          docsBasePath: '/docs/api',
+          llmDocsPath: '/llm-docs',
+          docsSourceFallback: {
+            enabled: true,
+            docsBasePaths: ['/docs'],
+            metadataBaseDir: '.docusaurus/docusaurus-plugin-content-docs',
+            docsPluginIds: ['default'],
+            cacheTtlMs: 2000,
+          },
+        },
+      },
+    ],
+    [
+      '@docusaurus/plugin-client-redirects',
+      {
+        redirects: [
+          {
+            from: '/docs/sdk/javascript/failed_transactions',
+            to: '/docs/main/after_payments/failed_transactions',
+          },
+          {
+            from: '/docs/lab/sdk/javascript/failed_transactions',
+            to: '/docs/lab/main/after_payments/failed_transactions',
+          },
+        ],
+      },
+    ],
     // [
     //   'docusaurus-plugin-typedoc',
     //
@@ -126,7 +221,23 @@ const config = {
         respectPrefersColorScheme: false,
       },
       // Replace with your project's social card
-      image: 'img/logo.svg',
+      image: 'img/social-card.png',
+      metadata: [{ property: 'og:type', content: 'website' }],
+      mermaid: {
+        theme: { light: 'default', dark: 'dark' },
+        options: {
+          maxTextSize: 50000,
+          fontFamily:
+            'halyard-text, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+          flowchart: {
+            htmlLabels: true,
+            curve: 'basis',
+            rankSpacing: 60,
+            nodeSpacing: 30,
+            padding: 15,
+          },
+        },
+      },
       algolia: {
         apiKey: 'fa68347e5d228c27e710aa15ccda53de',
         indexName: 'paytheory',
@@ -249,6 +360,14 @@ const config = {
         //darkTheme: darkCodeTheme,
       },
     }),
+  headTags: [
+    {
+      tagName: 'script',
+      attributes: { type: 'application/ld+json' },
+      innerHTML: JSON.stringify(structuredData),
+    },
+  ],
+
   scripts: [
     // Need to run this script first to ensure that the widget_id is set before the widget is initialized
     {

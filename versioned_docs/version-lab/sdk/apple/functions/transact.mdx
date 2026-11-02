@@ -1,0 +1,148 @@
+---
+sidebar_position: 1
+sidebar_label: 'transact'
+title: "transact"
+---
+
+# transact
+
+The `transact` function is a key method in the PayTheory SDK that allows you to process payments. It's available in two versions: an asynchronous version using Swift's modern concurrency features, and a closure-based version for compatibility with older codebases.
+
+## Async Version
+
+### Function Signature
+
+```swift
+public func transact(
+    amount: Int,
+    paymentMethod: PaymentType,
+    accountCode: String? = nil,
+    fee: Int? = nil,
+    feeMode: FeeMode = .merchantFee,
+    healthExpenseType: HealthExpenseType? = nil,
+    invoiceId: String? = nil,
+    level3DataSummary: Level3DataSummary? = nil,
+    metadata: [String: String]? = nil,
+    oneTimeUseToken: Bool = false,
+    payor: Payor? = nil,
+    payorId: String? = nil,
+    receiptDescription: String? = nil,
+    recurringId: String? = nil,
+    reference: String? = nil,
+    sendReceipt: Bool = false
+) async -> TransactResponse
+```
+
+### Parameters
+
+| Parameter          | Type                                                           | Description                                                                                                                                                                                                                                |
+|--------------------|----------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| amount             | `Int`                                                          | The amount of the transaction in cents.                                                                                                                                                                                                    |
+| paymentMethod      | [`PaymentType`](../data_models/enums#paymenttype)              | The type of payment method to use for the transaction (e.g., `.CARD`, `.ACH`, `.CASH`).                                                                                                                                                    |
+| accountCode        | `String?`                                                      | Code that can be used to track a payment or group of payments. Will be included in the transaction schema and in the Pay Theory Portal.                                                                                                    |
+| fee                | `Int?`                                                         | Represents the fee to be charged in cents. If you are using SERVICE_FEE mode and want to skip the confirmation step, you must provide the fee amount. This will be validated to ensure it matches the fee amount that would be charged.    |
+| feeMode            | [`FeeMode`](../data_models/enums#feemode)                      | Defaults to `.MERCHANT_FEE`. If available to merchant and set to `.SERVICE_FEE`, the fee will be added to the amount and charged to the payor. More details about the fee modes are available in your Pay Theory Portal.                   |
+| healthExpenseType  | [`HealthExpenseType?`](../data_models/enums#healthexpensetype) | Specifies the type of health expense for the transaction, if applicable.                                                                                                                                                                   |
+| invoiceId          | `String?`                                                      | The Pay Theory invoice ID to use for the payment. Allows for user to assign a payment to an invoice.                                                                                                                                       |
+| level3DataSummary  | [`Level3DataSummary?`](../data_models/level_3_summary)         | Provides additional transaction details for level 3 processing, which can result in lower interchange rates for eligible transactions.                                                                                                     |
+| metadata           | `[String: String]?`                                            | A dictionary that will be stored with the transaction and can be used to track the payment.                                                                                                                                                |
+| oneTimeUseToken    | `Bool`                                                         | Defaults to false. If set to true, the payment method will have the `is_active` flag set to `false` after the transaction processes so it cannot make further payments.                                                                    |
+| payor              | [`Payor?`](../data_models/payor)                               | Details of the payor who is making the transaction. This cannot be used if also using the payorId parameter.                                                                                                                               |
+| payorId            | `String?`                                                      | The Pay Theory payor ID to use for the payment. Allows for user to manage identities. This cannot be used if also using the payor parameter.                                                                                               |
+| receiptDescription | `String?`                                                      | Description to be included in the receipt. Defaults to "Payment from your merchant".                                                                                                                                                       |
+| recurringId        | `String?`                                                      | The Pay Theory recurring ID to use for the payment. Allows for user to assign a payment to a recurring payment. If you pass in a recurring ID, the transaction's amount must be an interval of the recurring payment's amount per payment. |
+| reference          | `String?`                                                      | Custom description assigned to a payment. Will be included in the transaction schema and in the Pay Theory Portal.                                                                                                                         |
+| sendReceipt        | `Bool`                                                         | Pass true to send a receipt to the payor. Must have an email address on the payor object or pass in a payorId that has an email address tied to it.                                                                                        |
+
+### Return Value
+
+The function returns a [`TransactResponse`](../response_types/transaction_response), which is an enum with the following cases:
+
+- [`.Success(SuccessfulTransaction)`](../response_types/transaction_response#successfultransaction)
+- [`.Failure(FailedTransaction)`](../response_types/transaction_response#failedtransaction)
+- [`.Error(PTError)`](../response_types/pt_error)
+- [`.Barcode(CashBarcode)`](../response_types/transaction_response#cashbarcode) (for cash payments)
+
+### Usage Example
+
+```swift
+do {
+    let response = try await payTheory.transact(
+        amount: 1000,
+        paymentMethod: .card,
+        metadata: ["order_id": "12345"]
+    )
+
+    switch response {
+    case .success(let transaction):
+        print("Transaction successful: \(transaction.transactionId)")
+    case .failure(let failure):
+        print("Transaction failed: \(failure.failureText)")
+    case .error(let error):
+        print("Error occurred: \(error.error)")
+    case .barcode:
+        print("Barcode generated (not applicable for card payments)")
+    }
+} catch {
+    print("An error occurred: \(error)")
+}
+```
+
+## Closure-based Version
+
+### Function Signature
+
+```swift
+public func transact(
+    amount: Int,
+    paymentMethod: PaymentType,
+    accountCode: String? = nil,
+    fee: Int? = nil,
+    feeMode: FeeMode = .merchantFee,
+    healthExpenseType: HealthExpenseType? = nil,
+    invoiceId: String? = nil,
+    level3DataSummary: Level3DataSummary? = nil,
+    metadata: [String: String]? = nil,
+    oneTimeUseToken: Bool = false,
+    payor: Payor? = nil,
+    payorId: String? = nil,
+    receiptDescription: String? = nil,
+    recurringId: String? = nil,
+    reference: String? = nil,
+    sendReceipt: Bool = false,
+    completion: @escaping (TransactResponse) -> Void
+)
+```
+
+The parameters for the closure-based version are the same as the async version, with an additional `completion` parameter:
+
+| Parameter  | Type                               | Description                                                   |
+|------------|-----------------------------------|---------------------------------------------------------------|
+| completion | `@escaping (TransactResponse) -> Void` | A closure that will be called with the result of the transaction. |
+
+### Usage Example
+
+```swift
+payTheory.transact(
+    amount: 1000,
+    paymentMethod: .card,
+    metadata: ["order_id": "12345"]
+) { response in
+    switch response {
+    case .success(let transaction):
+        print("Transaction successful: \(transaction.transactionId)")
+    case .failure(let failure):
+        print("Transaction failed: \(failure.failureText)")
+    case .error(let error):
+        print("Error occurred: \(error.error)")
+    case .barcode:
+        print("Barcode generated (not applicable for card payments)")
+    }
+}
+```
+
+:::note Asynchronous Execution Note
+The closure-based version of `transact` is executed asynchronously. The completion handler will be called on an arbitrary thread, so make sure to dispatch UI updates to the main thread if needed.
+:::
+
+Both versions of the `transact` function provide the same functionality. Choose the one that best fits your app's architecture and your preferred coding style. The async version is recommended for new projects using Swift 5.5 or later, as it provides better readability and error handling with Swift's structured concurrency.
