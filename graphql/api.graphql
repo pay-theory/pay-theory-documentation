@@ -1745,32 +1745,26 @@ input InvoiceUpdateInput {
   settings: InvoiceSettingsInput
 }
 
-"A JWK is a JSON Web Key."
+"Public Ed25519 material for the partner and environment that signed a webhook."
 type JWK @aws_lambda @aws_iam @aws_cognito_user_pools {
-  "The curve used for the JWK."
-  crv: String
-  "The key type used for the JWK."
-  kty: String
-  "The x coordinate used for the JWK."
-  x: String
-  "The y coordinate used for the JWK."
-  y: String
-  "The use of the JWK."
-  use: String
-  "The algorithm used for the JWK."
-  alg: String
-  "The key id used for the JWK."
-  kid: String
+  "The EdDSA algorithm identifier."
+  alg: String!
+  "The Ed25519 curve identifier."
+  crv: String!
+  "The identifier sent in the webhook signature key ID header."
+  kid: String!
+  "The OKP key type identifier."
+  kty: String!
+  "The signature-use identifier."
+  use: String!
+  "The base64url-encoded public key."
+  x: String!
 }
 
-"A JWKS is a JSON Web Key Set."
+"The public verification keys for this authenticated partner and environment."
 type JWKS @aws_lambda @aws_iam @aws_cognito_user_pools {
-  "The URI of the JWKS."
-  jwks_uri: String
-  "The issuer of the JWKS."
-  issuer: String
-  "The keys in the JWKS."
-  keys: [JWK]
+  "Public keys that can verify webhook deliveries from this environment."
+  keys: [JWK!]!
 }
 
 "Level3 data line item object."
@@ -2463,9 +2457,9 @@ type Mutation @aws_lambda @aws_iam @aws_cognito_user_pools {
     "An array of split objects to distribute the transaction amount to different accounts. The sum of all split amounts must equal the transaction amount."
     split: [SplitInput]
   ): Transaction! @docGroup(name: "Transaction", sidebarTitle: "Create Wallet Transaction") @docPriority(level: 3)
-  "To create a webhook, you need to provide the endpoint and a name for the webhook using the following mutation:"
+  "Creates a webhook endpoint. An endpoint created with a partner secret key receives events for every merchant under the partner. An endpoint created with a merchant secret key receives events for that merchant only. Every delivery is signed with Ed25519; use the `jwks` query to get the verification key."
   createWebhook(
-    "The URL the event will be sent to."
+    "The URL that events are sent to."
     endpoint: String!
     "The name you want to give the webhook for reference."
     name: String!
@@ -2502,7 +2496,7 @@ type Mutation @aws_lambda @aws_iam @aws_cognito_user_pools {
     "Pay Theory unique identifier for the merchant."
     merchant_uid: String
   ): Boolean @docIgnore
-  "To delete a webhook, you can use the following mutation:"
+  "Deletes a webhook endpoint. Pending retries to the endpoint are not delivered."
   deleteWebhook(
     "The URL of the webhook you want to delete."
     endpoint: String!
@@ -2596,13 +2590,13 @@ type Mutation @aws_lambda @aws_iam @aws_cognito_user_pools {
     "The permissions."
     permissions: AWSJSON!
   ): Boolean @docIgnore
-  "To update a webhook, you can use a mutation like the following:"
+  "Renames a webhook or turns it on or off. While `is_active` is false, the endpoint receives no events and pending retries to it are dropped. Turning it back on applies to new events only."
   updateWebhook(
-    "The URL of the webhook you want to update. This cannot be changed"
+    "The URL of the webhook you want to update. The URL cannot be changed."
     endpoint: String!
-    "The new name you want to give the webhook"
+    "The new name for the webhook."
     name: String
-    "Whether the webhook should be active or not"
+    "Set to false to pause deliveries, or true to resume them."
     is_active: Boolean
   ): Boolean! @docGroup(name: "Webhooks", sidebarTitle: "Update Webhook") @docPriority(level: 3)
 }
@@ -3107,8 +3101,8 @@ type Query @aws_lambda @aws_iam @aws_cognito_user_pools {
     "The invoice_id of the offset item."
     offset_id: String
   ): Invoices @docGroup(name: "Invoice", sidebarTitle: "List Invoices") @docPriority(level: 1)
-  "Returns jwks."
-  jwks: JWKS @docIgnore
+  "Returns the public Ed25519 keys that verify webhook deliveries for your partner and environment. Works with partner and merchant secret keys. Pick the key whose `kid` matches the `X-Webhook-Key-Id` header, then verify `X-Webhook-Signature` over `<X-Webhook-Timestamp>.<raw request body>`."
+  jwks: JWKS @docGroup(name: "Webhooks", sidebarTitle: "Get Webhook Verification Keys") @docPriority(level: 5)
   "Returns merchant."
   merchant(
     "The merchant_uid of the merchant to query."
@@ -3301,8 +3295,10 @@ type Query @aws_lambda @aws_iam @aws_cognito_user_pools {
   ): Boolean! @docGroup(name: "Payment Method Token", sidebarTitle: "Validate Payment Method Ownership") @docPriority(level: 4)
   "Returns webhook events."
   webhookEvents(
-    "Unique identifier."
+    "Unique delivery-attempt ID. Returns the exact matching attempt."
     id: ID
+    "Stable public per-destination Webhook Event ID. Returns all matching attempts newest first."
+    event_id: ID
     "The endpoint."
     endpoint: String
     "The result."
@@ -4276,9 +4272,9 @@ enum WalletType {
   VISA_STAGED
 }
 
-"To delete a webhook, you can use the following mutation:"
+"A configured endpoint that receives webhook notifications."
 type Webhook @aws_lambda @aws_iam @aws_cognito_user_pools {
-  "The URL of the webhook you want to delete."
+  "The URL of the configured webhook endpoint."
   endpoint: String!
   "Whether the webhook is active and receiving notifications."
   is_active: Boolean!
@@ -4286,33 +4282,37 @@ type Webhook @aws_lambda @aws_iam @aws_cognito_user_pools {
   name: String!
 }
 
-"A webhook event object represents a webhook trigger, meaning it may have sent a notification to your endpoint if it was active at the time."
+"A webhook event object represents one delivery attempt to an endpoint."
 type WebhookEvent @aws_lambda @aws_iam @aws_cognito_user_pools {
   "The endpoint of the webhook associated with the event."
   endpoint: String!
-  "An error message present only if the event failed."
+  "An error message present only if this delivery attempt failed."
   error: String
   "The type of event that was sent."
   event: String!
-  "The time the response was received or the last attempt to contact the endpoint was made."
+  "The time this delivery attempt finished."
   finished_at: String!
-  "A unique ID for the event."
+  "The unique ID for this delivery attempt. Use it for an exact attempt lookup."
   id: ID!
-  "A JSON string of the request that was sent to the endpoint."
+  "The stable public Webhook Event ID for one destination delivery, shared by all retry attempts. Legacy attempts may not have this value."
+  event_id: ID
+  "A JSON string of the request sent during this delivery attempt."
   request: AWSJSON!
-  "A JSON string of the response received from the endpoint. Not present if no response was received."
+  "A JSON string of the response received for this attempt. Not present if no response was received."
   response: AWSJSON
-  "The final outcome of the event."
+  "The outcome of this delivery attempt."
   result: WebhookNotificationResult!
-  "The time the first request was made."
+  "The zero-based retry number for this delivery attempt. Failed deliveries are retried up to 8 times over about 4 days (1, 5, 30, 120, 360, 720, 1440, then 2880 minutes after the previous attempt)."
+  retry_count: Int
+  "The time this delivery attempt started."
   started_at: String!
-  "The HTTP status code of the last response. Not present if no response was received."
+  "The HTTP status code returned for this attempt. Not present if no response was received."
   status_code: Int
 }
 
-"Webhook events object."
+"A paginated collection of webhook delivery attempts, newest first."
 type WebhookEvents @aws_lambda @aws_iam @aws_cognito_user_pools {
-  "List of Webhook Events."
+  "The webhook delivery attempts on this page."
   events: [WebhookEvent]!
   "The last evaluated key."
   last_evaluated_key: String

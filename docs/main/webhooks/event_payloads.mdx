@@ -1,0 +1,1000 @@
+---
+sidebar_position: 4
+sidebar_label: 'Webhook events'
+title: 'Webhook events'
+---
+
+# Webhook events
+
+This page lists every event Pay Theory sends, with a sample body for each. The samples follow real deliveries, with the values replaced by sample data.
+
+For the request headers and delivery rules, see [How webhooks work](overview).
+
+***
+
+## Reading payloads
+
+`payload` is the record as Pay Theory stores it, not the GraphQL type. A few rules hold for every event:
+
+- Amounts are strings of cents, such as `"2500"` for $25.00. Convert them with an integer parser, not a float.
+- Flags such as `is_active` and `is_settled` are `0` or `1`.
+- Every field is present, and unset fields are `null`.
+- Keys are in alphabetical order.
+- `metadata` is a JSON string. Parse it to read your values.
+- Pay Theory may add fields. Ignore fields you don't use.
+
+Every payload has `merchant_uid`. To get the latest state of a record, query it with the ID in the payload.
+
+***
+
+## TRANSACTION
+
+Sent when a payment, refund or reversal is created (`CREATED`), and when its status, fees or settlement change (`UPDATED`). A card payment usually sends `CREATED` when it's approved, then `UPDATED` when it settles.
+
+| Key | type | description |
+|---|---|---|
+| `transaction_id` | String | ID of the transaction. |
+| `transaction_type` | String | `DEBIT` for a payment, `REVERSAL` for a refund, `ACH_RETURN` for a returned ACH payment, `FAILURE` for a declined payment. |
+| `status` | String | Such as `PENDING`, `SETTLED`, `FAILED`, `REFUNDED`, `RETURNED` or `VOIDED`. See [Understanding transaction statuses](../after_payments/understanding_transaction_statuses). |
+| `gross_amount` | String | Amount charged, in cents, including fees. |
+| `fees` | String | Fees, in cents. |
+| `net_amount` | String | Amount the merchant receives, in cents. |
+| `refunded_amount` | String | Amount refunded so far, in cents. |
+| `fee_mode` | String | `MERCHANT_FEE` or `SERVICE_FEE`. |
+| `is_settled` | Int | `1` once the transaction is in a settlement. |
+| `settlement_batch` | String | Settlement batch number, once settled. |
+| `reference` | String | Your reference for the payment. |
+| `account_code` | String | Your account code for the payment. |
+| `metadata` | String | JSON string of the metadata you sent with the payment. |
+| `failure_reasons` | Array | Why the payment failed, for failed payments. |
+| `payment_method` | Object | The payment method token used, with its `payor`. |
+| `merchant` | Object | The merchant that took the payment. |
+| `invoice` | Object | The invoice paid, if any. |
+| `recurring` | Object | The recurring payment, if any. |
+
+```json title="TRANSACTION.CREATED"
+{
+  "event": "TRANSACTION",
+  "event_id": "pt_webh_14ubRk2Vn8XcQe5Jm3Tz7A",
+  "occurred_at": "2026-11-09T17:58:16.863000Z",
+  "payload": {
+    "account_code": "BOOKS-1042",
+    "ach_return_details": null,
+    "additional_purchase_data": null,
+    "authorization_id": null,
+    "avs_status": null,
+    "currency": "USD",
+    "device_id": null,
+    "dispute_status": null,
+    "failure_reasons": null,
+    "fee_mode": "SERVICE_FEE",
+    "fees": "83",
+    "flag_for_review": null,
+    "gross_amount": "2500",
+    "invoice": null,
+    "is_settled": 0,
+    "merchant": {
+      "ach_active": 1,
+      "card_active": 1,
+      "cash_active": 1,
+      "country_code": "USA",
+      "is_system": 0,
+      "merchant_name": "Northstar Books",
+      "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+      "parent_merchant_uid": null,
+      "submitted_onboarding": 1
+    },
+    "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+    "metadata": "{\"order_id\":\"order-1042\"}",
+    "net_amount": "2417",
+    "parent_id": null,
+    "payment_method": {
+      "address_line1": null,
+      "address_line2": null,
+      "bank_account_type": "PERSONAL_CHECKING",
+      "bank_code": "122105278",
+      "barcode_id": null,
+      "card_brand": null,
+      "card_type": null,
+      "city": null,
+      "country": null,
+      "cvv_status": "UNKNOWN",
+      "exp_date": null,
+      "full_name": "Pat Theodore",
+      "is_active": 1,
+      "issuing_country_code": "USA",
+      "last_four": "7895",
+      "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+      "metadata": "{\"order_id\":\"order-1042\"}",
+      "payment_method_id": "pt_pmt_4DuLyyzW1b1ImNbbPVy569",
+      "payment_type": "ACH",
+      "payor": {
+        "address_line1": null,
+        "address_line2": null,
+        "city": null,
+        "country": null,
+        "email": "pat@example.com",
+        "full_name": null,
+        "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+        "metadata": null,
+        "payor_id": "pt_pay_2Wq9mPzKcR7nX4tLb8Vh3e",
+        "phone": "+15555550123",
+        "postal_code": null,
+        "region": null
+      },
+      "postal_code": null,
+      "region": null,
+      "wallet_type": null
+    },
+    "processor": "paytheory",
+    "recurring": null,
+    "reference": "order-1042",
+    "refund_reason": null,
+    "refund_voidable": null,
+    "refunded_amount": "0",
+    "sale_id": null,
+    "settlement_batch": null,
+    "status": "PENDING",
+    "timezone": "UTC",
+    "transaction_date": "2026-11-09T17:58:05.000Z",
+    "transaction_id": "pt_txn_3hVY2pXN6mSgQk8mY5r1Lb",
+    "transaction_type": "DEBIT",
+    "updated_row_at": "2026-11-09T17:58:05.000Z"
+  },
+  "subtype": "CREATED"
+}
+```
+
+```json title="TRANSACTION.UPDATED"
+{
+  "event": "TRANSACTION",
+  "event_id": "pt_webh_13HCw9Lp4Ds6Yh1Nf8Gb2K",
+  "occurred_at": "2026-11-09T17:58:16.863000Z",
+  "payload": {
+    "account_code": "BOOKS-1042",
+    "ach_return_details": null,
+    "additional_purchase_data": null,
+    "authorization_id": null,
+    "avs_status": "POSTAL_CODE_AND_STREET_MATCH",
+    "currency": "USD",
+    "device_id": null,
+    "dispute_status": null,
+    "failure_reasons": null,
+    "fee_mode": "SERVICE_FEE",
+    "fees": "83",
+    "flag_for_review": null,
+    "gross_amount": "2500",
+    "invoice": null,
+    "is_settled": 1,
+    "merchant": {
+      "ach_active": 1,
+      "card_active": 1,
+      "cash_active": 1,
+      "country_code": "USA",
+      "is_system": 0,
+      "merchant_name": "Northstar Books",
+      "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+      "parent_merchant_uid": null,
+      "submitted_onboarding": 1
+    },
+    "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+    "metadata": "{\"order_id\":\"order-1042\"}",
+    "net_amount": "2417",
+    "parent_id": null,
+    "payment_method": {
+      "address_line1": null,
+      "address_line2": null,
+      "bank_account_type": null,
+      "bank_code": null,
+      "barcode_id": null,
+      "card_brand": "VISA",
+      "card_type": "CREDIT_CARD",
+      "city": null,
+      "country": null,
+      "cvv_status": "MATCH",
+      "exp_date": "1230",
+      "full_name": null,
+      "is_active": 1,
+      "issuing_country_code": "USA",
+      "last_four": "7895",
+      "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+      "metadata": null,
+      "payment_method_id": "pt_pmt_4DuLyyzW1b1ImNbbPVy569",
+      "payment_type": "CARD",
+      "payor": {
+        "address_line1": null,
+        "address_line2": null,
+        "city": null,
+        "country": null,
+        "email": null,
+        "full_name": null,
+        "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+        "metadata": null,
+        "payor_id": "pt_pay_2Wq9mPzKcR7nX4tLb8Vh3e",
+        "phone": null,
+        "postal_code": null,
+        "region": null
+      },
+      "postal_code": "45209",
+      "region": null,
+      "wallet_type": null
+    },
+    "processor": "paytheory",
+    "recurring": null,
+    "reference": "order-1042",
+    "refund_reason": null,
+    "refund_voidable": null,
+    "refunded_amount": "0",
+    "sale_id": null,
+    "settlement_batch": "45",
+    "status": "SETTLED",
+    "timezone": "UTC",
+    "transaction_date": "2026-11-09T17:58:05.000Z",
+    "transaction_id": "pt_txn_3hVY2pXN6mSgQk8mY5r1Lb",
+    "transaction_type": "DEBIT",
+    "updated_row_at": "2026-11-09T17:58:05.000Z"
+  },
+  "subtype": "UPDATED"
+}
+```
+
+***
+
+## AUTHORIZATION
+
+Sent when you create an authorization (`CREATED`), and when it changes, such as when it's captured or canceled (`UPDATED`).
+
+| Key | type | description |
+|---|---|---|
+| `authorization_id` | String | ID of the authorization. |
+| `status` | String | `SUCCEEDED` when approved, `FAILED` when declined, `CANCELED` when canceled. |
+| `amount` | String | Amount authorized, in cents. |
+| `fees` | String | Fees, in cents. |
+| `captured_amount` | String | Amount captured, in cents. `null` until captured. |
+| `transaction_id` | String | The transaction created by the capture. |
+| `sale_id` | String | Groups the authorization with its transaction. |
+| `expiration_date` | String | When the authorization expires if not captured. |
+| `failure_reasons` | Array | Why the authorization was declined. |
+| `payment_method` | Object | The payment method token used, with its `payor`. |
+
+```json title="AUTHORIZATION.CREATED"
+{
+  "event": "AUTHORIZATION",
+  "event_id": "pt_webh_16PlXa3Qm7Rt2Vc9Kw5Jd1",
+  "occurred_at": "2026-11-09T17:58:16.863000Z",
+  "payload": {
+    "account_code": null,
+    "additional_purchase_data": null,
+    "amount": "2500",
+    "authorization_date": "2026-11-09T17:58:05.000Z",
+    "authorization_id": "pt_auth_7Ld4Ws9Kc2Xq5Vn8Hb1Tm3",
+    "avs_status": null,
+    "captured_amount": null,
+    "currency": "USD",
+    "device_id": null,
+    "expiration_date": "2026-11-16T17:58:05.000Z",
+    "failure_reasons": null,
+    "fee_mode": "MERCHANT_FEE",
+    "fees": "83",
+    "invoice": null,
+    "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+    "metadata": null,
+    "payment_method": {
+      "address_line1": "123 Main Street",
+      "address_line2": null,
+      "bank_account_type": null,
+      "bank_code": null,
+      "card_brand": "VISA",
+      "card_type": "CREDIT_CARD",
+      "city": "Cincinnati",
+      "country": "USA",
+      "cvv_status": null,
+      "exp_date": "1230",
+      "full_name": "Pat Theodore",
+      "is_active": 0,
+      "issuing_country_code": "USA",
+      "last_four": "7895",
+      "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+      "metadata": "{\"order_id\":\"order-1042\"}",
+      "payment_method_id": "pt_pmt_4DuLyyzW1b1ImNbbPVy569",
+      "payment_type": "CARD",
+      "payor": {
+        "address_line1": "123 Main Street",
+        "address_line2": null,
+        "city": "Cincinnati",
+        "country": "USA",
+        "email": "pat@example.com",
+        "full_name": "Pat Theodore",
+        "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+        "metadata": "{\"order_id\":\"order-1042\"}",
+        "payor_id": "pt_pay_2Wq9mPzKcR7nX4tLb8Vh3e",
+        "phone": "+15555550123",
+        "postal_code": "45209",
+        "region": "OH"
+      },
+      "postal_code": "45209",
+      "region": "OH",
+      "wallet_type": null
+    },
+    "processor": "paytheory",
+    "reference": null,
+    "sale_id": "pt_sale_2Yx7Mr4Jd9Qc1Lt6Wk3Bn8",
+    "status": "SUCCEEDED",
+    "timezone": "UTC",
+    "transaction_id": null,
+    "updated_row_at": "2026-11-09T17:58:05.000Z"
+  },
+  "subtype": "CREATED"
+}
+```
+
+```json title="AUTHORIZATION.UPDATED"
+{
+  "event": "AUTHORIZATION",
+  "event_id": "pt_webh_17EgBn6Ys1Hq8Zp4Lc3Mx7",
+  "occurred_at": "2026-11-09T17:58:16.863000Z",
+  "payload": {
+    "account_code": null,
+    "additional_purchase_data": null,
+    "amount": "2500",
+    "authorization_date": "2026-11-09T17:58:05.000Z",
+    "authorization_id": "pt_auth_7Ld4Ws9Kc2Xq5Vn8Hb1Tm3",
+    "avs_status": "POSTAL_CODE_MATCH",
+    "captured_amount": "2583",
+    "currency": "USD",
+    "device_id": null,
+    "expiration_date": "2026-11-16T17:58:05.000Z",
+    "failure_reasons": null,
+    "fee_mode": "MERCHANT_FEE",
+    "fees": "83",
+    "invoice": null,
+    "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+    "metadata": null,
+    "payment_method": {
+      "address_line1": "123 Main Street",
+      "address_line2": null,
+      "bank_account_type": null,
+      "bank_code": null,
+      "card_brand": "VISA",
+      "card_type": "DEBIT_CARD",
+      "city": "Cincinnati",
+      "country": "USA",
+      "cvv_status": "MATCH",
+      "exp_date": "1230",
+      "full_name": "Pat Theodore",
+      "is_active": 1,
+      "issuing_country_code": "USA",
+      "last_four": "7895",
+      "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+      "metadata": "{\"order_id\":\"order-1042\"}",
+      "payment_method_id": "pt_pmt_4DuLyyzW1b1ImNbbPVy569",
+      "payment_type": "CARD",
+      "payor": {
+        "address_line1": "123 Main Street",
+        "address_line2": null,
+        "city": "Cincinnati",
+        "country": "USA",
+        "email": "pat@example.com",
+        "full_name": "Pat Theodore",
+        "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+        "metadata": "{\"order_id\":\"order-1042\"}",
+        "payor_id": "pt_pay_2Wq9mPzKcR7nX4tLb8Vh3e",
+        "phone": "+15555550123",
+        "postal_code": "45209",
+        "region": "OH"
+      },
+      "postal_code": "45209",
+      "region": "OH",
+      "wallet_type": null
+    },
+    "processor": "paytheory",
+    "reference": null,
+    "sale_id": "pt_sale_2Yx7Mr4Jd9Qc1Lt6Wk3Bn8",
+    "status": "SUCCEEDED",
+    "timezone": "UTC",
+    "transaction_id": "pt_txn_3hVY2pXN6mSgQk8mY5r1Lb",
+    "updated_row_at": "2026-11-09T17:58:05.000Z"
+  },
+  "subtype": "UPDATED"
+}
+```
+
+***
+
+## SPLIT_FUNDING
+
+Sent when part of a transaction is split to another merchant (`CREATED`). See [Split transactions](../online_payments/split_transactions).
+
+| Key | type | description |
+|---|---|---|
+| `id` | String | ID of the split. |
+| `transaction_id` | String | The transaction the split came from. |
+| `amount` | String | Amount sent to the receiving merchant, in cents. |
+| `merchant` | Object | The merchant that receives the split. |
+| `payment_method` | Object | The payment method token the payor used. |
+| `settlement_batch` | String | Settlement batch the split was paid in, once settled. |
+
+```json title="SPLIT_FUNDING.CREATED"
+{
+  "event": "SPLIT_FUNDING",
+  "event_id": "pt_webh_12rAp5Wk9Df2Gs7Jt1Qv6N",
+  "occurred_at": "2026-11-09T17:58:16.863000Z",
+  "payload": {
+    "account_code": null,
+    "amount": "500",
+    "created_at": "2026-11-09T17:58:05.000Z",
+    "currency": "USD",
+    "id": "pt_split_8Rb3Kv6Nx1Zq4Mc9Lt2Wd5",
+    "merchant": {
+      "ach_active": 1,
+      "card_active": 1,
+      "cash_active": 1,
+      "country_code": "USA",
+      "is_system": 0,
+      "merchant_name": "Northstar Books",
+      "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+      "parent_merchant_uid": null,
+      "submitted_onboarding": 1
+    },
+    "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+    "metadata": "{\"order_id\":\"order-1042\"}",
+    "payment_method": {
+      "address_line1": "123 Main Street",
+      "address_line2": null,
+      "bank_account_type": null,
+      "bank_code": null,
+      "barcode_id": null,
+      "card_brand": "VISA",
+      "card_type": "DEBIT_CARD",
+      "city": "Cincinnati",
+      "country": "USA",
+      "cvv_status": "MATCH",
+      "exp_date": "1230",
+      "full_name": "Pat Theodore",
+      "is_active": 1,
+      "issuing_country_code": "USA",
+      "last_four": "7895",
+      "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+      "metadata": "{\"order_id\":\"order-1042\"}",
+      "payment_method_id": "pt_pmt_4DuLyyzW1b1ImNbbPVy569",
+      "payment_type": "CARD",
+      "payor": {
+        "address_line1": "123 Main Street",
+        "address_line2": null,
+        "city": "Cincinnati",
+        "country": "USA",
+        "email": "pat@example.com",
+        "full_name": "Pat Theodore",
+        "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+        "metadata": "{\"order_id\":\"order-1042\"}",
+        "payor_id": "pt_pay_2Wq9mPzKcR7nX4tLb8Vh3e",
+        "phone": "+15555550123",
+        "postal_code": "45209",
+        "region": "OH"
+      },
+      "postal_code": "45209",
+      "region": "OH",
+      "wallet_type": null
+    },
+    "reference": null,
+    "settlement_batch": null,
+    "transaction_id": "pt_txn_3hVY2pXN6mSgQk8mY5r1Lb",
+    "updated_row_at": "2026-11-09T17:58:05.000Z"
+  },
+  "subtype": "CREATED"
+}
+```
+
+***
+
+## SETTLEMENT
+
+Sent when Pay Theory creates a settlement batch for a merchant (`CREATED`), and when the batch changes, such as when its funds are sent (`UPDATED`).
+
+| Key | type | description |
+|---|---|---|
+| `settlement_batch` | String | Batch number. Transactions in the batch have the same `settlement_batch`. |
+| `status` | String | `PENDING` until the funds are sent, then `SUCCEEDED`. |
+| `settlement_date` | String | Day the batch covers. |
+| `transfer_date` | String | When the funds were sent. `null` until then. |
+| `gross_amount` | String | Total of the batch's transactions, in cents. |
+| `total_fees` | String | Fees in the batch, in cents. |
+| `total_adjustments` | String | Refunds, returns and disputes in the batch, in cents. |
+| `net_amount` | String | Amount paid to the merchant, in cents. |
+| `transaction_debit_count` | String | Number of payments in the batch. |
+| `transaction_reversal_count` | String | Number of refunds in the batch. |
+| `transaction_dispute_count` | String | Number of disputes in the batch. |
+
+The `_64bit` fields hold the same amounts. Use either.
+
+```json title="SETTLEMENT.CREATED"
+{
+  "event": "SETTLEMENT",
+  "event_id": "pt_webh_15b0Ce8Lm3Xr6Ty1Hk9Pa4",
+  "occurred_at": "2026-11-09T17:58:16.863000Z",
+  "payload": {
+    "currency": "USD",
+    "gross_amount": "2500",
+    "gross_amount_64bit": "2500",
+    "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+    "net_amount": "2417",
+    "net_amount_64bit": "2417",
+    "settlement_batch": "45",
+    "settlement_date": "2026-11-09T00:00:00Z",
+    "status": "PENDING",
+    "total_adjustments": "0",
+    "total_adjustments_64bit": "0",
+    "total_fees": "83",
+    "total_fees_64bit": "83",
+    "transaction_debit_count": "1",
+    "transaction_dispute_count": "0",
+    "transaction_reversal_count": "0",
+    "transfer_date": null,
+    "updated_row_at": "2026-11-09T17:58:05.000Z"
+  },
+  "subtype": "CREATED"
+}
+```
+
+```json title="SETTLEMENT.UPDATED"
+{
+  "event": "SETTLEMENT",
+  "event_id": "pt_webh_16lZv2Nq7Bw4Ks9Rd1Mf3J",
+  "occurred_at": "2026-11-09T17:58:16.863000Z",
+  "payload": {
+    "currency": "USD",
+    "gross_amount": "2500",
+    "gross_amount_64bit": "2500",
+    "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+    "net_amount": "2417",
+    "net_amount_64bit": "2417",
+    "settlement_batch": "45",
+    "settlement_date": "2026-11-09T00:00:00Z",
+    "status": "SUCCEEDED",
+    "total_adjustments": "0",
+    "total_adjustments_64bit": "0",
+    "total_fees": "83",
+    "total_fees_64bit": "83",
+    "transaction_debit_count": "1",
+    "transaction_dispute_count": "0",
+    "transaction_reversal_count": "0",
+    "transfer_date": "2026-11-09T17:58:05.000Z",
+    "updated_row_at": "2026-11-09T17:58:05.000Z"
+  },
+  "subtype": "UPDATED"
+}
+```
+
+***
+
+## FUNDING_TRANSFER
+
+Sent when Pay Theory creates a transfer of funds for a settlement (`CREATED`), and when the transfer's status changes (`UPDATED`). One settlement can have several transfers, such as the merchant's deposit and the fees.
+
+| Key | type | description |
+|---|---|---|
+| `id` | String | ID of the transfer. |
+| `settlement_batch` | String | The settlement batch the transfer belongs to. |
+| `amount` | String | Amount transferred, in cents. |
+| `reason` | String | Why the money moved, such as `NET` for the merchant's deposit or `FEES`. |
+| `origin` | String | Where the money came from, such as `SETTLEMENT_BATCH`. |
+| `destination` | String | Where the money went, such as `MERCHANT` or `PLATFORM`. |
+| `status` | String | Status of the transfer, such as `SUCCEEDED`. |
+| `payment_method_id` | String | The bank account the transfer used. |
+| `processor_transfer_id` | String | The processor's ID for the transfer, once it has one. |
+| `transfer_date` | String | When the transfer was made. |
+
+```json title="FUNDING_TRANSFER.CREATED"
+{
+  "event": "FUNDING_TRANSFER",
+  "event_id": "pt_webh_143Qh8Yt5Gc1Lp6Wn2Zs9E",
+  "occurred_at": "2026-11-09T17:58:16.863000Z",
+  "payload": {
+    "amount": "2500",
+    "created_at": "2026-11-09T17:58:05.000Z",
+    "destination": "PLATFORM",
+    "id": "pt_fund_6Ad35Ag9oVfv31aps26Et3",
+    "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+    "origin": "SETTLEMENT_BATCH",
+    "payment_method_id": "pt_pmt_4DuLyyzW1b1ImNbbPVy569",
+    "processor_transfer_id": null,
+    "reason": "FEES",
+    "settlement_batch": "45",
+    "status": "SUCCEEDED",
+    "transfer_date": "2026-11-09T17:58:05.000Z",
+    "updated_at": "2026-11-09T17:58:05.000Z"
+  },
+  "subtype": "CREATED"
+}
+```
+
+```json title="FUNDING_TRANSFER.UPDATED"
+{
+  "event": "FUNDING_TRANSFER",
+  "event_id": "pt_webh_18HoKd3Rv7Mb2Xq5Jf9Ta1",
+  "occurred_at": "2026-11-09T17:58:16.863000Z",
+  "payload": {
+    "amount": "2500",
+    "created_at": "2026-11-09T17:58:05.000Z",
+    "destination": "MERCHANT",
+    "id": "pt_fund_6Ad35Ag9oVfv31aps26Et3",
+    "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+    "origin": "SETTLEMENT_BATCH",
+    "payment_method_id": "pt_pmt_4DuLyyzW1b1ImNbbPVy569",
+    "processor_transfer_id": "TRf8a2c91d07b44e3a9b6e4f2c1d7a8b5e",
+    "reason": "NET",
+    "settlement_batch": "45",
+    "status": "SUCCEEDED",
+    "transfer_date": "2026-11-09T17:58:05.000Z",
+    "updated_at": "2026-11-09T17:58:05.000Z"
+  },
+  "subtype": "UPDATED"
+}
+```
+
+***
+
+## DISPUTE
+
+Sent when a payor disputes a payment (`CREATED`), and when the dispute's status changes (`UPDATED`).
+
+| Key | type | description |
+|---|---|---|
+| `dispute_id` | String | ID of the dispute. |
+| `status` | String | `INQUIRY`, `PENDING`, `WON` or `LOST`. |
+| `amount` | String | Disputed amount, in cents. |
+| `reason` | String | Card network reason category, such as `FRAUD` or `QUALITY`. |
+| `dispute_date` | String | When the dispute was opened. |
+| `expiration_date` | String | Last day to respond with evidence. |
+| `settlement_withdrawal_batch` | String | Settlement batch that withdrew the disputed amount. |
+| `settlement_deposit_batch` | String | Settlement batch that returned the amount, if the merchant won. |
+| `transaction` | Object | The disputed transaction. |
+
+```json title="DISPUTE.CREATED"
+{
+  "event": "DISPUTE",
+  "event_id": "pt_webh_15HN2Lw6Pc9Vs1Ge4Bn8Ym",
+  "occurred_at": "2026-11-09T17:58:16.863000Z",
+  "payload": {
+    "amount": "2500",
+    "dispute_date": "2026-11-09T17:58:05.000Z",
+    "dispute_id": "DIaCL5EovqXb8fZDiYPz75ML",
+    "evidence_last_send_date": null,
+    "expiration_date": "2026-12-09T00:00:00.000Z",
+    "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+    "reason": "FRAUD",
+    "reason_message": "FRAUD",
+    "settlement_deposit_batch": null,
+    "settlement_withdrawal_batch": null,
+    "status": "PENDING",
+    "transaction": {
+      "account_code": "BOOKS-1042",
+      "authorization_id": null,
+      "currency": "USD",
+      "device_id": null,
+      "dispute_status": "PENDING",
+      "fee_mode": "MERCHANT_FEE",
+      "fees": "83",
+      "gross_amount": "2500",
+      "is_settled": 0,
+      "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+      "metadata": "{\"order_id\":\"order-1042\"}",
+      "net_amount": "2417",
+      "parent_id": null,
+      "reference": null,
+      "refund_voidable": null,
+      "refunded_amount": "0",
+      "sale_id": null,
+      "settlement_batch": null,
+      "status": "SUCCEEDED",
+      "timezone": "UTC",
+      "transaction_date": "2026-11-09T17:58:05.000Z",
+      "transaction_id": "pt_txn_3hVY2pXN6mSgQk8mY5r1Lb",
+      "transaction_type": "DEBIT",
+      "updated_row_at": "2026-11-09T17:58:05.000Z"
+    },
+    "updated_date": "2026-11-09T17:58:05.000Z",
+    "updated_row_at": "2026-11-09T17:58:05.000Z"
+  },
+  "subtype": "CREATED"
+}
+```
+
+```json title="DISPUTE.UPDATED"
+{
+  "event": "DISPUTE",
+  "event_id": "pt_webh_12EiZq4Kt8Hn3Rd6Wc1Lp5",
+  "occurred_at": "2026-11-09T17:58:16.863000Z",
+  "payload": {
+    "amount": "2500",
+    "dispute_date": "2026-11-09T17:58:05.000Z",
+    "dispute_id": "DIaCL5EovqXb8fZDiYPz75ML",
+    "evidence_last_send_date": null,
+    "expiration_date": "2026-12-09T00:00:00.000Z",
+    "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+    "reason": "QUALITY",
+    "reason_message": "QUALITY",
+    "settlement_deposit_batch": null,
+    "settlement_withdrawal_batch": "46",
+    "status": "LOST",
+    "transaction": {
+      "account_code": "BOOKS-1042",
+      "authorization_id": null,
+      "currency": "USD",
+      "device_id": null,
+      "dispute_status": "LOST",
+      "fee_mode": "SERVICE_FEE",
+      "fees": "83",
+      "gross_amount": "2500",
+      "is_settled": 1,
+      "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+      "metadata": "{\"order_id\":\"order-1042\"}",
+      "net_amount": "2417",
+      "parent_id": null,
+      "reference": "order-1042",
+      "refund_voidable": null,
+      "refunded_amount": "0",
+      "sale_id": null,
+      "settlement_batch": "45",
+      "status": "SETTLED",
+      "timezone": "UTC",
+      "transaction_date": "2026-11-09T17:58:05.000Z",
+      "transaction_id": "pt_txn_3hVY2pXN6mSgQk8mY5r1Lb",
+      "transaction_type": "DEBIT",
+      "updated_row_at": "2026-11-09T17:58:05.000Z"
+    },
+    "updated_date": "2026-11-09T17:58:05.000Z",
+    "updated_row_at": "2026-11-09T17:58:05.000Z"
+  },
+  "subtype": "UPDATED"
+}
+```
+
+***
+
+## MERCHANT
+
+Sent when a merchant is created (`CREATED`), and when its details, payment types or onboarding status change (`UPDATED`).
+
+| Key | type | description |
+|---|---|---|
+| `merchant_uid` | String | ID of the merchant. |
+| `merchant_name` | String | Merchant name. |
+| `api_key` | String | The merchant's public API key, for the SDK. |
+| `ach_active` | Int | `1` when the merchant can take ACH payments. |
+| `card_active` | Int | `1` when the merchant can take card payments. |
+| `cash_active` | Int | `1` when the merchant can take cash payments. |
+| `submitted_onboarding` | Int | `1` once the merchant has submitted onboarding. |
+| `parent_merchant_uid` | String | Parent merchant, for a sub-merchant. |
+| `is_system` | Int | `1` for Pay Theory's own system merchants. |
+| `metadata` | String | JSON string of the merchant's metadata. |
+
+```json title="MERCHANT.CREATED"
+{
+  "event": "MERCHANT",
+  "event_id": "pt_webh_17jxMa9Fs2Yv5Tb8Nk3Qe6",
+  "occurred_at": "2026-11-09T17:58:16.863000Z",
+  "payload": {
+    "ach_active": 0,
+    "api_key": "northstar-paytheory-3f9c2a7d1b8e4c6a9d0f2e5b7a1c3d8e",
+    "card_active": 0,
+    "cash_active": 0,
+    "country_code": "USA",
+    "is_system": 0,
+    "merchant_name": "Northstar Books",
+    "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+    "metadata": "{}",
+    "parent_merchant_uid": null,
+    "settings": null,
+    "submitted_onboarding": 0
+  },
+  "subtype": "CREATED"
+}
+```
+
+```json title="MERCHANT.UPDATED"
+{
+  "event": "MERCHANT",
+  "event_id": "pt_webh_13k3Gp7Xd1Wr4Lm9Hs2Vc8",
+  "occurred_at": "2026-11-09T17:58:16.863000Z",
+  "payload": {
+    "ach_active": 1,
+    "api_key": "northstar-paytheory-3f9c2a7d1b8e4c6a9d0f2e5b7a1c3d8e",
+    "card_active": 1,
+    "cash_active": 1,
+    "country_code": "USA",
+    "is_system": 0,
+    "merchant_name": "Northstar Books",
+    "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+    "metadata": "{}",
+    "parent_merchant_uid": null,
+    "settings": null,
+    "submitted_onboarding": 1
+  },
+  "subtype": "UPDATED"
+}
+```
+
+***
+
+## PAYOR
+
+Sent when a payor is created (`CREATED`) or updated (`UPDATED`).
+
+| Key | type | description |
+|---|---|---|
+| `payor_id` | String | ID of the payor. |
+| `full_name` | String | Payor name. |
+| `email` | String | Payor email. |
+| `phone` | String | Payor phone number. |
+| `address_line1` | String | Street address. `address_line2`, `city`, `region`, `postal_code` and `country` complete it. |
+| `metadata` | String | JSON string of the payor's metadata. |
+
+```json title="PAYOR.CREATED"
+{
+  "event": "PAYOR",
+  "event_id": "pt_webh_16CpRn5Bt8Jq2Zx6Kf1Ma4",
+  "occurred_at": "2026-11-09T17:58:16.863000Z",
+  "payload": {
+    "address_line1": null,
+    "address_line2": null,
+    "city": null,
+    "country": null,
+    "created_row_at": "2026-11-09T17:58:05.000Z",
+    "email": "pat@example.com",
+    "full_name": "Pat Theodore",
+    "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+    "metadata": null,
+    "payor_id": "pt_pay_2Wq9mPzKcR7nX4tLb8Vh3e",
+    "phone": "+15555550123",
+    "postal_code": null,
+    "region": null,
+    "updated_row_at": "2026-11-09T17:58:05.000Z"
+  },
+  "subtype": "CREATED"
+}
+```
+
+```json title="PAYOR.UPDATED"
+{
+  "event": "PAYOR",
+  "event_id": "pt_webh_14bJYw3Vm6Ns9Dc2Lt5Hg8",
+  "occurred_at": "2026-11-09T17:58:16.863000Z",
+  "payload": {
+    "address_line1": "123 Main Street",
+    "address_line2": null,
+    "city": "Cincinnati",
+    "country": "USA",
+    "created_row_at": "2026-11-09T17:58:05.000Z",
+    "email": "pat@example.com",
+    "full_name": "Pat Theodore",
+    "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+    "metadata": null,
+    "payor_id": "pt_pay_2Wq9mPzKcR7nX4tLb8Vh3e",
+    "phone": null,
+    "postal_code": "45209",
+    "region": "OH",
+    "updated_row_at": "2026-11-09T17:58:05.000Z"
+  },
+  "subtype": "UPDATED"
+}
+```
+
+***
+
+## PAYMENT_METHOD
+
+Sent when a payment method token is created (`CREATED`), and when it changes, such as when it's deactivated (`UPDATED`).
+
+| Key | type | description |
+|---|---|---|
+| `payment_method_id` | String | ID of the payment method token. |
+| `payment_type` | String | `CARD`, `ACH` or `CASH`. |
+| `last_four` | String | Last four digits of the card or account number. |
+| `card_brand` | String | Card brand, for cards. |
+| `exp_date` | String | Card expiration as `MMYY`, for cards. |
+| `bank_account_type` | String | Account type, for ACH, such as `PERSONAL_CHECKING`. |
+| `bank_code` | String | Routing number, for ACH. |
+| `is_active` | Int | `0` once the token is deactivated. |
+| `payor` | Object | The payor that owns the payment method. |
+| `metadata` | String | JSON string of the payment method's metadata. |
+
+```json title="PAYMENT_METHOD.CREATED"
+{
+  "event": "PAYMENT_METHOD",
+  "event_id": "pt_webh_18E4Tq1Kp7Gx4Ra9Wm3Zb6",
+  "occurred_at": "2026-11-09T17:58:16.863000Z",
+  "payload": {
+    "address_line1": null,
+    "address_line2": null,
+    "bank_account_type": "PERSONAL_CHECKING",
+    "bank_code": "122105278",
+    "barcode_id": null,
+    "card_brand": null,
+    "card_type": null,
+    "city": null,
+    "country": null,
+    "created_row_at": "2026-11-09T17:58:05.000Z",
+    "cvv_status": "UNKNOWN",
+    "exp_date": null,
+    "full_name": "Pat Theodore",
+    "is_active": 1,
+    "issuing_country_code": "USA",
+    "last_four": "7895",
+    "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+    "metadata": "{}",
+    "payment_method_id": "pt_pmt_4DuLyyzW1b1ImNbbPVy569",
+    "payment_type": "ACH",
+    "payor": {
+      "address_line1": null,
+      "address_line2": null,
+      "city": null,
+      "country": null,
+      "email": "pat@example.com",
+      "full_name": null,
+      "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+      "metadata": null,
+      "payor_id": "pt_pay_2Wq9mPzKcR7nX4tLb8Vh3e",
+      "phone": "+15555550123",
+      "postal_code": null,
+      "region": null,
+      "updated_row_at": null
+    },
+    "postal_code": null,
+    "region": null,
+    "updated_row_at": "2026-11-09T17:58:05.000Z",
+    "wallet_type": null
+  },
+  "subtype": "CREATED"
+}
+```
+
+```json title="PAYMENT_METHOD.UPDATED"
+{
+  "event": "PAYMENT_METHOD",
+  "event_id": "pt_webh_19Ab2Cd3Ef4Gh5Jk6Lm7Np",
+  "occurred_at": "2026-11-09T17:58:16.863000Z",
+  "payload": {
+    "address_line1": null,
+    "address_line2": null,
+    "bank_account_type": null,
+    "bank_code": null,
+    "barcode_id": null,
+    "card_brand": "MASTERCARD",
+    "card_type": "BUSINESS_CREDIT",
+    "city": null,
+    "country": null,
+    "created_row_at": "2026-11-09T17:58:05.000Z",
+    "cvv_status": "MATCH",
+    "exp_date": "1230",
+    "full_name": null,
+    "is_active": 0,
+    "issuing_country_code": "USA",
+    "last_four": "7895",
+    "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+    "metadata": null,
+    "payment_method_id": "pt_pmt_4DuLyyzW1b1ImNbbPVy569",
+    "payment_type": "CARD",
+    "payor": {
+      "address_line1": null,
+      "address_line2": null,
+      "city": null,
+      "country": null,
+      "email": null,
+      "full_name": null,
+      "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+      "metadata": null,
+      "payor_id": "pt_pay_2Wq9mPzKcR7nX4tLb8Vh3e",
+      "phone": null,
+      "postal_code": null,
+      "region": null,
+      "updated_row_at": null
+    },
+    "postal_code": "45209",
+    "region": null,
+    "updated_row_at": "2026-11-09T17:58:05.000Z",
+    "wallet_type": null
+  },
+  "subtype": "UPDATED"
+}
+```

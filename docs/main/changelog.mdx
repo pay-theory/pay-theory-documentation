@@ -8,6 +8,19 @@ title: "Changelog"
 Additions and updates to Pay Theory's API and SDKs
 
 
+## November 9, 2026
+#### Added to API
+* Webhooks are signed with Ed25519. Each request has `X-Webhook-Signature`, `X-Webhook-Timestamp` and `X-Webhook-Key-Id` headers. See [Verify webhook signatures](webhooks/verify_webhooks).
+* The `jwks` query returns the public key that verifies your webhooks. Partner and merchant keys can call it.
+* Webhook bodies have `event_id` and `occurred_at`. Retries reuse the same `event_id`, so you can deduplicate on it.
+* `webhookEvents` accepts `event_id` and returns every attempt for one delivery. Each attempt has `retry_count`.
+* A webhook created with a merchant key receives events for that merchant only.
+
+#### Changed in API
+* Failed webhook deliveries are retried up to eight times over about four days, starting 1 minute after the failure. See [How webhooks work](webhooks/overview#delivery-and-retries).
+
+---
+
 ## October 22, 2026
 #### Added to JS SDK
 * `transact` accepts `idempotencyKey`. A retry with the same key returns the first response instead of charging twice. See [Idempotency](online_payments/idempotency).

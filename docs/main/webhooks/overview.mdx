@@ -1,0 +1,169 @@
+---
+sidebar_position: 1
+sidebar_label: 'How webhooks work'
+title: 'How webhooks work'
+---
+
+# How webhooks work
+
+A webhook sends an HTTP `POST` to your endpoint when something changes in Pay Theory, such as a transaction settling or a payor being created. Your endpoint verifies the request, returns a `2xx` response and processes the event.
+
+To set one up, follow the [Webhooks quick start](quick_start). For every event type and its payload, see [Webhook events](event_payloads).
+
+***
+
+## Partner and merchant webhooks
+
+The API key you use to create a webhook decides which events it receives. `createWebhook` has no merchant argument.
+
+| Created with | Receives |
+|---|---|
+| Partner secret key | Events for every merchant under your partner. |
+| Merchant secret key | Events for that merchant only. |
+
+When an event belongs to a merchant, Pay Theory sends it to every active partner webhook and every active webhook created with that merchant's key. A partner webhook and a merchant webhook can both receive the same change. Each gets its own `event_id`.
+
+A merchant key sees and manages only the webhooks created with that merchant's key.
+
+***
+
+## The request
+
+Every delivery is a `POST` with a JSON body and three signature headers.
+
+| Header | Value |
+|---|---|
+| `Content-Type` | `application/json` |
+| `X-Webhook-Signature` | Base64 Ed25519 signature of this request. |
+| `X-Webhook-Timestamp` | Unix time in seconds when Pay Theory sent this attempt. |
+| `X-Webhook-Key-Id` | The `kid` of the public key that verifies the signature. |
+
+The body has five fields:
+
+| Key | type | description |
+|---|---|---|
+| `event` | String | Event family, such as `TRANSACTION` or `PAYOR`. |
+| `subtype` | String | `CREATED` or `UPDATED`. |
+| `payload` | Object | The record that changed. Fields depend on `event`. |
+| `event_id` | String | ID for this delivery to this endpoint. Retries reuse it, so use it to deduplicate. |
+| `occurred_at` | String | ISO 8601 UTC time of the change. |
+
+```json title="Example request body"
+{
+  "event": "PAYOR",
+  "event_id": "ptl_webh_1YdnvdAdRxftmqpYj12epc",
+  "occurred_at": "2026-11-09T19:32:06.669000Z",
+  "payload": {
+    "email": "pat@example.com",
+    "full_name": "Pat Theodore",
+    "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+    "payor_id": "ptl_pay_1RUZxPFUUQ84QGvAk90ult",
+    "phone": "+15555550123"
+  },
+  "subtype": "CREATED"
+}
+```
+
+Pay Theory signs every delivery. To check that a request came from Pay Theory, see [Verify webhook signatures](verify_webhooks).
+
+***
+
+## Delivery and retries
+
+Each attempt waits up to 10 seconds for your response.
+
+- Any `2xx` response is a success.
+- Redirects and every other status code fail.
+- Timeouts and connection errors fail.
+
+After a failed attempt, Pay Theory retries up to eight more times. Each delay is measured from the previous attempt:
+
+1. 1 minute
+2. 5 minutes
+3. 30 minutes
+4. 2 hours
+5. 6 hours
+6. 12 hours
+7. 24 hours
+8. 48 hours
+
+That is nine attempts over about four days. Every retry has the same body and `event_id`, with a new timestamp and signature.
+
+Delivery is at least once and unordered. The same `event_id` can arrive twice, and an `UPDATED` event can arrive before the `CREATED` event for the same record. Deduplicate on `event_id`, and use the record's own timestamps or status to decide which state is newest.
+
+Pay Theory never turns off a webhook because of failures. To stop deliveries, pause it with `updateWebhook` and `is_active: false`, or delete it with `deleteWebhook`. Both drop any pending retries, and turning a webhook back on applies only to new events.
+
+***
+
+## Delivery history
+
+`webhookEvents` returns one record per attempt, newest first. Pay Theory keeps attempts for 15 days.
+
+| Key | type | description |
+|---|---|---|
+| `id` | ID! | ID of this attempt. |
+| `event_id` | ID | The `event_id` from the request body. All retries of one delivery share it. Older attempts may return `null`. |
+| `event` | String! | Event family. |
+| `result` | WebhookNotificationResult! | `SUCCESS` or `FAILURE`. |
+| `status_code` | Int | HTTP status your endpoint returned. `null` when no response arrived. |
+| `error` | String | Why the attempt failed. |
+| `retry_count` | Int | `0` for the first attempt, then `1` to `8`. |
+| `request` | AWSJSON! | The body Pay Theory sent. |
+| `response` | AWSJSON | The response body your endpoint returned. |
+| `started_at` | String! | When the attempt started. |
+| `finished_at` | String! | When the attempt finished. |
+
+Look up history in one of three ways. Don't combine them in one request.
+
+- Pass `endpoint` for every attempt to one endpoint. Add `result` to filter, `limit` to size the page and `last_evaluated_key` for the next page.
+- Pass `event_id` for one delivery and all of its retries.
+- Pass `id` for one attempt.
+
+```graphql title="Example query"
+query WebhookEvents($event_id: ID) {
+  webhookEvents(event_id: $event_id) {
+    events {
+      id
+      event_id
+      event
+      result
+      status_code
+      retry_count
+      started_at
+    }
+  }
+}
+```
+
+See [List Webhook Events](../../api/webhooks/webhook-events) for more examples.
+
+***
+
+## Event types
+
+| Event | Subtypes | Sent when |
+|---|---|---|
+| `TRANSACTION` | `CREATED`, `UPDATED` | A transaction is created or its status, fees or settlement change. |
+| `AUTHORIZATION` | `CREATED`, `UPDATED` | An authorization is created, captured or canceled. |
+| `SPLIT_FUNDING` | `CREATED` | Part of a transaction is split to another merchant. |
+| `SETTLEMENT` | `CREATED`, `UPDATED` | A settlement batch is created or changes. |
+| `FUNDING_TRANSFER` | `CREATED`, `UPDATED` | A deposit or withdrawal to a merchant's bank account is created or changes. |
+| `DISPUTE` | `CREATED`, `UPDATED` | A dispute is opened or changes status. |
+| `MERCHANT` | `CREATED`, `UPDATED` | A merchant is created or its settings change. |
+| `PAYOR` | `CREATED`, `UPDATED` | A payor is created or updated. |
+| `PAYMENT_METHOD` | `CREATED`, `UPDATED` | A payment method token is created or updated. |
+
+See [Webhook events](event_payloads) for a sample payload of each.
+
+***
+
+## Manage webhooks
+
+Create and manage webhooks in the Pay Theory Portal under **Settings**, or with the API:
+
+- [Create Webhook](../../api/webhooks/create-webhook)
+- [List Webhooks](../../api/webhooks)
+- [Update Webhook](../../api/webhooks/update-webhook)
+- [Delete Webhook](../../api/webhooks/delete-webhook)
+- [List Webhook Events](../../api/webhooks/webhook-events)
+- [Get Webhook Verification Keys](../../api/webhooks/jwks)

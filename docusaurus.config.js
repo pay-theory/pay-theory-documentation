@@ -168,6 +168,14 @@ const config = {
             from: '/docs/lab/sdk/javascript/failed_transactions',
             to: '/docs/lab/main/after_payments/failed_transactions',
           },
+          {
+            from: '/docs/main/after_payments/webhook_events',
+            to: '/docs/main/webhooks/overview',
+          },
+          {
+            from: '/docs/main/after_payments/webhook_sample_payloads',
+            to: '/docs/main/webhooks/event_payloads',
+          },
         ],
       },
     ],
