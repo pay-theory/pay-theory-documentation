@@ -16,7 +16,7 @@ For the request headers and delivery rules, see [How webhooks work](overview).
 
 `payload` is the record as Pay Theory stores it, not the GraphQL type. A few rules hold for every event:
 
-- Amounts in payment records are integers of cents, such as `2500` for $25.00. `SETTLEMENT` and `FUNDING_TRANSFER` amounts are strings of cents, such as `"2500"`.
+- Amounts are integers of cents, such as `2500` for $25.00. Two are strings of cents instead: `amount` in `FUNDING_TRANSFER` and the `_64bit` fields in `SETTLEMENT`.
 - Flags such as `is_active` and `is_settled` are `true` or `false`.
 - Every field is present, and unset fields are `null`.
 - Keys are in alphabetical order.
@@ -43,7 +43,7 @@ Sent when a payment, refund or reversal is created (`CREATED`), and when its sta
 | `refunded_amount` | Int | Amount refunded so far, in cents. |
 | `fee_mode` | String | `MERCHANT_FEE` or `SERVICE_FEE`. |
 | `is_settled` | Boolean | `true` once the transaction is in a settlement. |
-| `settlement_batch` | String | Settlement batch number, once settled. |
+| `settlement_batch` | Int | Settlement batch number, once settled. |
 | `reference` | String | Your reference for the payment. |
 | `account_code` | String | Your account code for the payment. |
 | `metadata` | String | JSON string of the metadata you sent with the payment. |
@@ -230,7 +230,7 @@ Sent when a payment, refund or reversal is created (`CREATED`), and when its sta
     "refund_voidable": null,
     "refunded_amount": 0,
     "sale_id": null,
-    "settlement_batch": "45",
+    "settlement_batch": 45,
     "status": "SETTLED",
     "timezone": "UTC",
     "transaction_date": "2026-11-09T17:58:05.000Z",
@@ -416,7 +416,7 @@ Sent when part of a transaction is split to another merchant (`CREATED`). See [S
 | `amount` | Int | Amount sent to the receiving merchant, in cents. |
 | `merchant` | Object | The merchant that receives the split. |
 | `payment_method` | Object | The payment method token the payor used. |
-| `settlement_batch` | String | Settlement batch the split was paid in, once settled. |
+| `settlement_batch` | Int | Settlement batch the split was paid in, once settled. |
 
 ```json title="SPLIT_FUNDING.CREATED"
 {
@@ -867,19 +867,19 @@ Sent when Pay Theory creates a settlement batch for a merchant (`CREATED`), and 
 
 | Key | type | description |
 |---|---|---|
-| `settlement_batch` | String | Batch number. Transactions in the batch have the same `settlement_batch`. |
+| `settlement_batch` | Int | Batch number. Transactions in the batch have the same `settlement_batch`. |
 | `status` | String | `PENDING` until the funds are sent, then `SUCCEEDED`. |
 | `settlement_date` | String | Day the batch covers. |
 | `transfer_date` | String | When the funds were sent. `null` until then. |
 | `gross_amount` | Int | Total of the batch's transactions, in cents. |
-| `total_fees` | String | Fees in the batch, in cents. |
-| `total_adjustments` | String | Refunds, returns and disputes in the batch, in cents. |
+| `total_fees` | Int | Fees in the batch, in cents. |
+| `total_adjustments` | Int | Refunds, returns and disputes in the batch, in cents. |
 | `net_amount` | Int | Amount paid to the merchant, in cents. |
-| `transaction_debit_count` | String | Number of payments in the batch. |
-| `transaction_reversal_count` | String | Number of refunds in the batch. |
-| `transaction_dispute_count` | String | Number of disputes in the batch. |
+| `transaction_debit_count` | Int | Number of payments in the batch. |
+| `transaction_reversal_count` | Int | Number of refunds in the batch. |
+| `transaction_dispute_count` | Int | Number of disputes in the batch. |
 
-The `_64bit` fields hold the same amounts. Use either.
+The `_64bit` fields hold the same amounts as strings. Use either.
 
 ```json title="SETTLEMENT.CREATED"
 {
@@ -888,21 +888,21 @@ The `_64bit` fields hold the same amounts. Use either.
   "occurred_at": "2026-11-09T17:58:16.863000Z",
   "payload": {
     "currency": "USD",
-    "gross_amount": "2500",
+    "gross_amount": 2500,
     "gross_amount_64bit": "2500",
     "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
-    "net_amount": "2417",
+    "net_amount": 2417,
     "net_amount_64bit": "2417",
-    "settlement_batch": "45",
+    "settlement_batch": 45,
     "settlement_date": "2026-11-09T00:00:00Z",
     "status": "PENDING",
-    "total_adjustments": "0",
+    "total_adjustments": 0,
     "total_adjustments_64bit": "0",
-    "total_fees": "83",
+    "total_fees": 83,
     "total_fees_64bit": "83",
-    "transaction_debit_count": "1",
-    "transaction_dispute_count": "0",
-    "transaction_reversal_count": "0",
+    "transaction_debit_count": 1,
+    "transaction_dispute_count": 0,
+    "transaction_reversal_count": 0,
     "transfer_date": null,
     "updated_row_at": "2026-11-09T17:58:05.000Z"
   },
@@ -917,21 +917,21 @@ The `_64bit` fields hold the same amounts. Use either.
   "occurred_at": "2026-11-09T17:58:16.863000Z",
   "payload": {
     "currency": "USD",
-    "gross_amount": "2500",
+    "gross_amount": 2500,
     "gross_amount_64bit": "2500",
     "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
-    "net_amount": "2417",
+    "net_amount": 2417,
     "net_amount_64bit": "2417",
-    "settlement_batch": "45",
+    "settlement_batch": 45,
     "settlement_date": "2026-11-09T00:00:00Z",
     "status": "SUCCEEDED",
-    "total_adjustments": "0",
+    "total_adjustments": 0,
     "total_adjustments_64bit": "0",
-    "total_fees": "83",
+    "total_fees": 83,
     "total_fees_64bit": "83",
-    "transaction_debit_count": "1",
-    "transaction_dispute_count": "0",
-    "transaction_reversal_count": "0",
+    "transaction_debit_count": 1,
+    "transaction_dispute_count": 0,
+    "transaction_reversal_count": 0,
     "transfer_date": "2026-11-09T17:58:05.000Z",
     "updated_row_at": "2026-11-09T17:58:05.000Z"
   },
@@ -948,8 +948,8 @@ Sent when Pay Theory creates a transfer of funds for a settlement (`CREATED`), a
 | Key | type | description |
 |---|---|---|
 | `id` | String | ID of the transfer. |
-| `settlement_batch` | String | The settlement batch the transfer belongs to. |
-| `amount` | String | Amount transferred, in cents. |
+| `settlement_batch` | Int | The settlement batch the transfer belongs to. |
+| `amount` | String | Amount transferred, in cents, as a string, such as `"2500"`. |
 | `reason` | String | Why the money moved, such as `NET` for the merchant's deposit or `FEES`. |
 | `origin` | String | Where the money came from, such as `SETTLEMENT_BATCH`. |
 | `destination` | String | Where the money went, such as `MERCHANT` or `PLATFORM`. |
@@ -973,7 +973,7 @@ Sent when Pay Theory creates a transfer of funds for a settlement (`CREATED`), a
     "payment_method_id": "pt_pmt_4DuLyyzW1b1ImNbbPVy569",
     "processor_transfer_id": null,
     "reason": "FEES",
-    "settlement_batch": "45",
+    "settlement_batch": 45,
     "status": "SUCCEEDED",
     "transfer_date": "2026-11-09T17:58:05.000Z",
     "updated_at": "2026-11-09T17:58:05.000Z"
@@ -997,7 +997,7 @@ Sent when Pay Theory creates a transfer of funds for a settlement (`CREATED`), a
     "payment_method_id": "pt_pmt_4DuLyyzW1b1ImNbbPVy569",
     "processor_transfer_id": "TRf8a2c91d07b44e3a9b6e4f2c1d7a8b5e",
     "reason": "NET",
-    "settlement_batch": "45",
+    "settlement_batch": 45,
     "status": "SUCCEEDED",
     "transfer_date": "2026-11-09T17:58:05.000Z",
     "updated_at": "2026-11-09T17:58:05.000Z"
@@ -1016,7 +1016,7 @@ Sent when a payor disputes a payment (`CREATED`), and when the dispute's status 
 |---|---|---|
 | `dispute_id` | String | ID of the dispute. |
 | `status` | String | `INQUIRY`, `PENDING`, `WON` or `LOST`. |
-| `amount` | String | Disputed amount, in cents. |
+| `amount` | Int | Disputed amount, in cents. |
 | `reason` | String | Card network reason category, such as `FRAUD` or `QUALITY`. |
 | `dispute_date` | String | When the dispute was opened. |
 | `expiration_date` | String | Last day to respond with evidence. |
@@ -1030,7 +1030,7 @@ Sent when a payor disputes a payment (`CREATED`), and when the dispute's status 
   "event_id": "pt_webh_14bJYw3Vm6Ns9Dc2Lt5Hg8",
   "occurred_at": "2026-11-09T17:58:16.863000Z",
   "payload": {
-    "amount": "2500",
+    "amount": 2500,
     "dispute_date": "2026-11-09T17:58:05.000Z",
     "dispute_id": "DIaCL5EovqXb8fZDiYPz75ML",
     "evidence_last_send_date": null,
@@ -1048,16 +1048,16 @@ Sent when a payor disputes a payment (`CREATED`), and when the dispute's status 
       "device_id": null,
       "dispute_status": "PENDING",
       "fee_mode": "MERCHANT_FEE",
-      "fees": "83",
-      "gross_amount": "2500",
-      "is_settled": 0,
+      "fees": 83,
+      "gross_amount": 2500,
+      "is_settled": false,
       "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
       "metadata": "{\"order_id\":\"order-1042\"}",
-      "net_amount": "2417",
+      "net_amount": 2417,
       "parent_id": null,
       "reference": null,
       "refund_voidable": null,
-      "refunded_amount": "0",
+      "refunded_amount": 0,
       "sale_id": null,
       "settlement_batch": null,
       "status": "SUCCEEDED",
@@ -1080,7 +1080,7 @@ Sent when a payor disputes a payment (`CREATED`), and when the dispute's status 
   "event_id": "pt_webh_18E4Tq1Kp7Gx4Ra9Wm3Zb6",
   "occurred_at": "2026-11-09T17:58:16.863000Z",
   "payload": {
-    "amount": "2500",
+    "amount": 2500,
     "dispute_date": "2026-11-09T17:58:05.000Z",
     "dispute_id": "DIaCL5EovqXb8fZDiYPz75ML",
     "evidence_last_send_date": null,
@@ -1098,18 +1098,18 @@ Sent when a payor disputes a payment (`CREATED`), and when the dispute's status 
       "device_id": null,
       "dispute_status": "LOST",
       "fee_mode": "SERVICE_FEE",
-      "fees": "83",
-      "gross_amount": "2500",
-      "is_settled": 1,
+      "fees": 83,
+      "gross_amount": 2500,
+      "is_settled": true,
       "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
       "metadata": "{\"order_id\":\"order-1042\"}",
-      "net_amount": "2417",
+      "net_amount": 2417,
       "parent_id": null,
       "reference": "order-1042",
       "refund_voidable": null,
-      "refunded_amount": "0",
+      "refunded_amount": 0,
       "sale_id": null,
-      "settlement_batch": "45",
+      "settlement_batch": 45,
       "status": "SETTLED",
       "timezone": "UTC",
       "transaction_date": "2026-11-09T17:58:05.000Z",

@@ -214,3 +214,38 @@ test('sample payloads are valid webhook envelopes', () => {
     }
   }
 });
+
+// Wire types confirmed from the DynamoDB attribute types of live outbox rows.
+test('sample payloads use the wire types of real deliveries', () => {
+  const expected = {
+    TRANSACTION: {
+      gross_amount: 'number',
+      fees: 'number',
+      net_amount: 'number',
+      refunded_amount: 'number',
+      is_settled: 'boolean',
+    },
+    SETTLEMENT: {
+      gross_amount: 'number',
+      total_fees: 'number',
+      settlement_batch: 'number',
+      gross_amount_64bit: 'string',
+    },
+    FUNDING_TRANSFER: { amount: 'string', settlement_batch: 'number' },
+    DISPUTE: { amount: 'number' },
+    MERCHANT: { ach_active: 'boolean', card_active: 'boolean' },
+    PAYMENT_METHOD: { is_active: 'boolean' },
+  };
+  for (const dir of GUIDE_DIRS) {
+    const page = read(`${dir}/event_payloads.mdx`);
+    for (const [, event, json] of page.matchAll(
+      /```json title="([A-Z_]+)\.[A-Z]+"\n([\s\S]*?)\n```/g,
+    )) {
+      const { payload } = JSON.parse(json);
+      for (const [key, type] of Object.entries(expected[event] ?? {})) {
+        if (payload[key] === null) continue;
+        assert.equal(typeof payload[key], type, `${dir}: ${event}.${key}`);
+      }
+    }
+  }
+});
