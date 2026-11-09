@@ -8,6 +8,8 @@ title: 'Webhook events'
 
 This page lists every event Pay Theory sends, with a sample body for each. The samples follow real deliveries, with the values replaced by sample data.
 
+Each event's table lists its key fields. The sample below it shows the full payload.
+
 For the request headers and delivery rules, see [How webhooks work](overview).
 
 ***
@@ -30,6 +32,8 @@ Every payload has `merchant_uid`. To get the latest state of a record, query it 
 ## TRANSACTION
 
 Sent when a payment, refund or reversal is created (`CREATED`), and when its status, fees or settlement change (`UPDATED`). A card payment usually sends `CREATED` when it's approved, then `UPDATED` when it settles.
+
+**Key fields**
 
 | Key | type | description |
 |---|---|---|
@@ -244,6 +248,8 @@ Sent when a payment, refund or reversal is created (`CREATED`), and when its sta
 
 Sent when you create an authorization (`CREATED`), and when it changes, such as when it's captured or canceled (`UPDATED`).
 
+**Key fields**
+
 | Key | type | description |
 |---|---|---|
 | `authorization_id` | String | ID of the authorization. |
@@ -405,6 +411,8 @@ Sent when you create an authorization (`CREATED`), and when it changes, such as 
 
 Sent when part of a transaction is split to another merchant (`CREATED`). See [Split transactions](../online_payments/split_transactions).
 
+**Key fields**
+
 | Key | type | description |
 |---|---|---|
 | `id` | String | ID of the split. |
@@ -491,6 +499,8 @@ Sent when part of a transaction is split to another merchant (`CREATED`). See [S
 
 Sent when Pay Theory creates a settlement batch for a merchant (`CREATED`), and when the batch changes, such as when its funds are sent (`UPDATED`).
 
+**Key fields**
+
 | Key | type | description |
 |---|---|---|
 | `settlement_batch` | Int | Batch number. Transactions in the batch have the same `settlement_batch`. |
@@ -571,6 +581,8 @@ The `_64bit` fields hold the same amounts as strings. Use either.
 
 Sent when Pay Theory creates a transfer of funds for a settlement (`CREATED`), and when the transfer's status changes (`UPDATED`). One settlement can have several transfers, such as the merchant's deposit and the fees.
 
+**Key fields**
+
 | Key | type | description |
 |---|---|---|
 | `id` | String | ID of the transfer. |
@@ -637,6 +649,8 @@ Sent when Pay Theory creates a transfer of funds for a settlement (`CREATED`), a
 ## DISPUTE
 
 Sent when a payor disputes a payment (`CREATED`), and when the dispute's status changes (`UPDATED`).
+
+**Key fields**
 
 | Key | type | description |
 |---|---|---|
@@ -756,6 +770,8 @@ Sent when a payor disputes a payment (`CREATED`), and when the dispute's status 
 
 Sent when a merchant is created (`CREATED`), and when its details, payment types or onboarding status change (`UPDATED`).
 
+**Key fields**
+
 | Key | type | description |
 |---|---|---|
 | `merchant_uid` | String | ID of the merchant. |
@@ -821,6 +837,8 @@ Sent when a merchant is created (`CREATED`), and when its details, payment types
 
 Sent when a payor is created (`CREATED`) or updated (`UPDATED`).
 
+**Key fields**
+
 | Key | type | description |
 |---|---|---|
 | `payor_id` | String | ID of the payor. |
@@ -885,6 +903,8 @@ Sent when a payor is created (`CREATED`) or updated (`UPDATED`).
 ## PAYMENT_METHOD
 
 Sent when a payment method token is created (`CREATED`), and when it changes, such as when it's deactivated (`UPDATED`).
+
+**Key fields**
 
 | Key | type | description |
 |---|---|---|
