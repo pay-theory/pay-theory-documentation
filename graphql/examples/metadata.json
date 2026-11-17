@@ -1,0 +1,33 @@
+[
+  {
+    "operation": "updateMetadata",
+    "operationType": "mutation",
+    "examples": [
+      {
+        "name": "Add metadata to a transaction",
+        "description": "Adds metadata to a transaction. Send metadata as a JSON string.",
+        "query": "mutation UpdateMetadata($id: String!, $metadata_associate: MetadataAssociate!, $merchant_uid: String!, $metadata: AWSJSON!) {\n  updateMetadata(id: $id, metadata_associate: $metadata_associate, merchant_uid: $merchant_uid, metadata: $metadata)\n}",
+        "variables": {
+          "id": "ptl_txn_7pCgkYFpOJIa04NlWSum0b",
+          "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+          "metadata": "{\"department\":\"athletics\",\"student_id\":\"1234567\"}",
+          "metadata_associate": "TRANSACTION"
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "updateMetadata": true
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "operation": "deleteMetadata",
+    "operationType": "mutation",
+    "examples": []
+  }
+]

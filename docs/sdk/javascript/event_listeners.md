@@ -6,134 +6,120 @@ title: "Event Listeners"
 
 # Event Listeners
 
-The Pay Theory SDK provides a set of event listeners that can be used to respond messages from the hosted fields and inside the SDK.
+Event listeners report what happens in the hosted fields and the SDK. Each one takes a callback and returns a function that removes the listener. Add them before you call [`payTheoryFields`](functions#paytheoryfields) so you don't miss early events.
 
-Each of these listeners takes a callback function as a parameter. Below we will detail the parameters that are passed to each callback function.
+```javascript
+const removeListener = window.paytheory.errorObserver(error => {
+  // Respond to the error
+})
 
-Each of these listeners will return a function that can be used to remove the listener.
+// Later, stop listening
+removeListener()
+```
 
 ***
 ## readyObserver
 
-The `readyObserver` will fire when the hosted fields are ready to be used. This is where you should add any logic that should be executed when the hosted fields are ready.
+Fires when the hosted fields are connected and ready for `transact` or `tokenizePaymentMethod`.
 
 ```javascript
-const cleanupFunction =  window.paytheory.readyObserver(ready => {
-    // Logic to respond when the fields are ready
+const removeListener = window.paytheory.readyObserver(ready => {
+  // Enable your pay button
 })
 ```
 
-**Callback Parameter**
+**Callback parameter**
 
-When the fields are ready it will pass a boolean value of `true` to the callback function.
+`true`.
 
-**Returns**
-
-A function that can be used to remove the listener.
+To show each field as soon as it renders, before the fields are ready, use [`iframeLoaded`](#field-state) in the state observer.
 
 ***
 ## errorObserver
 
-The `errorObserver` will fire when an error occurs anywhere inside the Pay Theory SDK. This is a good place to add any logic that should only be executed when an error occurs.
+Fires when an error happens anywhere in the SDK.
 
 ```javascript
-const cleanupFunction =  window.paytheory.errorObserver(error => {
-    // Logic to respond to errors
+const removeListener = window.paytheory.errorObserver(error => {
+  // Respond to the error
 })
 ```
 
-**Callback Parameter**
+**Callback parameter**
 
-The callback will be passed a string indicating what happened in the SDK. The string should begin with one of the codes shown [here](errors).
+An error string. SDK errors start with one of the [error codes](errors). Field validation messages, such as an invalid card number, arrive without a code, and an empty string means a field's error cleared.
 
-Most errors will require the user to refresh the page and try again.
-
-The exception to this is the `NOT_VALID` error which will require the user to change the data in the payment fields until you get a proper response to the valid observer, and then you may try and transact or tokenize again.
-
-**Returns**
-
-A function that can be used to remove the listener.
+After `transact` or `tokenizePaymentMethod` returns an `ERROR` or `FAILED` response, you can call it again without reloading the page. For `NOT_VALID`, the payor fixes the data in the fields first, and you call again once the [valid observer](#validobserver) reports the fields as valid. Errors from mounting the fields, such as `FIELD_ERROR` or `NO_FIELDS`, need a fix to your page and a reload.
 
 ***
 ## stateObserver
 
-The `stateObserver` will fire when the state of any hosted field changes. You can use this listener to respond when a hosted field is focused, blurred, or when it has been typed into.
+Fires when any hosted field's state changes: focus, input, validation or loading. It also fires when the service fee changes.
 
 ```javascript
-const cleanupFunction =  window.paytheory.stateObserver(state => {
-    // Logic to respond to state changes
+const removeListener = window.paytheory.stateObserver(state => {
+  const cardNumber = state['card-number']
+  if (cardNumber.iframeLoaded) {
+    document.getElementById('card-skeleton').hidden = true
+  }
 })
 ```
 
-**Callback Parameter**
+**Callback parameter**
 
-The callback will be passed a state object. The state object will include an object with all the possible fields.
+An object with one key per hosted field and a `service_fee` key.
 
-**Keys**
+### Field state
 
-- `card-number`
-- `card-cvv`
-- `card-exp`
-- `card-name`
-- `billing-line1`
-- `billing-line2`
-- `billing-city`
-- `billing-state`
-- `billing-zip`
-- `account-name`
-- `account-type`
-- `account-number`
-- `routing-number`
-- `cash-name`
-- `cash-contact`
+Each field key holds:
 
-**State Object**
-Each of the above keys will contain an object with the following keys:
+| Key | type | description |
+|-----|------|-------------|
+| isFocused | Boolean | `true` while the field has focus. |
+| isDirty | Boolean | `true` once the field has input. |
+| errorMessages | String[] | Validation messages for the field. Empty when the field is valid. |
+| iframeLoaded | Boolean | `false` while the field loads. Turns `true` once that field's iframe has loaded and reported its state. |
 
-|Key                |type         |       description                     |
-|-------------------|-------------|---------------------------------------|
-|isFocused          |boolean      |Indicates if the field is focused|
-|isDirty            |boolean      |Indicates if the field currently has text entered|
-|errorMessages      |array        |Array of error messages if the field is invalid|
+`iframeLoaded` is set per field, so you can show each field as it renders instead of waiting for [`readyObserver`](#readyobserver).
 
-*Note: If using the combined card field you will receive state updates for number, cvv, and exp separately*
+### Field keys
 
-This can be used to help if you want to display field specific error messages or style the fields based on the state.
-This can also be used to help if you are using the Card Billing fields to capture the payor info and want to ensure the fields are filled out.
+The object includes every field key, whether or not you mounted that field.
 
-**Returns**
+| Payment type | Keys |
+|--------------|------|
+| Card | `card-number`, `card-exp`, `card-cvv`, `card-name` |
+| Billing address | `billing-line1`, `billing-line2`, `billing-city`, `billing-state`, `billing-zip` |
+| Bank (USA) | `account-name`, `account-type`, `account-number`, `routing-number` |
+| Bank (Canada) | `account-name`, `account-type`, `account-number`, `institution-number`, `transit-number` |
+| Cash | `cash-name`, `cash-contact` |
 
-A function that can be used to remove the listener.
+### Service fee
+
+`service_fee` holds the fees for the current amount:
+
+| Key | type | description |
+|-----|------|-------------|
+| amount | Int | Amount of the payment, in cents. |
+| card_fee | Int | Service fee for a card payment, in cents. |
+| bank_fee | Int | Service fee for a bank payment, in cents. |
+| ach_fee | Int | Same value as `bank_fee`. Kept for older integrations. |
+
+The fee keys are `undefined` until the SDK has an amount and has calculated the fee. Pass the amount to [`payTheoryFields`](functions#paytheoryfields) or [`updateAmount`](functions#updateamount). `card_fee` also waits until the payor has typed enough of the card number for Pay Theory to identify the card.
 
 ***
 ## validObserver
 
-The `validObserver` will fire when a set of hosted fields are valid. This is where you should add any logic that should be executed when the hosted fields are valid.
+Fires when a group of hosted fields becomes valid or invalid. Use it to enable your pay button once the payor has filled in the fields.
 
 ```javascript
-const cleanupFunction = window.paytheory.validObserver(valid => {
-    // Logic to respond when the form is valid
+const removeListener = window.paytheory.validObserver(valid => {
+  if (valid.includes('card')) {
+    // The card fields are valid
+  }
 })
 ```
 
-**Callback Parameter**
+**Callback parameter**
 
-The callback function will be passed a string that will contain the name of the payment type that is valid. This will be one of the following:
-
-- `card`
-- `ach`
-- `cash`
-
-There is a possibility that if you have multiple payment types mounted, that the string may contain multiple payment types. You could check for a certain payment type by using the `includes` method on the string.
-
-```javascript
-const cleanupFunction = myPayTheory.validObserver(valid => {
-    if (valid.includes("card")) {
-        // Logic to respond when the card is valid
-    }
-})
-```
-
-**Returns**
-
-A function that can be used to remove the listener.
+A string naming the payment types whose fields are valid, separated by spaces: `card`, `bank` or `cash`. When the bank fields are valid it also includes `ach`. With several payment types mounted it can name more than one, and it's empty when none are valid. Check for a type with `includes`.

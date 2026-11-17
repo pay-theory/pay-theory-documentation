@@ -1,0 +1,27 @@
+[
+  {
+    "operation": "createWebhook",
+    "operationType": "mutation",
+    "examples": []
+  },
+  {
+    "operation": "webhooks",
+    "operationType": "query",
+    "examples": []
+  },
+  {
+    "operation": "updateWebhook",
+    "operationType": "mutation",
+    "examples": []
+  },
+  {
+    "operation": "deleteWebhook",
+    "operationType": "mutation",
+    "examples": []
+  },
+  {
+    "operation": "webhookEvents",
+    "operationType": "query",
+    "examples": []
+  }
+]

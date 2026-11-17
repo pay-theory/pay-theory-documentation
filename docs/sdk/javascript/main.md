@@ -6,92 +6,88 @@ title: "Pay Theory Javascript SDK"
 
 # Pay Theory Javascript SDK
 
-This is the Pay Theory Web SDK. It is a collection of hosted fields, event listeners, and functions to help you integrate Pay Theory into your webpage.
+The Pay Theory Javascript SDK puts [hosted fields](hosted_fields) on your page and runs payments through them. The fields are Pay Theory iframes, so card and bank details never touch your page. You call [functions](functions) such as `transact`, and [event listeners](event_listeners) tell you what the fields are doing.
 
-Here is some steps to get you started with a basic implementation.
+These steps take a page from no SDK to a card payment.
 
-## Step 1: Importing the SDK
+***
+## 1. Import the SDK
 
-To use the Pay Theory Web SDK, you need to add this script to your web header:
-
-The SDK URL can be found in the Pay Theory portal under the settings tab as the SDK Import URL.
+Add the SDK script to your page's `<head>`. Your SDK Import URL is in the Pay Theory portal under the settings tab.
 
 ```html
-<script src={SDK Import URL}> </script>
+<script src="{SDK Import URL}"></script>
 ```
 
-The SDK will be available on the window object as `paytheory`.
-
-It can be accessed as follows:
+The SDK is then on the window as `paytheory`:
 
 ```javascript
-paytheory
-//or
 window.paytheory
 ```
 
-## Step 2: Add Pay Theory Elements to Your Form
+Using TypeScript? Download the declaration file from the same host. See [TypeScript](typescript).
 
-You need to add the Pay Theory elements to your form. You can place these elements anywhere in your form and the SDK will place the hosted fields in the correct place.
+***
+## 2. Add the hosted field containers
+
+Add an empty `div` for each field you want, anywhere in your form. The SDK mounts each field into the `div` with the matching ID.
 
 ```html
 <form>
-...
-<div id="pay-theory-credit-card"></div>
-<div id="pay-theory-credit-card-zip"></div>
-...
+  <div id="pay-theory-credit-card"></div>
+  <div id="pay-theory-credit-card-zip"></div>
 </form>
 ```
 
-## Step 3: Set up the event listeners
+See [hosted fields](hosted_fields) for the card, ACH, EFT and cash field IDs.
 
-You would then need to call any event listeners before you initialize the Pay Theory fields.
+***
+## 3. Add event listeners
 
-A full list of event listeners can be found [here](event_listeners.md).
+Add listeners before you mount the fields, so you don't miss early events.
 
 ```javascript
 paytheory.errorObserver(error => {
-    // Logic to respond to errors
+  // Respond to errors
+})
+
+paytheory.validObserver(valid => {
+  // Enable your pay button when valid includes 'card'
 })
 ```
 
-## Step 4: Initialize the Pay Theory Fields
+See all [event listeners](event_listeners).
 
-After you have set up all the event listeners, you can initialize the Pay Theory fields by calling the `payTheoryFields` function.
+***
+## 4. Mount the hosted fields
 
+Call `payTheoryFields` with your API Key.
 
 ```javascript
-const API_KEY = 'YOUR_API_KEY'
-
 paytheory.payTheoryFields({
-  apiKey: API_KEY
+  apiKey: 'YOUR_API_KEY'
 })
 ```
 
-## Step 5: Once the fields are valid, run transaction
+***
+## 5. Submit the payment
 
-Use the [valid observer](event_listeners#validobserver) to tell when the hosted fields are valid, so you can submit the payment.
-
-The only required field for the `transact` parameters is the `amount` field.
-
-You can customize the `transact` function more. Check out the full list of parameters [here](functions#transact).
+When the [valid observer](event_listeners#validobserver) reports the fields as valid, call `transact`. `amount` is the only required parameter. See all [transact parameters](functions#transact).
 
 ```javascript
-//Amount passed in is in cents
-const AMOUNT = 1000
+// Amount in cents
+const result = await paytheory.transact({
+  amount: 1000,
+  idempotencyKey: 'order-1042'
+})
 
-// Parameters that you will pass into the transact function. More details below.
-const TRANSACTING_PARAMETERS = {
-        amount: AMOUNT
-}
-
-let result = await paytheory.transact(TRANSACTING_PARAMETERS)
-
-if (result.type === "SUCCESS") {
-    // Logic to respond to successful transaction
-} else if (result.type === "FAILURE") {
-    // Logic to respond to failed transaction
-} else if (result.type === "ERROR") {
-    // Logic to respond to error
+if (result.type === 'SUCCESS') {
+  // The payment succeeded
+} else if (result.type === 'FAILED') {
+  // The payment was declined. See result.body.reason
+} else if (result.type === 'ERROR') {
+  // The SDK couldn't run the payment. See result.error
 }
 ```
+
+With `idempotencyKey`, a retry can't charge the payor twice. Pay Theory returns the first response for a repeated key, including a decline. To let the payor try another card after a decline, send a new key. See [Idempotency](../../main/online_payments/idempotency).

@@ -25,9 +25,31 @@ Parameters:
   CertificateArn:
     Type: String
     Description: v2 certificate arn
+  EdgeRoutesKvsArn:
+    Type: String
+    Description: ARN of the CloudFront KeyValueStore that lists the docs routes.
+    Default: ''
 Conditions:
     isStandard: !Equals [ !Ref TargetMode, standard]
+    hasEdgeRouter: !Not [!Equals [!Ref EdgeRoutesKvsArn, '']]
 Resources:
+
+  # Routes requests at the edge: pretty URLs, Markdown negotiation, 404s and
+  # redirects (edge/markdown-redirect/README.md). Updating the code publishes
+  # it in place; CloudFront keeps the same function ARN.
+  EdgeRouterFunction:
+    Condition: hasEdgeRouter
+    Type: AWS::CloudFront::Function
+    Properties:
+      Name: !Sub '${Repository}-${Partner}-${Stage}-edge-router'
+      AutoPublish: true
+      FunctionConfig:
+        Comment: !Sub 'Docs routing for ${Repository}-${Partner}-${Stage}'
+        Runtime: cloudfront-js-2.0
+        KeyValueStoreAssociations:
+          - KeyValueStoreARN: !Ref EdgeRoutesKvsArn
+      # scripts/render-formation-template.js inlines function.js here.
+      FunctionCode: EDGE_FUNCTION_CODE
 
   S3Bucket:
     DependsOn:
@@ -166,22 +188,38 @@ Resources:
         isStandard, 
         !Sub "docs.${Stage}.com", 
         !Sub "docs.${Stage}.com" ]
-        CustomErrorResponses:
+        # With the edge function, pretty URLs are rewritten to their index.html
+        # object, so an S3 miss (403 under OAC) means the page does not exist.
+        # Without it, keep the SPA fallback that pretty URLs depend on.
+        CustomErrorResponses: !If
+          - hasEdgeRouter
           -
-            ErrorCachingMinTTL: 10
-            ErrorCode: 400
-            ResponseCode: 200
-            ResponsePagePath: /index.html
+            -
+              ErrorCachingMinTTL: 10
+              ErrorCode: 403
+              ResponseCode: 404
+              ResponsePagePath: /404.html
+            -
+              ErrorCachingMinTTL: 10
+              ErrorCode: 404
+              ResponseCode: 404
+              ResponsePagePath: /404.html
           -
-            ErrorCachingMinTTL: 10
-            ErrorCode: 403
-            ResponseCode: 200
-            ResponsePagePath: /index.html
-          -
-            ErrorCachingMinTTL: 10
-            ErrorCode: 404
-            ResponseCode: 200
-            ResponsePagePath: /index.html
+            -
+              ErrorCachingMinTTL: 10
+              ErrorCode: 400
+              ResponseCode: 200
+              ResponsePagePath: /index.html
+            -
+              ErrorCachingMinTTL: 10
+              ErrorCode: 403
+              ResponseCode: 200
+              ResponsePagePath: /index.html
+            -
+              ErrorCachingMinTTL: 10
+              ErrorCode: 404
+              ResponseCode: 200
+              ResponsePagePath: /index.html
         DefaultCacheBehavior:
           AllowedMethods:
             - GET
@@ -191,6 +229,15 @@ Resources:
           CachePolicyId: '{{resolve:ssm:pt-global-books-cache}}'
           OriginRequestPolicyId: '{{resolve:ssm:pt-global-books-origin}}'
           ViewerProtocolPolicy: redirect-to-https
+          FunctionAssociations: !If
+            - hasEdgeRouter
+            -
+              - EventType: viewer-request
+                FunctionARN: !GetAtt EdgeRouterFunction.FunctionARN
+              # Same function; adds Vary: Accept to HTML and Markdown.
+              - EventType: viewer-response
+                FunctionARN: !GetAtt EdgeRouterFunction.FunctionARN
+            - !Ref AWS::NoValue
         HttpVersion: http2
         DefaultRootObject: index.html
         IPV6Enabled: true

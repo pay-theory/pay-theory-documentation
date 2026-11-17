@@ -1,0 +1,232 @@
+[
+  {
+    "operation": "merchant",
+    "operationType": "query",
+    "examples": [
+      {
+        "name": "Get a merchant",
+        "description": "Gets one merchant by merchant_uid.",
+        "query": "query Merchant($merchant_uid: String) {\n  merchant(merchant_uid: $merchant_uid) {\n    merchant_uid\n    merchant_name\n    card_active\n    ach_active\n    cash_active\n    max_transaction_amount\n    country_code\n    settings {\n      contact_email\n      website\n    }\n  }\n}",
+        "variables": {
+          "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "merchant": {
+                "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                "merchant_name": "Northstar Books",
+                "card_active": true,
+                "ach_active": true,
+                "cash_active": true,
+                "max_transaction_amount": 1000000,
+                "country_code": "USA",
+                "settings": {
+                  "contact_email": null,
+                  "website": null
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "name": "Merchant not found",
+        "query": "query Merchant($merchant_uid: String) {\n  merchant(merchant_uid: $merchant_uid) {\n    merchant_uid\n    merchant_name\n    card_active\n    ach_active\n    cash_active\n    country_code\n    settings {\n      contact_email\n      website\n    }\n  }\n}",
+        "variables": {
+          "merchant_uid": "6b0c1e4d-2f7a-4c9e-z1y2-8d3f5a7b9c10"
+        },
+        "response": {
+          "type": "error",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "merchant": null
+            },
+            "errors": [
+              {
+                "path": [
+                  "merchant"
+                ],
+                "data": null,
+                "errorType": "NOT_FOUND",
+                "errorInfo": {
+                  "arguments": {
+                    "merchant_uid": "6b0c1e4d-2f7a-4c9e-z1y2-8d3f5a7b9c10"
+                  }
+                },
+                "message": "Merchant not found."
+              }
+            ]
+          }
+        },
+        "description": "Returns an error when the merchant_uid does not exist."
+      }
+    ]
+  },
+  {
+    "operation": "merchants",
+    "operationType": "query",
+    "examples": [
+      {
+        "name": "List merchants",
+        "description": "Lists the merchants scoped to your access.",
+        "query": "query Merchants($limit: Int) {\n  merchants(limit: $limit) {\n    items {\n      merchant_uid\n      merchant_name\n      card_active\n      ach_active\n      cash_active\n      country_code\n      parent_merchant_uid\n    }\n    total_row_count\n  }\n}",
+        "variables": {
+          "limit": 2
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "merchants": {
+                "items": [
+                  {
+                    "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                    "merchant_name": "Northstar Books",
+                    "card_active": true,
+                    "ach_active": true,
+                    "cash_active": true,
+                    "country_code": "USA",
+                    "parent_merchant_uid": null
+                  }
+                ],
+                "total_row_count": 1
+              }
+            }
+          }
+        }
+      },
+      {
+        "name": "Filter by merchant name",
+        "description": "Filters the merchants your API key can see by merchant_name.",
+        "query": "query Merchants($query: SqlQuery, $limit: Int) {\n  merchants(query: $query, limit: $limit) {\n    items {\n      merchant_uid\n      merchant_name\n      card_active\n      ach_active\n      cash_active\n      country_code\n      parent_merchant_uid\n    }\n    total_row_count\n  }\n}",
+        "variables": {
+          "query": {
+            "query_list": [
+              {
+                "key": "merchant_name",
+                "value": "Northstar Books",
+                "operator": "EQUAL"
+              }
+            ]
+          },
+          "limit": 2
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "merchants": {
+                "items": [
+                  {
+                    "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                    "merchant_name": "Northstar Books",
+                    "card_active": true,
+                    "ach_active": true,
+                    "cash_active": true,
+                    "country_code": "USA",
+                    "parent_merchant_uid": null
+                  }
+                ],
+                "total_row_count": 1
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "operation": "createMerchant",
+    "operationType": "mutation",
+    "examples": [
+      {
+        "name": "Create a merchant",
+        "query": "mutation CreateMerchant(\n  $merchant_name: String!\n  $metadata: AWSJSON\n) {\n  createMerchant(\n    merchant_name: $merchant_name\n    metadata: $metadata\n  ) {\n    merchant_uid\n    merchant_name\n    parent_merchant_uid\n    ach_active\n    card_active\n    cash_active\n    country_code\n    is_system\n    submitted_onboarding\n    metadata\n  }\n}",
+        "variables": {
+          "merchant_name": "Northstar Books",
+          "metadata": "{\"created_by\":\"docs-example\"}"
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "createMerchant": {
+                "merchant_uid": "6b0c1e4d-2f7a-4c9e-z1y2-8d3f5a7b9c10",
+                "merchant_name": "Northstar Books",
+                "parent_merchant_uid": null,
+                "ach_active": true,
+                "card_active": true,
+                "cash_active": true,
+                "country_code": "USA",
+                "is_system": false,
+                "submitted_onboarding": true,
+                "metadata": "{\"created_by\":\"docs-example\"}"
+              }
+            }
+          }
+        },
+        "description": "Creates a merchant in Pay Theory to start the underwriting process."
+      }
+    ]
+  },
+  {
+    "operation": "updateFeeMatrix",
+    "operationType": "mutation",
+    "examples": []
+  },
+  {
+    "operation": "updateMerchantSettings",
+    "operationType": "mutation",
+    "examples": [
+      {
+        "name": "Set contact details and website",
+        "description": "Sets a merchant's contact details and website.",
+        "query": "mutation UpdateMerchantSettings($merchant_uid: ID!, $settings: MerchantSettingsInput!) {\n  updateMerchantSettings(merchant_uid: $merchant_uid, settings: $settings)\n}",
+        "variables": {
+          "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+          "settings": {
+            "contact_email": "pat@example.com",
+            "contact_phone": "+14045551234",
+            "website": "https://paytheory.com"
+          }
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "updateMerchantSettings": true
+            }
+          }
+        }
+      },
+      {
+        "name": "Update the website only",
+        "description": "Updates the merchant's website.",
+        "query": "mutation UpdateMerchantSettings($merchant_uid: ID!, $settings: MerchantSettingsInput!) {\n  updateMerchantSettings(merchant_uid: $merchant_uid, settings: $settings)\n}",
+        "variables": {
+          "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+          "settings": {
+            "website": "https://paytheory.com"
+          }
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "updateMerchantSettings": true
+            }
+          }
+        }
+      }
+    ]
+  }
+]

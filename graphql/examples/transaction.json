@@ -1,0 +1,981 @@
+[
+  {
+    "operation": "transactions",
+    "operationType": "query",
+    "examples": [
+      {
+        "name": "List transactions for a merchant",
+        "query": "query Transactions($query: SqlQuery, $limit: Int) {\n    transactions(query: $query, limit: $limit) {\n      items {\n        transaction_id\n        merchant_uid\n        gross_amount\n        net_amount\n        currency\n        status\n        transaction_date\n        settlement_batch\n        transaction_type\n        fee_mode\n      }\n      total_row_count\n    }\n  }",
+        "variables": {
+          "query": {
+            "query_list": [
+              {
+                "key": "merchant_uid",
+                "value": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                "operator": "EQUAL"
+              }
+            ]
+          },
+          "limit": 2
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "transactions": {
+                "items": [
+                  {
+                    "transaction_id": "ptl_txn_102r6G8pr86LXpr1exCSLL",
+                    "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                    "gross_amount": 2502,
+                    "net_amount": 2412,
+                    "currency": "USD",
+                    "status": "PENDING",
+                    "transaction_date": "2026-09-02T15:08:18.0Z",
+                    "settlement_batch": null,
+                    "transaction_type": "DEBIT",
+                    "fee_mode": "MERCHANT_FEE"
+                  },
+                  {
+                    "transaction_id": "ptl_txn_10OTj8JRUYdgWXjRJ3S16N",
+                    "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                    "gross_amount": 217,
+                    "net_amount": 177,
+                    "currency": "USD",
+                    "status": "PENDING",
+                    "transaction_date": "2026-09-02T20:37:36.0Z",
+                    "settlement_batch": null,
+                    "transaction_type": "DEBIT",
+                    "fee_mode": "MERCHANT_FEE"
+                  }
+                ],
+                "total_row_count": 609
+              }
+            }
+          }
+        },
+        "description": "Filters by merchant and returns up to two transactions with gross and net amounts, status, and transaction date."
+      },
+      {
+        "name": "Filter transactions by card and payor",
+        "description": "Nested query_list arguments narrow the results to transactions whose payment method and payor match.",
+        "query": "query TransactionsByCardAndPayor($query: SqlQuery, $paymentMethodQuery: [QueryPair], $payorQuery: [QueryPair]) {\n  transactions(query: $query, limit: 10) {\n    items {\n      transaction_id\n      payment_method(query_list: $paymentMethodQuery) {\n        last_four\n        payor(query_list: $payorQuery) {\n          email\n        }\n      }\n    }\n    total_row_count\n  }\n}",
+        "variables": {
+          "query": {
+            "query_list": [
+              {
+                "key": "merchant_uid",
+                "value": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                "operator": "EQUAL"
+              }
+            ]
+          },
+          "paymentMethodQuery": [
+            {
+              "key": "last_four",
+              "value": "7895",
+              "operator": "EQUAL"
+            }
+          ],
+          "payorQuery": [
+            {
+              "key": "email",
+              "value": "pat@example.com",
+              "operator": "EQUAL"
+            }
+          ]
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "transactions": {
+                "items": [
+                  {
+                    "transaction_id": "ptl_txn_5i1qZaLdc0vwqGJy3R08jC",
+                    "payment_method": {
+                      "last_four": "7895",
+                      "payor": {
+                        "email": "pat@example.com"
+                      }
+                    }
+                  }
+                ],
+                "total_row_count": 1
+              }
+            }
+          }
+        }
+      },
+      {
+        "name": "Invalid column",
+        "query": "query Transactions($query: SqlQuery, $limit: Int) {\n    transactions(query: $query, limit: $limit) {\n      items {\n        transaction_id\n        merchant_uid\n        gross_amount\n        net_amount\n        currency\n        status\n        transaction_date\n        settlement_batch\n        transaction_type\n        fee_mode\n      }\n      total_row_count\n    }\n  }",
+        "variables": {
+          "query": {
+            "query_list": [
+              {
+                "key": "not_a_column",
+                "value": "x",
+                "operator": "EQUAL"
+              }
+            ]
+          },
+          "limit": 2
+        },
+        "response": {
+          "type": "error",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "transactions": null
+            },
+            "errors": [
+              {
+                "path": [
+                  "transactions"
+                ],
+                "data": null,
+                "errorType": "VALIDATION_ERROR",
+                "errorInfo": null,
+                "message": "Invalid query column: not_a_column."
+              }
+            ]
+          }
+        },
+        "description": "Returns an error when the filter contains an unsupported field."
+      }
+    ]
+  },
+  {
+    "operation": "createTransaction",
+    "operationType": "mutation",
+    "examples": [
+      {
+        "name": "Create a transaction with an idempotency key",
+        "description": "Charges a saved payment method. Use a new key for each new charge, and reuse it only to retry this request.",
+        "query": "mutation CreateTransaction(\n  $merchant_uid: String!\n  $amount: Int!\n  $idempotency_key: String\n  $payment_method_id: String\n  $fee_mode: FeeMode\n) {\n  createTransaction(\n    merchant_uid: $merchant_uid\n    amount: $amount\n    idempotency_key: $idempotency_key\n    payment_method_id: $payment_method_id\n    fee_mode: $fee_mode\n  ) {\n    transaction_id\n    merchant_uid\n    gross_amount\n    net_amount\n    currency\n    status\n    fee_mode\n    fees\n    transaction_type\n    transaction_date\n  }\n}",
+        "variables": {
+          "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+          "idempotency_key": "order-1042-transaction",
+          "amount": 250,
+          "payment_method_id": "ptl_pmt_54LidQwRcTs5MU9g0QYrgt",
+          "fee_mode": "MERCHANT_FEE"
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "createTransaction": {
+                "transaction_id": "ptl_txn_5mos8Z6NFWAWQRac7BAQFX",
+                "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                "gross_amount": 250,
+                "net_amount": 218,
+                "currency": "USD",
+                "status": "PENDING",
+                "fee_mode": "MERCHANT_FEE",
+                "fees": 32,
+                "transaction_type": "DEBIT",
+                "transaction_date": "2026-09-02T20:55:54.494Z"
+              }
+            }
+          }
+        }
+      },
+      {
+        "name": "Retry a transaction with the same key",
+        "description": "Retrying the same request with the same key returns the original transaction with the same ID.",
+        "query": "mutation CreateTransaction(\n  $merchant_uid: String!\n  $amount: Int!\n  $idempotency_key: String\n  $payment_method_id: String\n  $fee_mode: FeeMode\n) {\n  createTransaction(\n    merchant_uid: $merchant_uid\n    amount: $amount\n    idempotency_key: $idempotency_key\n    payment_method_id: $payment_method_id\n    fee_mode: $fee_mode\n  ) {\n    transaction_id\n    merchant_uid\n    gross_amount\n    net_amount\n    currency\n    status\n    fee_mode\n    fees\n    transaction_type\n    transaction_date\n  }\n}",
+        "variables": {
+          "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+          "idempotency_key": "order-1042-transaction",
+          "amount": 250,
+          "payment_method_id": "ptl_pmt_54LidQwRcTs5MU9g0QYrgt",
+          "fee_mode": "MERCHANT_FEE"
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "createTransaction": {
+                "transaction_id": "ptl_txn_5mos8Z6NFWAWQRac7BAQFX",
+                "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                "gross_amount": 250,
+                "net_amount": 218,
+                "currency": "USD",
+                "status": "PENDING",
+                "fee_mode": "MERCHANT_FEE",
+                "fees": 32,
+                "transaction_type": "DEBIT",
+                "transaction_date": "2026-09-02T20:55:54.494Z"
+              }
+            }
+          }
+        }
+      },
+      {
+        "name": "Reuse a transaction key with a changed amount",
+        "description": "Sends the key from the first example with a changed amount. Returns a conflict that identifies the original transaction.",
+        "query": "mutation CreateTransaction(\n  $merchant_uid: String!\n  $amount: Int!\n  $idempotency_key: String\n  $payment_method_id: String\n  $fee_mode: FeeMode\n) {\n  createTransaction(\n    merchant_uid: $merchant_uid\n    amount: $amount\n    idempotency_key: $idempotency_key\n    payment_method_id: $payment_method_id\n    fee_mode: $fee_mode\n  ) {\n    transaction_id\n    merchant_uid\n    gross_amount\n    net_amount\n    currency\n    status\n    fee_mode\n    fees\n    transaction_type\n    transaction_date\n  }\n}",
+        "variables": {
+          "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+          "idempotency_key": "order-1042-transaction",
+          "amount": 150,
+          "payment_method_id": "ptl_pmt_54LidQwRcTs5MU9g0QYrgt",
+          "fee_mode": "MERCHANT_FEE"
+        },
+        "response": {
+          "type": "error",
+          "httpStatus": 200,
+          "body": {
+            "data": null,
+            "errors": [
+              {
+                "path": [
+                  "createTransaction"
+                ],
+                "data": null,
+                "errorType": "CONFLICT",
+                "errorInfo": {
+                  "code": "CONFLICT",
+                  "details": {
+                    "error_code": "IDEMPOTENCY_KEY_PAYLOAD_MISMATCH",
+                    "idempotency_status": "COMPLETED",
+                    "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                    "operation": "CREATE_TRANSACTION",
+                    "transaction_id": "ptl_txn_5mos8Z6NFWAWQRac7BAQFX"
+                  }
+                },
+                "message": "Idempotency key was already used with a different request payload."
+              }
+            ]
+          }
+        }
+      },
+      {
+        "name": "Transaction key still in progress",
+        "description": "Returns a conflict when another request with this key hasn't finished. The error identifies that request's transaction. Look the key up with idempotencyLookup before you retry.",
+        "query": "mutation CreateTransaction(\n  $merchant_uid: String!\n  $amount: Int!\n  $idempotency_key: String\n  $payment_method_id: String\n  $fee_mode: FeeMode\n) {\n  createTransaction(\n    merchant_uid: $merchant_uid\n    amount: $amount\n    idempotency_key: $idempotency_key\n    payment_method_id: $payment_method_id\n    fee_mode: $fee_mode\n  ) {\n    transaction_id\n    merchant_uid\n    gross_amount\n    net_amount\n    currency\n    status\n    fee_mode\n    fees\n    transaction_type\n    transaction_date\n  }\n}",
+        "variables": {
+          "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+          "idempotency_key": "order-1042-transaction-race",
+          "amount": 250,
+          "payment_method_id": "ptl_pmt_54LidQwRcTs5MU9g0QYrgt",
+          "fee_mode": "MERCHANT_FEE"
+        },
+        "response": {
+          "type": "error",
+          "httpStatus": 200,
+          "body": {
+            "data": null,
+            "errors": [
+              {
+                "path": [
+                  "createTransaction"
+                ],
+                "data": null,
+                "errorType": "CONFLICT",
+                "errorInfo": {
+                  "code": "CONFLICT",
+                  "details": {
+                    "error_code": "IDEMPOTENCY_KEY_ALREADY_USED",
+                    "idempotency_status": "IN_PROGRESS",
+                    "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                    "operation": "CREATE_TRANSACTION",
+                    "transaction_id": "ptl_txn_5AdClJ1LJNZX3fXGT8U1yM"
+                  }
+                },
+                "message": "Idempotency key has already been used for this operation."
+              }
+            ]
+          }
+        }
+      },
+      {
+        "name": "Charge a saved payment method",
+        "description": "Charges a saved payment method.",
+        "query": "mutation CreateTransaction(\n  $merchant_uid: String!\n  $amount: Int!\n  $payment_method_id: String\n  $fee_mode: FeeMode\n) {\n  createTransaction(\n    merchant_uid: $merchant_uid\n    amount: $amount\n    payment_method_id: $payment_method_id\n    fee_mode: $fee_mode\n  ) {\n    transaction_id\n    merchant_uid\n    gross_amount\n    net_amount\n    currency\n    status\n    fee_mode\n    fees\n    transaction_type\n    transaction_date\n  }\n}",
+        "variables": {
+          "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+          "amount": 250,
+          "payment_method_id": "ptl_pmt_54LidQwRcTs5MU9g0QYrgt",
+          "fee_mode": "MERCHANT_FEE"
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "createTransaction": {
+                "transaction_id": "ptl_txn_WrrCZ01zilf5kDqbXVFbcq",
+                "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                "gross_amount": 250,
+                "net_amount": 218,
+                "currency": "USD",
+                "status": "PENDING",
+                "fee_mode": "MERCHANT_FEE",
+                "fees": 32,
+                "transaction_type": "DEBIT",
+                "transaction_date": "2026-09-02T20:55:52.108Z"
+              }
+            }
+          }
+        }
+      },
+      {
+        "name": "Charge a card",
+        "description": "Creates a card transaction by passing card details directly in payment_method. Available only to Partners who have completed a full PCI Level 1 audit.",
+        "query": "mutation CreateTransaction(\n  $merchant_uid: String!\n  $amount: Int!\n  $payment_method: PaymentMethodInput\n  $fee_mode: FeeMode\n  $account_code: String\n  $reference: String\n) {\n  createTransaction(\n    merchant_uid: $merchant_uid\n    amount: $amount\n    payment_method: $payment_method\n    fee_mode: $fee_mode\n    account_code: $account_code\n    reference: $reference\n  ) {\n    transaction_id\n    merchant_uid\n    gross_amount\n    net_amount\n    currency\n    status\n    fee_mode\n    fees\n    transaction_type\n    transaction_date\n  }\n}",
+        "variables": {
+          "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+          "amount": 500,
+          "payment_method": {
+            "card": {
+              "card_number": "4835034598457895",
+              "exp_date": {
+                "month": "12",
+                "year": "30"
+              },
+              "security_code": "123",
+              "full_name": "Pat Theodore",
+              "address_line1": "123 Main Street",
+              "city": "Cincinnati",
+              "region": "OH",
+              "postal_code": "45209",
+              "country": "USA"
+            },
+            "payor": {
+              "full_name": "Pat Theodore",
+              "email": "pat@example.com",
+              "phone": "+15555550123",
+              "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
+            }
+          },
+          "fee_mode": "MERCHANT_FEE",
+          "reference": "invoice-1042",
+          "account_code": "ACCT-1042"
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "createTransaction": {
+                "transaction_id": "ptl_txn_5i1qZaLdc0vwqGJy3R08jC",
+                "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                "gross_amount": 500,
+                "net_amount": 462,
+                "currency": "USD",
+                "status": "PENDING",
+                "fee_mode": "MERCHANT_FEE",
+                "fees": 38,
+                "transaction_type": "DEBIT",
+                "transaction_date": "2026-09-02T20:55:50.617Z"
+              }
+            }
+          }
+        }
+      },
+      {
+        "name": "Charge an ACH account",
+        "description": "Creates an ACH transaction by passing bank account details directly in payment_method. Available only to Partners who have completed a full PCI Level 1 audit.",
+        "query": "mutation CreateTransaction(\n  $merchant_uid: String!\n  $amount: Int!\n  $payment_method: PaymentMethodInput\n  $fee_mode: FeeMode\n) {\n  createTransaction(\n    merchant_uid: $merchant_uid\n    amount: $amount\n    payment_method: $payment_method\n    fee_mode: $fee_mode\n  ) {\n    transaction_id\n    merchant_uid\n    gross_amount\n    net_amount\n    currency\n    status\n    fee_mode\n    fees\n    transaction_type\n    transaction_date\n  }\n}",
+        "variables": {
+          "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+          "amount": 700,
+          "payment_method": {
+            "ach": {
+              "account_number": "0000000016",
+              "account_type": "PERSONAL_CHECKING",
+              "name_on_account": "Pat Theodore",
+              "routing_number": "122105278"
+            },
+            "payor": {
+              "full_name": "Pat Theodore",
+              "email": "pat@example.com",
+              "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
+            }
+          },
+          "fee_mode": "MERCHANT_FEE"
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "createTransaction": {
+                "transaction_id": "ptl_txn_5k8K0OJtfZtOb2ydWahoCA",
+                "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                "gross_amount": 700,
+                "net_amount": 657,
+                "currency": "USD",
+                "status": "PENDING",
+                "fee_mode": "MERCHANT_FEE",
+                "fees": 43,
+                "transaction_type": "DEBIT",
+                "transaction_date": "2026-09-02T20:55:52.0Z"
+              }
+            }
+          }
+        }
+      },
+      {
+        "name": "Charge an EFT account",
+        "description": "Creates an EFT transaction by passing Canadian bank account details directly in payment_method. Available only to Partners who have completed a full PCI Level 1 audit.",
+        "query": "mutation CreateTransaction(\n  $merchant_uid: String!\n  $amount: Int!\n  $payment_method: PaymentMethodInput\n  $fee_mode: FeeMode\n) {\n  createTransaction(\n    merchant_uid: $merchant_uid\n    amount: $amount\n    payment_method: $payment_method\n    fee_mode: $fee_mode\n  ) {\n    transaction_id\n    merchant_uid\n    gross_amount\n    net_amount\n    currency\n    status\n    fee_mode\n    fees\n    transaction_type\n    transaction_date\n  }\n}",
+        "variables": {
+          "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+          "amount": 700,
+          "payment_method": {
+            "canadian_eft": {
+              "account_number": "123456789012",
+              "account_type": "PERSONAL_CHECKING",
+              "institution_number": "001",
+              "name_on_account": "Pat Theodore",
+              "transit_number": "12345"
+            },
+            "payor": {
+              "full_name": "Pat Theodore",
+              "email": "pat@example.com",
+              "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
+            }
+          },
+          "fee_mode": "MERCHANT_FEE"
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "createTransaction": {
+                "transaction_id": "ptl_txn_6PYLsHWqPe9cEpSdA72GRW",
+                "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+                "gross_amount": 700,
+                "net_amount": 657,
+                "currency": "USD",
+                "status": "PENDING",
+                "fee_mode": "MERCHANT_FEE",
+                "fees": 43,
+                "transaction_type": "DEBIT",
+                "transaction_date": "2026-09-02T20:55:53.0Z"
+              }
+            }
+          }
+        }
+      },
+      {
+        "name": "Missing payment method",
+        "description": "Returns a validation error when neither payment_method nor payment_method_id is supplied.",
+        "query": "mutation CreateTransaction(\n  $merchant_uid: String!\n  $amount: Int!\n) {\n  createTransaction(\n    merchant_uid: $merchant_uid\n    amount: $amount\n  ) {\n    transaction_id\n    merchant_uid\n    gross_amount\n    net_amount\n    currency\n    status\n    fee_mode\n    fees\n    transaction_type\n    transaction_date\n  }\n}",
+        "variables": {
+          "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+          "amount": 500
+        },
+        "response": {
+          "type": "error",
+          "httpStatus": 200,
+          "body": {
+            "data": null,
+            "errors": [
+              {
+                "path": [
+                  "createTransaction"
+                ],
+                "data": null,
+                "errorType": "VALIDATION_ERROR",
+                "errorInfo": null,
+                "message": "Either payment_method or payment_method_id must be passed in."
+              }
+            ]
+          }
+        }
+      },
+      {
+        "name": "Payment method and ID both provided",
+        "description": "Returns an error when both payment_method and payment_method_id are supplied.",
+        "query": "mutation CreateTransaction(\n  $merchant_uid: String!\n  $amount: Int!\n  $payment_method_id: String\n  $payment_method: PaymentMethodInput\n  $fee_mode: FeeMode\n) {\n  createTransaction(\n    merchant_uid: $merchant_uid\n    amount: $amount\n    payment_method_id: $payment_method_id\n    payment_method: $payment_method\n    fee_mode: $fee_mode\n  ) {\n    transaction_id\n    merchant_uid\n    gross_amount\n    net_amount\n    currency\n    status\n    fee_mode\n    fees\n    transaction_type\n    transaction_date\n  }\n}",
+        "variables": {
+          "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+          "amount": 500,
+          "payment_method": {
+            "card": {
+              "card_number": "4835034598457895",
+              "exp_date": {
+                "month": "12",
+                "year": "30"
+              },
+              "security_code": "123",
+              "full_name": "Pat Theodore",
+              "address_line1": "123 Main Street",
+              "city": "Cincinnati",
+              "region": "OH",
+              "postal_code": "45209",
+              "country": "USA"
+            },
+            "payor": {
+              "full_name": "Pat Theodore",
+              "email": "pat@example.com",
+              "phone": "+15555550123",
+              "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
+            }
+          },
+          "payment_method_id": "ptl_pmt_54LidQwRcTs5MU9g0QYrgt",
+          "fee_mode": "MERCHANT_FEE"
+        },
+        "response": {
+          "type": "error",
+          "httpStatus": 200,
+          "body": {
+            "data": null,
+            "errors": [
+              {
+                "path": [
+                  "createTransaction"
+                ],
+                "data": null,
+                "errorType": "VALIDATION_ERROR",
+                "errorInfo": null,
+                "message": "payment_method and payment_method_id cannot both be passed in."
+              }
+            ]
+          }
+        }
+      },
+      {
+        "name": "Invalid payment method",
+        "description": "Returns a validation error when payment_method_id does not identify a valid stored payment method.",
+        "query": "mutation CreateTransaction(\n  $merchant_uid: String!\n  $amount: Int!\n  $payment_method_id: String\n  $fee_mode: FeeMode\n) {\n  createTransaction(\n    merchant_uid: $merchant_uid\n    amount: $amount\n    payment_method_id: $payment_method_id\n    fee_mode: $fee_mode\n  ) {\n    transaction_id\n    merchant_uid\n    gross_amount\n    net_amount\n    currency\n    status\n    fee_mode\n    fees\n    transaction_type\n    transaction_date\n  }\n}",
+        "variables": {
+          "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+          "amount": 500,
+          "payment_method_id": "ptl_pmt_not_a_real_token",
+          "fee_mode": "MERCHANT_FEE"
+        },
+        "response": {
+          "type": "error",
+          "httpStatus": 200,
+          "body": {
+            "data": null,
+            "errors": [
+              {
+                "path": [
+                  "createTransaction"
+                ],
+                "data": null,
+                "errorType": "VALIDATION_ERROR",
+                "errorInfo": null,
+                "message": "Payment method ID is not valid."
+              }
+            ]
+          }
+        }
+      },
+      {
+        "name": "Amount is zero",
+        "description": "Returns a validation error when amount is 0.",
+        "query": "mutation CreateTransaction(\n  $merchant_uid: String!\n  $amount: Int!\n  $payment_method: PaymentMethodInput\n) {\n  createTransaction(\n    merchant_uid: $merchant_uid\n    amount: $amount\n    payment_method: $payment_method\n  ) {\n    transaction_id\n    merchant_uid\n    gross_amount\n    net_amount\n    currency\n    status\n    fee_mode\n    fees\n    transaction_type\n    transaction_date\n  }\n}",
+        "variables": {
+          "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+          "amount": 0,
+          "payment_method": {
+            "card": {
+              "card_number": "4835034598457895",
+              "exp_date": {
+                "month": "12",
+                "year": "30"
+              },
+              "security_code": "123",
+              "full_name": "Pat Theodore",
+              "address_line1": "123 Main Street",
+              "city": "Cincinnati",
+              "region": "OH",
+              "postal_code": "45209",
+              "country": "USA"
+            },
+            "payor": {
+              "full_name": "Pat Theodore",
+              "email": "pat@example.com",
+              "phone": "+15555550123",
+              "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
+            }
+          }
+        },
+        "response": {
+          "type": "error",
+          "httpStatus": 200,
+          "body": {
+            "data": null,
+            "errors": [
+              {
+                "path": [
+                  "createTransaction"
+                ],
+                "data": null,
+                "errorType": "VALIDATION_ERROR",
+                "errorInfo": null,
+                "message": "Payment amount cannot be 0."
+              }
+            ]
+          }
+        }
+      },
+      {
+        "name": "Inactive payment method",
+        "description": "Returns a validation error when the stored payment method is inactive.",
+        "query": "mutation CreateTransaction(\n  $merchant_uid: String!\n  $amount: Int!\n  $payment_method_id: String\n  $fee_mode: FeeMode\n) {\n  createTransaction(\n    merchant_uid: $merchant_uid\n    amount: $amount\n    payment_method_id: $payment_method_id\n    fee_mode: $fee_mode\n  ) {\n    transaction_id\n    merchant_uid\n    gross_amount\n    net_amount\n    currency\n    status\n    fee_mode\n    fees\n    transaction_type\n    transaction_date\n  }\n}",
+        "variables": {
+          "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+          "amount": 200,
+          "payment_method_id": "ptl_pmt_70NrB489gNLgE0pFaPvfm1",
+          "fee_mode": "MERCHANT_FEE"
+        },
+        "response": {
+          "type": "error",
+          "httpStatus": 200,
+          "body": {
+            "data": null,
+            "errors": [
+              {
+                "path": [
+                  "createTransaction"
+                ],
+                "data": null,
+                "errorType": "VALIDATION_ERROR",
+                "errorInfo": null,
+                "message": "The payment method is inactive."
+              }
+            ]
+          }
+        }
+      }
+    ]
+  },
+  {
+    "operation": "createWalletTransaction",
+    "operationType": "mutation",
+    "examples": [
+      {
+        "name": "Invalid wallet payload",
+        "description": "Returns an error when digital_wallet_payload is not a valid token.",
+        "query": "mutation CreateWalletTransaction(\n  $merchant_uid: String!\n  $digital_wallet_payload: String!\n  $wallet_type: WalletType\n  $amount: Int\n) {\n  createWalletTransaction(\n    merchant_uid: $merchant_uid\n    digital_wallet_payload: $digital_wallet_payload\n    wallet_type: $wallet_type\n    amount: $amount\n  ) {\n    transaction_id\n    gross_amount\n    status\n  }\n}",
+        "variables": {
+          "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+          "digital_wallet_payload": "eyJ0b2tlbiI6IngifQ==",
+          "wallet_type": "GOOGLE_PAY",
+          "amount": 200
+        },
+        "response": {
+          "type": "error",
+          "httpStatus": 200,
+          "body": {
+            "data": null,
+            "errors": [
+              {
+                "path": [
+                  "createWalletTransaction"
+                ],
+                "data": null,
+                "errorType": "VALIDATION_ERROR",
+                "errorInfo": null,
+                "message": "Session key missing, invalid request."
+              }
+            ]
+          }
+        }
+      }
+    ]
+  },
+  {
+    "operation": "createReversal",
+    "operationType": "mutation",
+    "examples": [
+      {
+        "name": "Full void",
+        "description": "Voids the full unsettled transaction. No new transaction ID is handed back.",
+        "query": "mutation CreateReversal(\n  $transaction_id: String!\n  $amount: Int!\n  $refund_reason: RefundReasonInput!\n) {\n  createReversal(\n    transaction_id: $transaction_id\n    amount: $amount\n    refund_reason: $refund_reason\n  ) {\n    is_void\n    transaction_id\n  }\n}",
+        "variables": {
+          "amount": 700,
+          "refund_reason": {
+            "reason_code": "REQUESTED_BY_CUSTOMER",
+            "reason_details": "Docs example"
+          },
+          "transaction_id": "ptl_txn_5fQ5C9zB7yqrfahxst1nJ8"
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "createReversal": {
+                "is_void": true,
+                "transaction_id": null
+              }
+            }
+          }
+        }
+      },
+      {
+        "name": "Partial void",
+        "description": "Voids part of an unsettled transaction. The transaction ID is for the adjusted debit.",
+        "query": "mutation CreateReversal(\n  $transaction_id: String!\n  $amount: Int!\n  $refund_reason: RefundReasonInput!\n) {\n  createReversal(\n    transaction_id: $transaction_id\n    amount: $amount\n    refund_reason: $refund_reason\n  ) {\n    is_void\n    transaction_id\n  }\n}",
+        "variables": {
+          "amount": 5000,
+          "refund_reason": {
+            "reason_code": "REQUESTED_BY_CUSTOMER",
+            "reason_details": "Docs example"
+          },
+          "transaction_id": "ptl_txn_2DUMuZpP6ox6ZrWnUyS3Fe"
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "createReversal": {
+                "is_void": true,
+                "transaction_id": "ptl_txn_7D8hjxJp7D3yK7MJfRbWg1"
+              }
+            }
+          }
+        }
+      },
+      {
+        "name": "Refund part of a settled transaction",
+        "description": "Refunds part of a settled transaction. The transaction_id in the response is the new reversal.",
+        "query": "mutation CreateReversal(\n  $transaction_id: String!\n  $amount: Int!\n  $refund_reason: RefundReasonInput!\n) {\n  createReversal(\n    transaction_id: $transaction_id\n    amount: $amount\n    refund_reason: $refund_reason\n  ) {\n    is_void\n    transaction_id\n  }\n}",
+        "variables": {
+          "amount": 100,
+          "refund_reason": {
+            "reason_code": "REQUESTED_BY_CUSTOMER",
+            "reason_details": "Docs example"
+          },
+          "transaction_id": "ptl_txn_11OTxnMLiIfGFAVDo8Zjkl"
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "createReversal": {
+                "is_void": false,
+                "transaction_id": "ptl_txn_6RvdLbnGEXzAbyPybDw2Sd"
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "operation": "serviceFee",
+    "operationType": "query",
+    "examples": [
+      {
+        "name": "Read the service fee for a card",
+        "query": "query ServiceFee($merchant_uid: String!, $amount: Int!, $bank_id: String) {\n  serviceFee(merchant_uid: $merchant_uid, amount: $amount, bank_id: $bank_id) {\n    fee\n    total\n    adjusted_total\n  }\n}",
+        "variables": {
+          "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+          "amount": 1000,
+          "bank_id": "483503"
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "serviceFee": {
+                "fee": 195,
+                "total": 1000,
+                "adjusted_total": 1195
+              }
+            }
+          }
+        },
+        "description": "Calculates the service fee for a card using its BIN."
+      },
+      {
+        "name": "Read the service fee for a bank account",
+        "query": "query ServiceFee($merchant_uid: String!, $amount: Int!, $is_ach: Boolean) {\n  serviceFee(merchant_uid: $merchant_uid, amount: $amount, is_ach: $is_ach) {\n    fee\n    total\n    adjusted_total\n  }\n}",
+        "variables": {
+          "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+          "amount": 1000,
+          "is_ach": true
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "serviceFee": {
+                "fee": 44,
+                "total": 1000,
+                "adjusted_total": 1044
+              }
+            }
+          }
+        },
+        "description": "Calculates the service fee for an ACH payment."
+      },
+      {
+        "name": "Bank_id is not a 6-8 digit BIN",
+        "query": "query ServiceFee($merchant_uid: String!, $amount: Int!, $bank_id: String) {\n  serviceFee(merchant_uid: $merchant_uid, amount: $amount, bank_id: $bank_id) {\n    fee\n    total\n    adjusted_total\n  }\n}",
+        "variables": {
+          "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+          "amount": 1000,
+          "bank_id": "VISA"
+        },
+        "response": {
+          "type": "error",
+          "httpStatus": 200,
+          "body": {
+            "data": null,
+            "errors": [
+              {
+                "path": [
+                  "serviceFee"
+                ],
+                "data": null,
+                "errorType": "VALIDATION_ERROR",
+                "errorInfo": null,
+                "message": "bank_id must be a 6 to 8 digit number."
+              }
+            ]
+          }
+        },
+        "description": "Returns an error when bank_id is not a 6- to 8-digit BIN."
+      },
+      {
+        "name": "Read the service fee for a saved card",
+        "description": "Calculates the service fee using a saved card payment method.",
+        "query": "query ServiceFeeWithPaymentMethodToken($merchant_uid: String!, $amount: Int!, $payment_method_id: String!) {\n  serviceFee(merchant_uid: $merchant_uid, amount: $amount, payment_method_id: $payment_method_id) {\n    fee\n    total\n    adjusted_total\n  }\n}",
+        "variables": {
+          "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+          "amount": 1000,
+          "payment_method_id": "ptl_pmt_54LidQwRcTs5MU9g0QYrgt"
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "serviceFee": {
+                "fee": 195,
+                "total": 1000,
+                "adjusted_total": 1195
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "operation": "createReceiptEmail",
+    "operationType": "mutation",
+    "examples": [
+      {
+        "name": "Send a receipt to the payor",
+        "description": "Emails a receipt to the address on the payor. true means the email is queued, not delivered.",
+        "query": "mutation CreateReceiptEmail($transaction_id: String!) {\n  createReceiptEmail(transaction_id: $transaction_id)\n}",
+        "variables": {
+          "transaction_id": "ptl_txn_4rNilJChpgcuQFgLvdZbxm"
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "createReceiptEmail": true
+            }
+          }
+        }
+      },
+      {
+        "name": "Send a receipt to a different address",
+        "description": "Sends the receipt to email instead of the payor’s saved address.",
+        "query": "mutation CreateReceiptEmail($transaction_id: String!, $receipt_description: String, $email: AWSEmail) {\n  createReceiptEmail(transaction_id: $transaction_id, receipt_description: $receipt_description, email: $email)\n}",
+        "variables": {
+          "transaction_id": "ptl_txn_4rNilJChpgcuQFgLvdZbxm",
+          "email": "pat@example.com",
+          "receipt_description": "Thanks for your business - order 4815"
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "createReceiptEmail": true
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "operation": "updateTransactionInReview",
+    "operationType": "mutation",
+    "examples": [
+      {
+        "name": "Merchant key not allowed",
+        "description": "Returns an error when called with a merchant key. Use a partner key.",
+        "query": "mutation UpdateTransactionInReview($transaction_id: String!, $action: TransactionReviewAction!) {\n  updateTransactionInReview(transaction_id: $transaction_id, action: $action)\n}",
+        "variables": {
+          "action": "ACCEPT",
+          "transaction_id": "ptl_txn_7pCgkYFpOJIa04NlWSum0b"
+        },
+        "response": {
+          "type": "error",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "updateTransactionInReview": null
+            },
+            "errors": [
+              {
+                "path": [
+                  "updateTransactionInReview"
+                ],
+                "data": null,
+                "errorType": "VALIDATION_ERROR",
+                "errorInfo": null,
+                "message": "Transaction approvals are only available at the partner level."
+              }
+            ]
+          }
+        }
+      },
+      {
+        "name": "Transaction ID not found",
+        "description": "Returns an error when the transaction ID does not exist.",
+        "query": "mutation UpdateTransactionInReview($transaction_id: String!, $action: TransactionReviewAction!) {\n  updateTransactionInReview(transaction_id: $transaction_id, action: $action)\n}",
+        "variables": {
+          "transaction_id": "ptl_txn_8aQ4mR7xB2kN9vC5dL3pT6",
+          "action": "ACCEPT"
+        },
+        "response": {
+          "type": "error",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "updateTransactionInReview": null
+            },
+            "errors": [
+              {
+                "path": [
+                  "updateTransactionInReview"
+                ],
+                "data": null,
+                "errorType": "VALIDATION_ERROR",
+                "errorInfo": null,
+                "message": "transaction not found"
+              }
+            ]
+          }
+        }
+      }
+    ]
+  }
+]

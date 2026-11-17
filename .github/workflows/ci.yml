@@ -6,6 +6,10 @@ jobs:
   ci:
     if: ${{ contains(github.event.head_commit.message, '[run ci]') || github.event_name == 'pull_request' }}
     runs-on: ubuntu-latest
+    # @lewl/graphql-doc 0.2.0 refuses to write anywhere under /home, and the
+    # default runner checks out to /home/runner/work. A container job checks
+    # out to /__w instead, so `npm run build` can generate the API docs.
+    container: node:20-bookworm
 
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -13,23 +17,17 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Saving cache
-        uses: actions/cache@v2
-        with:
-          path: '**/node_modules'
-          key: ${{ runner.os }}-modules-${{ hashFiles('**/package-lock.json') }}
+        uses: actions/checkout@v4
 
       - name: Set up Node
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
           registry-url: 'https://npm.pkg.github.com'
+          cache: 'npm'
 
       - name: Install dependencies
-        run: |
-          npm install
+        run: npm ci
 
       - name: Check linting
         run: npm run lint
@@ -37,6 +35,11 @@ jobs:
       - name: Check TS
         run: npm run check-ts
 
-      # - name: Check tests
-      #   run: |
-      #     npm run test
+      - name: Run tests
+        run: npm test
+
+      - name: Build site
+        run: npm run build
+
+      - name: Check agent-facing artifacts
+        run: npm run agent-docs:check

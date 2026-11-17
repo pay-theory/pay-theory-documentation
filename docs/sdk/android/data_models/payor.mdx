@@ -1,0 +1,44 @@
+---
+sidebar_position: 2
+sidebar_label: 'Payor Info'
+title: "Payor Info"
+---
+
+# Payor Info
+
+The PayorInfo class contains information about the person making the payment.
+
+## Properties
+
+| Property | Type | Description |
+|----------|------|-------------|
+| first_name | String? | First name of the payor |
+| last_name | String? | Last name of the payor |
+| email | String? | Email address of the payor |
+| phone | String? | Phone number of the payor |
+| address | Address? | Personal address of the payor |
+
+## Example
+
+```kotlin
+val payorInfo = PayorInfo(
+    first_name = "John",
+    last_name = "Doe",
+    email = "john.doe@example.com",
+    phone = "1234567890",
+    address = Address(
+        line1 = "123 Main St",
+        city = "Columbus",
+        region = "OH",
+        postal_code = "43215",
+        country = "USA"
+    )
+)
+```
+
+## Usage Notes
+
+- All fields are optional and can be null
+- Used in both payment and tokenization requests
+- Can be stored with payment tokens for future reference
+- Useful for receipt delivery and payment tracking 

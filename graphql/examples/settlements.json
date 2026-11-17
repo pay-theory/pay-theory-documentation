@@ -1,0 +1,12 @@
+[
+  {
+    "operation": "cancelSettlementInstruction",
+    "operationType": "mutation",
+    "examples": []
+  },
+  {
+    "operation": "createSettlementInstruction",
+    "operationType": "mutation",
+    "examples": []
+  }
+]

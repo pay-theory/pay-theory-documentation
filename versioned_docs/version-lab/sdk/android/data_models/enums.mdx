@@ -1,0 +1,41 @@
+---
+sidebar_position: 1
+sidebar_label: 'Enums'
+title: "Enums & Constants"
+---
+
+# Enums & Constants
+
+## PaymentMethodType
+
+Enum class that defines the types of payments accepted:
+
+```kotlin
+enum class PaymentMethodType {
+    CARD,   // Credit/Debit card payments
+    BANK,   // ACH/Bank account payments
+    CASH    // Cash/Barcode payments
+}
+```
+
+## TokenizationType
+
+Enum class that defines the types of payment methods that can be tokenized:
+
+```kotlin
+enum class TokenizationType {
+    CARD,   // Credit/Debit card tokenization
+    BANK    // ACH/Bank account tokenization
+}
+```
+
+## FeeMode
+
+Object containing fee mode constants:
+
+```kotlin
+object FeeMode {
+    const val MERCHANT_FEE = "merchant_fee"  // Merchant pays the processing fee
+    const val SERVICE_FEE = "service_fee"    // Customer pays the processing fee
+}
+``` 

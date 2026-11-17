@@ -18,18 +18,25 @@ echo "TARGET_MODE :: $TARGET_MODE"
 echo "S3_ARTIFACTS_BUCKET :: $S3_ARTIFACTS_BUCKET"
 echo "S3_ARTIFACTS_PATH :: $S3_ARTIFACTS_PATH"
 
+# formation.yml gets the edge function's code inlined at deploy time.
+FORMATION_TEMPLATE=$(mktemp -t formation.XXXXXX)
+node scripts/render-formation-template.js "${FORMATION_TEMPLATE}" || exit 1
+
 echo "Validating the cfn templates $(date) in $(pwd)" ;
-aws cloudformation validate-template --template-body file://templates/formation.yml
+aws cloudformation validate-template --template-body "file://${FORMATION_TEMPLATE}" || exit 1
+aws cloudformation validate-template --region us-east-1 --template-body file://templates/distribution.yml || exit 1
 
-aws s3 cp build s3://"${SERVICE_NAME}"-"${TARGET_ACCOUNT_ID}"-"${PARTNER}"-"${STAGE}"/"${STAGE}"/"${PARTNER}" --recursive --cache-control max-age=3
-
+SITE_S3_PATH="s3://${SERVICE_NAME}-${TARGET_ACCOUNT_ID}-${PARTNER}-${STAGE}/${STAGE}/${PARTNER}"
+aws s3 cp build "${SITE_S3_PATH}" --recursive --cache-control max-age=3 --exclude '*.graphql' || exit 1
+# S3 has no MIME type for .graphql; serve the schema as readable text.
+aws s3 cp build "${SITE_S3_PATH}" --recursive --cache-control max-age=3 --exclude '*' --include '*.graphql' --content-type 'text/plain; charset=utf-8' || exit 1
 
 
 echo "Deploying certificates and hosted zone resources"
 aws cloudformation deploy --template-file ./templates/distribution.yml \
 --stack-name "${SERVICE_NAME}"-distribution-"${PARTNER}"-"${STAGE}" \
 --region "us-east-1" \
---capabilities CAPABILITY_IAM \
+--capabilities CAPABILITY_NAMED_IAM \
 --no-fail-on-empty-changeset \
 --parameter-overrides \
 Partner="${PARTNER}" \
@@ -53,8 +60,37 @@ echo "Retrieving hosted zone" ;
 HOSTED_ZONE=$(aws --region="us-east-1" ssm get-parameters --name "${SERVICE_NAME}-${PARTNER}-${STAGE}-hosted-zone" --output text --query "Parameters[0].Value")
 echo "Retrieving certificate" ;
 CERTIFICATE_ARN=$(aws --region="us-east-1" ssm get-parameters --name "${SERVICE_NAME}-${PARTNER}-${STAGE}-certificate-arn" --output text --query "Parameters[0].Value")
+echo "Retrieving edge routes key value store" ;
+EDGE_ROUTES_KVS_ARN=$(aws --region="us-east-1" ssm get-parameters --name "${SERVICE_NAME}-${PARTNER}-${STAGE}-edge-routes-kvs-arn" --output text --query "Parameters[0].Value")
 
-aws cloudformation deploy --template-file ./templates/formation.yml \
+if [[ ${EDGE_ROUTES_KVS_ARN} != *":key-value-store/"* ]]
+then
+    echo "Failed to retrieve edge routes key value store ARN!"
+    exit 1
+fi
+
+echo "Retrieving edge routes sync role" ;
+EDGE_ROUTES_SYNC_ROLE_ARN=$(aws --region="us-east-1" ssm get-parameters --name "${SERVICE_NAME}-${PARTNER}-${STAGE}-edge-routes-sync-role-arn" --output text --query "Parameters[0].Value")
+# A new role can take a few seconds to become assumable.
+for ATTEMPT in 1 2 3 4 5 6; do
+  read -r SYNC_KEY_ID SYNC_SECRET SYNC_TOKEN <<< "$(aws sts assume-role --role-arn "${EDGE_ROUTES_SYNC_ROLE_ARN}" --role-session-name edge-routes-sync --output text --query "Credentials.[AccessKeyId,SecretAccessKey,SessionToken]")"
+  [ -n "${SYNC_TOKEN}" ] && break
+  echo "Sync role not assumable yet (attempt ${ATTEMPT}), retrying in 10s"
+  sleep 10
+done
+if [ -z "${SYNC_TOKEN}" ]
+then
+    echo "Failed to assume edge routes sync role!"
+    exit 1
+fi
+
+# Runs after the S3 upload, so every route in the store already has its pages.
+# Only this command uses the sync role's credentials.
+echo "Syncing edge routes" ;
+AWS_ACCESS_KEY_ID="${SYNC_KEY_ID}" AWS_SECRET_ACCESS_KEY="${SYNC_SECRET}" AWS_SESSION_TOKEN="${SYNC_TOKEN}" \
+node scripts/sync-edge-routes.js "${EDGE_ROUTES_KVS_ARN}" || exit 1
+
+aws cloudformation deploy --template-file "${FORMATION_TEMPLATE}" \
 --stack-name "${SERVICE_NAME}"-"${PARTNER}"-"${STAGE}" \
 --region "${TARGET_REGION}" \
 --capabilities CAPABILITY_NAMED_IAM \
@@ -64,7 +100,8 @@ Partner="${PARTNER}" \
 Stage="${STAGE}" \
 TargetMode="${TARGET_MODE}" \
 HostedZone="${HOSTED_ZONE}" \
-CertificateArn="${CERTIFICATE_ARN}"
+CertificateArn="${CERTIFICATE_ARN}" \
+EdgeRoutesKvsArn="${EDGE_ROUTES_KVS_ARN}"
 
 # Check the status of cloudformation stack set
 STATUS=$(aws cloudformation describe-stacks --stack-name "${SERVICE_NAME}"-"${PARTNER}"-"${STAGE}" --output text --query "Stacks[0].StackStatus")
@@ -125,4 +162,3 @@ fi
 # fi
 
 # ##########################################################################
-

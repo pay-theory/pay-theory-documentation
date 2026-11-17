@@ -1,0 +1,154 @@
+---
+sidebar_position: 2
+sidebar_label: 'ACHState'
+title: "ACHState"
+---
+
+# ACHState
+
+The `ACHState` class in the PayTheory SDK manages the state of ACH (Automated Clearing House) payment information. It provides a secure way to handle and validate ACH payment details without directly exposing sensitive financial data.
+
+## ACHState Class
+
+### Overview
+
+`ACHState` is the main class that encapsulates the state of an ACH payment method. It conforms to the `ObservableObject` protocol, making it compatible with SwiftUI's state management system.
+
+### Properties
+
+| Property       | Type             | Description                                            |
+|----------------|------------------|--------------------------------------------------------|
+| isValid        | `Bool`           | Indicates if all ACH details are valid and complete.   |
+| accountName    | `ACHAccountName` | Manages the state of the account holder's name.        |
+| accountNumber  | `ACHAccountNumber` | Manages the state of the bank account number.        |
+| routingNumber  | `ACHRoutingNumber` | Manages the state of the bank routing number.        |
+
+### Usage
+
+```swift
+@EnvironmentObject var payTheory: PayTheory
+
+var body: some View {
+    VStack {
+        Text("ACH Payment Valid: \(payTheory.ach.isValid ? "Yes" : "No")")
+        // ACH form fields
+    }
+}
+```
+
+## Sub-classes
+
+Each of the following sub-classes conforms to the `ObservableObject` and `ValidAndEmpty` protocols.
+
+### ACHAccountName
+
+Manages the state of the account holder's name.
+
+#### Properties
+
+| Property | Type   | Description                                               |
+|----------|--------|-----------------------------------------------------------|
+| isValid  | `Bool` | Indicates if the account name is valid.                   |
+| isEmpty  | `Bool` | Indicates if the account name field is empty.             |
+
+#### Usage
+
+```swift
+Text("Name Valid: \(payTheory.ach.accountName.isValid ? "Yes" : "No")")
+Text("Name Empty: \(payTheory.ach.accountName.isEmpty ? "Yes" : "No")")
+```
+
+### ACHAccountNumber
+
+Manages the state of the bank account number.
+
+#### Properties
+
+| Property | Type   | Description                                               |
+|----------|--------|-----------------------------------------------------------|
+| isValid  | `Bool` | Indicates if the account number is valid.                 |
+| isEmpty  | `Bool` | Indicates if the account number field is empty.           |
+
+#### Usage
+
+```swift
+Text("Account Number Valid: \(payTheory.ach.accountNumber.isValid ? "Yes" : "No")")
+Text("Account Number Empty: \(payTheory.ach.accountNumber.isEmpty ? "Yes" : "No")")
+```
+
+### ACHRoutingNumber
+
+Manages the state of the bank routing number.
+
+#### Properties
+
+| Property | Type   | Description                                               |
+|----------|--------|-----------------------------------------------------------|
+| isValid  | `Bool` | Indicates if the routing number is valid.                 |
+| isEmpty  | `Bool` | Indicates if the routing number field is empty.           |
+
+#### Usage
+
+```swift
+Text("Routing Number Valid: \(payTheory.ach.routingNumber.isValid ? "Yes" : "No")")
+Text("Routing Number Empty: \(payTheory.ach.routingNumber.isEmpty ? "Yes" : "No")")
+```
+
+## Validation Logic
+
+- The `isValid` property of `ACHState` is `true` only when all sub-class `isValid` properties are `true`.
+- Each sub-class has its own validation logic:
+- `ACHAccountName`: Valid if not empty and meets any specific name requirements.
+- `ACHAccountNumber`: Valid if it contains a valid number of digits (typically 8-17).
+- `ACHRoutingNumber`: Valid if it's a 9-digit number and passes the ABA routing number check algorithm.
+
+## Best Practices
+
+1. Always use the provided PayTheory UI components (`PTAchAccountName`, `PTAchAccountNumber`, `PTAchRoutingNumber`) to ensure proper state management and security.
+2. Observe the `isValid` and `isEmpty` properties to provide real-time feedback to users.
+3. Use the `ACHState.isValid` property to control the enabled state of your submission button.
+4. Remember that while you can check the validity of fields, you cannot access the actual ACH data. This is a security feature of the SDK.
+
+## Example: Complete ACH Form
+
+Here's an example of how to use `ACHState` in a complete ACH payment form:
+
+```swift
+struct ACHPaymentForm: View {
+    @EnvironmentObject var payTheory: PayTheory
+
+    var body: some View {
+        VStack {
+            PTAchAccountName()
+                .background(backgroundColor(for: payTheory.ach.accountName))
+            PTAchAccountNumber()
+                .background(backgroundColor(for: payTheory.ach.accountNumber))
+            PTAchRoutingNumber()
+                .background(backgroundColor(for: payTheory.ach.routingNumber))
+
+            Button("Submit ACH Payment") {
+                submitPayment()
+            }
+            .disabled(!payTheory.ach.isValid)
+        }
+    }
+
+    private func backgroundColor(for field: ValidAndEmpty) -> Color {
+        if field.isEmpty {
+            return .white
+        } else if field.isValid {
+            return .green.opacity(0.2)
+        } else {
+            return .red.opacity(0.2)
+        }
+    }
+
+    private func submitPayment() {
+        // ACH payment submission logic
+    }
+}
+```
+
+This example demonstrates how to use the `ACHState` and its sub-classes to create a responsive ACH payment form with real-time validation feedback.
+
+By leveraging `ACHState` and its sub-classes, you can create secure and user-friendly ACH payment forms while adhering to best practices in handling sensitive financial data.

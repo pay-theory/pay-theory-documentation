@@ -1,0 +1,357 @@
+---
+sidebar_position: 1
+sidebar_label: 'Pay Theory Android SDK'
+title: "Pay Theory Android SDK"
+---
+
+# Pay Theory Android SDK
+
+This is the Pay Theory Android SDK. It is a collection of Material Design UI components and utilities to help you integrate Pay Theory into your Android application.
+
+This guide will walk you through the basic steps to integrate the Pay Theory Android SDK into your application.
+
+## Step 1: SDK Setup and Configuration
+
+The Pay Theory Android SDK is available through Maven Central. Follow these steps to set up the SDK in your project:
+
+### Add Maven Repository
+
+Add mavenCentral() to your project level `build.gradle` file:
+
+```groovy
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+}
+```
+
+### Add SDK Dependency
+
+Add Pay Theory Android SDK to your app level `build.gradle` file:
+
+```groovy
+dependencies {
+    implementation group: 'com.paytheory.android.sdk', name: 'AndroidSDK', version: '3.0.4'
+}
+```
+
+### Configure Build Settings
+
+Update your app level `build.gradle` to set the required SDK versions:
+
+```groovy
+android {
+    compileSdk 33
+
+    defaultConfig {
+        minSdk 26
+        targetSdk 33
+    }
+}
+```
+
+### Secure Your API Key
+
+While Pay Theory's API key is not considered a secret key, it's best practice to avoid exposing it in your source code repository. Here's how to add it as a build resource:
+
+1. Add your API key to the project level `local.properties` file:
+```properties
+API_KEY=YOUR-API-KEY
+```
+
+2. Update your app level `build.gradle` to read and use the API key:
+```groovy
+// Read local properties
+File secretPropsFile = project.rootProject.file('local.properties')
+Properties p = new Properties()
+new FileInputStream(secretPropsFile).withCloseable { is -> p.load(is) }
+p.each { name, value -> ext[name] = value }
+
+android {
+    buildTypes {
+        debug {
+            resValue("string", "api_key", "${API_KEY}")
+        }
+        release {
+            resValue("string", "api_key", "${API_KEY}")
+        }
+    }
+}
+```
+
+## Step 2: Register Your App
+
+Before using the SDK in production, you need to register your app for App Attestation in the Pay Theory Portal:
+
+1. Log in to the Pay Theory Portal
+2. Navigate to Settings
+3. Find the Native App Registration section
+4. Register your Android app with your bundle identifier (e.g., `com.paytheory.android.testsdk`)
+
+:::note
+For detailed instructions on app registration, see the [App Registration](app_registration.mdx) guide.
+:::
+
+## Step 3: Configure Your Activity
+
+Your payment activity needs to extend `PayTheoryMerchantActivity` and implement the `Payable` interface to handle payment responses:
+
+```kotlin title="PaymentActivity.kt"
+class PaymentActivity : PayTheoryMerchantActivity(), Payable {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.payment_activity)
+
+        if (savedInstanceState == null) {
+            // Create PayTheoryFragment
+            val payTheoryFragment = PayTheoryFragment()
+
+            // Add fragment to container
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.payment_fragment, payTheoryFragment)
+                .commit()
+        }
+    }
+
+    // Required Payable interface handlers
+    override fun handleReady(isReady: Boolean) {
+        // Handle ready state
+    }
+
+    override fun handleError(error: PTError) {
+        // Handle error
+    }
+
+    override fun handleSuccess(successfulTransactionResult: SuccessfulTransactionResult) {
+        // Handle success
+    }
+
+    override fun handleFailure(failedTransactionResult: FailedTransactionResult) {
+        // Handle failure
+    }
+
+    override fun handlePaymentStart(paymentType: String) {
+        // Handle payment start
+    }
+
+    override fun handleTokenStart(paymentType: String) {
+        // Handle token start
+    }
+
+    override fun handleBarcodeSuccess(barcodeResult: BarcodeResult) {
+        // Handle barcode success
+    }
+
+    override fun handleTokenizeSuccess(paymentMethodToken: PaymentMethodTokenResults) {
+        // Handle tokenization success
+    }
+}
+```
+
+## Step 4: Create Your Layout
+
+Create a layout file that includes the `PayTheoryFragment` and `PayTheoryButton`:
+
+```xml title="payment_activity.xml"
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/payment_fragment"
+        android:name="com.paytheory.android.sdk.fragments.PayTheoryFragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <com.paytheory.android.sdk.view.PayTheoryButton
+        android:id="@+id/submit_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/submit_payment" />
+
+</LinearLayout>
+```
+
+## Step 5: Configure Payment Settings
+
+Configure your payment settings using the `configurePayment` function:
+
+```kotlin title="PaymentActivity.kt"
+class PaymentActivity : PayTheoryMerchantActivity(), Payable {
+...
+
+    override fun onStart() {
+            super.onStart()
+
+            // Get submit button reference and the PayTheoryFragment
+            val submitButton = findViewById<PayTheoryButton>(R.id.submit_button)
+            val payTheoryFragment = supportFragmentManager.findFragmentById(R.id.payment_fragment) as PayTheoryFragment
+
+
+            // Create configuration
+            val configuration = PayTheoryConfiguration(
+                apiKey = resources.getString(R.string.api_key),
+                payTheoryButton = submitButton
+            )
+            configuration.paymentMethodType = PaymentMethodType.CARD
+            configuration.amount = 1000
+
+            // Configure the payment after fragment is attached
+            payTheoryFragment.configurePayment(
+                merchantActivity = this,
+                configuration = configuration
+            )
+        }
+
+...
+}
+```
+
+## Step 6: Set Up Payment Button
+
+Configure the `PayTheoryButton` with a click listener to process the payment:
+
+```kotlin
+findViewById<PayTheoryButton>(R.id.submit_button).setOnClickListener {
+    payTheoryFragment.transact()
+}
+```
+
+:::note Alternative: Tokenizing Payments
+Instead of immediately processing a payment with `transact()`, you can tokenize a payment method for later use:
+
+```kotlin
+// Set up button for tokenization
+findViewById<PayTheoryButton>(R.id.submit_button).setOnClickListener {
+    payTheoryFragment.tokenize()
+}
+```
+:::
+
+## Complete Example
+
+Here's a complete example putting it all together:
+
+```kotlin title="PaymentActivity.kt"
+class PaymentActivity : PayTheoryMerchantActivity(), Payable {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.payment_activity)
+
+        if (savedInstanceState == null) {
+            // Create PayTheoryFragment
+            val payTheoryFragment = PayTheoryFragment()
+
+            // Add fragment to container
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.payment_fragment, payTheoryFragment)
+                .commit()
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        // Get submit button reference and the PayTheoryFragment
+        val submitButton = findViewById<PayTheoryButton>(R.id.submit_button)
+        val payTheoryFragment = supportFragmentManager.findFragmentById(R.id.payment_fragment) as PayTheoryFragment
+
+
+        // Create configuration
+        val configuration = PayTheoryConfiguration(
+            apiKey = resources.getString(R.string.api_key),
+            payTheoryButton = submitButton
+        )
+        configuration.paymentMethodType = PaymentMethodType.CARD
+        configuration.amount = 1000
+        configuration.accountCode = "Test Account Code"
+        configuration.reference = "Test Reference"
+
+        // Set up button click listener
+        submitButton.setOnClickListener {
+            payTheoryFragment.transact()
+        }
+
+        // Configure the payment after fragment is attached
+        payTheoryFragment.configurePayment(
+            merchantActivity = this,
+            configuration = configuration
+        )
+    }
+
+    // Required Payable interface handlers
+    override fun handleReady(isReady: Boolean) {
+        // Handle ready state
+    }
+
+    override fun handleError(error: PTError) {
+        // Handle error
+    }
+
+    override fun handleSuccess(successfulTransactionResult: SuccessfulTransactionResult) {
+        // Handle success
+    }
+
+    override fun handleFailure(failedTransactionResult: FailedTransactionResult) {
+        // Handle failure
+    }
+
+    override fun handlePaymentStart(paymentType: String) {
+        // Handle payment start
+    }
+
+    override fun handleTokenStart(paymentType: String) {
+        // Handle token start
+    }
+
+    override fun handleBarcodeSuccess(barcodeResult: BarcodeResult) {
+        // Handle barcode success
+    }
+
+    override fun handleTokenizeSuccess(paymentMethodToken: PaymentMethodTokenResults) {
+        // Handle tokenization success
+    }
+}
+```
+
+```xml title="payment_activity.xml"
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/payment_fragment"
+        android:name="com.paytheory.android.sdk.fragments.PayTheoryFragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <com.paytheory.android.sdk.view.PayTheoryButton
+        android:id="@+id/submit_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/submit_payment" />
+
+</LinearLayout>
+```
+
+This quick start guide demonstrates how to:
+- Add the Pay Theory SDK dependency
+- Set up your payment activity with the required interface
+- Create a layout with the necessary UI components
+- Configure payment settings
+- Handle payment processing and responses
+
+Remember to add your API key to `local.properties` as shown in the "Secure Your API Key" section.
+
+For more advanced usage and additional payment methods, please refer to the full SDK documentation:
+- [PayTheoryFragment](pay_theory_fragment.mdx) - Core payment functionality
+- [Activity & Interface Setup](merchant_activity_and_payable.mdx) - Detailed activity setup
+- [UI Components](ui_components/pay_theory_button.mdx) - Available UI components
+- [Response Types](response_types/successful_transaction_result.mdx) - Payment response handling

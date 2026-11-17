@@ -1,0 +1,159 @@
+[
+  {
+    "operation": "createOneTimePayment",
+    "operationType": "mutation",
+    "examples": [
+      {
+        "name": "Missing payment method",
+        "query": "mutation CreateOneTimePayment(\n  $merchant_uid: String!\n  $amount: Int!\n  $fee_mode: FeeMode\n) {\n  createOneTimePayment(\n    merchant_uid: $merchant_uid\n    amount: $amount\n    fee_mode: $fee_mode\n  ) {\n    transaction_id\n    status\n    amount\n    service_fee\n    card_brand\n    last_four\n    currency\n    failure_reason\n    created_at\n  }\n}",
+        "variables": {
+          "amount": 200,
+          "fee_mode": "MERCHANT_FEE",
+          "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1"
+        },
+        "response": {
+          "type": "error",
+          "httpStatus": 200,
+          "body": {
+            "data": null,
+            "errors": [
+              {
+                "path": [
+                  "createOneTimePayment"
+                ],
+                "data": null,
+                "errorType": "VALIDATION_ERROR",
+                "errorInfo": null,
+                "message": "Either payment_method or payment_method_id must be passed in."
+              }
+            ]
+          }
+        },
+        "description": "Returns an error when neither payment_method nor payment_method_id is supplied."
+      }
+    ]
+  },
+  {
+    "operation": "createRefund",
+    "operationType": "mutation",
+    "examples": [
+      {
+        "name": "Refund a settled charge",
+        "query": "mutation CreateRefund(\n  $transaction_id: String!\n  $amount: Int!\n  $refund_reason: RefundReasonInput!\n) {\n  createRefund(\n    transaction_id: $transaction_id\n    amount: $amount\n    refund_reason: $refund_reason\n  )\n}",
+        "variables": {
+          "amount": 1,
+          "refund_reason": {
+            "reason_code": "REQUESTED_BY_CUSTOMER",
+            "reason_details": "Docs example"
+          },
+          "transaction_id": "ptl_txn_11OTxnMLiIfGFAVDo8Zjkl"
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "createRefund": true
+            }
+          }
+        },
+        "description": "Creates a deprecated refund for a settled charge."
+      },
+      {
+        "name": "Refund amount is too high",
+        "query": "mutation CreateRefund(\n  $transaction_id: String!\n  $amount: Int!\n  $refund_reason: RefundReasonInput!\n) {\n  createRefund(\n    transaction_id: $transaction_id\n    amount: $amount\n    refund_reason: $refund_reason\n  )\n}",
+        "variables": {
+          "amount": 26010,
+          "refund_reason": {
+            "reason_code": "REQUESTED_BY_CUSTOMER",
+            "reason_details": "Docs example"
+          },
+          "transaction_id": "ptl_txn_11OTxnMLiIfGFAVDo8Zjkl"
+        },
+        "response": {
+          "type": "error",
+          "httpStatus": 200,
+          "body": {
+            "data": null,
+            "errors": [
+              {
+                "path": [
+                  "createRefund"
+                ],
+                "data": null,
+                "errorType": "VALIDATION_ERROR",
+                "errorInfo": null,
+                "message": "Refund amount exceeds remaining transaction balance."
+              }
+            ]
+          }
+        },
+        "description": "Returns an error when the refund amount is greater than the remaining balance."
+      }
+    ]
+  },
+  {
+    "operation": "serviceFeeAmount",
+    "operationType": "query",
+    "examples": [
+      {
+        "name": "Read both service fees",
+        "query": "query ServiceFeeAmount($merchant_uid: String!, $amount: Int!) {\n  serviceFeeAmount(merchant_uid: $merchant_uid, amount: $amount) {\n    ach {\n      fee\n      total\n      adjusted_total\n    }\n    card {\n      fee\n      total\n      adjusted_total\n    }\n  }\n}",
+        "variables": {
+          "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+          "amount": 200
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "serviceFeeAmount": {
+                "ach": {
+                  "fee": 41,
+                  "total": 200,
+                  "adjusted_total": 241
+                },
+                "card": {
+                  "fee": 195,
+                  "total": 200,
+                  "adjusted_total": 395
+                }
+              }
+            }
+          }
+        },
+        "description": "Reads the deprecated ACH and card fee quote shape in one call."
+      },
+      {
+        "name": "Missing merchant ID",
+        "query": "query ServiceFeeAmount($merchant_uid: String!, $amount: Int!) {\n  serviceFeeAmount(merchant_uid: $merchant_uid, amount: $amount) {\n    ach {\n      fee\n      total\n      adjusted_total\n    }\n    card {\n      fee\n      total\n      adjusted_total\n    }\n  }\n}",
+        "variables": {
+          "merchant_uid": "",
+          "amount": 200
+        },
+        "response": {
+          "type": "error",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "serviceFeeAmount": null
+            },
+            "errors": [
+              {
+                "path": [
+                  "serviceFeeAmount"
+                ],
+                "data": null,
+                "errorType": "VALIDATION_ERROR",
+                "errorInfo": null,
+                "message": "Merchant UID is required and cannot be empty."
+              }
+            ]
+          }
+        },
+        "description": "Returns an error when merchant_uid is empty."
+      }
+    ]
+  }
+]

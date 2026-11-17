@@ -1,0 +1,84 @@
+---
+sidebar_position: 2
+sidebar_label: 'Payor'
+title: "Payor"
+---
+
+# Payor Class
+
+The `Payor` structure in the Pay Theory SDK represents an individual who is making a payment. It encapsulates personal details and address information of the payor.
+
+## Overview
+
+`Payor` is a Swift structure that conforms to the `Codable` protocol. It provides a standardized way to handle payor information across the Pay Theory SDK.
+
+## Properties
+
+| Property | Type | Description |
+|----------|------|-------------|
+| phone | String? | The phone number of the payor. |
+| firstName | String? | The first name of the payor. |
+| lastName | String? | The last name of the payor. |
+| email | String? | The email address of the payor. |
+| personalAddress | Address | The personal address of the payor. |
+
+## Initializer
+
+```swift
+public init(firstName: String? = nil,
+            lastName: String? = nil,
+            email: String? = nil,
+            phone: String? = nil,
+            personalAddress: Address = Address())
+```
+
+Creates a new `Payor` instance.
+
+### Parameters
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| firstName | String? | nil | The first name of the payor. |
+| lastName | String? | nil | The last name of the payor. |
+| email | String? | nil | The email address of the payor. |
+| phone | String? | nil | The phone number of the payor. |
+| personalAddress | Address | Address() | The personal address of the payor. |
+
+## Usage Example
+
+```swift
+let payorAddress = Address(line1: "123 Main St", city: "Anytown", region: "CA", postalCode: "12345", country: "USA")
+let payor = Payor(
+    firstName: "John",
+    lastName: "Doe",
+    email: "john.doe@example.com",
+    phone: "1234567890",
+    personalAddress: payorAddress
+)
+
+// Accessing properties
+print(payor.firstName ?? "") // Outputs: John
+print(payor.personalAddress.city ?? "") // Outputs: Anytown
+
+// Updating properties
+var mutablePayor = payor
+mutablePayor.email = "newemail@example.com"
+```
+
+## Methods
+
+### clear()
+
+```swift
+public mutating func clear()
+```
+
+Clears all information in the `Payor` instance, resetting all properties to their default values.
+
+#### Usage
+
+```swift
+var payor = Payor(firstName: "John", lastName: "Doe")
+payor.clear()
+print(payor.firstName ?? "No name") // Outputs: No name
+```
