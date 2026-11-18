@@ -2,26 +2,257 @@
   {
     "operation": "createWebhook",
     "operationType": "mutation",
-    "examples": []
+    "examples": [
+      {
+        "name": "Create a partner webhook",
+        "description": "Sends events for every merchant under your partner to the endpoint. Call it with a partner key.",
+        "query": "mutation CreateWebhook($endpoint: String!, $name: String!) {\n  createWebhook(endpoint: $endpoint, name: $name)\n}",
+        "variables": {
+          "endpoint": "https://example.com/webhooks/paytheory",
+          "name": "Order sync"
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "createWebhook": true
+            }
+          }
+        }
+      },
+      {
+        "name": "Create a merchant webhook",
+        "description": "Sends events for one merchant only. Call it with that merchant's key. The mutation has no merchant argument.",
+        "query": "mutation CreateWebhook($endpoint: String!, $name: String!) {\n  createWebhook(endpoint: $endpoint, name: $name)\n}",
+        "variables": {
+          "endpoint": "https://example.com/webhooks/northstar-books",
+          "name": "Northstar Books orders"
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "createWebhook": true
+            }
+          }
+        }
+      }
+    ]
   },
   {
     "operation": "webhooks",
     "operationType": "query",
-    "examples": []
+    "examples": [
+      {
+        "name": "Get a webhook",
+        "description": "Filters by `endpoint`. Omit `endpoint` to list every webhook your API key owns.",
+        "query": "query Webhooks($endpoint: String) {\n  webhooks(endpoint: $endpoint) {\n    endpoint\n    name\n    is_active\n  }\n}",
+        "variables": {
+          "endpoint": "https://example.com/webhooks/paytheory"
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "webhooks": [
+                {
+                  "endpoint": "https://example.com/webhooks/paytheory",
+                  "name": "Order sync",
+                  "is_active": true
+                }
+              ]
+            }
+          }
+        }
+      },
+      {
+        "name": "List a merchant's webhooks",
+        "description": "A merchant key sees only the webhooks created with that merchant's key.",
+        "query": "query Webhooks {\n  webhooks {\n    endpoint\n    name\n    is_active\n  }\n}",
+        "variables": {},
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "webhooks": [
+                {
+                  "endpoint": "https://example.com/webhooks/northstar-books",
+                  "name": "Northstar Books orders",
+                  "is_active": true
+                }
+              ]
+            }
+          }
+        }
+      }
+    ]
   },
   {
     "operation": "updateWebhook",
     "operationType": "mutation",
-    "examples": []
+    "examples": [
+      {
+        "name": "Pause a webhook",
+        "description": "Stops deliveries to the endpoint. Pending retries are dropped and are not sent when you turn it back on.",
+        "query": "mutation UpdateWebhook($endpoint: String!, $is_active: Boolean) {\n  updateWebhook(endpoint: $endpoint, is_active: $is_active)\n}",
+        "variables": {
+          "endpoint": "https://example.com/webhooks/paytheory",
+          "is_active": false
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "updateWebhook": true
+            }
+          }
+        }
+      },
+      {
+        "name": "Rename a webhook",
+        "description": "Changes only the name. The endpoint URL can't be changed.",
+        "query": "mutation UpdateWebhook($endpoint: String!, $name: String) {\n  updateWebhook(endpoint: $endpoint, name: $name)\n}",
+        "variables": {
+          "endpoint": "https://example.com/webhooks/paytheory",
+          "name": "Order sync v2"
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "updateWebhook": true
+            }
+          }
+        }
+      }
+    ]
   },
   {
     "operation": "deleteWebhook",
     "operationType": "mutation",
-    "examples": []
+    "examples": [
+      {
+        "name": "Delete a webhook",
+        "description": "Removes the endpoint. Delivery history for it stays queryable until it expires.",
+        "query": "mutation DeleteWebhook($endpoint: String!) {\n  deleteWebhook(endpoint: $endpoint)\n}",
+        "variables": {
+          "endpoint": "https://example.com/webhooks/paytheory"
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "deleteWebhook": true
+            }
+          }
+        }
+      }
+    ]
   },
   {
     "operation": "webhookEvents",
     "operationType": "query",
-    "examples": []
+    "examples": [
+      {
+        "name": "List delivery attempts for an endpoint",
+        "description": "Returns attempts newest first. Pass `last_evaluated_key` from the response to get the next page.",
+        "query": "query WebhookEvents($endpoint: String, $limit: Int) {\n  webhookEvents(endpoint: $endpoint, limit: $limit) {\n    events {\n      id\n      event_id\n      event\n      result\n      status_code\n      error\n      retry_count\n      started_at\n    }\n    last_evaluated_key\n  }\n}",
+        "variables": {
+          "endpoint": "https://example.com/webhooks/paytheory",
+          "limit": 5
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "webhookEvents": {
+                "events": [
+                  {
+                    "id": "ptl_webh_1YdrHSbtgDtIDtSvKm3uE2",
+                    "event_id": "ptl_webh_1YdnvdAdRxftmqpYj12epc",
+                    "event": "PAYOR",
+                    "result": "FAILURE",
+                    "status_code": 405,
+                    "error": "Webhook endpoint returned HTTP 405",
+                    "retry_count": 0,
+                    "started_at": "2026-11-09T19:32:08.0Z"
+                  }
+                ],
+                "last_evaluated_key": null
+              }
+            }
+          }
+        }
+      },
+      {
+        "name": "Get every attempt for one event",
+        "description": "Filters by the `event_id` from the webhook body. Returns the first attempt and every retry, newest first.",
+        "query": "query WebhookEvents($event_id: ID) {\n  webhookEvents(event_id: $event_id) {\n    events {\n      id\n      event_id\n      event\n      result\n      status_code\n      retry_count\n      started_at\n    }\n  }\n}",
+        "variables": {
+          "event_id": "ptl_webh_1YdnvdAdRxftmqpYj12epc"
+        },
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "webhookEvents": {
+                "events": [
+                  {
+                    "id": "ptl_webh_1YdrHSbtgDtIDtSvKm3uE2",
+                    "event_id": "ptl_webh_1YdnvdAdRxftmqpYj12epc",
+                    "event": "PAYOR",
+                    "result": "FAILURE",
+                    "status_code": 405,
+                    "retry_count": 0,
+                    "started_at": "2026-11-09T19:32:08.0Z"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "operation": "jwks",
+    "operationType": "query",
+    "examples": [
+      {
+        "name": "Get webhook verification keys",
+        "description": "Returns the Ed25519 public key that signs your webhooks. Partner and merchant keys get the same key.",
+        "query": "query WebhookVerificationKeys {\n  jwks {\n    keys {\n      kid\n      kty\n      crv\n      alg\n      use\n      x\n    }\n  }\n}",
+        "variables": {},
+        "response": {
+          "type": "success",
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "jwks": {
+                "keys": [
+                  {
+                    "kid": "key-1",
+                    "kty": "OKP",
+                    "crv": "Ed25519",
+                    "alg": "EdDSA",
+                    "use": "sig",
+                    "x": "vpr_qZecTM6euIor3KpvjDx89OqAsCWUeAf7lLaKTIo"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    ]
   }
 ]

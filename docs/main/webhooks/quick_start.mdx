@@ -1,0 +1,161 @@
+---
+sidebar_position: 2
+sidebar_label: 'Quick start'
+title: 'Webhooks quick start'
+---
+
+# Webhooks quick start
+
+This guide sets up a webhook in a sandbox, sends it a test event and checks the delivery. It takes about 15 minutes.
+
+:::danger Before you start
+You need a sandbox partner or merchant secret key and your API endpoint, both from the Pay Theory Portal **Settings** tab. Send API requests with the header `Authorization: partner;SECRET_KEY` for a partner key or `Authorization: MERCHANT_UID;SECRET_KEY` for a merchant key.
+:::
+
+***
+
+## 1. Build a receiver
+
+Your endpoint reads the raw body, returns a `2xx` response quickly and does the real work afterward. Keep the body as raw bytes, because [signature verification](verify_webhooks) needs the exact bytes Pay Theory sent.
+
+```javascript title="server.mjs"
+import express from 'express';
+
+const app = express();
+
+app.post(
+  '/webhooks/paytheory',
+  express.raw({ type: 'application/json' }),
+  (request, response) => {
+    const event = JSON.parse(request.body.toString('utf8'));
+    console.log(event.event, event.subtype, event.event_id);
+    response.sendStatus(204);
+  },
+);
+
+app.listen(3000);
+```
+
+Start it with `node server.mjs`.
+
+***
+
+## 2. Make it public
+
+Pay Theory can't reach `localhost`. While testing, put a tunnel such as [ngrok](https://ngrok.com) in front of your receiver:
+
+```bash title="Terminal"
+ngrok http 3000
+```
+
+ngrok prints a public URL. Your webhook endpoint is that URL plus your route, for example `https://example.ngrok-free.app/webhooks/paytheory`.
+
+***
+
+## 3. Create the webhook
+
+Call `createWebhook` with your endpoint and a name. A partner key creates a webhook for every merchant under your partner. A merchant key creates one for that merchant only.
+
+```graphql title="Example mutation"
+mutation CreateWebhook($endpoint: String!, $name: String!) {
+  createWebhook(endpoint: $endpoint, name: $name)
+}
+```
+
+```json title="Variables"
+{
+  "endpoint": "https://example.ngrok-free.app/webhooks/paytheory",
+  "name": "Order sync"
+}
+```
+
+```json title="Response"
+{
+  "data": {
+    "createWebhook": true
+  }
+}
+```
+
+The webhook is active as soon as the call returns. Confirm it with `webhooks`:
+
+```graphql title="Example query"
+query Webhooks {
+  webhooks {
+    endpoint
+    name
+    is_active
+  }
+}
+```
+
+***
+
+## 4. Send a test event
+
+Any change in the sandbox sends an event. Creating a payor is the quickest:
+
+```graphql title="Example mutation"
+mutation CreatePayor($input: PayorInput!) {
+  createPayor(input: $input) {
+    payor_id
+  }
+}
+```
+
+```json title="Variables"
+{
+  "input": {
+    "merchant_uid": "e9f2387b-8727-450a-w3g2-fee9b49e42a1",
+    "full_name": "Pat Theodore",
+    "email": "pat@example.com"
+  }
+}
+```
+
+Within a few seconds your receiver logs `PAYOR CREATED` and an `event_id`.
+
+***
+
+## 5. Check the delivery
+
+`webhookEvents` shows each attempt to your endpoint and what your endpoint returned:
+
+```graphql title="Example query"
+query WebhookEvents($endpoint: String, $limit: Int) {
+  webhookEvents(endpoint: $endpoint, limit: $limit) {
+    events {
+      id
+      event_id
+      event
+      result
+      status_code
+      error
+      retry_count
+      started_at
+    }
+    last_evaluated_key
+  }
+}
+```
+
+```json title="Variables"
+{
+  "endpoint": "https://example.ngrok-free.app/webhooks/paytheory",
+  "limit": 5
+}
+```
+
+A `FAILURE` result with a `status_code` means your endpoint answered with a non-`2xx` status. A `FAILURE` with no `status_code` means no response arrived, because of a timeout or a connection error. Pay Theory retries failed attempts on the [retry schedule](overview#delivery-and-retries).
+
+***
+
+## 6. Before you go live
+
+- [Verify the signature](verify_webhooks) of every request before you trust it.
+- Deduplicate on `event_id`. The same delivery can arrive more than once.
+- Handle events in any order.
+- Create a separate webhook with your live keys. Sandbox and live webhooks are separate.
+- Pause or delete test webhooks you no longer use, so failed deliveries stop retrying.
+
+For the fields in each event, see [Webhook events](event_payloads).

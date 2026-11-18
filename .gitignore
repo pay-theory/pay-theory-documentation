@@ -45,3 +45,7 @@ pusher.sh
 /static/llms.txt
 /docs/api/agent-skills/
 /versioned_docs/version-*/api/agent-skills/
+
+# Python bytecode
+__pycache__/
+*.pyc
